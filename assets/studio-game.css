@@ -1,0 +1,429 @@
+/* Evening studio / game art direction. This is the only game theme layer.
+   Base structural styles live in style.css and office.css. */
+:root {
+  color-scheme: dark;
+  --bg: #111820; --panel: #1c252e; --surface: #26343c;
+  --text: #f2ecde; --muted: #a8b7b8; --line: #c8d5cb24;
+  --amber: #efb86b; --mint: #8ed8bf; --coral: #f49d88;
+  --paper: #eee5d2; --paper-ink: #293940; --paper-muted: #4e5d53;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+}
+body { background: var(--bg); }
+button, a, select { -webkit-tap-highlight-color: transparent; }
+button:disabled { opacity: .55; }
+button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 4px; }
+.primary, .secondary { min-height: 48px; border-radius: 7px; font-weight: 700; font-size: 14px; }
+.primary { color: #292a25; border: 1px solid #ffda9b; background: linear-gradient(#f5ca83, #e6ac5e); box-shadow: 0 3px 0 #8b5d2b, inset 0 1px 0 #ffe7b3; }
+.primary:not(:disabled):hover { background: #ffda9b; box-shadow: 0 3px 0 #8b5d2b, 0 0 24px #efb86b24; }
+.secondary { border-color: #c8d5cb40; background: #ffffff05; }
+.secondary:not(:disabled):hover { background: #ffffff0c; border-color: #c8d5cb70; }
+.icon-btn { width: 44px; height: 44px; border-radius: 8px; background: #ffffff05; border-color: var(--line); }
+.text-button { min-height: 44px; font-size: 13px; }
+.brand-period { color: var(--amber); }
+.badge { font-size: 10px; letter-spacing: .8px; }
+
+/* An invitation into the same evening as the playable room. */
+.landing { background: #111820; }
+.office-backdrop { opacity: .85; }
+.landing-shade { background: linear-gradient(90deg,#111820fa 0%,#111820e8 31%,#11182050 65%,#11182018),linear-gradient(0deg,#111820,transparent 38%); }
+.landing .topbar { height: 88px; padding: 0 5vw; }
+.intro-copy { width: 660px; max-width: 60vw; padding: 40px 0 100px 5vw; }
+.chapter-label { color: var(--amber); font-size: 13px; }
+.chapter-label > span { width: 34px; height: 34px; border-radius: 6px; background: #efb86b0c; }
+.intro-copy h1 { font-size: clamp(40px,4.2vw,64px); line-height: 1.08; margin: 24px 0; letter-spacing: -1.5px; }
+.intro-copy > p { color: #d5d9cf; font-size: 17px; }
+.intro-letter { max-width: 460px; margin: 24px 0; padding: 20px; border: 1px solid #ead8af50; border-left: 3px solid var(--amber); border-radius: 0 10px 10px 0; background: #e4d8bd; box-shadow: 0 12px 32px #0003; }
+.intro-letter b { color: var(--paper-ink); font-size: 14px; }
+.intro-letter b > span { color: var(--paper-muted); font-size: 11px; }
+.intro-letter p { color: #405354; font-size: 14px; }
+.letter-avatar { border-radius: 7px; background: #587b70; }
+.intro-copy > p.intro-role { max-width: 450px; color: var(--muted); font-size: 14px; }
+.difficulty { margin: 24px 0 20px; }
+.difficulty legend { font-size: 12px; color: var(--muted); }
+.difficulty-option { min-height: 44px; border-radius: 6px; background: #1c252ed9; padding: 12px 16px; font-size: 12px; }
+.difficulty-option.chosen { border-color: var(--amber); background: #efb86b14; color: #ffdaa1; }
+.intro-cta .primary { min-width: 270px; min-height: 56px; font-size: 15px; }
+.office-caption { border: 1px solid var(--line); border-radius: 6px; background: #18232bd9; padding: 12px 16px; }
+.landing-footer { padding: 24px 5vw; color: var(--muted); font-size: 11px; letter-spacing: .3px; }
+.demo-link { color: var(--mint); }
+
+/* Compact mission header and a quiet chapter rail. */
+.game-shell { height: 100svh; min-height: 940px; background: var(--bg); }
+.game-topbar { order: 0; height: 76px; padding: 0 28px; background: #121b23; border-bottom: 1px solid #e0c99115; }
+.game-topbar .brand { font-size: 24px; letter-spacing: .2px; }
+.game-topbar .brand small { color: #b4c0bb; font-size: 8px; letter-spacing: 2.8px; }
+.project-title { gap: 12px; font-size: 15px; letter-spacing: 1.5px; }
+.project-title .tiny { font-size: 10px; color: var(--muted); }
+.project-title .badge { color: var(--amber); border-color: #efb86b40; background: #efb86b0b; }
+.hud-stats { gap: 16px; }
+.hud-stat { gap: 10px; padding: 8px 18px; border-left: 1px solid var(--line); }
+.hud-stat small { color: var(--muted); font-size: 11px; }
+.hud-stat strong { color: #f6dfad; font-size: 20px; font-variant-numeric: tabular-nums; }
+.game-footer { order: 1; height: 58px; padding: 0 28px; background: #151e27; border: 0; }
+.timeline { gap: 0; }
+.timeline-step { color: #92a3a6; font-size: 12px; gap: 9px; }
+.timeline-step > span { width: 26px; height: 26px; border-radius: 6px; background: #25313a; border: 1px solid #8da49f30; font-size: 11px; }
+.timeline-step:not(:last-child)::after { width: 28px; margin: 0 16px; background: #8da49f30; }
+.timeline-step.current { color: #f2cd8d; }
+.timeline-step.current > span { background: var(--amber); color: #262b29; box-shadow: 0 0 16px #efb86b1a; border-color: #ffe0a2; }
+.timeline-step.completed, .timeline-step.completed > span { color: var(--mint); }
+.timeline-step.completed > span { background: #8ed8bf14; border-color: #8ed8bf40; }
+.save-status { color: #93aaa6; font-size: 11px; }
+.game-layout { order: 2; min-height: 0; padding: 0 16px 16px; gap: 16px; grid-template-columns: minmax(0,1fr) clamp(470px,28vw,590px); background: #151e27; }
+
+/* The room is a lit diorama on a stage, with controls on its edges. */
+.game-layout .playable-office {
+  position: relative; display: grid; grid-template-rows: auto minmax(280px,1fr) auto auto auto;
+  padding: 24px; border: 1px solid #a9c7ba24; border-radius: 12px;
+  background: radial-gradient(ellipse at 50% 38%,#345352 0%,#21353d 49%,#16252f 100%);
+  box-shadow: inset 0 0 90px #06111a45;
+}
+.playable-office::after { content: ''; position: absolute; inset: 10px; border: 1px solid #b5d0bb08; border-radius: 6px; pointer-events: none; }
+.office-heading { padding-bottom: 12px; position: relative; z-index: 2; }
+.office-heading .eyebrow { color: #b2c5bd; font-size: 10px; letter-spacing: 1.4px; }
+.office-heading h2 { color: #f1e6cd; font-size: 28px; font-weight: 600; margin-top: 8px; }
+.office-brief { min-height: 44px; color: #efce96; padding: 8px 12px; background: #10202a88; border: 1px solid #efb86b45; border-radius: 6px; font-size: 12px; }
+.game-layout .playable-office .office-room { width: auto; height: 100%; min-height: 0; min-width: 0; max-height: 100%; max-width: 100%; aspect-ratio: 10/7; margin: 0 auto; align-self: stretch; justify-self: center; }
+.office-render-status { color: #b0c6c4; font-size: 10px; }
+.office-camera-controls { gap: 6px; }
+.office-camera-controls button { width: 44px; height: 44px; color: #d7e0d9; background: #11232ce8; border-color: #afcab63d; border-radius: 7px; }
+.office-camera-controls button:hover { background: #36504d; border-color: var(--amber); }
+.office-room.is-3d .desk-tag { background: #152a34f2; border: 1px solid #b8d3bc35; border-radius: 7px; box-shadow: 0 3px 12px #0002; }
+.office-room.is-3d .office-desk.selected .desk-tag { border-color: var(--person); background: #2a484b; }
+.office-room.is-3d .desk-tag b { font-size: 14px; }
+.office-room.is-3d .desk-tag small { font-size: 11px; color: #b7cbc3; }
+.office-guidance { margin-top: 12px; padding: 12px 16px; gap: 12px; min-height: 60px; border: 1px solid #d8b67c38; border-radius: 7px; background: #0f2028b8; }
+.office-guidance p { color: #d8dfd2; font-size: 13px; }
+.office-step { color: #f1c580; font-size: 16px; }
+.office-guidance .text-button { min-height: 44px; font-size: 12px; }
+.office-arrivals { padding-top: 12px; min-height: 0; }
+.office-arrivals.vacant-row { display: none; }
+.office-walk-button { min-height: 44px; border-radius: 6px; font-size: 12px; }
+.arrival { background: #2c4647; border-color: #bad3ba40; border-radius: 7px; }
+.office-roster { padding-top: 16px; }
+.office-roster-title { color: #b5c7bf; font-size: 10px; letter-spacing: 1.3px; }
+.office-roster-title b { font-size: 12px; }
+.office-roster-slots { gap: 10px; }
+.office-member { min-height: 70px; padding: 10px; gap: 10px; border-radius: 7px; background: #11232c; border-color: #a9c7ba30; }
+.office-member.selected { background: #2a4547; border-color: var(--person); }
+.office-member b { color: #f0eadb; font-size: 14px; }
+.office-member small { font-size: 11px; color: #aebfb9; }
+.roster-portrait { width: 38px; height: 44px; border-radius: 6px; }
+.office-roster-empty { min-height: 70px; padding: 12px; border: 1px dashed #b6c9bb40; border-radius: 7px; background: #11232c33; }
+.office-roster-empty > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1px dashed #b6c9bb40; }
+.office-roster-empty small { color: #a7bdb6; font-size: 11px; }
+
+/* Personnel desk: portraits, a paper dossier, and one clear offer. */
+.control-panel { min-width: 0; padding: 22px; background: #1b2730; border: 1px solid #c8d5cb25; border-radius: 12px; scrollbar-width: thin; scrollbar-color: #687c77 #1b2730; scroll-margin-top: 92px; }
+.panel-header { margin-bottom: 20px; }
+.panel-header .eyebrow { margin-bottom: 10px; font-size: 11px; letter-spacing: 1.3px; color: var(--amber); }
+.panel-header h1 { font-size: 32px; line-height: 1.12; margin-bottom: 10px; letter-spacing: -.6px; }
+.panel-header > p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.candidate-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 20px; }
+.candidate { position: relative; display: block; min-width: 0; padding: 0; overflow: hidden; text-align: left; border-radius: 8px; border: 1px solid #a1b6b440; background: #273943; }
+.candidate-art { position: relative; display: block; height: 86px; overflow: hidden; background: radial-gradient(ellipse at 50% 110%,var(--agent),#233641 75%); }
+.candidate .candidate-portrait { position: absolute; left: 0; top: 50%; display: block; width: 100%; height: auto; aspect-ratio: 1; transform: translateY(-38%); min-height: 0; border: 0; border-radius: 0; background-size: 300% 200%; }
+.candidate-price { position: absolute; top: 6px; left: 6px; padding: 4px 6px; color: #f9e3b9; background: #10212ae8; border: 1px solid #ebd2a028; border-radius: 4px; font-size: 10px; font-weight: 650; }
+.candidate-caption { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; padding: 10px; background: #152630; border-top: 1px solid #b9c8bc20; }
+.candidate b { display: block; color: #f3ead6; font-size: 14px; }
+.candidate small { margin: 0; color: #afc2ba; font-size: 10px; }
+.candidate:not(:disabled):hover { transform: translateY(-2px); border-color: var(--agent); background: #2d4548; }
+.candidate.selected { border-color: #f7d69b; box-shadow: 0 0 0 1px #f7d69b70, 0 5px 16px #0003; }
+.candidate.selected .candidate-caption { background: #3d4b46; }
+.candidate.hired .candidate-caption { border-bottom: 2px solid var(--mint); padding-bottom: 8px; }
+.hired-check { display: grid; place-items: center; position: absolute; top: 6px; right: 6px; width: 21px; height: 21px; border-radius: 50%; color: #17352e; background: #a2e3c5; }
+.agent-detail.agent-dossier { position: relative; margin: 0; padding: 18px 18px 0; border: 1px solid #ffedc5; border-radius: 9px; color: var(--paper-ink); background: linear-gradient(120deg,#f4ecd9,#e5dbc4); box-shadow: 0 8px 24px #0002; }
+.dossier-header { display: flex; align-items: center; gap: 16px; position: relative; padding-bottom: 16px; border-bottom: 1px solid #5b6c5c2b; }
+.dossier-portrait { width: 82px; height: 82px; flex: none; overflow: hidden; border: 3px solid #fff9e8; border-radius: 5px; box-shadow: 0 2px 7px #384b3d2b; background: #8fa99a; }
+.dossier-portrait .dossier-face { display: block; width: 100%; height: 100%; border: 0; border-radius: 0; }
+.dossier-identity { flex: 1; min-width: 0; }
+.dossier-role { font-size: 11px; font-weight: 650; color: #43594f; }
+.dossier-identity h2 { font-size: 30px; line-height: 1.05; margin: 6px 0 8px; letter-spacing: -.5px; }
+.dossier-identity p { color: var(--paper-muted); font-size: 12px; line-height: 1.5; font-style: italic; }
+.dossier-serial { position: absolute; right: -5px; top: -8px; color: #62756230; font: 700 30px Bahnschrift,sans-serif; }
+.dossier-skills { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; align-items: center; padding: 12px 0; }
+.dossier-skills .radar-wrap { min-width: 0; }
+.dossier-skills .radar { width: 100%; height: auto; min-height: 0; max-height: none; display: block; }
+.dossier-skills .radar text { fill: var(--paper-muted); font-size: 11px; }
+.dossier-skills .radar text[font-weight="700"] { fill: #233b34; font-size: 14px; }
+.dossier-skills .radar polygon[fill="none"], .dossier-skills .radar line { stroke: #647a6040; }
+.dossier-skills .radar polygon:not([fill="none"]) { fill: #507c652b; stroke: #3e705b; }
+.dossier-skills .radar circle { fill: #3e705b; }
+.skill-list { display: grid; gap: 10px; margin: 0; padding: 4px 0 4px 10px; border-left: 1px solid #5b6c5c2b; }
+.skill-list > div { display: grid; grid-template-columns: 60px minmax(0,1fr); align-items: center; gap: 8px; }
+.skill-list dt { color: var(--paper-muted); font-size: 11px; }
+.skill-list dd { display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; margin: 0; }
+.skill-list b { width: 22px; color: #274535; font-size: 13px; font-variant-numeric: tabular-nums; }
+.skill-track { flex: 1; height: 5px; min-width: 10px; border-radius: 1px; overflow: hidden; background: #78907b26; }
+.skill-track i { display: block; height: 100%; background: #618d72; }
+.dossier-note { padding: 10px 0 12px; border-top: 1px solid #5b6c5c2b; }
+.dossier-note h3 { margin: 0 0 5px; color: #35483c; font: 700 13px 'Segoe UI',sans-serif; }
+.dossier-note p { margin: 0; color: var(--paper-muted); font-size: 12px; line-height: 1.6; }
+.agent-dossier .agent-caution { display: flex; align-items: flex-start; gap: 7px; color: #705332; font-size: 11px; line-height: 1.5; margin: 0 0 12px; padding: 9px 10px; background: #b98b3933; border-radius: 4px; }
+.agent-caution svg { flex: none; margin-top: 1px; }
+.dossier-offer { display: flex; align-items: center; gap: 16px; margin: 0 -18px; padding: 14px 18px; border-top: 1px solid #536b4f33; border-radius: 0 0 8px 8px; background: #e6d7b7; }
+.dossier-offer > strong { flex: none; color: #3f513e; font-size: 23px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.dossier-offer small { display: block; color: #4e5d4d; font-size: 10px; margin-top: 5px; font-weight: 500; }
+.dossier-offer button { flex: 1; min-width: 0; font-size: 13px; padding: 10px 12px; }
+.dossier-offer .secondary { color: #3d6350; border-color: #57795c66; background: #f8f0da; }
+.dossier-offer .primary:disabled { color: #4a5344; background: #c2c5ab; border-color: #91a082; box-shadow: none; }
+.panel-bottom { padding: 16px 0 0; margin-top: 20px; border-top: 1px solid #c1d0bc25; background: transparent; }
+.coverage { gap: 16px; margin-bottom: 12px; }
+.coverage span { font-size: 12px; color: var(--muted); }
+.coverage span.covered { color: var(--mint); }
+.panel-bottom > span { display: block; color: var(--muted); font-size: 12px; line-height: 1.6; margin-bottom: 14px; }
+.panel-bottom .primary:disabled { color: #b4c3ba; border-color: #80988a50; background: #384b4b; box-shadow: none; }
+
+/* The same language carries into planning, incidents and the release. */
+.dependency-map { padding: 14px 12px; border: 1px solid #c8d5cb25; border-radius: 7px; background: #12232b; font-size: 12px; color: #d8e2d8; }
+.plan-toolbar { gap: 12px; }
+.plan-toolbar > span { color: var(--muted); font-size: 12px; }
+.plan-task { padding: 20px 0; border-color: var(--line); }
+.task-number { color: var(--amber); background: #efb86b10; border: 1px solid #efb86b35; border-radius: 5px; }
+.task-body { min-width: 0; }
+.task-body h2 { font-size: 16px; }
+.task-body p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.task-select-row select { min-height: 44px; min-width: 0; max-width: 100%; padding: 10px; background: #11242c; border: 1px solid #9eb8a94d; border-radius: 6px; font-size: 13px; }
+.fit { font-size: 12px; }
+.work-controls { gap: 10px; }
+.time-strip { margin: 16px 0; color: var(--muted); font-size: 12px; }
+.work-tasks { display: grid; gap: 9px; }
+.work-task { padding: 16px 12px; border: 1px solid #b4cbb32b; border-radius: 7px; background: #142731; }
+.work-task.active { background: #2e3e3c; border-color: #edc37d80; box-shadow: inset 3px 0 0 var(--amber); }
+.work-task.done { background: #203b37; border-color: #8ed8bf45; }
+.work-task h2 { font-size: 15px; }
+.work-task > div > span { color: #afc3ba; font-size: 12px; }
+.work-task > strong { font-size: 15px; }
+.meter { height: 5px; background: #9bb9ab1a; }
+.meter i { background: var(--amber); }
+.work-task.done .meter i { background: var(--mint); }
+.activity-log { padding-top: 20px; }
+.activity-log p { color: var(--muted); font-size: 12px; }
+.activity-log p.latest { color: #d9ddca; }
+.support-card { margin-top: 20px; padding: 18px; background: #24433a; border: 1px solid #a9dcb45c; border-radius: 8px; }
+.support-card .eyebrow { color: #ade2bd; }
+.support-card h2 { color: #f0e6cf; font-size: 18px; }
+.support-card p { color: #bed0bb; font-size: 13px; }
+.support-done { color: var(--mint); }
+.event-heading { gap: 8px; font-size: 11px; }
+.event-alert { padding: 7px 9px; border-radius: 5px; background: #efb86b15; color: var(--amber); font-size: 10px; }
+.speaker { padding: 18px 0; }
+.speaker .portrait { width: 64px; height: 64px; border: 2px solid #edd3a66b; border-radius: 9px; }
+.event-copy h1 { font-size: 31px; }
+.event-copy > p { font-size: 15px; color: #c6d1c5; }
+.event-options { display: grid; gap: 12px; }
+.event-option { padding: 18px 14px; gap: 12px; border: 1px solid #c0d2bb45; background: #233640; border-radius: 7px; }
+.event-option:not(:disabled):hover { background: #36493f; border-color: var(--amber); }
+.event-option b { font-size: 15px; color: #f1e8d0; }
+.option-description { color: #bacebd; font-size: 13px; }
+.event-option small { color: #f2c381; font-size: 12px; }
+.option-number { color: #b3c6b4; font-size: 11px; }
+.lesson-note p { color: var(--muted); font-size: 12px; }
+.code-review { background: #12232b; border-color: #a1b8a935; border-left-color: var(--amber); }
+.result-metrics { padding: 20px; background: #11232b; border: 1px solid #c1d0bc25; border-radius: 8px; gap: 24px 16px; }
+.result-metrics small { color: var(--muted); font-size: 12px; }
+.result-metrics b { font-size: 23px; }
+.game-preview { border-radius: 8px; border-color: #f2c38180; box-shadow: 0 5px 24px #0002; }
+.career-result h2 { color: #f2e4c7; }
+.lead-recap { color: #b5c9bb; }
+dialog { background: #1c2c35; color: var(--text); border: 1px solid #d7c09255; border-radius: 12px; }
+dialog::backdrop { background: #06101bd9; backdrop-filter: blur(5px); }
+.dialog-close { top: 16px; right: 16px; }
+#toast { width: min(440px,calc(100vw - 32px)); max-width: calc(100vw - 32px); border-color: #d7c09255; background: #2b4145; color: #f1e8cf; font-size: 13px; }
+
+@media (min-width:1001px) {
+  .dossier-offer { position: sticky; bottom: 10px; z-index: 2; box-shadow: 0 -5px 14px #22352c25; }
+  .control-panel:has([data-action="plan"]:not(:disabled)) .dossier-offer { position: static; }
+  .control-panel:has([data-action="plan"]:not(:disabled)) .panel-bottom { position: sticky; bottom: 0; z-index: 3; padding: 12px; background: #20383a; border: 1px solid #9bd8bb70; border-radius: 7px; box-shadow: 0 -8px 16px #1b2730; }
+  .control-panel:has([data-action="plan"]:not(:disabled)) .panel-bottom .coverage { display: none; }
+  .control-panel:has([data-action="plan"]:not(:disabled)) .panel-bottom > span { font-size: 12px; margin-bottom: 10px; }
+}
+@media (min-width:1800px) {
+  .game-shell { min-height: 1000px; }
+  .game-topbar { height: 86px; padding: 0 32px; }
+  .game-topbar .brand { font-size: 29px; }
+  .game-topbar .brand small { font-size: 10px; }
+  .project-title { font-size: 18px; }
+  .hud-stat small { font-size: 13px; }
+  .hud-stat strong { font-size: 24px; }
+  .game-footer { height: 64px; padding: 0 32px; }
+  .timeline-step { font-size: 15px; }
+  .timeline-step > span { width: 30px; height: 30px; font-size: 13px; }
+  .save-status { font-size: 13px; }
+  .game-layout { gap: 20px; padding: 0 20px 20px; grid-template-columns: minmax(0,1fr) 600px; }
+  .game-layout .playable-office { padding: 28px; }
+  .office-heading h2 { font-size: 34px; }
+  .office-heading .eyebrow { font-size: 12px; }
+  .office-brief { font-size: 14px; }
+  .office-render-status { font-size: 12px; }
+  .office-guidance { min-height: 66px; }
+  .office-guidance p { font-size: 16px; }
+  .office-step { font-size: 18px; }
+  .office-member, .office-roster-empty { min-height: 78px; }
+  .office-member b { font-size: 16px; }
+  .office-member small, .office-roster-empty small { font-size: 13px; }
+  .office-roster-title { font-size: 12px; }
+  .office-room.is-3d .desk-interactions, .office-room.is-3d .office-desk { height: 54px; }
+  .office-room.is-3d .desk-tag b { font-size: 16px; }
+  .office-room.is-3d .desk-tag small { font-size: 13px; }
+  .control-panel { padding: 26px; }
+  .panel-header h1 { font-size: 38px; }
+  .panel-header .eyebrow { font-size: 13px; }
+  .panel-header > p { font-size: 16px; }
+  .candidate-art { height: 92px; }
+  .candidate b { font-size: 16px; }
+  .candidate small, .candidate-price { font-size: 12px; }
+  .dossier-portrait { width: 96px; height: 96px; }
+  .dossier-identity h2 { font-size: 34px; }
+  .dossier-role, .dossier-identity p { font-size: 13px; }
+  .dossier-note h3 { font-size: 15px; }
+  .dossier-note p { font-size: 14px; }
+  .skill-list dt { font-size: 13px; }
+  .skill-list b { font-size: 15px; }
+  .dossier-offer > strong { font-size: 27px; }
+  .dossier-offer button { font-size: 15px; min-height: 54px; }
+  .agent-dossier .agent-caution { font-size: 13px; }
+  .coverage span, .panel-bottom > span { font-size: 14px; }
+  .task-body h2, .work-task h2 { font-size: 18px; }
+  .task-body p, .task-select-row select, .work-task > div > span { font-size: 15px; }
+  .work-controls button { font-size: 16px; min-height: 54px; }
+  .time-strip, .activity-log p { font-size: 14px; }
+  .event-copy h1 { font-size: 36px; }
+  .event-copy > p { font-size: 17px; }
+  .event-option b { font-size: 18px; }
+  .option-description, .event-option small { font-size: 15px; }
+}
+@media (max-width:1200px) and (min-width:1001px) {
+  .game-layout { grid-template-columns: minmax(0,1fr) 440px; gap: 12px; padding: 0 12px 12px; }
+  .game-layout .playable-office { padding: 18px 14px; }
+  .control-panel { padding: 18px; }
+  .office-heading { flex-wrap: wrap; gap: 6px; }
+  .office-heading h2 { font-size: 24px; }
+  .office-member { padding: 8px 6px; gap: 6px; }
+  .office-member b { font-size: 12px; }
+  .office-member small { font-size: 10px; }
+  .dossier-header { gap: 12px; }
+  .skill-list > div { grid-template-columns: 50px minmax(0,1fr); gap: 4px; }
+}
+@media (max-width:1000px) {
+  .game-shell { height: auto; min-height: 100svh; }
+  .game-topbar { position: sticky; top: 0; z-index: 5; background: #121b23f5; backdrop-filter: blur(12px); padding: 0 20px; }
+  .project-title { display: none; }
+  .game-footer { height: 56px; padding: 0 20px; }
+  .save-status { display: none; }
+  .timeline { width: 100%; justify-content: space-between; }
+  .game-layout { display: flex; flex-direction: column; gap: 16px; padding: 0 16px 16px; }
+  .game-layout .playable-office { display: flex; flex-direction: column; height: auto; min-height: 0; padding: 20px; }
+  .game-layout .playable-office .office-room { width: 100%; height: auto; max-width: 700px; max-height: none; aspect-ratio: 10/7; margin: 8px auto 16px; }
+  .control-panel { overflow: visible; padding: 24px; }
+  .candidate-art { height: 140px; }
+  .dossier-skills { grid-template-columns: minmax(0,.8fr) minmax(0,1fr); max-width: 600px; margin: auto; }
+  .dossier-skills .radar { max-height: 220px; }
+  .dossier-header { gap: 20px; }
+  .dossier-portrait { width: 96px; height: 96px; }
+  .dossier-note p { font-size: 14px; }
+  .dossier-offer { margin-top: 8px; }
+  .intro-copy { max-width: 75vw; }
+}
+@media (max-width:600px) {
+  .landing .topbar { height: 76px; padding: 0 20px; }
+  .landing-shade { background: linear-gradient(90deg,#111820f5,#111820d9 70%,#111820ad); }
+  .intro-copy { width: 100%; max-width: none; padding: 24px 20px 32px; }
+  .intro-copy h1 { font-size: clamp(34px,9.5vw,48px); letter-spacing: -1.2px; }
+  .intro-copy > p { font-size: 16px; }
+  .intro-letter { padding: 16px; gap: 12px; }
+  .intro-letter p { font-size: 13px; }
+  .difficulty-option { padding: 12px 10px; font-size: 11px; margin-right: 4px; }
+  .intro-cta { flex-wrap: wrap; gap: 12px; }
+  .intro-cta .primary { min-width: 0; width: 100%; }
+  .landing-footer { position: relative; display: flex; gap: 12px; flex-wrap: wrap; padding: 20px; font-size: 10px; }
+  .office-caption { display: none; }
+  .game-topbar { height: 76px; padding: 0 12px; gap: 8px; }
+  .game-topbar .brand { font-size: 17px; }
+  .game-topbar .brand small { font-size: 6px; letter-spacing: 1.4px; }
+  .hud-stats { gap: 6px; }
+  .hud-stat { min-width: 0; gap: 0; padding: 4px; border: 0; }
+  .hud-stat > svg { display: none; }
+  .hud-stat small { font-size: 9px; }
+  .hud-stat strong { font-size: 13px; }
+  .hud-stats .icon-btn { width: 44px; height: 44px; }
+  .game-footer { padding: 0 12px; flex-direction: row; }
+  .timeline { display: grid; grid-template-columns: repeat(4,auto); gap: 8px; }
+  .timeline-step { font-size: 11px; gap: 6px; }
+  .timeline-step > span { width: 24px; height: 24px; font-size: 10px; }
+  .timeline-step:not(:last-child)::after { display: none; }
+  .game-layout { padding: 0 8px 12px; gap: 12px; }
+  .game-layout .playable-office { padding: 16px 12px; }
+  .office-heading { gap: 8px; }
+  .office-heading h2 { font-size: 22px; }
+  .office-heading .eyebrow { font-size: 8px; letter-spacing: .6px; }
+  .office-brief { font-size: 11px; padding: 8px; }
+  .game-layout .playable-office .office-room.is-3d { aspect-ratio: 1.15; }
+  .office-render-status { max-width: 100%; font-size: 8px; }
+  .office-guidance { padding: 10px; flex-wrap: wrap; gap: 8px; }
+  .office-guidance p { flex-basis: calc(100% - 48px); font-size: 12px; }
+  .office-member { min-height: 62px; padding: 8px 6px; gap: 6px; }
+  .office-member b { font-size: 12px; }
+  .office-member small { font-size: 10px; }
+  .roster-portrait { width: 28px; height: 36px; }
+  .office-roster-slots { gap: 6px; }
+  .office-roster-empty { padding: 8px 6px; min-height: 62px; gap: 6px; }
+  .office-roster-empty small { font-size: 10px; }
+  .office-roster-empty > span { width: 20px; height: 20px; flex: none; }
+  .control-panel { padding: 20px 14px; }
+  .panel-header h1 { font-size: 29px; }
+  .panel-header > p { font-size: 14px; }
+  .candidate-grid { gap: 8px; }
+  .candidate-art { height: 82px; }
+  .candidate-caption { display: block; padding: 8px; }
+  .candidate b { font-size: 13px; }
+  .candidate small { display: block; margin-top: 4px; font-size: 10px; }
+  .candidate-price { font-size: 9px; left: 4px; top: 4px; padding: 3px 4px; }
+  .hired-check { top: 4px; right: 4px; width: 18px; height: 18px; }
+  .agent-detail.agent-dossier { padding: 14px 14px 0; }
+  .dossier-header { gap: 12px; }
+  .dossier-portrait { width: 72px; height: 72px; }
+  .dossier-role { font-size: 10px; }
+  .dossier-identity h2 { font-size: 28px; }
+  .dossier-identity p { font-size: 11px; }
+  .dossier-skills { grid-template-columns: 1fr; padding-top: 16px; }
+  .dossier-skills .radar-wrap { display: none; }
+  .skill-list { gap: 12px; border: 0; padding: 0; }
+  .skill-list > div { grid-template-columns: 70px minmax(0,1fr); gap: 12px; }
+  .skill-list dt { font-size: 12px; }
+  .skill-list b { font-size: 14px; }
+  .skill-track { height: 6px; }
+  .dossier-note h3 { font-size: 13px; }
+  .dossier-note p { font-size: 12px; }
+  .dossier-offer { margin: 8px -14px 0; padding: 14px; gap: 12px; }
+  .dossier-offer > strong { font-size: 21px; }
+  .dossier-offer button { font-size: 12px; min-height: 48px; }
+  .dependency-map { font-size: 10px; gap: 4px; padding: 12px 8px; }
+  .parallel-tasks i { padding: 4px 8px; }
+  .task-body h2 { font-size: 15px; }
+  .task-body p, .task-select-row select { font-size: 12px; }
+  .event-copy h1 { font-size: 27px; }
+  .event-heading { flex-wrap: wrap; }
+  .event-option { padding: 16px 12px; gap: 8px; }
+  .event-option b { font-size: 14px; }
+  .support-card { padding: 16px; }
+}
+@media (max-width:360px) {
+  .game-topbar .brand { font-size: 15px; }
+  .game-topbar .brand small { font-size: 5px; }
+  .hud-stat strong { font-size: 12px; }
+  .hud-stat small { font-size: 8px; }
+  .timeline-step { font-size: 10px; gap: 4px; }
+  .control-panel { padding: 18px 12px; }
+  .candidate-art { height: 66px; }
+  .candidate-caption { padding: 7px; }
+  .candidate b { font-size: 12px; }
+  .candidate-price { font-size: 8px; }
+  .dossier-portrait { width: 62px; height: 62px; }
+  .dossier-offer { flex-wrap: wrap; }
+  .dossier-offer button { flex-basis: 100%; }
+  .office-heading h2 { font-size: 20px; }
+  .office-heading .eyebrow { font-size: 7px; }
+}
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; } }
