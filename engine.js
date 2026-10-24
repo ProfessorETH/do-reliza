@@ -6,7 +6,7 @@ export function createGame(difficulty = 'normal') {
   const mode = DIFFICULTIES[difficulty] || DIFFICULTIES.normal;
   return { version: VERSION, stage: 'hire', difficulty: DIFFICULTIES[difficulty] ? difficulty : 'normal',
     budget: mode.budget, initialBudget: mode.budget, deadline: mode.deadline, time: 0,
-    team: [], assignments: {}, progress: Object.fromEntries(TASKS.map(t => [t.id, 0])),
+    team: [], seats: [null, null, null], assignments: {}, progress: Object.fromEntries(TASKS.map(t => [t.id, 0])),
     workload: {}, choices: {}, currentEvent: null, trust: 80, designPenalty: 0,
     shield: false, checkpoint: true, criticalBug: false, extraCode: 0,
     log: ['Получен заказ: подготовить игру «Орбита» к школьному фестивалю.'] };
@@ -16,6 +16,7 @@ export function hire(state, id) {
   if (!a || state.stage !== 'hire') return 'Сейчас команда уже работает.';
   if (state.team.includes(id)) {
     state.team = state.team.filter(x => x !== id); state.budget += a.cost;
+    state.seats = state.seats.map(x => x === id ? null : x);
     Object.keys(state.assignments).forEach(k => { if (state.assignments[k] === id) delete state.assignments[k]; });
     return null;
   }
@@ -23,8 +24,23 @@ export function hire(state, id) {
   if (state.budget < a.cost) return 'Не хватает бюджета. Попробуйте другую комбинацию.';
   state.team.push(id); state.budget -= a.cost; return null;
 }
+// Saves from checkpoint 01 had no office layout. Keep their project progress.
+export function restoreOffice(state) {
+  if (!state.seats) state.seats = Array.from({ length: 3 }, (_, i) => state.stage === 'hire' ? null : state.team[i] || null);
+  return state;
+}
+export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
+export function seatAgent(state, agentId, index) {
+  if (!['hire', 'plan'].includes(state.stage)) return 'Пересадить команду можно до начала смены.';
+  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери агента из команды и рабочее место.';
+  const previous = state.seats.indexOf(agentId), occupant = state.seats[index];
+  if (previous === index) return null;
+  if (previous >= 0) state.seats[previous] = occupant;
+  state.seats[index] = agentId;
+  return null;
+}
 export function beginPlan(state) {
-  if (state.stage !== 'hire' || state.team.length !== 3) return false;
+  if (state.stage !== 'hire' || !teamSeated(state)) return false;
   state.stage = 'plan'; return true;
 }
 export function assign(state, taskId, agentId) {
@@ -47,7 +63,7 @@ export function recommend(state) {
   for (const task of TASKS) state.assignments[task.id] = [...state.team].sort((a, b) => fit(b, task) - fit(a, task))[0];
 }
 export function beginWork(state) {
-  if (state.stage !== 'plan' || !TASKS.every(t => state.team.includes(state.assignments[t.id]))) return false;
+  if (state.stage !== 'plan' || !teamSeated(state) || !TASKS.every(t => state.team.includes(state.assignments[t.id]))) return false;
   state.stage = 'work'; state.log.push('План согласован. Команда приступила к работе.'); return true;
 }
 export function taskStatus(state, task) {
@@ -122,6 +138,10 @@ export function validSave(s) {
   return s && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= 3 && new Set(s.team).size === s.team.length
     && s.team.every(id => !!agentById(id)) && Number.isFinite(s.budget) && s.budget >= 0
+    && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === 3
+      && s.seats.every(id => id === null || s.team.includes(id))
+      && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))
+    && (s.stage === 'hire' || s.seats === undefined || teamSeated(s))
     && Number.isFinite(s.time) && s.time >= 0 && Number.isFinite(s.deadline) && s.deadline > 0
     && s.progress && TASKS.every(t => Number.isFinite(s.progress[t.id]) && s.progress[t.id] >= 0 && s.progress[t.id] <= 100)
     && s.assignments && Object.values(s.assignments).every(id => s.team.includes(id))

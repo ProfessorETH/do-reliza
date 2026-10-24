@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AGENTS, TASKS, DIFFICULTIES } from '../data.js';
-import { createGame, hire, beginPlan, assign, recommend, beginWork, tick, activeTasks, resolveEvent, getResult, validSave, supportTask, fit } from '../engine.js';
+import { createGame, hire, beginPlan, assign, recommend, beginWork, tick, activeTasks, resolveEvent, getResult, validSave, supportTask, fit, seatAgent, teamSeated, restoreOffice } from '../engine.js';
 
 function prepared(ids=['mira','iskra','echo'],difficulty='normal') {
   const s=createGame(difficulty);for(const id of ids)assert.equal(hire(s,id),null);
+  ids.forEach((id,i)=>assert.equal(seatAgent(s,id,i),null));
   assert.equal(beginPlan(s),true);recommend(s);assert.equal(beginWork(s),true);return s;
 }
 function finish(s,scope='focus',bug='fix',review='review-fix') {
@@ -26,7 +27,7 @@ test('hiring respects budget, headcount and refunds',()=>{
   assert.equal(beginPlan(s),false);
 });
 test('unassigned plan cannot start and foreign agents cannot be assigned',()=>{
-  const s=createGame();['mira','iskra','echo'].forEach(id=>hire(s,id));beginPlan(s);
+  const s=createGame();['mira','iskra','echo'].forEach((id,i)=>{hire(s,id);seatAgent(s,id,i);});beginPlan(s);
   assert.equal(beginWork(s),false);assert.equal(assign(s,'code','nord'),false);
   assert.equal(fit(s.assignments.code,TASKS.find(t=>t.id==='code'),s),0);
   recommend(s);assert.equal(beginWork(s),true);assert.equal(assign(s,'code','mira'),false);
@@ -83,4 +84,36 @@ test('damaged saves rejected; normal play survives JSON round trip',()=>{
   assert.equal(!!validSave(null),false);assert.equal(!!validSave({version:1,stage:'wat'}),false);
   const s=prepared();assert.ok(validSave(s));const broken=structuredClone(s);broken.assignments.qa='unknown';assert.equal(!!validSave(broken),false);
   assert.ok(validSave(finish(JSON.parse(JSON.stringify(s)))));
+});
+
+test('office seating gates planning, swaps seats and frees a dismissed worker',()=>{
+  const s=createGame('calm');['mira','iskra','echo'].forEach(id=>hire(s,id));
+  assert.equal(beginPlan(s),false);
+  assert.equal(typeof seatAgent(s,'nord',0),'string');
+  assert.equal(typeof seatAgent(s,'mira',3),'string');
+  ['mira','iskra','echo'].forEach((id,i)=>assert.equal(seatAgent(s,id,i),null));
+  assert.ok(teamSeated(s));assert.equal(seatAgent(s,'mira',1),null);
+  assert.deepEqual(s.seats,['iskra','mira','echo']);
+  hire(s,'mira');assert.deepEqual(s.seats,['iskra',null,'echo']);
+  assert.equal(teamSeated(s),false);hire(s,'mira');seatAgent(s,'mira',1);
+  assert.ok(validSave(JSON.parse(JSON.stringify(s))));
+  assert.equal(beginPlan(s),true);recommend(s);assert.equal(beginWork(s),true);
+  assert.equal(typeof seatAgent(s,'mira',2),'string');
+});
+
+test('old saves get office seats without losing project progress; corrupt layouts rejected',()=>{
+  const s=prepared();tick(s);const before=structuredClone(s.progress);delete s.seats;
+  assert.ok(validSave(s));restoreOffice(s);assert.deepEqual(s.seats,s.team);
+  assert.deepEqual(s.progress,before);assert.ok(teamSeated(s));
+  const duplicate=structuredClone(s);duplicate.seats[1]=duplicate.seats[0];assert.equal(!!validSave(duplicate),false);
+  const foreign=structuredClone(s);foreign.seats[0]='nord';assert.equal(!!validSave(foreign),false);
+  const missing=structuredClone(s);missing.seats[0]=null;assert.equal(!!validSave(missing),false);
+  const fresh=createGame();hire(fresh,'mira');delete fresh.seats;restoreOffice(fresh);
+  assert.deepEqual(fresh.seats,[null,null,null]);
+});
+
+test('seating an arrival at an occupied computer sends its previous occupant to the entrance',()=>{
+  const s=createGame('calm');hire(s,'mira');hire(s,'iskra');seatAgent(s,'mira',0);
+  seatAgent(s,'iskra',0);assert.deepEqual(s.seats,['iskra',null,null]);
+  assert.equal(s.team.length,2);assert.ok(validSave(s));
 });
