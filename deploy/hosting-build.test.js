@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { renderStartScreen } from '../assets/start-screen.js';
 
 const root=resolve(import.meta.dirname,'..');
 const manifest=JSON.parse(await readFile(resolve(root,'dist/build-manifest.json'),'utf8'));
@@ -40,4 +41,10 @@ test('mobile background is materially smaller; dynamically loaded assets remain 
     assert((await stat(resolve(dir,'assets',path))).size>0);
   }
   assert((await stat(resolve(dir,'THREE-LICENSE.txt'))).size>0);
+});
+
+test('the accepted start audio portrait uses the module asset root, not the HTML root', () => {
+  const markup=renderStartScreen({difficulty:'calm',saved:null,demo:false,logo:()=>'',icon:()=>'',money:String,soundButton:'',soundEnabled:true,soundPreviewed:false});
+  assert(!markup.includes('src="assets/'));
+  assert.match(markup,/src="[^"]+\/assets\/onboarding\/nika-avatar\.webp"/);
 });
