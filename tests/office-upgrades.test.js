@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {registerHooks} from 'node:module';
-import {Box3,Vector3} from '../vendor/three/three.module.js';
-import {DESKS} from '../office-layout.js';
+import {Box3,Vector3,Raycaster} from '../vendor/three/three.module.js';
+import {DESKS,LOUNGE_SEAT} from '../office-layout.js';
+import {prepareLoungeSeat} from '../assets/lounge-seat.js';
 
 registerHooks({resolve(specifier,context,next){return next(specifier==='three'?new URL('../vendor/three/three.module.js',import.meta.url).href:specifier,context);}});
 const {GLTFLoader}=await import('../vendor/three/loaders/GLTFLoader.js');
@@ -17,6 +18,21 @@ test('each purchase owns independent real Blender geometry and visibility surviv
   applyUpgradeVisibility(groups,[]);assert.ok([...groups.values()].every(g=>!g.visible));
   applyUpgradeVisibility(groups,['quiet']);assert.equal(groups.get('quiet').visible,true);assert.equal(groups.get('computers').visible,false);
   applyUpgradeVisibility(groups,['computers','lounge']);assert.equal(groups.get('quiet').visible,false);assert.equal(groups.get('computers').visible,true);assert.equal(groups.get('lounge').visible,true);
+});
+
+test('actual beanbag and cloth compress to the seated pelvis and recover without mutating cached geometry',async()=>{
+  const b=await readFile(new URL('../assets/models/office.glb',import.meta.url));
+  const room=(await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')).scene;
+  room.add(await upgrades());
+  const cozyBytes=await readFile(new URL('../assets/models/office-cozy.glb',import.meta.url));
+  room.add((await new GLTFLoader().parseAsync(cozyBytes.buffer.slice(cozyBytes.byteOffset,cozyBytes.byteOffset+cozyBytes.byteLength),'')).scene);
+  const seat=prepareLoungeSeat(room);assert.ok(seat.parts.length>0);
+  const before=seat.parts.map(({node})=>Array.from(node.geometry.attributes.position.array));
+  seat.update(1);room.updateMatrixWorld(true);
+  const ray=new Raycaster(new Vector3(LOUNGE_SEAT.point[0],1.5,LOUNGE_SEAT.point[1]),new Vector3(0,-1,0));
+  const contact=ray.intersectObject(room,true).filter(hit=>hit.point.y<.75)[0];assert.ok(contact);
+  assert.ok(Math.abs(contact.point.y-(LOUNGE_SEAT.hipHeight-.12))<.012,`pelvis / cushion gap: ${contact.point.y}`);
+  seat.update(0);seat.parts.forEach(({node},i)=>assert.deepEqual(Array.from(node.geometry.attributes.position.array),before[i]));
 });
 
 test('purchased geometry stays inside existing furniture footprints and contact receipts agree',async()=>{

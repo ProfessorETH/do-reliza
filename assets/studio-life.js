@@ -26,19 +26,36 @@ export function ensureLife(s) {
     m.restSerial ??= 0;
     if (m.breaks && !m.restTrip) m.restTrip = { phase: 'resting', slot: s.team.indexOf(id) }; // Old saved breaks have already started.
   }
+  // Older builds allowed three simultaneous standing breaks. Preserve every
+  // recovery entitlement, but restore a single occupant of the physical chair.
+  let owner = false;
+  for (const id of s.team) {
+    const m = s.life.members[id];
+    if (!['outbound','resting'].includes(m.restTrip?.phase)) continue;
+    if (owner) m.restTrip.phase = 'queued';
+    else owner = true;
+  }
+  callNextBreak(s);
   return s.life;
 }
 export const restInTransit = s => s.team.some(id => ['outbound','returning'].includes(s.life?.members[id]?.restTrip?.phase));
+export const awayForRest = m => !!(m?.breaks || m?.restTrip) && m?.restTrip?.phase !== 'queued';
+function callNextBreak(s) {
+  if (s.team.some(id => { const t=s.life.members[id].restTrip;return t && t.phase!=='queued'; })) return;
+  const id=s.team.filter(id=>s.life.members[id].restTrip?.phase==='queued').sort((a,b)=>(s.life.members[a].restTrip.request||0)-(s.life.members[b].restTrip.request||0))[0];
+  if(id) { s.life.members[id].restTrip.phase='outbound';s.log.push(`${AGENTS.find(a=>a.id===id).name}: кресло освободилось, пора на перерыв.`); }
+}
 export function restArrival(s, id, arrival) {
   const m = s.life?.members[id], trip = m?.restTrip;
   if (!s.team.includes(id) || !trip) return false;
   if (arrival === 'resting' && trip.phase === 'outbound') { trip.phase = 'resting'; return true; }
-  if (arrival === 'back' && trip.phase === 'returning') { m.restTrip = null; return true; }
+  if (arrival === 'back' && trip.phase === 'returning') { m.restTrip = null; callNextBreak(s); return true; }
   return false;
 }
 export const contractFor = s => CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0];
 export function condition(s, id) {
   const m = ensureLife(s).members[id];
+  if (m.restTrip?.phase === 'queued') return { label: 'Ждёт свободное кресло', reason: 'Перерыв запланирован. Пока кресло занято, сотрудник продолжает работу; затем пойдёт отдыхать сам.', factor: m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1 };
   if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Игровой час начнётся после прибытия.', factor: 1 };
   if (m.restTrip?.phase === 'returning') return { label: 'Возвращается за компьютер', reason: 'Перерыв завершён. Работа продолжится после возвращения на своё место.', factor: 1 };
   if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час в зоне отдыха; остальные продолжают работу.', factor: 1 };
@@ -52,7 +69,7 @@ export function lifeHour(s, active, completed) {
   const l = ensureLife(s);
   for (const id of s.team) {
     const m = l.members[id], task = active.find(t => s.assignments[t.id] === id);
-    if (m.breaks) { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); m.restTrip = { phase: 'returning', slot: s.team.indexOf(id) }; }
+    if (m.breaks && m.restTrip?.phase === 'resting') { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); m.restTrip = { phase: 'returning', slot: s.team.indexOf(id) }; }
     else if (task) {
       m.energy = clamp(m.energy - 7);
       const difficult = AGENTS.find(a => a.id === id).stats[task.skill] < 60;
@@ -93,8 +110,10 @@ export function careFor(s, id, action) {
   if (!s.team.includes(id)) return 'Выбери сотрудника команды.';
   if (action === 'break') {
     if (s.stage !== 'work' || m.breaks || m.restTrip) return 'Перерыв доступен во время работы, один за раз. Сначала вернись к компьютеру.';
-    m.breaks = 1; m.restSerial = (m.restSerial || 0) + 1; m.restTrip = { phase: 'outbound', slot: s.team.indexOf(id) };
-    s.log.push(`${AGENTS.find(a => a.id === id).name} идёт в зону отдыха на один игровой час. Остальные продолжат работу.`);
+    const occupied=s.team.some(a=>l.members[a].restTrip);
+    const request=1+Math.max(0,...s.team.map(a=>l.members[a].restTrip?.request||0));
+    m.breaks = 1; m.restSerial = (m.restSerial || 0) + 1; m.restTrip = { phase: occupied?'queued':'outbound', slot: s.team.indexOf(id), request };
+    s.log.push(`${AGENTS.find(a => a.id === id).name} ${occupied?'ждёт свободное кресло и пока продолжает работу.':'идёт в зону отдыха на один игровой час. Остальные продолжат работу.'}`);
   } else if (action === 'praise') {
     if (!['work', 'result'].includes(s.stage)) return 'Поблагодарить можно за готовую задачу.';
     const count = Object.keys(s.progress).filter(t => s.assignments[t] === id && s.progress[t] >= 100).length;
@@ -149,6 +168,6 @@ export function validLife(s) {
     && Array.isArray(l.history) && l.history.every(h => h && typeof h.name === 'string' && integer(h.score, 0, 100) && integer(h.reward, 0) && Number.isFinite(h.time) && h.time >= 0)
     && l.members && AGENTS.every(a => { const m = l.members[a.id]; return m && ['energy','stress','morale'].every(k => Number.isFinite(m[k]) && m[k] >= 0 && m[k] <= 100) && integer(m.breaks,0,1) && integer(m.raises,0,3) && integer(m.praised,0,5) && integer(m.warnings,0)
       && (m.restSerial === undefined || integer(m.restSerial,0))
-      && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['outbound','resting','returning'].includes(m.restTrip.phase) && integer(m.restTrip.slot,0,2) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
+      && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,2) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
     && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && !l.incidentDone);
 }

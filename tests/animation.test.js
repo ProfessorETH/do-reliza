@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 import * as THREE from '../vendor/three/three.module.js';
 import { OfficeActor } from '../office-actors.js';
-import { DESKS, REST_SPOTS, isWalkable, distance } from '../office-layout.js';
+import { DESKS, LOUNGE_SEAT, isWalkable, distance } from '../office-layout.js';
 import { poseActor } from '../office-pose.js';
 
 // Node has no browser import map; resolve the unmodified vendored addons locally.
@@ -92,26 +92,46 @@ test('hands reach keyboard and mouse without changing seated pelvis contact', as
   }
 });
 
-test('employees leave each desk, rest at a separate lounge spot and return without teleporting',async()=>{
+test('employees leave each desk, sit in the beanbag, relax and stand before returning without teleporting',async()=>{
   for(const dt of [1/30,1/60,1/120])for(let slot=0;slot<3;slot++){
     const a=await actor('mira',slot),game={seats:[null,null,null],officeTargets:{},life:{members:{mira:{restTrip:null,restSerial:1}}}};
     game.seats[slot]='mira';a.destination(game,true);const seats=[...game.seats];
     game.life.members.mira.restTrip={phase:'outbound',slot};a.destination(game);
-    const states=new Set();let previous=a.point;
+    const states=new Set();let previous=a.point,planted=null;
     for(let frame=0;frame<45/dt&&a.moving;frame++){
       a.update(dt,frame*dt,[a],{stage:'work',task:{skill:'code'}},false,false);states.add(a.state);
       assert.ok(distance(previous,a.point)<.11,'continuous lounge travel');previous=a.point;
       if(a.state==='walk')assert.ok(isWalkable(a.point));
+      if(a.state==='rest-lower'&&a.sit>.02&&a.sit<.98){
+        a.group.updateMatrixWorld(true);const feet=['Left','Right'].map(side=>a.joints[side+'Foot'].getWorldPosition(new THREE.Vector3()));
+        if(planted)feet.forEach((p,i)=>assert.ok(Math.hypot(p.x-planted[i].x,p.z-planted[i].z)<.015,'planted foot does not slide during lowering'));
+        planted=feet;
+        for(const side of ['Left','Right'])assert.ok(Math.abs(new THREE.Box3().setFromObject(a.joints[side+'Foot'],true).min.y)<.006,'lowering soles stay grounded');
+      }
     }
-    assert.equal(a.failed,false);assert.equal(a.state,'idle');assert.equal(a.sit,0);
-    assert.ok(distance(a.point,REST_SPOTS[slot].point)<.001);
-    for(const state of ['pullout','rise','exit','walk'])assert.ok(states.has(state),state);
+    assert.equal(a.failed,false);assert.equal(a.state,'resting');assert.equal(a.sit,1);
+    assert.ok(distance(a.point,LOUNGE_SEAT.point)<.001);
+    for(const state of ['pullout','rise','exit','walk','rest-align','rest-lower'])assert.ok(states.has(state),state);
     update(a,120,dt,{stage:'work',task:{skill:'code'}});assert.ok(a.workBlend<.01,'no typing during rest');
+    assert.ok(a.restBlend>.95);assert.equal(a.joints.Hips.position.y,LOUNGE_SEAT.hipHeight);
+    for(const side of ['Left','Right']){a.group.updateMatrixWorld(true);assert.ok(Math.abs(new THREE.Box3().setFromObject(a.joints[side+'Foot'],true).min.y)<.006,'rest soles touch floor');}
+    poseActor(a,1,false);const relaxed=a.joints.Head.quaternion.clone();poseActor(a,2.5,false);assert.ok(relaxed.angleTo(a.joints.Head.quaternion)>.001,'ambient relaxation animates');
     game.life.members.mira.restTrip.phase='returning';a.destination(game);previous=a.point;
+    assert.equal(a.state,'rest-rise');
     for(let frame=0;frame<45/dt&&a.moving;frame++){
       a.update(dt,frame*dt,[a],activity,false,false);assert.ok(distance(previous,a.point)<.11);previous=a.point;
     }
     assert.equal(a.failed,false);assert.equal(a.state,'seated',JSON.stringify({dt,slot,point:a.point,path:a.path,state:a.state,speed:a.speed}));assert.equal(a.sit,1);
     assert.ok(distance(a.point,DESKS[slot].seat)<.001);assert.deepEqual(game.seats,seats);
+  }
+});
+
+test('every restored rig sits in the lounge and keeps a quiet pose with reduced motion',async()=>{
+  for(const id of ids){
+    const a=await actor(id),game={seats:[id,null,null],officeTargets:{},life:{members:{[id]:{restSerial:1,restTrip:{phase:'resting',slot:0}}}}};
+    a.destination(game,true);poseActor(a,1,true);a.group.updateMatrixWorld(true);
+    assert.equal(a.state,'resting');assert.equal(a.chairSeat,-1);assert.equal(a.sit,1);
+    for(const side of ['Left','Right'])assert.ok(Math.abs(new THREE.Box3().setFromObject(a.joints[side+'Foot'],true).min.y)<.006,`${id}: grounded lounge feet`);
+    const head=a.joints.Head.quaternion.clone();poseActor(a,8,true);assert.ok(head.angleTo(a.joints.Head.quaternion)<.000001);
   }
 });

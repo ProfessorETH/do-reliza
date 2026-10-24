@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js?v=office-life-20261024-v3';
-import { DESKS, REST_SPOTS, distance } from './office-layout.js?v=office-life-20261024-v3';
-import { agentById, activeTasks } from './engine.js?v=office-life-20261024-v3';
+import { OfficeActor } from './office-actors.js?v=seated-breaks-20261024-v2';
+import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { agentById, activeTasks } from './engine.js?v=seated-breaks-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
 import { mountOfficeUpgrades } from './assets/office-upgrades.js?v=office-life-1';
+import { prepareLoungeSeat } from './assets/lounge-seat.js?v=seated-breaks-1';
 import { officeFrame, officeWallVisible } from './office-camera-fit.js';
 
 let world;
@@ -60,6 +61,7 @@ class OfficeWorld {
       await this.art.dress(this.room);
       this.purchases = await mountOfficeUpgrades(this.room);
       this.purchases.sync(this.game?.life?.upgrades);
+      this.loungeSeat = prepareLoungeSeat(this.room);
       this.walls = [];
       this.room.traverse(node => { if (node.userData.wallSide) this.walls.push(node); });
       this.ready = true; this.refreshContainer(); this.syncActors();
@@ -114,7 +116,7 @@ class OfficeWorld {
     for (const id of this.game.team) {
       const trip = this.game.life?.members[id]?.restTrip, actor = this.actors.get(id);
       if (!trip) continue;
-      const arrived = trip.phase === 'outbound' && (fallback || actor?.state === 'idle' && distance(actor.point,REST_SPOTS[trip.slot].point) < .03) ? 'resting'
+      const arrived = trip.phase === 'outbound' && (fallback || actor?.state === 'resting' && distance(actor.point,LOUNGE_SEAT.point) < .03) ? 'resting'
         : trip.phase === 'returning' && (fallback || actor?.state === 'seated') ? 'back' : null;
       const key = `${id}:${arrived}`;
       if (!arrived || this.restSignals.has(key)) continue;
@@ -131,7 +133,8 @@ class OfficeWorld {
       const active = activeTasks(this.game), actors = [...this.actors.values()];
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
       this.reportRest();
-      this.container.dataset.resting = actors.filter(a => a.state === 'idle' && a.restPhase).map(a=>a.id).join(',');
+      this.container.dataset.resting = actors.filter(a => a.state === 'resting').map(a=>a.id).join(',');
+      this.loungeSeat?.update(Math.max(0,...actors.map(a=>(a.loungeBlend||0)*a.sit)));
       this.container.dataset.upgrades = (this.game.life?.upgrades || []).join(',');
       for (const [index, chair] of this.chairs) chair.node.position.z = chair.z + Math.max(0, ...actors.filter(a => a.chairSeat === index).map(a => a.chairPull));
       if (this.cameraGoal) {
