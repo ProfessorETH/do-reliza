@@ -28,7 +28,7 @@ import {
 } from "../vendor/three/three.module.js";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const IDS = ["mira", "pixel", "nord", "iskra", "saga", "echo"];
+const IDS = ["mira", "pixel", "nord", "iskra", "saga", "echo", "nika"];
 const COMPONENTS = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
 const TYPES = {
   5120: { bytes: 1, read: "readInt8", max: 127, signed: true },
