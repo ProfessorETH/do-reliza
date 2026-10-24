@@ -67,3 +67,4 @@ art/characters/body-v5/*/*.qc.json
 art/characters/body-v5/*/appearance*.json
 art/characters/body-v5/*/head*.json
 art/characters/body-v5/*/paint*.json
+art/characters/body-v5/*/*.history.json
