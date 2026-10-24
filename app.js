@@ -3,9 +3,10 @@ import { renderStartScreen } from './assets/start-screen.js';
 import { createSound } from './assets/sound.js';
 import { WAITING } from './office-layout.js?v=0.5.0';
 import { createDemoGame } from './demo.js?v=0.5.0';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.0';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.2-cozy';
 import { renderOffice } from './office.js?v=0.5.0';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
+import { candidatePicker, agentDossier } from './assets/studio-ui-components.js';
 import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js';
 
 const root = document.querySelector('#app');
@@ -70,13 +71,8 @@ function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<3&&game.budget>=a.cost);
   const quickTeam = DEMO && game.team.length === 3;
   return `<div class="panel-header"><div class="eyebrow">1 / 4 · ${DEMO?'ДЕМО-КОМАНДА':'КОМАНДА'}</div><h1>${quickTeam?'Познакомься с командой':'Кого берём?'}</h1><p>${quickTeam?'Команда собрана. Выбери персонажа, попробуй прогулку и переходи к задачам.':'Три места. Шесть кандидатов.<br>Найми агента, затем выбери для него компьютер в офисе.'}</p></div>
-    <div class="candidate-grid" aria-label="Кандидаты">${AGENTS.map(x=>`<button class="candidate ${candidate===x.id?'selected':''} ${game.team.includes(x.id)?'hired':''}" data-action="candidate" data-id="${x.id}" aria-label="${x.name}, ${x.role}, ${money(x.cost)}" aria-pressed="${candidate===x.id}">${portrait(x)}<span><b>${x.name}</b><small>${money(x.cost)}</small></span>${game.team.includes(x.id)?`<span class="hired-check">${icon('check',13)}</span>`:''}</button>`).join('')}</div>
-    <section class="agent-detail" style="--agent:${a.color}"><div class="agent-profile"><div class="portrait-frame">${portrait(a,'large-portrait')}${badge(a.role)}</div><div class="radar-wrap">${radar(a)}</div></div>
-      <dl class="mobile-skills">${SKILLS.map(s=>`<div><dt>${s.label}</dt><dd>${a.stats[s.key]}</dd></div>`).join('')}</dl>
-      <div class="agent-name-row"><h2>${a.name} <span>/ ${String(a.index+1).padStart(2,'0')}</span></h2><strong>${money(a.cost)}<small>за весь проект</small></strong></div>
-      <h3 class="agent-trait">${a.trait}</h3><p class="agent-description">${a.desc}</p><div class="agent-caution">${icon('info',14)} ${a.weakness}</div>
-      <button class="${hired?'secondary hired-button':'primary'} full" data-action="hire" data-id="${a.id}" ${canHire?'':'disabled'}>${hired?`${icon('check')} В команде · убрать`:game.team.length===3?'Команда укомплектована':game.budget<a.cost?'Не хватает бюджета':`${icon('people')} Нанять за ${money(a.cost)}`}</button>
-    </section>
+    ${candidatePicker(AGENTS,candidate,game.team,{portrait,icon,money,esc})}
+    ${agentDossier(a,{hired,canHire,teamCount:game.team.length,budget:game.budget},{portrait,icon,money,esc,radar})}
     <div class="panel-bottom"><div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div><span>${game.team.length===3?(game.budget<1500?'Резерв меньше 1 500 ₽. Исправить ошибку за деньги не получится.':'Состав готов. Деньги в резерве пригодятся на исправления.'):`Выбрано ${game.team.length} из 3. После найма нажми на свободный компьютер.`}</span><button class="primary full" data-action="plan" ${teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving&&teamSeated(game)?'Команда занимает места…':game.team.length===3&&!teamSeated(game)?`Рассади команду · ${game.seats.filter(Boolean).length}/3`: 'Раздать задачи'} ${icon('arrow')}</button></div>`;
 }
 function planPanel() {
