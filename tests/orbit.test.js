@@ -1,6 +1,8 @@
+import { missionFor } from '../assets/orbit-missions.js';
+import { routeTo, followRoute, missionRoute } from './orbit-route.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createGame, hire, seatAgent, beginPlan, recommend, beginWork, tick, resolveEvent, nextProject, getResult } from '../engine.js';
+import { createGame, hire, seatAgent, beginPlan, recommend, beginWork, tick, resolveEvent, nextProject, getResult, validSave } from '../engine.js';
 import { freshOrbit, restoreOrbit, moveOrbit, stepOrbit, orbitFeatures, rocks, batteriesFor, outsideOrbit } from '../assets/orbit.js';
 import { renderOrbit } from '../assets/orbit-view.js';
 
@@ -66,16 +68,7 @@ test('design assignment and mentoring change the actual map presentation, while 
   game.choices.scope='swap';game.designPenalty=12;
   assert.equal(orbitFeatures(game,100).decorated,false);
 });
-function flyTo(game, flight, target) {
-  const queue=[[flight.x,flight.y,[]]], seen=new Set();
-  while(queue.length) {
-    const [x,y,path]=queue.shift(),key=`${x},${y}`;
-    if(seen.has(key))continue;seen.add(key);
-    if(key===target){for(const [dx,dy] of path)moveOrbit(game,flight,dx,dy);return;}
-    for(const [dx,dy] of [[1,0],[0,1],[-1,0],[0,-1]])if(!outsideOrbit(x+dx,y+dy)&&!rocks.has(`${x+dx},${y+dy}`))queue.push([x+dx,y+dy,[...path,[dx,dy]]]);
-  }
-  assert.fail(`No route to ${target}`);
-}
+function flyTo(game,flight,target){followRoute(game,flight,routeTo(game,flight,target));}
 test('all 27 decision combinations remain playable across all three commissions and preserve their save policy', () => {
   let count=0;
   for(const scope of ['focus','shield','swap'])for(const review of ['review-fix','review-pair','review-skip'])for(const bug of ['fix','cut','ignore']) {
@@ -86,13 +79,14 @@ test('all 27 decision combinations remain playable across all three commissions 
         assert.equal(nextProject(game,contract),null);assert.ok(beginPlan(game));recommend(game);assert.ok(beginWork(game));finish(game,scope,bug,review);
       }
       const flight=freshOrbit(game);
+      const mission=missionFor(game);if(mission.relay)flyTo(game,flight,mission.relay);
       for(const target of batteriesFor(game))flyTo(game,flight,target);
       const restored=restoreOrbit(game,JSON.parse(JSON.stringify(flight)));
-      assert.equal(restored.collected.length,bug==='fix'?3:0);
+      assert.equal(restored.collected.length,bug==='fix'?batteriesFor(game).length:0);
       assert.equal(orbitFeatures(game,getResult(game).design).saveMode,{fix:'working',cut:'removed',ignore:'broken'}[bug]);
       const html=renderOrbit(game,flight,{icon:()=>'',design:getResult(game).design,stored:bug==='fix'});
       assert.equal(html.includes('data-action="reload-mini"'),bug!=='cut');
-      flyTo(game,flight,'6,4');assert.ok(flight.won);count++;
+      missionRoute(game,flight);assert.ok(flight.won);count++;
     }
   }
   assert.equal(count,81);
@@ -108,6 +102,13 @@ test('checkpoint preserves consumed charge only for the same release and a new f
     assert.deepEqual(restoreOrbit(other, saved), freshOrbit(other));
   }
   assert.deepEqual(restoreOrbit(game, { x: 2, y: 0, collected: ['2,0'], shield: false }), freshOrbit(game));
+});
+test('next commissions preserve studio records and timer preference, but reset the flight',()=>{
+  const game=release();game.orbitRecords={festival:18,cup:28};game.timedEvents=false;
+  assert.ok(validSave(game));assert.equal(nextProject(game,'club'),null);
+  assert.deepEqual(game.orbitRecords,{festival:18,cup:28});assert.equal(game.timedEvents,false);
+  assert.equal(freshOrbit(game).moves,0);assert.equal(freshOrbit(game).relay,false);
+  assert.ok(validSave(game));game.orbitRecords.cup=-1;assert.ok(!validSave(game));
 });
 test('save and code-review decisions affect actual flight behavior', () => {
   for (const bug of ['fix', 'cut', 'ignore']) {

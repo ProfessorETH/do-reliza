@@ -18,7 +18,7 @@ for (const name of await readdir(target)) {
 const stage = join(target, 'staging');
 await mkdir(stage);
 // Only game assets and the required license; no source art, logs or secrets.
-await cp(join(root, 'assets'), join(stage, 'assets'), {recursive:true,filter:path=>!(/\.(?:js|css|png)$/.test(path))});
+await cp(join(root, 'assets'), join(stage, 'assets'), {recursive:true,filter:path=>!(/\.(?:js|css|png|ttf)$/.test(path))});
 // These images are emitted by the CSS file loader with content hashes.
 for (const file of ['agents.webp','office.webp','office-mobile.webp','onboarding/nika-portrait.webp']) await rm(join(stage,'assets',file),{force:true});
 await cp(join(root, 'vendor/three/LICENSE'), join(stage, 'THREE-LICENSE.txt'));
@@ -38,7 +38,7 @@ const styles = [...html.matchAll(/<link rel="stylesheet" href="([^"?]+)[^"]*">/g
 const css = await build({
   absWorkingDir:root, stdin:{contents:styles.map(path=>`@import "./${path}";`).join('\n'),resolveDir:root,sourcefile:'styles.css',loader:'css'},
   outdir:stage,entryNames:'styles-[hash]',assetNames:'media/[name]-[hash]',
-  bundle:true,minify:true,metafile:true,loader:{'.webp':'file'},target:['chrome100','safari15.4'],
+  bundle:true,minify:true,metafile:true,loader:{'.webp':'file','.ttf':'file'},target:['chrome100','safari15.4'],
 });
 // Cache by the contents of the entire directory, including late-loaded media.
 async function files(directory) {
