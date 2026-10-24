@@ -1,0 +1,114 @@
+{
+  "method": "Additive native Blender geometry; no existing furniture or characters changed",
+  "sourceSceneNotSaved": "E:\\хакатон игра\\art\\blender\\do-reliza-office.blend",
+  "objectsBeforeBatch": 104,
+  "objectsAfterBatch": 39,
+  "triangles": 9514,
+  "meshes": 33,
+  "meshDatablocksSingleUser": true,
+  "contacts": [
+    {
+      "interface": "battery prototype / desk pad",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "controller / existing coffee tabletop",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "controller / measured coffee tabletop",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "controller bottom / coffee tabletop",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "curtain header / hanger centreline",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "curtain top / hanger lower edge",
+      "gapMeters": 0.002
+    },
+    {
+      "interface": "desk pad 0 / tabletop",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "desk pad 1 / tabletop",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "desk pad 2 / tabletop",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "headphone cup / desk pad",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "measured desk pad 0",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "measured desk pad 1",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "measured desk pad 2",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "measured pot / original sill top",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "pad / original desk 0",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "pad / original desk 1",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "pad / original desk 2",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "rail bracket / wall interior",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "shelf book / shelf top",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "shelf bracket / shelf underside",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "ShelfPlantB pot bottom / support top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "sill pot / existing sill",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "SillPlantA pot bottom / support top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "SillPlantB pot bottom / support top",
+      "gapMeters": 0.0
+    }
+  ],
+  "baseOffice": "assets/models/office.glb",
+  "dressingPreserved": "assets/models/office-dressing.glb",
+  "curtainSillClearanceMeters": 0.076,
+  "sha256": {
+    "art/blender/studio-cozy/studio-cozy.blend": "ce3880b791f87dbe1ec7ffe68909a152ae7114b0c0e1fd5150ea5ed3c70a4bba",
+    "assets/models/office-cozy.glb": "6cb4a41abf397939687e7135e42365f90505dd8c6f7af85e7dee3599f09891e0"
+  }
+}
