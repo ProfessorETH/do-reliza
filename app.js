@@ -5,15 +5,16 @@ import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=mobile-ui-20261024';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=studio-theme-20261024';
-import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
+import { createSound } from './assets/sound.js?v=original-cast-20261024';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo, graphicsSettingsHTML } from './assets/office-runtime.js?v=team-hud-20261024';
 import { renderOffice } from './office.js?v=shift-ux-20261024-v2';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
-import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-ui-20261024';
+import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-voices-20261024';
 import { assetURL } from './asset-url.js';
+import { characterLine, characterMoment } from './assets/character-dialogue.js';
 import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
 import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
@@ -99,6 +100,7 @@ function showDialog(html) {
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
   if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus();
 }
+dialog.addEventListener('cancel',()=>sound.stopVoice('character'));
 dialog.addEventListener('close', () => {
   if (dialogOrigin) [...root.querySelectorAll('[data-action]')].find(el => el.dataset.action === dialogOrigin.action && el.dataset.id === dialogOrigin.id)?.focus({ preventScroll: true });
 });
@@ -158,6 +160,23 @@ function workPanel() {
     <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div><button class="text-button" data-action="activity">Журнал ↗</button>${game.log.slice(-1).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
     ${game.support?`<div class="support-done">${icon('check',18)}<span>Разбор проведён: ${agentById(game.support.agentId).name}<small>Навык для задачи «${TASKS.find(t=>t.id===game.support.taskId).name}» повышен на 15, максимум до 100.</small></span></div>`:support?`<div class="support-card"><div class="eyebrow">ПОМОЩЬ ТИМЛИДА</div><h2>${agentById(game.assignments[support.id]).name}: «${support.name}»</h2><p>Разберите задачу вместе. Разработчик лучше справится с ней, но ты потратишь час.</p><button class="secondary full" data-action="support" data-id="${support.id}">Помочь с задачей <span>+1 ч</span></button></div>`:''}`;
 }
+function eventVoices() {
+  if (!game || game.stage !== 'event') return [];
+  if (game.currentEvent === 'life') {
+    const incident = game.life.incident;
+    return incident.type === 'tension' ? [{id:incident.id,kind:'conflict'},{id:incident.otherId,kind:'concern'}]
+      : [{id:incident.id,kind:incident.type === 'idea' ? 'work' : 'concern'}];
+  }
+  return [{id:game.assignments[game.currentEvent === 'bug' ? 'qa' : game.currentEvent === 'review' ? 'code' : 'brief'],kind:'concern'}];
+}
+function characterQuote(id,kind) {
+  const agent=agentById(id); if(!agent)return '';
+  return `<blockquote class="character-event-line"><b>${agent.name}</b><p>«${esc(characterLine(id,kind))}»</p>${sound.hasCharacterVoice(id,kind)?`<button class="secondary team-voice" data-action="character-voice" data-id="${id}" data-kind="${kind}" aria-label="Прослушать реплику: ${agent.name}">Послушать</button>`:''}</blockquote>`;
+}
+function syncCharacterSpeaking() {
+  document.querySelectorAll('[data-character-speaker]').forEach(el=>el.classList.toggle('is-speaking',el.dataset.characterSpeaker===sound.speakingCharacter));
+}
+document.addEventListener('character-voice-state',syncCharacterSpeaking);
 function eventPanel() {
   if (game.currentEvent === 'life') {
     const incident = game.life.incident, ev = INCIDENTS[incident.type], speaker = agentById(incident.id);
@@ -219,6 +238,7 @@ function render() {
     onError:message=>{toast(message);if(game)render();},
   });
   onboarding.sync(game, officeMoving);
+  syncCharacterSpeaking();
   if(manageOpen&&!stageChanged&&root.querySelector('.crew-manage'))root.querySelector('.crew-manage').open=true;
   syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
@@ -229,23 +249,27 @@ function render() {
   else if(oldAction) root.querySelector(`[data-action="${oldAction}"]${oldId?`[data-id="${oldId}"]`:''}`)?.focus({preventScroll:true});
   if(stageChanged){
     if(nextStage==='result')sound.effect('result');
+    if(nextStage==='result')sound.speakCharacter(game.assignments.release,characterMoment(game,game.assignments.release));
+    if(nextStage==='work' && game.time===0)sound.speakCharacter(game.assignments.brief,'work');
     window.scrollTo(0,0);
   }
 }
 function syncEventDialog() {
   const key=eventKey(game);
-  if(!key){if(eventDialog.open)eventDialog.close();shownEvent=null;return;}
-  if(shownEvent!==key){
+  if(!key){if(eventDialog.open){eventDialog.close();sound.stopVoice('character');}shownEvent=null;return;}
+  const fresh=shownEvent!==key;
+  if(fresh){
     shownEvent=key;eventSaveSecond=-1;
     const timer=ensureEventClock(game);persist();
     const contents=eventPanel().replace('<h1>','<h2 id="event-title" tabindex="-1">').replace('</h1>','</h2>');
     eventDialog.innerHTML='<div class="event-modal-label">СОБЫТИЕ В СТУДИИ</div>'+
       (timer?'<div class="decision-clock"><div><b data-event-seconds></b><span>Если время закончится: отложим проблему до релиза. Напряжение +10, настроение −8.</span></div><progress max="'+(game.difficulty==='hard'?30000:45000)+'" value="'+timer.remaining+'" data-event-progress aria-label="Осталось времени"></progress><div class="event-timer-actions"><button class="secondary" data-action="event-pause"></button><button class="text-button" data-action="event-untimed">Играть без таймеров</button></div></div>':'<p class="event-unlimited">Без ограничения времени. Смена продолжится после решения.</p>')+
-      contents+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
+      contents+eventVoices().map(line=>characterQuote(line.id,line.kind)).join('')+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
     eventDialog.classList.remove('event-clock-compact');eventDialog.scrollTop=0;sound.stopVoice();
   }
   if(!eventDialog.open){eventDialog.showModal();eventDialog.querySelector('#event-title')?.focus({preventScroll:true});}
   updateEventClock(0);
+  if(fresh)sound.speakExchange(eventVoices(),true);
 }
 function completeDecision(id,expired=false){
   const error=resolveEvent(game,id);
@@ -367,16 +391,17 @@ document.addEventListener('click',e=>{
   }
   sound.unlock();
   sound.effect(({hire:'hire',plan:'plan',work:'plan',decision:'decision'})[action]||'click');
-  if(action==='close-dialog'){dialog.close();return;}
+  if(action==='close-dialog'){sound.stopVoice('character');dialog.close();return;}
   if(action==='about'){about();return;}
   if(action==='new-game'){if(saved)resetDialog();else newGame();return;}
   if(action==='confirm-new'){dialog.close();newGame();return;}
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
-  if(action==='workspace'){workspaceView=id;if(dialog.open)dialog.close();if(mobileUI.matches)onboarding.collapseGuide();render();}
-  if(action==='team-focus'){const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=hudSelection===id?null:id;if(mobileUI.matches)onboarding.collapseGuide();render();if(mobileUI.matches)showDialog(renderTeamMemberPreview(game,id,activity));}
+  if(action==='workspace'){workspaceView=id;if(dialog.open){sound.stopVoice('character');dialog.close();}if(mobileUI.matches)onboarding.collapseGuide();render();}
+  if(action==='team-focus'){const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=hudSelection===id?null:id;if(mobileUI.matches)onboarding.collapseGuide();render();if(mobileUI.matches)showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if((hudSelection||mobileUI.matches)&&kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
   if(action==='guide-open'){onboarding.toggleGuide();render();return;}
-  if(action==='team-dismiss'){const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
+  if(action==='character-voice'){sound.speakCharacter(id,el.dataset.kind,true);return;}
+  if(action==='team-dismiss'){sound.stopVoice('character');const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
   if(action==='seating'){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);}
   if(action==='event-open'){syncEventDialog();return;}
   if(action==='event-pause'){const clock=ensureEventClock(game);if(clock)clock.paused=!clock.paused;persist();updateEventClock(0);return;}
@@ -386,7 +411,7 @@ document.addEventListener('click',e=>{
   if(action==='task-info'){const t=TASKS.find(t=>t.id===id);showDialog(`<div class="eyebrow">ЗАДАЧА КОМАНДЫ</div><h2 id="dialog-title">${t.name}</h2><p>${t.description}</p><button class="primary full" data-action="close-dialog">К плану</button>`);}
   if(action==='activity')showDialog(`<div class="eyebrow">ИЗ СТУДИИ</div><h2 id="dialog-title">Журнал смены</h2><div class="activity-history">${game.log.slice().reverse().map(m=>`<p>${esc(m)}</p>`).join('')}</div><button class="primary full" data-action="close-dialog">К команде</button>`);
   if(action==='event-info'){const ev=EVENTS[game.currentEvent];showDialog(`<div class="eyebrow">КОНТЕКСТ РЕШЕНИЯ</div><h2 id="dialog-title">${ev.title}</h2><p>${ev.text}</p>${ev.options.map(o=>`<p><b>${o.title}.</b> ${o.text}<br><small>${o.effect}</small></p>`).join('')}<p>${ev.lesson}</p><button class="primary full" data-action="close-dialog">Вернуться к решению</button>`);}
-  if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p><button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);}
+  if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
   if(action==='life-office'){showDialog(officePanel(game));return;}
   if(action==='life-member'){if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
@@ -419,13 +444,13 @@ document.addEventListener('click',e=>{
     const error=nextProject(game,id);if(error)toast(error);else{dialog.close();stopAuto();resetOfficeWorld();officeMoving=false;officeSelection=null;mini=null;try{localStorage.removeItem(MINI);}catch{}persist();render();}return;
   }
   if(action==='candidate'){candidate=id;render();}
-  if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;if(officeSelection){const free=game.seats.indexOf(null);if(free>=0)seatAgent(game,id,free);}persist();render();if(officeSelection)toast(`${agentById(id).name} идёт за компьютер ${game.seats.indexOf(id)+1}.`);}}
+  if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;if(officeSelection){const free=game.seats.indexOf(null);if(free>=0)seatAgent(game,id,free);}persist();render();if(officeSelection){toast(`${agentById(id).name} идёт за компьютер ${game.seats.indexOf(id)+1}.`);sound.speakCharacter(id,'intro');}}}
   if(action==='plan'){if(!officeMoving&&beginPlan(game)){officeSelection=null;persist();render();}}
   if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один разработчик не может делать код и экран одновременно.');}
   if(action==='back-hire'){game.stage='hire';persist();render();}
   if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
   if(action==='tick')advance();
-  if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');}}
+  if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');sound.speakCharacter(game.support.agentId,'support');}}
   if(action==='auto'){game.autoPlay=!game.autoPlay;persist();render();}
   if(action==='decision'){completeDecision(id);return;}
   if(action==='office-select'){officeSelection=officeSelection===id?null:id;render();}

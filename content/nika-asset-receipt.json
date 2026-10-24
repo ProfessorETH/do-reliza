@@ -44,7 +44,7 @@
     "identity": "all six frames visually reviewed against original portrait",
     "anatomy": "eyes, hair, face, outfit checked; hands outside frame",
     "browser": "desktop and mobile compositing inspected",
-    "limitations": "expression frames have small illustration differences; speech is a short decorative frame cycle, without synthesized voice or phoneme sync",
+    "limitations": "expression frames have small illustration differences; the decorative speaking cycle follows audio playback, without phoneme-level lip sync",
     "approval": "user rejected original vector, requested polished anime art and animated states; final browser preview awaits user feedback"
   }
 }
