@@ -39,7 +39,26 @@ test('restored games and backward navigation use the current state rather than a
   restored.stage = 'event';
   assert.equal(guideFor(restored).id, 'event');
   restored.stage = 'result';
-  assert.equal(guideFor(restored).target, '[data-action="play-mini"]');
+  assert.equal(guideFor(restored).target, '[data-action="life-contracts"]');
   assert.equal(guideFor(null), null);
   assert.equal(STORY.length, 3);
+});
+
+test('Nika explains employee care, personal breaks, random incidents and repeat commissions', () => {
+  const game = createGame('calm');
+  ['mira', 'iskra', 'echo'].forEach((id, i) => { hire(game,id); seatAgent(game,id,i); });
+  beginPlan(game); recommend(game); beginWork(game);
+  game.life.members.mira.energy = 20;
+  assert.equal(guideFor(game).id,'care');
+  assert.equal(guideFor(game).target,'[data-action="life-member"][data-id="mira"]');
+  game.life.members.mira.breaks = 1;
+  assert.equal(guideFor(game).id,'time');
+  game.time = 2; game.team.forEach(id=>game.life.members[id].breaks=1);
+  assert.equal(guideFor(game).id,'time'); // No support button while everyone rests.
+  game.stage='event';game.currentEvent='life';
+  assert.equal(guideFor(game).voice,'guide-team-event');
+  assert.match(guideFor(game).text,/настроение/);
+  game.stage='result';game.life.completed=2;
+  assert.match(guideFor(game).title,/Ещё один/);
+  assert.equal(guideFor(game).target,'[data-action="life-contracts"]');
 });

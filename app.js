@@ -217,10 +217,11 @@ function moveMini(dx,dy) {
   renderMini();
 }
 document.addEventListener('keydown',e=>{
-  if(dialog.open&&e.key==='Tab'){
-    const controls=[...dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),summary,[tabindex="0"]')].filter(el=>el.getClientRects().length);
+  const keyboardDialog=document.querySelector('dialog[open]');
+  if(keyboardDialog&&e.key==='Tab'){
+    const controls=[...keyboardDialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),summary,[tabindex="0"]')].filter(el=>el.getClientRects().length);
     const first=controls[0],last=controls.at(-1);
-    if(first&&((e.shiftKey&&document.activeElement===first)||(!e.shiftKey&&document.activeElement===last)||!dialog.contains(document.activeElement))){e.preventDefault();(e.shiftKey?last:first).focus();}
+    if(first&&((e.shiftKey&&document.activeElement===first)||(!e.shiftKey&&document.activeElement===last)||!keyboardDialog.contains(document.activeElement))){e.preventDefault();(e.shiftKey?last:first).focus();}
   }
   if(dialog.open&&document.querySelector('.mini-board')){const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();moveMini(...d);}}
 });
