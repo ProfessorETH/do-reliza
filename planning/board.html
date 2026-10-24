@@ -1,0 +1,82 @@
+<div id="release-team-board">
+  <div class="board-status text-small" role="status" aria-live="polite"></div>
+  <div class="board-lanes" aria-label="Задачи по статусам"></div>
+  <details class="add-task"><summary>Добавить задачу</summary><form class="new-task-form">
+    <label class="form-label">Задача<input class="form-control" name="title" maxlength="100" required></label>
+    <label class="form-label">Что должно получиться<textarea class="form-control" name="acceptance" maxlength="400" required></textarea></label>
+    <button class="btn btn-primary" type="submit">Добавить в Сделать</button>
+  </form></details>
+</div>
+<style>
+#release-team-board{color:var(--foreground)}
+#release-team-board .board-lanes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin:12px 0 24px}
+#release-team-board .lane{min-width:0}
+#release-team-board .lane h3{margin:0 0 16px;display:flex;justify-content:space-between;gap:12px}
+#release-team-board .task{padding:14px 0;border-top:1px solid var(--border);overflow-wrap:anywhere}
+#release-team-board .task summary{cursor:default;display:block}
+#release-team-board .task summary strong{font-weight:500;display:block;margin:6px 0}
+#release-team-board .task summary .owner{display:block;color:var(--muted-foreground)}
+#release-team-board .task-content{display:grid;gap:12px;padding-top:14px}
+#release-team-board .task-content p{margin:0}
+#release-team-board .task-content .form-label{display:grid;gap:6px}
+#release-team-board .board-status{min-height:24px;padding-right:95px}
+#release-team-board .new-task-form{display:grid;gap:14px;margin-top:16px;max-width:500px}
+#release-team-board .new-task-form .form-label{display:grid;gap:6px}
+#release-team-board .add-task{border-top:1px solid var(--border);padding-top:18px}
+@media(max-width:950px){#release-team-board .board-lanes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){#release-team-board .board-lanes{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('release-team-board');
+const lanes=root.querySelector('.board-lanes'),message=root.querySelector('.board-status');
+const statuses=['Сделать','В работе','На проверке','Готово'];
+const owners=['Не назначено','ProfessorETH','cicada0133','Вместе'];
+const defaults=[
+{id:'T01',title:'Подключить второй компьютер',owner:'cicada0133',status:'Сделать',files:'Новая локальная папка проекта',depends:'Принять приглашение GitHub',acceptance:'Код клонирован, тесты проходят, своя игра открывается на localhost:5179. Путь проекта указан в результате.'},
+{id:'T02',title:'Характеры и диалоги шести агентов',owner:'cicada0133',status:'Сделать',files:'content/characters.md',depends:'T01',acceptance:'Для каждого агента: характер и по одной короткой реплике на найм, помощь, ошибку и релиз. Без рекламных слоганов; понятно подростку. data.js пока не менять.'},
+{id:'T03',title:'Проверить баланс первой главы',owner:'ProfessorETH',status:'Сделать',files:'engine.js, tests/',depends:'Можно начинать',acceptance:'Проверить три сложности и несколько составов. Описать выигрышные и рискованные решения. При изменениях логики тесты проходят.'},
+{id:'T04',title:'Сделать следующий ход заметнее',owner:'ProfessorETH',status:'Сделать',files:'app.js, style.css',depends:'Один владелец интерфейса',acceptance:'Кнопка найма и следующий этап легко находятся. Понятен результат помощи. Проверены компьютер 1440 px и телефон 390/320 px.'},
+{id:'T05',title:'Подготовить состояния персонажей',owner:'cicada0133',status:'Сделать',files:'assets/proposals/',depends:'После согласования диалогов T02',acceptance:'Предложить состояния: работа, вопрос, ошибка, успех. Сохранить личности и вечерний стиль. Приложить происхождение ассетов; не запускать чужую GPU-очередь.'},
+{id:'T06',title:'Встроить принятые реплики',owner:'ProfessorETH',status:'Сделать',files:'data.js, app.js',depends:'T02 принят; T04 завершён',acceptance:'Реплики соответствуют действиям игрока, не повторяются навязчиво и помещаются на телефоне. Полное прохождение работает.'},
+{id:'T07',title:'Провести пробное прохождение',owner:'Вместе',status:'Сделать',files:'content/playtest.md',depends:'Текущая глава готова для показа',acceptance:'Новый игрок проходит главу без подсказок разработчика. Записать места непонимания и три приоритетных исправления без персональных данных участника.'},
+{id:'T08',title:'Уточнить дедлайн и полный регламент',owner:'ProfessorETH',status:'Сделать',files:'CASE-CHECK.md',depends:'Условия организаторов',acceptance:'Зафиксировать точный дедлайн, требования сдачи, условия ИИ и ассетов, способ предоставить жюри игру и код.'},
+{id:'T09',title:'Подготовить презентацию',owner:'cicada0133',status:'Сделать',files:'presentation/',depends:'Можно начать; финальные ссылки после T10',acceptance:'Кратко: команда, профессия, игровой цикл, стек, скриншоты, референсы. Не заявлять 3D и реальные LLM. Места для QR-кодов обозначены.'},
+{id:'T10',title:'Опубликовать проверенную игру',owner:'ProfessorETH',status:'Сделать',files:'Настройки публикации и README.md',depends:'T07 и T08',acceptance:'Публичный URL открывается без регистрации на другом устройстве. Пройдена глава; подготовлены QR на игру и доступный жюри код.'},
+{id:'T11',title:'Чекпойнт 01 и общий репозиторий',owner:'ProfessorETH',status:'Готово',files:'Версия 0.2',depends:'Выполнено 24.10.2026',acceptance:'Рабочая глава, мини-игра, 9 групп тестов, 1269 сценариев. Репозиторий ProfessorETH/do-reliza создан; приглашение cicada0133 отправлено.',note:'https://github.com/ProfessorETH/do-reliza'}
+];
+let tasks=structuredClone(defaults),saving=false;
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const valid=s=>s?.modelContent?.boardVersion===1&&Array.isArray(s.modelContent.tasks);
+const read=s=>valid(s)?s.modelContent.tasks.filter(t=>t&&typeof t.id==='string'&&typeof t.title==='string').slice(0,25):null;
+const options=(values,current)=>values.map(v=>`<option ${v===current?'selected':''}>${escape(v)}</option>`).join('');
+function render(){
+  const opened=new Set(Array.from(lanes.querySelectorAll('details[open]')).map(e=>e.dataset.id));
+  lanes.innerHTML=statuses.map(status=>`<section class="lane" aria-label="${status}"><h3>${status}<span class="text-small">${tasks.filter(t=>t.status===status).length}</span></h3>${tasks.filter(t=>t.status===status).map(t=>`<details class="task" data-id="${escape(t.id)}" ${opened.has(t.id)?'open':''}><summary class="cursor-interaction"><span class="text-small">${escape(t.id)}</span><strong>${escape(t.title)}</strong><span class="owner text-small">${escape(t.owner)}</span></summary><div class="task-content"><p><b>Результат:</b> ${escape(t.acceptance)}</p><p class="text-small"><b>Файлы:</b> ${escape(t.files||'Указать до начала')}</p><p class="text-small"><b>Зависимости:</b> ${escape(t.depends||'Нет')}</p><label class="form-label">Ответственный<select class="form-select" name="owner">${options(owners,t.owner)}</select></label><label class="form-label">Статус<select class="form-select" name="status">${options(statuses,t.status)}</select></label><label class="form-label">Ветка, PR или результат<textarea class="form-control" name="note" maxlength="350" rows="3">${escape(t.note||'')}</textarea></label><button class="btn" type="button" data-save="${escape(t.id)}" ${saving?'disabled':''}>Сохранить карточку</button></div></details>`).join('')||'<p class="text-small text-muted">Пока нет задач</p>'}</section>`).join('');
+}
+async function save(id,patch,newTask){
+ if(saving)return;
+ if(typeof window.openai?.setWidgetState!=='function'){message.textContent='Сохранение недоступно в этом просмотре. Откройте страницу в приложении.';return;}
+ const latest=read(window.openai.widgetState)||tasks;
+ const next=newTask?[...latest,newTask]:latest.map(t=>t.id===id?{...t,...patch}:t);
+ const state={modelContent:{boardVersion:1,tasks:next},privateContent:null};
+ if(new TextEncoder().encode(JSON.stringify(state)).length>15000){message.textContent='Доска заполнена. Сократите заметки перед добавлением новых задач.';return;}
+ saving=true;message.textContent='Сохраняю…';
+ root.querySelectorAll('button').forEach(b=>b.disabled=true);
+ try{await window.openai.setWidgetState(state);tasks=next;message.textContent='Изменение сохранено';}
+ catch{message.textContent='Не удалось сохранить. Проверьте доступ и попробуйте ещё раз.';}
+ finally{saving=false;render();root.querySelectorAll('button').forEach(b=>b.disabled=false);}
+}
+lanes.addEventListener('click',e=>{const button=e.target.closest('[data-save]');if(!button)return;const card=button.closest('details');save(button.dataset.save,{owner:card.querySelector('[name=owner]').value,status:card.querySelector('[name=status]').value,note:card.querySelector('[name=note]').value});});
+lanes.addEventListener('dragstart',e=>{const card=e.target.closest('.task');if(!card||saving)return;e.dataTransfer.setData('text/plain',card.dataset.id);e.dataTransfer.effectAllowed='move';});
+lanes.addEventListener('dragover',e=>{if(e.target.closest('.lane')){e.preventDefault();e.dataTransfer.dropEffect='move';}});
+lanes.addEventListener('drop',e=>{const lane=e.target.closest('.lane');if(!lane)return;e.preventDefault();const id=e.dataTransfer.getData('text/plain');if(tasks.some(t=>t.id===id))save(id,{status:lane.getAttribute('aria-label')});});
+root.querySelector('form').addEventListener('submit',async e=>{e.preventDefault();const form=e.target;if(tasks.length>=25){message.textContent='На доске уже 25 задач. Завершите текущий этап перед расширением.';return;}const data=new FormData(form);const task={id:'T'+Date.now().toString(36).toUpperCase(),title:String(data.get('title')).trim(),acceptance:String(data.get('acceptance')).trim(),owner:'Не назначено',status:'Сделать',files:'',depends:'',note:''};if(!task.title||!task.acceptance)return;await save(null,null,task);if(tasks.some(t=>t.id===task.id))form.reset();});
+const initial=read(window.openai?.widgetState);if(initial)tasks=initial;
+window.addEventListener('openai:set_globals',e=>{const incoming=read(e.detail?.globals?.widgetState);if(incoming){tasks=incoming;render();if(!saving)message.textContent='Доска обновлена';}});
+render();
+const draggable=new MutationObserver(()=>{lanes.querySelectorAll('.task>summary:not([draggable])').forEach(el=>{el.draggable=true;});});
+draggable.observe(lanes,{childList:true,subtree:true});
+lanes.querySelectorAll('.task>summary').forEach(el=>{el.draggable=true;});
+})();
+</script>
