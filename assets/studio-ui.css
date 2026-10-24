@@ -1,0 +1,309 @@
+/* Evening studio interface. Kept separate from character/scene work.
+   Located in assets/ so the static demo build includes it automatically. */
+:root {
+  --bg: #111b20;
+  --panel: #1c292e;
+  --surface: #233237;
+  --surface-raised: #2b3b40;
+  --line: #b6c7c125;
+  --text: #f3f0e6;
+  --muted: #b0c0bf;
+  --amber: #f5bf70;
+  --mint: #9bd8bb;
+  --coral: #ffa38e;
+  --radius: 12px;
+}
+
+body { background: var(--bg); }
+button, select, a { -webkit-tap-highlight-color: transparent; }
+button:disabled { opacity: .58; }
+button:focus-visible, select:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+}
+.primary, .secondary { min-height: 48px; border-radius: 8px; }
+.primary { background: var(--amber); border-color: #ffd89c; color: #202a2b; box-shadow: 0 2px 0 #0003; }
+.primary:not(:disabled):hover { background: #ffd18e; }
+.secondary { background: #ffffff05; border-color: #b6c7c140; }
+.secondary:not(:disabled):hover { background: var(--surface-raised); }
+.icon-btn { width: 44px; height: 44px; border-color: var(--line); background: #233237a6; }
+.text-button { min-height: 44px; font-size: 13px; }
+.badge { font-size: 10px; letter-spacing: .8px; border-color: var(--line); }
+
+/* The invitation feels like a message received in the studio. */
+.landing .topbar { height: 88px; padding: 0 5vw; }
+.landing-shade {
+  background: linear-gradient(90deg, #101b20fa 0%, #101b20ed 30%, #101b2080 58%, #101b2010 85%),
+    linear-gradient(0deg, #101b20f2, transparent 35%);
+}
+.intro-copy { width: 660px; max-width: 60vw; padding: 40px 0 100px 5vw; }
+.chapter-label { gap: 12px; color: var(--amber); font-size: 13px; }
+.chapter-label > span { border-radius: 8px; width: 32px; height: 32px; background: #f5bf7010; }
+.intro-copy h1 { font-size: clamp(40px, 4.2vw, 64px); line-height: 1.08; margin: 24px 0; letter-spacing: -1.6px; }
+.intro-copy > p { color: #d0d9d5; font-size: 17px; }
+.intro-letter {
+  max-width: 460px; padding: 20px; margin: 24px 0;
+  background: #27363bcf; border: 1px solid var(--line); border-left: 3px solid var(--amber);
+  border-radius: 0 12px 12px 0; backdrop-filter: blur(12px);
+}
+.letter-avatar { background: #516e65; border-radius: 8px; }
+.intro-letter p { color: #e2e6de; font-size: 14px; }
+.intro-copy > p.intro-role { max-width: 450px; color: var(--muted); font-size: 14px; }
+.difficulty { margin: 24px 0 20px; }
+.difficulty legend { font-size: 12px; color: var(--muted); }
+.difficulty-option { min-height: 44px; padding: 12px 16px; font-size: 12px; border-radius: 7px; background: #1c292ecf; }
+.difficulty-option.chosen { background: #f5bf701a; border-color: var(--amber); color: #ffdaa3; }
+.intro-cta .primary { min-width: 270px; min-height: 56px; font-size: 15px; }
+.office-caption { border: 1px solid var(--line); border-radius: 8px; background: #1c292ed9; padding: 12px 16px; }
+.landing-footer { font-size: 11px; letter-spacing: .3px; color: var(--muted); padding: 24px 5vw; }
+
+/* Stage rail comes before the workspace in the visual order. */
+.game-shell { min-height: 900px; height: 100svh; }
+.game-topbar { order: 0; height: 80px; background: var(--bg); padding: 0 28px; border: 0; }
+.game-topbar .brand { font-size: 23px; }
+.game-topbar .brand small { font-size: 8px; letter-spacing: 2.8px; color: var(--muted); }
+.brand-period { color: var(--amber); }
+.project-title { font-size: 14px; letter-spacing: 1px; gap: 12px; }
+.project-title .tiny { color: var(--muted); font-size: 10px; }
+.hud-stats { gap: 12px; }
+.hud-stat { background: var(--panel); border: 1px solid var(--line); padding: 10px 16px; border-radius: 8px; min-width: 130px; }
+.hud-stat small { font-size: 11px; color: var(--muted); }
+.hud-stat strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.game-footer { order: 1; height: 64px; flex: none; background: var(--bg); padding: 0 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.timeline { gap: 0; }
+.timeline-step { font-size: 12px; color: var(--muted); gap: 8px; }
+.timeline-step > span { width: 26px; height: 26px; border-radius: 8px; font-size: 11px; background: var(--panel); border: 1px solid var(--line); }
+.timeline-step.current { color: var(--amber); }
+.timeline-step.current > span { color: #202a2b; background: var(--amber); border-color: var(--amber); }
+.timeline-step.completed { color: var(--mint); }
+.timeline-step.completed > span { background: #9bd8bb16; border-color: #9bd8bb50; color: var(--mint); }
+.timeline-step:not(:last-child)::after { width: 32px; margin: 0 16px; background: var(--line); }
+.save-status { color: var(--muted); font-size: 11px; }
+.game-layout { order: 2; grid-template-columns: minmax(0, 1fr) minmax(460px, 36%); gap: 16px; padding: 16px; background: var(--bg); }
+.playable-office { border: 1px solid var(--line); border-radius: 12px; padding: 24px; background: radial-gradient(ellipse at 48% 40%, #3a4a47 0%, #24373a 58%, #1b2b31 100%); }
+.office-heading .eyebrow { font-size: 10px; color: #b8c8bf; letter-spacing: 1.3px; }
+.office-heading h2 { color: var(--text); font-size: 28px; font-weight: 600; margin-top: 8px; }
+.office-brief { color: var(--amber); min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #17272d80; }
+.office-room { max-width: 720px; }
+.office-render-status { color: #b9c9c5; font-size: 10px; }
+.office-camera-controls { gap: 6px; }
+.office-camera-controls button { width: 44px; height: 44px; border-radius: 8px; background: #1c292ee8; }
+.office-guidance { border: 1px solid #f5bf7030; background: #f5bf7009; border-radius: 8px; padding: 12px; gap: 12px; }
+.office-guidance p { font-size: 13px; color: #e1e5db; }
+.office-roster-title { font-size: 10px; color: var(--muted); }
+.office-member { background: #17272d; border-radius: 8px; padding: 10px; min-height: 64px; }
+.office-member b { font-size: 13px; }
+.office-member small { font-size: 11px; }
+.office-roster-empty { border-color: #b6c7c140; border-radius: 8px; min-height: 64px; }
+.office-roster-empty small { font-size: 11px; }
+.office-walk-button { min-height: 44px; border-radius: 7px; }
+.arrival { background: #233b3e; border-radius: 7px; }
+.desk-tag { background: #18282ef2; border-radius: 8px; }
+
+/* Candidate selection, profile and next step have separate visual weights. */
+.control-panel { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); scrollbar-width: thin; scrollbar-color: #647875 var(--panel); scroll-margin-top: 92px; }
+.panel-header { margin-bottom: 20px; }
+.panel-header .eyebrow { font-size: 11px; color: var(--amber); letter-spacing: 1px; margin-bottom: 12px; }
+.panel-header h1 { font-size: 32px; line-height: 1.15; margin-bottom: 12px; }
+.panel-header > p { font-size: 14px; color: var(--muted); }
+.candidate-grid { gap: 8px; margin-bottom: 20px; }
+.candidate { position: relative; min-width: 0; min-height: 76px; gap: 8px; padding: 10px; background: #ffffff03; border: 1px solid var(--line); border-radius: 8px; }
+.candidate:not(:disabled):hover { background: var(--surface-raised); border-color: #b6c7c160; }
+.candidate.selected { background: #f5bf7010; border-color: var(--amber); box-shadow: inset 0 0 0 1px #f5bf7030; }
+.candidate .portrait { width: 40px; height: 48px; border-radius: 6px; }
+.candidate > span:nth-child(2) { min-width: 0; }
+.candidate b { font-size: 14px; }
+.candidate small { font-size: 11px; color: var(--muted); }
+.candidate.hired { border-bottom: 2px solid var(--mint); }
+.hired-check { top: 4px; right: 4px; background: #254b3e; color: #c5f2d7; }
+.agent-detail { padding: 20px 0 0; border-top: 1px solid var(--line); }
+.agent-profile { grid-template-columns: 36% 64%; align-items: center; }
+.large-portrait { border-radius: 10px; min-height: 170px; }
+.portrait-frame > .badge { font-size: 11px; color: #dddeda; margin-top: 8px; border: 0; }
+.radar { min-height: 160px; max-height: 195px; }
+.agent-name-row { margin-top: 16px; }
+.agent-name-row h2 { font-size: 28px; }
+.agent-name-row > strong { font-size: 21px; color: var(--amber); font-variant-numeric: tabular-nums; }
+.agent-name-row > strong small { color: var(--muted); font-size: 11px; }
+.agent-trait { font-size: 14px; color: var(--text); }
+.agent-description { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+.agent-caution { align-items: flex-start; color: #dbc6a8; font-size: 12px; line-height: 1.6; background: #f5bf7009; border-radius: 6px; padding: 10px 12px; margin-bottom: 16px; }
+.agent-caution svg { margin-top: 3px; }
+.agent-detail .primary, .agent-detail .secondary { font-size: 14px; }
+.panel-bottom { margin-top: 20px; padding: 16px; background: #111e2380; border: 1px solid var(--line); border-radius: 10px; }
+.panel-bottom > span { color: var(--muted); font-size: 12px; }
+.coverage { gap: 16px; }
+.coverage span { font-size: 12px; color: var(--muted); }
+.panel-bottom .primary:disabled { background: #4e605e; border-color: #71807b; color: #e1e6df; opacity: .75; box-shadow: none; }
+
+/* Planning, decisions and release use the same surfaces and rhythm. */
+.dependency-map { font-size: 12px; color: #d9e2db; }
+.plan-toolbar { gap: 12px; }
+.plan-toolbar > span { color: var(--muted); font-size: 12px; }
+.plan-task { padding: 20px 0; border-color: var(--line); }
+.task-number { background: var(--surface); border-radius: 6px; color: var(--amber); }
+.task-body { min-width: 0; }
+.task-body h2 { font-size: 16px; }
+.task-body p { font-size: 13px; line-height: 1.6; color: var(--muted); }
+.task-select-row select { background: #15252a; border: 1px solid #b6c7c14d; min-height: 44px; border-radius: 7px; font-size: 13px; max-width: 100%; }
+.fit { font-size: 12px; }
+.work-controls { gap: 8px; }
+.time-strip { font-size: 12px; color: var(--muted); margin: 16px 0; }
+.work-tasks { display: grid; gap: 8px; }
+.work-task { padding: 16px 12px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff03; }
+.work-task.active { border-color: #f5bf7070; background: #f5bf7009; }
+.work-task.done { background: #9bd8bb06; }
+.work-task h2 { font-size: 15px; }
+.work-task > div > span { font-size: 12px; color: var(--muted); }
+.meter { height: 5px; background: #ffffff12; }
+.activity-log { padding: 20px 0 0; }
+.activity-log p { font-size: 12px; color: var(--muted); }
+.support-card { border: 1px solid #9bd8bb40; background: #9bd8bb08; border-radius: 10px; padding: 20px; }
+.support-card .eyebrow { color: var(--mint); }
+.support-card p { color: var(--muted); }
+.event-heading { gap: 8px; font-size: 11px; }
+.event-alert { color: var(--amber); font-size: 10px; }
+.speaker { padding: 16px 0; }
+.event-copy h1 { font-size: 30px; }
+.event-copy > p { font-size: 15px; }
+.event-options { display: grid; gap: 12px; }
+.event-option { background: #ffffff03; border: 1px solid #b6c7c13d; border-radius: 8px; padding: 18px 14px; gap: 12px; }
+.event-option:hover { border-color: var(--amber); background: #f5bf700c; }
+.event-option b { font-size: 15px; }
+.option-description { font-size: 13px; color: #c6d1cc; }
+.event-option small { color: var(--amber); font-size: 12px; }
+.option-number { color: var(--muted); }
+.lesson-note p { color: var(--muted); }
+.result-metrics { background: #111e2360; padding: 20px; border-radius: 10px; gap: 24px 16px; }
+.result-metrics small { color: var(--muted); font-size: 12px; }
+.result-metrics b { font-size: 22px; }
+.game-preview { border-radius: 10px; border-color: #f5bf7070; }
+dialog { background: var(--panel); border: 1px solid #b6c7c140; border-radius: 16px; color: var(--text); }
+dialog::backdrop { background: #071115c9; backdrop-filter: blur(5px); }
+.dialog-close { right: 16px; top: 16px; }
+#toast { width: min(420px, calc(100vw - 32px)); max-width: calc(100vw - 32px); border-color: #b6c7c140; background: #2b3b40; color: var(--text); font-size: 14px; }
+
+@media (min-width: 1001px) and (max-height: 940px) {
+  .game-shell { min-height: 850px; }
+  .office-room { max-width: 620px; }
+}
+@media (max-width: 1200px) and (min-width: 1001px) {
+  .game-layout { grid-template-columns: minmax(0, 1fr) 440px; gap: 12px; padding: 12px; }
+  .control-panel { padding: 20px; }
+  .playable-office { padding: 20px 16px; }
+  .office-heading { flex-wrap: wrap; gap: 8px; }
+  .office-heading h2 { font-size: 25px; }
+  .office-member { padding: 6px; }
+  .office-member small { font-size: 10px; }
+}
+@media (max-width: 1000px) {
+  .game-shell { height: auto; min-height: 100svh; }
+  .game-layout { display: flex; flex-direction: column; padding: 16px; gap: 16px; }
+  .game-topbar { position: sticky; top: 0; z-index: 5; height: 76px; background: #111b20f5; backdrop-filter: blur(12px); padding: 0 20px; }
+  .project-title { display: none; }
+  .game-footer { height: 60px; padding: 0 20px; }
+  .save-status { display: none; }
+  .timeline { width: 100%; justify-content: space-between; }
+  .timeline-step:not(:last-child)::after { width: 24px; margin: 0 16px; }
+  .playable-office { height: auto; min-height: 0; padding: 20px; }
+  .office-room { max-width: 620px; margin: 8px auto 16px; }
+  .control-panel { overflow: visible; padding: 28px; }
+  .candidate { min-height: 80px; }
+  .candidate .portrait { width: 48px; height: 52px; }
+  .agent-profile { grid-template-columns: 160px minmax(0, 1fr); max-width: 520px; margin: auto; }
+  .radar { max-height: 210px; }
+  .large-portrait { min-height: 180px; }
+  .intro-copy { max-width: 75vw; }
+}
+@media (max-width: 600px) {
+  .landing .topbar { height: 76px; padding: 0 20px; }
+  .landing-shade { background: linear-gradient(90deg, #101b20f5, #101b20d9 70%, #101b20ad); }
+  .intro-copy { width: 100%; max-width: none; padding: 24px 20px 32px; }
+  .intro-copy h1 { font-size: clamp(34px, 9.5vw, 48px); letter-spacing: -1.2px; }
+  .intro-copy > p { font-size: 16px; }
+  .intro-letter { margin: 24px 0; padding: 16px; gap: 12px; }
+  .intro-letter p { font-size: 13px; }
+  .difficulty-option { padding: 12px 10px; font-size: 11px; margin-right: 4px; }
+  .intro-cta { gap: 12px; }
+  .intro-cta .primary { width: 100%; min-width: 0; }
+  .landing-footer { position: relative; padding: 20px; display: flex; gap: 12px; flex-wrap: wrap; font-size: 10px; }
+  .office-caption { display: none; }
+  .game-topbar { height: 76px; padding: 0 12px; gap: 8px; }
+  .game-topbar .brand { font-size: 17px; }
+  .game-topbar .brand small { font-size: 6px; letter-spacing: 1.4px; }
+  .hud-stats { gap: 6px; }
+  .hud-stat { min-width: 0; gap: 0; background: transparent; border: 0; padding: 4px; }
+  .hud-stat > svg { display: none; }
+  .hud-stat small { font-size: 9px; }
+  .hud-stat strong { font-size: 13px; }
+  .hud-stats .icon-btn { width: 44px; height: 44px; }
+  .game-footer { padding: 0 12px; height: 56px; flex-direction: row; }
+  .timeline-step { font-size: 11px; gap: 6px; }
+  .timeline-step > span { width: 24px; height: 24px; font-size: 10px; }
+  .timeline { display: grid; grid-template-columns: repeat(4, auto); gap: 8px; }
+  .timeline-step:not(:last-child)::after { display: none; }
+  .game-layout { padding: 8px; gap: 12px; }
+  .playable-office { padding: 16px 12px; border-radius: 10px; }
+  .office-heading { gap: 8px; }
+  .office-heading h2 { font-size: 22px; }
+  .office-heading .eyebrow { font-size: 8px; letter-spacing: .6px; }
+  .office-brief { padding: 8px; font-size: 11px; }
+  .office-room { margin: 12px auto 16px; }
+  .office-render-status { max-width: 47%; font-size: 8px; }
+  .office-guidance { padding: 10px; gap: 8px; flex-wrap: wrap; }
+  .office-guidance p { font-size: 12px; flex-basis: calc(100% - 48px); }
+  .office-guidance .text-button { min-height: 44px; font-size: 12px; }
+  .office-roster-title { font-size: 9px; }
+  .office-roster-title b { font-size: 10px; }
+  .office-member { padding: 8px 6px; gap: 6px; }
+  .office-member b { font-size: 12px; }
+  .office-member small { font-size: 10px; }
+  .office-roster-empty small { font-size: 10px; }
+  .control-panel { padding: 20px 16px; border-radius: 10px; }
+  .panel-header h1 { font-size: 29px; }
+  .panel-header > p { font-size: 14px; }
+  .candidate-grid { gap: 6px; }
+  .candidate { padding: 10px 6px; gap: 5px; min-height: 72px; }
+  .candidate .portrait { width: 30px; height: 38px; }
+  .candidate b { font-size: 12px; }
+  .candidate small { font-size: 10px; }
+  .agent-profile { display: block; }
+  .portrait-frame { display: flex; align-items: center; gap: 16px; aspect-ratio: auto; }
+  .large-portrait { width: 84px; height: 92px; min-height: 0; flex: none; }
+  .portrait-frame > .badge { position: static; font-size: 13px; margin: 0; padding: 10px; white-space: normal; }
+  .radar-wrap { display: none; }
+  .mobile-skills { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 12px 4px; margin: 16px 0; border: 1px solid var(--line); border-radius: 8px; background: #111e2340; }
+  .mobile-skills dt { font-size: 10px; color: var(--muted); }
+  .mobile-skills dd { font-size: 16px; color: var(--agent); margin-top: 8px; }
+  .agent-name-row h2 { font-size: 27px; }
+  .agent-name-row > strong { font-size: 20px; }
+  .panel-bottom { padding: 14px; }
+  .dependency-map { font-size: 10px; gap: 4px; }
+  .parallel-tasks i { padding: 4px 8px; }
+  .task-body h2 { font-size: 15px; }
+  .task-body p { font-size: 12px; }
+  .task-select-row select { font-size: 12px; min-width: 0; }
+  .event-copy h1 { font-size: 27px; }
+  .event-heading { flex-wrap: wrap; }
+  .event-option { padding: 16px 12px; gap: 8px; }
+  .event-option b { font-size: 14px; }
+  .event-option small { font-size: 12px; }
+  .support-card { padding: 16px; }
+}
+@media (max-width: 360px) {
+  .game-topbar .brand { font-size: 15px; }
+  .game-topbar .brand small { font-size: 5px; }
+  .hud-stat strong { font-size: 12px; }
+  .hud-stat small { font-size: 8px; }
+  .timeline-step { font-size: 10px; gap: 4px; }
+  .timeline-step:not(:last-child)::after { width: 6px; margin: 0 4px; }
+  .control-panel { padding: 20px 12px; }
+  .candidate { flex-direction: column; align-items: flex-start; padding: 10px; }
+  .candidate > span:nth-child(2) { width: 100%; }
+  .mobile-skills dt { font-size: 9px; }
+  .office-heading h2 { font-size: 20px; }
+  .office-heading .eyebrow { font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
