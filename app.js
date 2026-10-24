@@ -1,3 +1,4 @@
+import { createOnboarding } from './onboarding.js?v=1';
 import { WAITING } from './office-layout.js';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js';
 import { renderOffice } from './office.js';
@@ -11,6 +12,7 @@ const MINI = 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
 let game = null, candidate = 'mira', difficulty = 'calm', automatic = null, saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
+const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: stopAuto, refresh: render });
 try { const raw = JSON.parse(localStorage.getItem(SAVE)); if (validSave(raw)) saved = restoreOffice(raw); } catch { /* No usable saved session. */ }
 const money = n => new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 const esc = x => String(x).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -132,7 +134,7 @@ function render() {
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
-  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged)window.scrollTo(0,0); return; }
+  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); onboarding.sync(null); if(stageChanged)window.scrollTo(0,0); return; }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:eventPanel,result:resultPanel};
   root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}">${topbar()}<div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div>${timeline()}</main>`;
   mountOfficeWorld(game,officeSelection,{
@@ -142,6 +144,7 @@ function render() {
     onFloor:point=>officeWalk(point),
     onError:message=>{toast(message);if(game)render();},
   });
+  onboarding.sync(game, officeMoving);
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
   else if(oldAction) root.querySelector(`[data-action="${oldAction}"]${oldId?`[data-id="${oldId}"]`:''}`)?.focus({preventScroll:true});
   if(stageChanged){
@@ -164,7 +167,7 @@ function officeDeskAction(index) {
   }else if(occupant)inspect(occupant);
 }
 function advance() { if(tick(game)){if(game.stage!=='work')stopAuto(); persist();render();} }
-function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); }
+function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ ПОПЫТКА</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Текущая команда и прогресс будут заменены. Можно попробовать другой состав и решения.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
 function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.4</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих агентов и посади каждого за компьютер: выбери персонажа, затем рабочее место. Он дойдёт до него и сядет. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро агент работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с агентом.</p><p class="small-muted">Это игровая модель профессии. Агенты — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
