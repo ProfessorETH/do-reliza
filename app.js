@@ -4,7 +4,7 @@ import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, actOrbit, orbitFeatu
 import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=mobile-ui-20261024';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
-import { renderStartScreen } from './assets/start-screen.js?v=studio-theme-20261024';
+import { renderStartScreen } from './assets/start-screen.js?v=start-clarity-20261024';
 import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
@@ -46,6 +46,7 @@ const icon = (name, size = 20) => {
     people: '<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m2-16a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 6"/>',
     check: '<path d="m5 12 4 4L19 6"/>', cross: '<path d="m6 6 12 12M6 18 18 6"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',
     menu: '<path d="M4 6h16M4 12h16M4 18h16"/>', home: '<path d="m3 11 9-8 9 8M5 9v12h5v-7h4v7h5V9"/>',
+    settings: '<path d="M3 6h8m6 0h4M3 12h2m6 0h10M3 18h10m6 0h2"/><circle cx="14" cy="6" r="3"/><circle cx="8" cy="12" r="3"/><circle cx="16" cy="18" r="3"/>',
     play: '<path d="m8 5 11 7-11 7z"/>', pause: '<path d="M8 5v14M16 5v14"/>', star: '<path d="m12 3 3 6 6 1-4.5 4.5 1 6-5.5-3-5.5 3 1-6L3 10l6-1z"/>',
     bolt: '<path d="m14 2-9 12h7l-2 8 9-12h-7z"/>', lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
     rocket: '<path d="M9 15 5 19m4-4 6-6m-6 6-4-1 2-6 5-1 3-4 6-1-1 6-4 3-1 5-6 2-1-4z"/><circle cx="16" cy="7" r="1"/>',
@@ -114,7 +115,7 @@ function radar(a) {
   </svg>`;
 }
 function intro() {
-  return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundButton: sound.button(icon), soundEnabled:sound.enabled, soundPreviewed });
+  return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundEnabled:sound.enabled, soundPreviewed });
 }
 function topbar() {
   return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('menu')}</button></div></header>`;
