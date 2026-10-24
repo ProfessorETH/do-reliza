@@ -1,3 +1,4 @@
+import { captureMembers, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 import { renderDecisionPanel } from './assets/decision-view.js';
 import { purchasePanel, contractPreview } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
@@ -270,8 +271,12 @@ function syncEventDialog(requestOpen=false) {
   if(fresh)sound.speakExchange(eventVoices(),true);
 }
 function completeDecision(id,expired=false){
+  const incident=game.life.incident,kind=game.currentEvent;
+  const affected=kind==='life'?(incident.type==='idea'&&id==='life-care'?[...game.team]:[incident.id,...(incident.type==='tension'?[incident.otherId]:[])]):kind==='bug'?[game.assignments.qa]:kind==='review'?[game.assignments.code]:[];
+  const before=captureMembers(game);
   const error=resolveEvent(game,id);
   if(error){toast(error);return;}
+  queueMemberFeedback(game,before,affected);
   delete game.eventClock;
   if(expired)game.log.push('Время решения вышло: проблема отложена до релиза.');
   persist();render();
@@ -433,8 +438,9 @@ document.addEventListener('click',e=>{
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
+    const before=captureMembers(game);
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee')toast('Напиток доставлен: энергия +15, настроение +5.');else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
+    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee')toast('Напиток доставлен: энергия +15, настроение +5.');else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;
@@ -449,13 +455,15 @@ document.addEventListener('click',e=>{
     showDialog(purchasePanel(game,u));return;
   }
   if(action==='life-buy'){
-    const error=buyUpgrade(game,id);if(error)toast(error);else{persist();render();showDialog(officePanel(game));}return;
+    const cost=UPGRADES.find(u=>u.id===id)?.price;
+    const error=buyUpgrade(game,id);if(error)toast(error);else{queuePurchaseFeedback(game,id,cost);dialog.close();officeSelection=null;workspaceView='office';officeExpanded=false;persist();render();}return;
   }
   if(action==='life-contract-preview'){
     const c=CONTRACTS.find(c=>c.id===id);if(!c||game.stage!=='result')return;
     showDialog(contractPreview(game,c));return;
   }
   if(action==='life-next'){
+    clearSceneFeedback(game);
     const error=nextProject(game,id);if(error)toast(error);else{dialog.close();stopAuto();resetOfficeWorld();officeMoving=false;officeSelection=null;mini=null;try{localStorage.removeItem(MINI);}catch{}persist();render();}return;
   }
   if(action==='candidate'){candidate=id;render();}
@@ -483,7 +491,7 @@ document.addEventListener('click',e=>{
   if(action==='fresh-mini'){mini=freshOrbit(game);miniEffect={};miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
   if(action==='reload-mini'){openMini(true);dialog.querySelector('.tile.ship')?.focus({preventScroll:true});}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
-  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="guide-open">Ника · подсказки и голос</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
+  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="guide-open">Ника · подсказки и голос</button><button class="secondary full" data-action="brief">Задание заказчика</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();persist();game=null;render();}
 });
 let demoArrival = false;

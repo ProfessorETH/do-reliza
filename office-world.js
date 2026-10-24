@@ -1,3 +1,4 @@
+import { placeFeedback } from './assets/scene-feedback.js';
 import { mountSceneClock } from './assets/scene-clock.js';
 import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
@@ -183,6 +184,49 @@ class OfficeWorld {
     const parent = this.container.closest('.office-room');
     const viewRect=this.container.getBoundingClientRect(),roomRect=parent.getBoundingClientRect();
     const point=()=>({x:viewRect.left-roomRect.left+(this.projected.x*.5+.5)*viewRect.width,y:viewRect.top-roomRect.top+(-this.projected.y*.5+.5)*viewRect.height});
+    this.feedbackHighlights ||= new Map();
+    const feedback=[...parent.querySelectorAll('[data-scene-feedback]')];
+    const activeKeys=new Set(feedback.map(el=>el.dataset.sceneFeedback));
+    for(const [key,entry] of this.feedbackHighlights)if(!activeKeys.has(key)){
+      this.scene.remove(entry.helper);entry.helper.geometry.dispose();entry.helper.material.dispose();this.feedbackHighlights.delete(key);
+    }
+    const placements=[];
+    for(const el of feedback){
+      const key=el.dataset.sceneFeedback,actor=this.actors.get(el.dataset.feedbackActor);
+      let point;
+      if(actor)point=actor.group.position.clone().add(new THREE.Vector3(0,actor.sit>.5?1.9:2.35,0));
+      if(el.dataset.feedbackUpgrade){
+        let entry=this.feedbackHighlights.get(key);
+        if(!entry){
+          const id=el.dataset.feedbackUpgrade;
+          const object=id==='coffee'?this.room.getObjectByName('CoffeeStation'):id==='desk4'?this.expansion.desks[0]:id==='desk5'?this.expansion.desks[1]:this.purchases.groups.get(id);
+          if(object){
+            this.room.updateMatrixWorld(true);
+            const box=new THREE.Box3().setFromObject(object).expandByScalar(.08);
+            if(!box.isEmpty()){
+              const helper=new THREE.Box3Helper(box,0xe9c78f);helper.material.transparent=true;helper.material.opacity=.65;helper.userData.feedbackDecoration=true;this.scene.add(helper);
+              const center=box.getCenter(new THREE.Vector3());
+              entry={helper,point:center.clone().setY(box.max.y+.3)};this.feedbackHighlights.set(key,entry);
+              if(!this.flying)this.cameraGoal={target:center,offset:new THREE.Vector3(7,5,8),zoom:['quiet','computers'].includes(id)?1.4:1.8};
+            }
+          }
+        }
+        if(entry){point=entry.point;entry.helper.material.opacity=this.reduced.matches ? .65 :.55+Math.sin(performance.now()/280)*.2;}
+      }
+      if(!point)continue;
+      this.projected.copy(point).project(this.camera);
+      const room=parent.getBoundingClientRect(),canvas=this.container.getBoundingClientRect(),half=el.offsetWidth/2;
+      placements.push({el,x:canvas.left-room.left+(this.projected.x*.5+.5)*canvas.width,y:canvas.top-room.top+(-this.projected.y*.5+.5)*canvas.height,width:el.offsetWidth,height:el.offsetHeight});
+    }
+    const offsetX=viewRect.left-roomRect.left,offsetY=viewRect.top-roomRect.top;
+    const local=placements.map(p=>({...p,x:p.x-offsetX,y:p.y-offsetY}));
+    placeFeedback(local,viewRect.width,viewRect.height).forEach((pos,i)=>{
+      pos={...pos,x:pos.x+offsetX,y:pos.y+offsetY};
+      const item=placements[i];item.el.style.left=(pos.x+pos.width/2)+'px';item.el.style.top=(pos.y+pos.height)+'px';
+      const line=item.el.querySelector('.feedback-link line');
+      if(line){for(const [key,value] of Object.entries({x1:pos.width/2,y1:pos.height,x2:item.x-pos.x,y2:item.y-pos.y}))line.setAttribute(key,value);}
+    });
+
     for (const [i, d] of DESKS.entries()) {
       const button = parent.querySelector(`[data-action="office-desk"][data-id="${i}"]`); if (!button) continue;
       this.projected.set(d.seat[0], .35, d.seat[1] + .5).project(this.camera);
