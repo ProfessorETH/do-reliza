@@ -1,8 +1,8 @@
 {
   "name": "before-release",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Browser career game: hire a team and ship its first game",
-  "scripts": { "test": "node --test tests/engine.test.js", "check": "node --check app.js && node --check engine.js && node --check data.js" }
+  "scripts": { "test": "node --test tests/engine.test.js", "check": "node --check app.js && node --check engine.js && node --check data.js && node --check office.js" }
 }

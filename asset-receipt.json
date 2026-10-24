@@ -15,5 +15,14 @@
       "source": "C:/Users/popka/.codex/generated_images/01a167d5-dfff-7601-88e8-f5cfedc7fa2b/exec-2fd4c831-7881-4e3e-9f27-59f4fa89468c.png",
       "prompt": "Use case: stylized-concept. Create a single precise game portrait sprite atlas: SIX equal-sized square portrait cells in exactly THREE columns and TWO rows, edge-to-edge grid, no margins, no gutters, no text, no frames. Landscape 3:2 canvas. Every character is framed identically from shoulders up in their own cell, face entirely within the central 70 percent of the cell. All are original young-adult digital teammates for an indie IT-office management browser game. Art direction: sophisticated stylized 3D animated-film characters, tactile hair and clothing, expressive intelligent faces, warm amber lighting from left, dark petrol-blue seamless plain background in EVERY cell. Cohesive rendering quality, charming and human, not photoreal, not anime, not robots. Strongly differentiated silhouettes and accent colors. Top-left: female designer MIRA, copper-orange wavy hair tied in loose bun, sage-green crewneck, confident friendly face. Top-middle: male rapid prototyper PIXEL, dark curly hair, round orange headphones around neck, orange hoodie, playful smile. Top-right: male developer NORD, neat dark hair, thin rectangular glasses, teal overshirt, calm thoughtful face. Bottom-left: female developer ISKRA, short deep brown hair with one small coral streak, black hoodie, energetic confident smile. Bottom-middle: female QA specialist SAGA, shoulder-length ash-blonde bob, navy hoodie, observant kindly expression. Bottom-right: male QA generalist ECHO, tan skin, dark wavy hair, round glasses, cream sweatshirt, warm communicative smile. Perfectly consistent 3x2 layout. Each head centered in its own square, no overlap between cells, no hands, no extra people, no lettering. Output is ONE atlas artwork intended for CSS sprite portraits."
     }
-  ]
+  ],
+  "officeIteration": {
+    "date": "2026-10-24",
+    "files": [
+      "office.js",
+      "office.css"
+    ],
+    "method": "Original inline SVG room and characters, CSS animation, authored in code by Codex. Existing portrait atlas reused in roster. No new image or video generation, external assets, GPU renders or dependencies.",
+    "implementation": "2D isometric illustration; not a Blender or GLB scene."
+  }
 }
