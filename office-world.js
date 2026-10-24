@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js?v=seated-breaks-20261024-v2';
-import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=seated-breaks-20261024-v2';
-import { agentById, activeTasks } from './engine.js?v=seated-breaks-20261024-v2';
+import { OfficeActor } from './office-actors.js?v=shift-ux-20261024-v2';
+import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
+import { agentById, activeTasks } from './engine.js?v=shift-ux-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
 import { mountOfficeUpgrades } from './assets/office-upgrades.js?v=office-life-1';
