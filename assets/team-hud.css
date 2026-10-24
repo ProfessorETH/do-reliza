@@ -1,0 +1,169 @@
+/* Team HUD: portraits carry the live crew state, the office carries the scene. */
+.game-shell.team-hud-layout {
+  --hud-ink:#191f28; --hud-panel:#242b35; --hud-edge:#d2dfdc1d;
+  --hud-paper:#eee5d2; --hud-muted:#a6b4b7; --hud-accent:#e1bc89;
+  display:grid; grid-template-rows:60px 62px 36px minmax(0,1fr); height:100dvh; min-height:0;
+  overflow:hidden; font-size:15px; color:#ebece3; background:var(--hud-ink);
+}
+.team-hud-layout .game-topbar { min-height:0; height:auto; padding:0 22px; flex-wrap:nowrap; background:#1b222c; border-color:var(--hud-edge); gap:20px; }
+.team-hud-layout .game-topbar .brand { font-size:24px; }.team-hud-layout .brand small { font-size:8px; letter-spacing:2px; margin-top:5px; }
+.team-hud-layout .game-topbar .project-title { flex:1; justify-content:center; font-size:15px; letter-spacing:.6px; gap:10px; }
+.team-hud-layout .project-title .tiny,.team-hud-layout .project-title .badge { font-size:10px; }
+.team-hud-layout .hud-stats { gap:8px; margin:0; }.team-hud-layout .hud-stat { padding:0 12px; }.team-hud-layout .hud-stat small { font-size:11px; }.team-hud-layout .hud-stat strong { font-size:19px; }
+.team-hud-layout .hud-stats .icon-btn { width:38px; height:38px; min-width:38px; }.team-hud-layout .sound-toggle>span { display:none; }
+.team-hud-layout .shift-banner { position:static; min-height:0; padding:8px 22px; gap:20px; grid-template-columns:1fr 1fr 1fr auto; background:#232b34; border-color:var(--hud-edge); }
+.team-hud-layout .shift-banner span { font-size:11px; line-height:1.4; color:#9eafb3; }.team-hud-layout .shift-banner strong { font-size:20px; line-height:1.3; color:#eddfc6; }
+.team-hud-layout .shift-auto { gap:10px; max-width:260px; }.team-hud-layout .shift-auto .secondary { min-height:38px; min-width:90px; font-size:14px; padding:7px 12px; }.team-hud-layout .shift-auto>span { font-size:11px; max-width:150px; }
+.team-hud-layout .shift-banner>div { grid-column:auto; grid-row:auto; }
+.team-hud-layout .game-footer { min-height:0; padding:0 22px; height:auto; background:transparent; }
+.team-hud-layout .timeline-step { font-size:12px; gap:7px; }.team-hud-layout .timeline-step>span { width:20px; height:20px; font-size:11px; }.team-hud-layout .save-status { font-size:10px; }
+.game-shell.team-hud-layout .game-layout,.game-shell.team-hud-layout.event-state .game-layout { display:grid; grid-template-columns:154px minmax(0,1fr) clamp(350px,28vw,440px); gap:14px; padding:0 16px 16px; min-height:0; }
+.team-hud-layout .workspace-tabs { display:none; }
+
+/* Round portraits and authored, state-driven thoughts. */
+.team-hud { display:flex; flex-direction:column; min-height:0; padding:10px 0 0; color:#dce7e1; overflow-y:auto; scrollbar-width:none; }
+.team-hud-heading { display:flex; align-items:center; justify-content:space-between; padding:0 12px 10px; font-size:11px; text-transform:uppercase; letter-spacing:1.4px; color:#a4b3b5; }
+.team-hud-heading b { font-size:15px; color:#dbe6dc; letter-spacing:0; }.team-hud-heading b span { font-size:11px; color:#7d9199; }
+.team-hud-members { display:grid; gap:7px; }
+.team-hud-person { --mood:#b6d6a1; width:100%; position:relative; display:flex; flex-direction:column; align-items:center; padding:9px 6px; gap:3px; border:1px solid transparent; background:transparent; border-radius:14px; color:inherit; text-align:center; }
+.team-hud-person:hover { background:#ffffff06; }.team-hud-person.is-current { background:#2e3941; border-color:#bad4c62b; }
+.team-hud-person[data-tone=low],.team-hud-person[data-tone=urgent] { --mood:#e2a084; }.team-hud-person[data-tone=bright] { --mood:#d2eaa2; }
+.team-portrait-ring { position:relative; display:block; width:68px; height:68px; padding:3px; border-radius:50%; background:conic-gradient(var(--mood) var(--morale),#47535b 0); box-shadow:0 5px 16px #080d1540; margin-bottom:4px; }
+.team-portrait { display:block; width:100%; height:100%; border:3px solid #253039; border-radius:50%; background-image:url('./agents.webp'); background-size:300% 200%; background-position:var(--px) var(--py); }
+.team-mood-face { position:absolute; right:-3px; bottom:0; width:23px; height:23px; padding:2px; border-radius:50%; background:#29363a; color:var(--mood); }
+.team-mood-face svg { display:block; width:100%; height:100%; }.team-hud-person>b { font-size:15px; line-height:1.15; font-weight:650; }
+.team-mood-label { color:var(--mood); font-size:12px; line-height:1.25; max-width:100%; }.team-activity { color:#a2b3bb; font-size:11px; line-height:1.3; max-width:100%; min-height:14px; }
+.team-hud-vacant { display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 0; color:#71818c; }.team-hud-vacant>span { display:grid; place-items:center; border:1px dashed #7d919955; border-radius:50%; width:56px; height:56px; font-size:23px; }.team-hud-vacant small { font-size:11px; }
+.team-thought { position:relative; margin-top:12px; padding:12px; border-radius:12px; background:#dce4d8; color:#303e3e; box-shadow:0 7px 20px #080d1522; }
+.team-thought::before { content:''; position:absolute; top:-6px; left:24px; width:13px; height:13px; background:inherit; transform:rotate(45deg); }
+.team-thought-who { display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:11px; font-weight:700; color:#5a6d62; }
+.team-thought p { margin:6px 0 11px; font-size:13px; line-height:1.5; color:#34413e; }
+.team-vitals { display:grid; gap:7px; margin-bottom:9px; }.team-vitals>span { display:grid; grid-template-columns:1fr auto; gap:4px; font-size:9px; color:#667467; }.team-vitals b { color:#3f5949; font-size:10px; font-weight:700; }
+.team-vitals i { grid-column:1/-1; display:block; height:3px; border-radius:2px; background:linear-gradient(90deg,#839b74 var(--value),#b9c7b4 0); }
+.team-care { min-height:32px; padding:0; font-size:10px; font-weight:650; line-height:1.4; text-align:left; color:#4c644c; background:none; justify-content:flex-start; }
+.team-thought-close { display:none; }.team-hud-invite { font-size:12px; line-height:1.5; color:#81979e; padding:12px; margin-top:auto; }
+
+/* Clear scene: only camera, desk choices and the next useful action. */
+.game-shell.team-hud-layout .game-layout .playable-office { display:flex; flex-direction:column; height:100%; min-height:0; padding:16px; overflow:hidden; border:1px solid var(--hud-edge); border-radius:18px; background:radial-gradient(ellipse at 50% 42%,#394751,#2b3540 62%,#252e39); }
+.team-hud-layout .office-heading { flex-wrap:nowrap; flex:none; align-items:center; gap:12px; padding:0 0 6px; }
+.team-hud-layout .office-heading .eyebrow { color:#9faeae; font-size:9px; letter-spacing:1.3px; }.team-hud-layout .office-heading h2 { font-size:23px; line-height:1.2; margin-top:6px; color:#f0e4cd; }
+.team-hud-layout .office-header-actions { gap:6px; }.team-hud-layout .office-brief { font-size:11px; min-height:36px; padding:6px 10px; }.team-hud-layout .office-expand { font-size:20px; }
+.game-shell.team-hud-layout .playable-office .office-room { flex:1 1 0; height:auto; min-height:140px; max-height:none; width:100%; margin:0; aspect-ratio:auto; }
+.team-hud-layout .office-room.is-3d #office-webgl { inset:0 0 56px; }
+.team-hud-layout .office-room.is-3d .desk-interactions { inset:auto 0 0; height:46px; gap:7px; }
+.team-hud-layout .office-room.is-3d .office-desk { height:46px; min-height:44px; }
+.team-hud-layout .office-room.is-3d .desk-tag { padding:6px 8px; background:#202a34d9; border:1px solid #bacabe30; border-radius:9px; }
+.team-hud-layout .office-room.is-3d .desk-tag b { font-size:13px; color:#e3dece; }.team-hud-layout .office-room.is-3d .desk-tag small { font-size:10px; line-height:1.2; color:#9eafb3; }
+.team-hud-layout .office-camera-controls { top:5px; right:0; padding:3px; gap:2px; background:#202935bd; border-color:var(--hud-edge); border-radius:10px; }
+.team-hud-layout .office-camera-controls button { width:32px; height:34px; min-height:34px; font-size:18px; }
+.team-hud-layout .office-render-status { position:absolute; top:48px; left:7px; max-width:100%; padding:0; background:none; color:#9babb2; font-size:10px; line-height:1.4; }
+.team-hud-layout .office-room.is-3d .office-render-status { display:none; }
+.team-hud-layout .office-movement { display:none; }
+.team-hud-layout .office-guidance { flex:none; min-height:42px; margin:10px 0 0; padding:8px 10px; gap:10px; border-radius:9px; border-color:#d1bb8b30; background:#222c36ba; align-items:center; }
+.team-hud-layout .office-guidance p { font-size:12px; line-height:1.4; }.team-hud-layout .office-guidance .text-button { font-size:11px; min-height:28px; }.team-hud-layout .office-step { font-size:15px; min-width:26px; }
+.team-hud-layout .office-arrivals { padding-top:5px; gap:6px; }.team-hud-layout .office-arrivals:empty { display:none; }.team-hud-layout .arrival { min-height:32px; padding:5px 8px; font-size:12px; }.team-hud-layout .office-walk-button { font-size:11px; min-height:30px; }
+.team-hud-layout .playable-office :is(.office-roster,.graphics-settings) { display:none; }
+.studio-wallet-row { flex:none; display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:10px; color:#849ba6; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
+.studio-wallet-row button { background:transparent; color:#b1c3bb; min-height:32px; padding:5px 7px; font-size:11px; border-radius:6px; }.studio-wallet-row button:hover { background:#ffffff08; }.studio-wallet-row b { color:#e0d3b7; font-weight:600; }
+
+/* A readable task panel, not a second roster. */
+.game-shell.team-hud-layout .control-panel { display:flex; flex-direction:column; height:100%; min-height:0; overflow:auto; padding:22px; scroll-padding:16px; border:1px solid var(--hud-edge); border-radius:18px; background:#252b34; }
+.team-hud-layout :is(.primary,.secondary) { min-height:44px; font-size:14px; padding:10px 14px; border-radius:9px; }
+.team-hud-layout .primary { background:#e5c28e; border-color:#f4dab4; color:#383329; }.team-hud-layout .primary:not(:disabled):hover { background:#f3d6aa; }
+.team-hud-layout .primary:disabled { background:#414a50; color:#a1afb0; border-color:#6574794d; }
+.team-hud-layout .text-button { min-height:34px; font-size:13px; }.team-hud-layout .panel-header { margin:0 0 18px; padding-right:28px; }
+.team-hud-layout .panel-header .eyebrow { font-size:10px; margin-bottom:8px; color:#b5b9a4; }.team-hud-layout .panel-header h1 { font-size:26px; line-height:1.1; margin:0 0 8px; }
+.team-hud-layout .panel-header>p { font-size:14px; line-height:1.5; margin:0; color:#a6b7bd; }
+.team-ready { position:relative; flex:none; padding:22px 18px; margin:0 0 18px; background:#333f43; border:1px solid #bdd4b830; border-radius:13px; }
+.ready-symbol { display:grid; place-items:center; width:48px; height:48px; margin-bottom:15px; color:#d7e4b8; background:#a8c1a215; border-radius:12px; }
+.team-ready h2 { font-size:20px; line-height:1.25; margin:0 0 10px; }.team-ready p { font-size:14px; line-height:1.6; color:#bccac7; }.team-ready ol { margin:18px 0 0; padding-left:22px; font-size:13px; line-height:1.6; color:#c6d1c9; }.team-ready li { padding:3px 0; }
+.crew-manage { flex:none; margin:0 0 10px; }.crew-manage>summary { cursor:pointer; list-style:none; padding:11px 0; color:#c6bca6; font-size:13px; }.crew-manage>summary::after { content:'＋'; float:right; }.crew-manage[open]>summary::after { content:'−'; }.crew-manage[open] { padding-bottom:10px; }
+.crew-seating { flex:none; display:flex; justify-content:flex-start; gap:9px; width:100%; min-height:44px; padding:9px 12px; background:#1e2630; color:#aebfc3; border:1px solid var(--hud-edge); border-radius:9px; font-size:13px; }.crew-seating b { margin-left:auto; color:#cad8c5; font-size:12px; }.crew-seating:hover { border-color:#d4c7a369; }
+.team-hud-layout .panel-bottom { flex:none; margin-top:auto; padding:18px 0 0; border:0; }.team-hud-layout .panel-bottom>span { font-size:12px; margin:0 0 12px; line-height:1.5; color:#a0b0b5; }
+.team-hud-layout .coverage { gap:16px; margin:0 0 8px; }.team-hud-layout .coverage span { font-size:12px; }.team-hud-layout .coverage span.covered { color:#b7cda8; }
+.team-hud-layout .candidate-grid { gap:8px; margin:0 0 14px; }.team-hud-layout .candidate { padding:8px 3px; display:flex; align-items:center; flex-direction:column; gap:4px; background:#202832; border-color:var(--hud-edge); border-radius:10px; }
+.team-hud-layout .candidate-art { position:relative; width:50px; height:50px; border-radius:50%; overflow:visible; background:none; }
+.team-hud-layout .candidate .candidate-portrait { position:static; display:block; width:50px; height:50px; border-radius:50%; transform:none; }.team-hud-layout .candidate-caption { padding:0; display:block; text-align:center; background:transparent; }
+.team-hud-layout .candidate b { font-size:13px; }.team-hud-layout .candidate-price { font-size:10px; color:#9dadb2; display:block; margin-top:3px; }.team-hud-layout .candidate.selected { border-color:#d7bf8a; background:#454840; }.team-hud-layout .candidate small { display:none; }.team-hud-layout .hired-check { width:17px; height:17px; top:auto; bottom:0; right:-4px; }
+.team-hud-layout .agent-detail.agent-dossier { padding:12px 14px 0; background:#e4e2d1; border-color:#cfd5bf; border-radius:11px; }
+.team-hud-layout .dossier-header { padding-bottom:10px; gap:10px; flex-wrap:nowrap; }.team-hud-layout .dossier-portrait { width:40px; height:40px; }.team-hud-layout .dossier-identity { min-width:0; }.team-hud-layout .dossier-role { font-size:10px; }.team-hud-layout .dossier-identity h2 { font-size:24px; }.team-hud-layout .profile-more { min-height:32px; font-size:10px; padding:0 6px; }
+.team-hud-layout .dossier-skills { padding:12px 0 8px; }.team-hud-layout .skill-list { grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }.team-hud-layout .skill-list>div { display:flex; flex-direction:column; align-items:stretch; gap:4px; }
+.team-hud-layout .skill-list dt { text-align:center; font-size:10px; }.team-hud-layout .skill-list dd { flex-direction:column; gap:5px; }.team-hud-layout .skill-list b { width:auto; text-align:center; font-size:15px; }.team-hud-layout .skill-track { width:100%; flex:none; height:4px; }
+.team-hud-layout .dossier-note { padding:4px 0; }.team-hud-layout .dossier-note h3 { font-size:12px; }.team-hud-layout .agent-dossier .agent-caution { font-size:11px; margin:5px 0 10px; padding:0; line-height:1.4; }
+.team-hud-layout .dossier-offer { margin:0 -14px; padding:10px 14px; gap:10px; flex-wrap:nowrap; }.team-hud-layout .dossier-offer>strong { font-size:20px; }.team-hud-layout .dossier-offer small { font-size:9px; }.team-hud-layout .dossier-offer button { min-height:40px; font-size:12px; padding:7px 9px; }
+.team-hud-layout .dependency-map { flex:none; padding:10px; font-size:10px; border-color:var(--hud-edge); background:#1f2731; }.team-hud-layout .plan-toolbar { flex:none; padding:7px 0; gap:7px; }.team-hud-layout .plan-toolbar>span { font-size:11px; }.team-hud-layout .task-plan { flex:none; }
+.team-hud-layout .plan-task { padding:12px 0; grid-template-columns:26px 1fr; gap:9px; }.team-hud-layout .task-number { width:25px; height:25px; font-size:11px; }.team-hud-layout .task-body { display:block; }.team-hud-layout .task-body h2 { font-size:14px; margin:0 0 7px; }.team-hud-layout .task-body>p { display:none; }
+.team-hud-layout .task-select-row { gap:6px; }.team-hud-layout .task-select-row select { min-height:40px; font-size:12px; padding:7px 8px; background:#1c2530; }.team-hud-layout .fit { font-size:11px; }.team-hud-layout .warning-note { font-size:12px; padding:10px; }
+.team-hud-layout .work-controls { flex:none; }.team-hud-layout .work-controls button { min-height:44px; font-size:15px; }.team-hud-layout .time-strip { flex:none; font-size:12px; margin:10px 0; gap:10px; }
+.team-hud-layout .work-tasks { flex:none; gap:8px; }.team-hud-layout .work-task { min-height:0; padding:12px; margin:0; border-radius:10px; background:#202832; }.team-hud-layout .work-task.active { background:#3b443e; border-color:#bfd4a85c; }.team-hud-layout .work-task.done { background:#2c3935; }
+.team-hud-layout .work-task h2 { font-size:14px; margin:0; }.team-hud-layout .work-task>div>span { font-size:11px; line-height:1.4; margin:0; }.team-hud-layout .work-task>div:nth-child(2) { display:grid; gap:4px; }.team-hud-layout .work-task-icon { width:28px; height:28px; }.team-hud-layout .work-task>strong { font-size:13px; }.team-hud-layout .work-task .meter { margin:0; height:4px; }
+.team-hud-layout .activity-log { padding:14px 0; margin:0; }.team-hud-layout .activity-log .eyebrow { font-size:10px; margin:0; }.team-hud-layout .activity-log p { font-size:12px; line-height:1.45; }.team-hud-layout .activity-log .text-button { float:right; margin:-20px 0 0; font-size:11px; min-height:24px; }
+.team-hud-layout .support-card { margin-top:auto; padding:12px; border-color:#a7b99140; background:#354337; }.team-hud-layout .support-card .eyebrow { font-size:9px; }.team-hud-layout .support-card h2 { font-size:15px; margin:6px 0 10px; }.team-hud-layout .support-card p { display:none; }.team-hud-layout .support-card .secondary { min-height:40px; font-size:13px; }.team-hud-layout .support-done { font-size:12px; }
+.team-hud-layout .event-heading { gap:8px; margin:0 0 8px; }.team-hud-layout .control-panel .event-heading>span { font-size:10px; }.team-hud-layout .event-context { font-size:11px; min-height:30px; }
+.team-hud-layout .speaker { padding:10px 0; margin:0; gap:10px; }.team-hud-layout .speaker .portrait { width:44px; height:44px; }.team-hud-layout .speaker b { font-size:15px; }.team-hud-layout .speaker small { font-size:12px; }
+.team-hud-layout .event-copy h1 { font-size:25px; }.team-hud-layout .event-copy>p { font-size:14px; line-height:1.55; }.team-hud-layout .event-options { gap:10px; }.team-hud-layout .event-option { min-height:0; padding:14px 12px; gap:10px; align-items:center; background:#2c353e; border-color:#aebbb04d; }
+.team-hud-layout .event-option b { font-size:15px; line-height:1.35; }.team-hud-layout .event-option small { font-size:12px; line-height:1.4; margin-top:7px; }.team-hud-layout .option-description { font-size:12px; line-height:1.5; margin-top:5px; }.team-hud-layout .option-number { font-size:11px; }
+.team-hud-layout .lesson-note { margin-top:12px; padding-top:0; font-size:12px; line-height:1.5; }.team-hud-layout .lesson-note p { font-size:12px; }.team-hud-layout .code-review { padding:10px 12px; }.team-hud-layout .code-review :is(span,ol,p) { font-size:12px; }.team-hud-layout .code-review p { display:none; }.team-hud-layout .code-review ol { margin:5px 0 0; line-height:1.4; }
+.team-hud-layout .result-score { padding:0; margin:0 0 16px; gap:12px; }.team-hud-layout .score-orbit { width:45px; height:45px; }.team-hud-layout .result-score strong { font-size:42px; }.team-hud-layout .result-score strong small { font-size:18px; }.team-hud-layout .result-score>div>span { font-size:11px; }.team-hud-layout .result-score .badge { font-size:9px; }
+.team-hud-layout .result-metrics { padding:12px; gap:12px; margin:0; }.team-hud-layout .result-metrics small { font-size:11px; }.team-hud-layout .result-metrics b { font-size:22px; }.team-hud-layout .game-preview { min-height:95px; padding:12px; }.team-hud-layout .game-preview>span>b { font-size:27px; }.team-hud-layout .game-preview>span>span { font-size:12px; }.team-hud-layout .game-preview small { font-size:9px; }.team-hud-layout .release-features { gap:9px; font-size:11px; }
+.team-hud-layout .career-result { padding:0; }.team-hud-layout .career-result :is(.eyebrow,h2,.lead-recap) { display:none!important; }.team-hud-layout .life-result { margin:10px 0; padding:12px; gap:8px; }.team-hud-layout .life-result h2 { display:none; }.team-hud-layout .life-result>p { font-size:12px; line-height:1.45; }.team-hud-layout .life-result button { min-height:40px; font-size:12px; }
+.team-hud-layout .life-notice { font-size:12px; padding:8px; }
+.menu-graphics { margin:14px 0; }.menu-graphics summary { cursor:pointer; padding:10px 0; font-size:16px; }
+
+/* Compact screens keep the crew visible while switching the two workspaces. */
+@media(max-width:1100px) {
+  .game-shell.team-hud-layout { grid-template-rows:54px 58px 30px 40px minmax(0,1fr); height:100dvh; min-height:0; overflow:hidden; }
+  .team-hud-layout .game-topbar { padding:0 12px; gap:10px; }.team-hud-layout .game-topbar .brand { font-size:19px; }.team-hud-layout .brand small { font-size:7px; }.team-hud-layout .game-topbar .project-title { display:none; }.team-hud-layout .hud-stats { margin-left:auto; }.team-hud-layout .hud-stat small { font-size:10px; }.team-hud-layout .hud-stat strong { font-size:16px; }.team-hud-layout .hud-stat { padding:0 6px; }
+  .team-hud-layout .shift-banner { padding:7px 12px; gap:8px; grid-template-columns:1fr 1fr 1fr auto; }.team-hud-layout .shift-banner span { font-size:9px; }.team-hud-layout .shift-banner strong { font-size:15px; }.team-hud-layout .shift-auto { display:block; }.team-hud-layout .shift-auto .secondary { min-width:38px; width:38px; height:38px; min-height:38px; padding:5px; font-size:0; }.team-hud-layout .shift-auto>span { display:none; }
+  .team-hud-layout .game-footer { padding:0 12px; }.team-hud-layout .timeline-step { font-size:10px; }.team-hud-layout .timeline-step>span { width:18px; height:18px; font-size:10px; }.team-hud-layout .save-status { display:none; }
+  .team-hud-layout .workspace-tabs { display:grid; grid-template-columns:1fr 1fr; position:static; padding:0 10px 6px; gap:6px; }.team-hud-layout .workspace-tabs button { min-height:34px; font-size:12px; }.team-hud-layout .workspace-tabs button>span { font-size:10px; }
+  .game-shell.team-hud-layout .game-layout,.game-shell.team-hud-layout.event-state .game-layout { display:grid; grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); gap:8px; min-height:0; padding:0 8px 8px; }
+  .team-hud { position:relative; padding:0; min-height:0; overflow:visible; }.team-hud-heading { display:none; }.team-hud-members { grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }.team-hud-person { display:grid; grid-template-columns:46px minmax(0,1fr); grid-template-rows:repeat(3,auto); gap:2px 7px; padding:8px; text-align:left; border-radius:10px; }
+  .team-portrait-ring { grid-column:1; grid-row:1/4; width:44px; height:44px; margin:0; padding:2px; }.team-portrait { border-width:2px; }.team-mood-face { width:18px; height:18px; right:-3px; }.team-hud-person>b { font-size:13px; }.team-mood-label { font-size:10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }.team-activity { font-size:10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; min-height:12px; }
+  .team-thought { display:none; }.team-hud[data-open=true] .team-thought { display:block; position:absolute; top:calc(100% + 7px); left:0; width:260px; z-index:15; margin:0; padding:14px; box-shadow:0 10px 35px #05091299; }.team-thought::before { left:26px; }.team-thought p { font-size:13px; }.team-care { min-height:38px; font-size:12px; }.team-thought-close { display:block; margin-left:auto; min-width:28px; min-height:28px; padding:0; border-radius:50%; color:#536459; background:#53645915; font-size:20px; }
+  .team-hud-vacant { flex-direction:row; justify-content:center; padding:8px 4px; }.team-hud-vacant>span { width:38px; height:38px; font-size:18px; }.team-hud-vacant small { font-size:10px; }.team-hud-invite { display:none; }
+  .game-shell.team-hud-layout .control-panel { height:100%; min-height:0; padding:16px; overflow:auto; border-radius:12px; }.team-hud-layout .panel-header { margin-bottom:14px; }.team-hud-layout .panel-header h1 { font-size:24px; }.team-hud-layout .panel-header>p { font-size:13px; }.team-hud-layout .panel-bottom { padding-top:12px; }
+  .game-shell.team-hud-layout .game-layout .playable-office { height:100%; min-height:0; padding:12px; overflow:hidden; border-radius:12px; }.game-shell.team-hud-layout .playable-office .office-room { height:auto; min-height:130px; flex:1 1 0; }
+  .team-hud-layout[data-workspace=project] .game-layout .playable-office,.team-hud-layout[data-workspace=office] .control-panel { display:none; }
+  .team-hud-layout .office-heading h2 { font-size:20px; }.team-hud-layout .office-heading .eyebrow { font-size:7px; }.team-hud-layout .office-brief { font-size:10px; padding:5px 8px; min-height:34px; }.team-hud-layout .office-expand { width:32px; min-height:34px; font-size:18px; }
+  .team-hud-layout .office-camera-controls { top:2px; gap:0; }.team-hud-layout .office-camera-controls button { width:30px; height:32px; min-height:32px; }.team-hud-layout .office-render-status { top:42px; font-size:9px; }.team-hud-layout .office-guidance { min-height:40px; padding:7px; }.team-hud-layout .office-guidance p { font-size:11px; }.team-hud-layout .office-room.is-3d .desk-tag b { font-size:11px; }.team-hud-layout .office-room.is-3d .desk-tag small { font-size:9px; }
+  .team-hud-layout .team-ready { padding:16px; margin-bottom:12px; }.team-hud-layout .team-ready h2 { font-size:18px; }.team-hud-layout .team-ready p { font-size:13px; }.team-hud-layout .team-ready ol { margin-top:12px; font-size:12px; }.ready-symbol { width:38px; height:38px; margin-bottom:10px; }
+  .team-hud-layout .team-ready ol { display:none; }
+  .team-hud-layout[data-stage=plan] .panel-header>p { display:none!important; }
+}
+@media(max-width:600px) {
+  .team-hud-layout .hud-stats .icon-btn { width:32px; min-width:32px; height:34px; }.team-hud-layout .game-topbar .brand { font-size:17px; }.team-hud-layout .brand small { font-size:6px; }
+  .team-hud-person { display:flex; gap:2px; padding:5px 3px; text-align:center; }.team-portrait-ring { width:40px; height:40px; margin:0 0 3px; }.team-hud-person>b { font-size:12px; }.team-mood-label,.team-activity { width:100%; font-size:9px; }.team-hud-vacant small { display:none; }
+  .team-hud-layout .candidate-art,.team-hud-layout .candidate .candidate-portrait { width:40px; height:40px; }.team-hud-layout .candidate { padding:6px 2px; }.team-hud-layout .candidate b { font-size:12px; }.team-hud-layout .candidate-price { font-size:9px; }
+  .team-hud-layout .skill-list dt { font-size:9px; }.team-hud-layout .skill-list b { font-size:14px; }.team-hud-layout .dossier-identity h2 { font-size:21px; }.team-hud-layout .dossier-portrait { width:34px; height:34px; }.team-hud-layout .dossier-offer>strong { font-size:18px; }.team-hud-layout .dossier-offer button { font-size:11px; }
+  .team-hud-layout .task-body { display:grid; grid-template-columns:minmax(0,1fr) minmax(135px,55%); align-items:center; gap:6px; }.team-hud-layout .task-body h2 { margin:0; font-size:12px; }.team-hud-layout .task-select-row select { font-size:11px; }.team-hud-layout .plan-task { padding:9px 0; }
+  .team-hud-layout .support-card h2 { font-size:13px; }.team-hud-layout .event-copy h1 { font-size:22px; }.team-hud-layout .event-copy>p { font-size:13px; }.team-hud-layout .event-option b { font-size:13px; }.team-hud-layout .event-option small { font-size:11px; }.team-hud-layout .lesson-note { font-size:11px; }
+}
+@media(max-height:800px) and (min-width:1101px) {
+  .game-shell.team-hud-layout { grid-template-rows:52px 54px 30px minmax(0,1fr); }.team-hud-layout .game-layout { padding-bottom:12px; }.team-hud-layout .game-topbar .brand { font-size:21px; }.team-hud-layout .shift-banner strong { font-size:17px; }
+  .team-hud-person { padding:5px 4px; }.team-portrait-ring { width:52px; height:52px; }.team-hud-members { gap:3px; }.team-hud-person>b { font-size:14px; }.team-mood-label { font-size:11px; }.team-activity { font-size:10px; }.team-thought { margin-top:9px; padding:10px; }.team-thought p { font-size:11px; margin-bottom:8px; }.team-vitals { gap:5px; }.team-care { font-size:10px; min-height:28px; }
+  .game-shell.team-hud-layout .control-panel { padding:16px; }.team-hud-layout .panel-header { margin-bottom:12px; }.team-hud-layout .panel-header h1 { font-size:24px; }.team-hud-layout .team-ready { padding:15px; margin-bottom:12px; }.team-hud-layout .team-ready h2 { font-size:18px; }.team-hud-layout .team-ready p { font-size:13px; }.team-hud-layout .team-ready ol { margin-top:12px; }.team-hud-layout .plan-task { padding:8px 0; }.team-hud-layout .work-task { padding:9px; }.team-hud-layout .work-tasks { gap:6px; }
+}
+body:has(.team-hud-layout) #info-dialog { width:min(660px,calc(100vw - 24px)); max-width:660px; padding:28px; font-size:16px; line-height:1.5; }
+body:has(.team-hud-layout) #info-dialog h2 { font-size:27px; line-height:1.2; }
+body:has(.team-hud-layout) #info-dialog :is(p,li,small,.small-muted) { font-size:15px; line-height:1.6; }
+body:has(.team-hud-layout) #info-dialog :is(button,select) { min-height:44px; font-size:14px; }
+body:has(.team-hud-layout) #info-dialog .life-stats dt { font-size:13px; }body:has(.team-hud-layout) #info-dialog .life-stats dd { font-size:24px; }
+body:has(.team-hud-layout) #info-dialog .seating-panel { margin:0; padding:0; border:0; background:none; }body:has(.team-hud-layout) #info-dialog .seating-panel h2 { display:none; }
+body:has(.team-hud-layout) #info-dialog .seating-card b { font-size:15px; }body:has(.team-hud-layout) #info-dialog .seating-card>span { font-size:12px; }body:has(.team-hud-layout) #info-dialog .seating-card select { font-size:13px; }
+.game-shell.team-hud-layout[data-expanded=true] .shift-banner { display:none; }
+.game-shell.team-hud-layout[data-expanded=true] .game-layout .playable-office { position:fixed; inset:8px; z-index:30; height:auto; display:flex; }
+.game-shell.team-hud-layout[data-expanded=true] .playable-office :is(.studio-wallet-row,.office-guidance,.office-arrivals) { display:none; }
+/* Nika keeps her invitation, with a dedicated slot instead of covering actions. */
+.team-hud-layout .hud-stat { margin-right:46px; }
+body:has(.team-hud-layout) .nika-guide.nika-collapsed { width:38px; height:38px; right:116px; top:11px; bottom:auto; }
+body:has(.team-hud-layout) .nika-guide.nika-collapsed .nika-toggle { width:38px; height:38px; min-height:38px; border-width:1px; }
+@media(max-width:1100px) {
+  .team-hud-layout .hud-stat { margin-right:0; }.team-hud-layout .workspace-tabs { padding-right:54px; }
+  body:has(.team-hud-layout) .nika-guide.nika-collapsed { width:32px; height:32px; top:145px; right:12px; }
+  body:has(.team-hud-layout) .nika-guide.nika-collapsed .nika-toggle { width:32px; height:32px; min-height:32px; }
+}
+@media(max-height:800px) and (min-width:1101px) {
+  body:has(.team-hud-layout) .nika-guide.nika-collapsed { top:7px; }
+}
+@media(prefers-reduced-motion:reduce) { .team-hud * { transition:none; animation:none; } }

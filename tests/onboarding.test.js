@@ -50,7 +50,7 @@ test('Nika explains employee care, personal breaks, random incidents and repeat 
   beginPlan(game); recommend(game); beginWork(game);
   game.life.members.mira.energy = 20;
   assert.equal(guideFor(game).id,'care');
-  assert.equal(guideFor(game).target,'[data-action="life-member"][data-id="mira"]');
+  assert.equal(guideFor(game).target,'[data-action="team-focus"][data-id="mira"]');
   game.life.members.mira.breaks = 1;
   assert.equal(guideFor(game).id,'time');
   game.time = 2; game.team.forEach(id=>game.life.members[id].breaks=1);
