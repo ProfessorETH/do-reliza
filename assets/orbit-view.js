@@ -1,46 +1,49 @@
-import { rocks, batteriesFor, orbitFeatures, outsideOrbit } from './orbit.js';
+import { missionFor, patrolAt, missionReady, raceMedal } from './orbit-missions.js';
+import { orbitFeatures, outsideOrbit } from './orbit.js';
 
 export function renderOrbit(game, flight, { icon, design, message = '', effect = {}, stored = false }) {
   const { decorated, edgeGuard, saveMode } = orbitFeatures(game, design);
-  const batteries = batteriesFor(game), ready = flight.collected.length === 3;
+  const mission=missionFor(game), batteries=mission.batteries, ready=missionReady(mission,flight);
+  const patrol=patrolAt(mission,flight.turns), nextPatrol=patrolAt(mission,flight.turns+1), current=flight.x+','+flight.y;
   const shieldText = flight.shield ? 'Щит активен · 1 / 1' : game.shield ? 'Щит израсходован · 0 / 1' : 'Без щита · отложен командой';
   const shieldReason = game.choices.scope === 'swap' ? 'Команда заменила часть оформления на защиту.'
     : game.shield ? 'Команда добавила защиту за 2 000 ₽.' : 'Команда сохранила основной объём релиза.';
   const saveTitle = saveMode === 'removed' ? 'Одна сессия · без сохранения'
     : saveMode === 'broken' ? 'Ошибка записи · прогресс не сохранён'
-      : stored ? `Сохранено · ${flight.collected.length} / 3 батареи` : 'Браузер не смог записать прогресс';
-  const saveDetail = saveMode === 'working' && stored ? `Клетка ${flight.x + 1}:${flight.y + 1} · щит ${flight.shield ? '1' : '0'}. Можно закрыть игру и продолжить.`
+      : stored ? `Сохранено · ${flight.collected.length} / ${batteries.length} батареи` : 'Браузер не смог записать прогресс';
+  const saveDetail = saveMode === 'working' && stored ? `Клетка ${flight.x + 1}:${flight.y + 1} · щит ${flight.shield ? '1' : '0'}. Цели и положение патруля тоже сохранены.`
     : saveMode === 'removed' ? 'Команда убрала сохранение. Закончите маршрут до закрытия игры.'
-      : saveMode === 'broken' ? 'Команда выпустила известный баг. Перезапуск вернёт корабль на старт и уберёт собранные батареи.'
+      : saveMode === 'broken' ? 'Команда выпустила известный баг. Перезапуск вернёт корабль на старт и сбросит все цели миссии.'
         : 'Сохранение исправлено командой, но недоступно в этом браузере. Не закрывайте полёт.';
-  const contract = { festival: 'Фестиваль', club: 'Исследователи', cup: 'Кубок пилотов' }[game.life?.contract] || 'Фестиваль';
+  const contract=mission.name;
   const tile = i => {
-    const x = i % 7, y = Math.floor(i / 7), key = `${x},${y}`;
-    const ship = flight.x === x && flight.y === y, rock = rocks.has(key), end = x === 6 && y === 4;
+    const x = i % mission.width, y = Math.floor(i / mission.width), key = `${x},${y}`;
+    const ship = flight.x === x && flight.y === y, rock = mission.rocks.includes(key), end = key===mission.finish;
+    const barrier=mission.barriers.includes(key), scan=mission.scans.includes(key), scanned=flight.scanned.includes(key), relay=mission.relay===key, gate=mission.gates.indexOf(key);
     const batteryIndex = batteries.indexOf(key), bat = batteryIndex !== -1 && !flight.collected.includes(key);
-    const hit = effect.cell === key && ['blocked','phase','shield-hit','edge'].includes(effect.kind);
+    const hit = effect.cell === key && ['blocked','phase','shield-hit','edge','barrier','patrol-hit'].includes(effect.kind);
     const label = ship ? `${flight.shield ? 'Корабль под щитом' : 'Корабль'}${rock ? ', внутри астероида' : ''}`
-      : rock ? 'Астероид' : end ? (ready ? 'Станция готова принять энергию' : 'Станция ждёт три батареи') : bat ? `Батарея ${batteryIndex+1}` : 'Космос';
+      : key===patrol?'Патруль':barrier&&!flight.relay?'Ионный барьер':relay?'Ретранслятор':scan?(scanned?'Изученная аномалия':'Аномалия: нужно сканировать'):gate>=0?'Ворота '+(gate+1):rock ? 'Астероид' : end ? (ready ? 'Станция готова принять груз' : 'Станция ждёт выполнения всех целей') : bat ? `Батарея ${batteryIndex+1}` : 'Космос';
     const classes = ['tile', ship && 'ship', ship && flight.shield && 'shielded', rock && 'rock', end && 'station', bat && 'battery',
-      hit && `impact-${effect.kind}`, ship && rock && game.wallBug && 'collision-bug', end && ready && 'station-ready'].filter(Boolean).join(' ');
+      hit && `impact-${effect.kind}`, ship && rock && game.wallBug && 'collision-bug', end && ready && 'station-ready',barrier&&(flight.relay?'barrier-open':'barrier-closed'),scan&&(scanned?'scan-done':'scan-site'),relay&&'relay-site',gate>=0&&(gate<flight.gates?'gate-done':gate===flight.gates?'gate-active':'gate-locked'),key===patrol&&'patrol-cell',key===nextPatrol&&'patrol-next'].filter(Boolean).join(' ');
     const asteroid = decorated ? '<svg class="orbit-rock" viewBox="0 0 40 40" aria-hidden="true"><path d="m10 3 17 2 10 12-5 16-16 5L3 27 2 13z"/><circle cx="14" cy="14" r="4"/><circle cx="26" cy="25" r="5"/></svg>' : '<span class="orbit-rock" aria-hidden="true">◆</span>';
-    const scenery = rock ? asteroid : bat ? `<span class="orbit-battery" aria-hidden="true">${icon('bolt',23)}</span>${decorated?`<small class="orbit-map-label" aria-hidden="true">${batteryIndex+1}</small>`:''}`
-      : end ? `<span class="orbit-station" aria-hidden="true">${icon('flag',24)}</span>${decorated?`<span class="orbit-dock-lights" aria-hidden="true">${[0,1,2].map(n=>`<i class="${n<flight.collected.length?'lit':''}"></i>`).join('')}</span>`:''}` : '<span class="orbit-star" aria-hidden="true">·</span>';
-    return `<button class="${classes}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${label}, ${x+1}, ${y+1}">${scenery}${ship?`<span class="orbit-ship" aria-hidden="true">${icon('rocket',30)}</span>`:''}${ship&&flight.shield?'<span class="orbit-shield-ring" aria-hidden="true"></span>':''}${ship&&rock&&game.wallBug?'<span class="orbit-bug-mark" aria-hidden="true">!</span>':''}${hit&&effect.kind==='blocked'?'<span class="orbit-block-mark" aria-hidden="true">×</span>':''}</button>`;
+    const scenery = barrier ? `<span class="orbit-special" aria-hidden="true">${flight.relay?'·':'≋'}</span>` : relay ? `<span class="orbit-special" aria-hidden="true">R${flight.relay?'✓':''}</span>` : scan ? `<span class="orbit-special" aria-hidden="true">${scanned?'✓':'◎'}</span>` : gate>=0 ? `<span class="orbit-special" aria-hidden="true">${gate+1}${gate<flight.gates?'✓':''}</span>` : rock ? asteroid : bat ? `<span class="orbit-battery" aria-hidden="true">${icon('bolt',23)}</span>${decorated?`<small class="orbit-map-label" aria-hidden="true">${batteryIndex+1}</small>`:''}`
+      : end ? `<span class="orbit-station" aria-hidden="true">${icon('flag',24)}</span>${decorated?`<span class="orbit-dock-lights" aria-hidden="true">${batteries.map((_,n)=>`<i class="${n<flight.collected.length?'lit':''}"></i>`).join('')}</span>`:''}` : '<span class="orbit-star" aria-hidden="true">·</span>';
+    return `<button class="${classes}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${label}, ${x+1}, ${y+1}${key===nextPatrol?', следующая клетка патруля':''}">${scenery}${key===patrol?'<span class="orbit-patrol" aria-hidden="true">✦</span>':''}${key===nextPatrol?'<span class="orbit-next-mark" aria-hidden="true">↳</span>':''}${ship?`<span class="orbit-ship" aria-hidden="true">${icon('rocket',30)}</span>`:''}${ship&&flight.shield?'<span class="orbit-shield-ring" aria-hidden="true"></span>':''}${ship&&rock&&game.wallBug?'<span class="orbit-bug-mark" aria-hidden="true">!</span>':''}${hit&&effect.kind==='blocked'?'<span class="orbit-block-mark" aria-hidden="true">×</span>':''}</button>`;
   };
-  const direction = (dir, dx, dy, label, arrow) => `<button class="secondary" data-action="move" data-dir="${dir}" aria-label="${label}${edgeGuard&&outsideOrbit(flight.x+dx,flight.y+dy)?' · граница карты':''}" ${flight.won || (edgeGuard&&outsideOrbit(flight.x+dx,flight.y+dy))?'disabled':''}>${arrow}</button>`;
+  const direction = (dir, dx, dy, label, arrow) => `<button class="secondary" data-action="move" data-dir="${dir}" aria-label="${label}${edgeGuard&&outsideOrbit(flight.x+dx,flight.y+dy,game)?' · граница карты':''}" ${flight.won || (edgeGuard&&outsideOrbit(flight.x+dx,flight.y+dy,game))?'disabled':''}>${arrow}</button>`;
   return `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button>
-    <div class="mini-game ${decorated?'polished':'simple'}" data-save-mode="${saveMode}">
+    <div class="mini-game ${decorated?'polished':'simple'}" data-save-mode="${saveMode}" data-mission="${mission.id}">
       <div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ · ${contract}</div>
-      <h2 id="dialog-title">ОРБИТА <span>0${flight.collected.length} / 03</span></h2>
-      <p>${flight.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p>
-      <div class="orbit-shield ${flight.shield?'charged':''}">${icon('shield',32)}<div><strong>${shieldText}</strong><span>${shieldReason} ${game.shield?'Щит автоматически защищает при одном столкновении.':''}</span></div></div>
-      <div class="orbit-map-heading"><span>${decorated?'Навигация и оформление команды':game.choices.scope==='swap'?'Простой интерфейс · вместо оформления выбран щит':'Базовое оформление команды'}</span>${edgeGuard?'<b>Защита границы</b>':''}</div>
-      <div class="mini-board ${edgeGuard?'edge-tested':''} ${effect.kind==='edge'?'edge-contact':''}" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>tile(i)).join('')}</div>
-      <div class="orbit-feedback ${['phase','blocked','lost'].includes(effect.kind)?'orbit-warning':''}" role="status">${message || (flight.won?'Миссия выполнена!':edgeGuard?'Выход за карту заблокирован: недоступные направления выключены.':'Корабль готов. Выбери направление.')}</div>
+      <h2 id="dialog-title">ОРБИТА <span>${flight.collected.length} / ${batteries.length}</span></h2>
+      <p>${flight.won?'Все задачи миссии выполнены!':mission.briefing}</p>
+      <div class="orbit-shield ${flight.shield?'charged':''}">${icon('shield',32)}<div><strong>${shieldText}</strong>${mission.id!=='festival'?'<details><summary>Решение команды</summary>':''}<span>${shieldReason} ${game.shield?'Щит автоматически защищает при одном столкновении.':''}</span>${mission.id!=='festival'?'</details>':''}</div></div>
+      <div class="orbit-objectives" aria-label="Цели миссии"><span class="${flight.collected.length===batteries.length?'done':''}">${icon('bolt',20)} Батареи ${flight.collected.length}/${batteries.length}</span>${mission.scans.length?`<span class="${flight.relay?'done':''}">R · ${flight.relay?'Ретранслятор включён':'Включить ретранслятор'}</span><span class="${flight.scanned.length===mission.scans.length?'done':''}">◎ Аномалии ${flight.scanned.length}/${mission.scans.length}</span>`:''}${mission.gates.length?`<span class="${flight.gates===mission.gates.length?'done':''}">Ворота ${flight.gates}/${mission.gates.length} · по порядку</span><span>Ходов: ${flight.moves} · золото ≤${mission.gold}${game.orbitRecords?.cup!==undefined?' · рекорд '+game.orbitRecords.cup:''}</span>`:''}</div><div class="orbit-map-heading"><span>${decorated?'Навигация и оформление команды':game.choices.scope==='swap'?'Простой интерфейс · вместо оформления выбран щит':'Базовое оформление команды'}</span>${edgeGuard?'<b>Защита границы</b>':''}</div>
+      <div class="mini-board ${edgeGuard?'edge-tested':''} ${effect.kind==='edge'?'edge-contact':''}" style="--map-width:${mission.width}" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:mission.width*mission.height},(_,i)=>tile(i)).join('')}</div>
+      <div class="orbit-feedback ${['phase','blocked','lost','barrier','patrol-hit'].includes(effect.kind)?'orbit-warning':''}" role="status">${message || (flight.won?'Миссия выполнена!':edgeGuard?'Выход за карту заблокирован: недоступные направления выключены.':'Корабль готов. Выбери направление.')}</div>
       <div class="mini-controls">${direction('left',-1,0,'Влево','←')}<div>${direction('up',0,-1,'Вверх','↑')}${direction('down',0,1,'Вниз','↓')}</div>${direction('right',1,0,'Вправо','→')}<p>Стрелки или соседняя клетка.</p></div>
-      <div class="orbit-save ${saveMode==='broken'||(saveMode==='working'&&!stored)?'orbit-save-error':''}" role="status">${icon(saveMode==='working'&&stored?'check':saveMode==='removed'?'info':'cross',26)}<div><strong>${saveTitle}</strong><span>${saveDetail}</span></div></div>
-      ${flight.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}
+      ${mission.scans.length?`<div class="orbit-mission-actions"><button class="primary" data-action="orbit-scan" ${flight.won||!mission.scans.includes(current)||flight.scanned.includes(current)?'disabled':''}>◎ Сканировать · 1 ход</button><p>R открывает барьер ≋. Сканирование доступно на клетке ◎.</p></div>`:''}${mission.patrol.length?`<div class="orbit-mission-actions"><button class="secondary" data-action="orbit-wait" ${flight.won?'disabled':''}>Пропустить ход</button><p>✦ — патруль; ↳ — его следующая клетка. Без щита столкновение задержит на 3 хода. Золото ≤${mission.gold}, серебро ≤${mission.silver}.</p></div>`:''}<div class="orbit-save ${saveMode==='broken'||(saveMode==='working'&&!stored)?'orbit-save-error':''}" role="status">${icon(saveMode==='working'&&stored?'check':saveMode==='removed'?'info':'cross',26)}<div><strong>${saveTitle}</strong><span>${saveDetail}</span></div></div>
+      ${flight.won?`<div class="mini-win">${mission.gold?raceMedal(mission,flight)+' · '+flight.moves+' ходов. Попробуй улучшить результат новым полётом!':'Миссия завершена. Ваша команда сделала работающую игру!'}</div>`:''}
       <div class="dialog-actions">${saveMode!=='removed'?`<button class="secondary" data-action="reload-mini">${icon('reset',15)} ${saveMode==='working'?'Загрузить сохранение':'Перезапустить игру'}</button>`:''}<button class="secondary" data-action="fresh-mini">${saveMode==='removed'?'Начать сессию заново':'Новый полёт'}</button><button class="primary" data-action="close-dialog">В студию</button></div>
     </div>`;
 }
