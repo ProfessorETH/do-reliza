@@ -70,6 +70,10 @@
 .game-shell[data-expanded=true] .playable-office .office-room { flex:1 1 auto; height:auto; }
 .nika-guide-head { position:sticky; top:0; background:inherit; z-index:2; }.nika-target { scroll-margin-top:calc(var(--shift-clock-height,100px) + 100px); }
 .onboarding-story { width:min(1000px,calc(100% - 32px)); max-width:1000px; }.nika-story-copy h2 { overflow-wrap:anywhere; }.nika-story-actions .primary { min-height:54px; }
+.start-screen .start-lead { font-size:26px; line-height:1.55; }.start-screen .start-role { font-size:24px; line-height:1.6; }
+.start-screen .start-audio { grid-template-columns:64px minmax(0,1fr); padding:22px; gap:12px 16px; }.start-screen .start-audio>img { width:64px; height:64px; }.start-screen .start-audio-copy h2 { font-size:26px; }.start-screen .start-audio-copy p { font-size:22px; }.start-screen .start-audio-button { grid-column:1/-1; grid-row:auto; min-height:52px; font-size:22px; }.start-screen .start-audio-note { grid-column:1/-1; font-size:20px; }
+.start-screen .difficulty-picker legend { font-size:26px; }.start-screen .difficulty-choice { font-size:22px; min-height:54px; }.start-screen .difficulty-choice input { width:22px; height:22px; }.start-screen .difficulty-description { font-size:22px; line-height:1.55; min-height:0; }.start-screen .difficulty-resources { font-size:20px; line-height:1.5; }
+.start-screen .start-actions .primary { font-size:26px; min-height:58px; }.start-screen .start-demo,.start-screen .start-actions .text-button,.start-screen .landing-footer { font-size:20px; line-height:1.5; }
 @media(min-width:1600px) { .game-shell .game-layout { grid-template-columns:minmax(0,1fr) minmax(660px,40vw); }.game-shell.event-state .game-layout { grid-template-columns:minmax(0,1fr) minmax(760px,50vw); } }
 @media(max-width:1199px) {
   .game-shell { height:auto; min-height:100dvh; overflow:visible; grid-template-rows:auto auto auto auto 1fr; }
@@ -84,6 +88,7 @@
   .nika-guide { right:16px; bottom:16px; }.control-panel .panel-bottom { margin-bottom:0; }
 }
 @media(max-width:600px) {
+  .start-screen .difficulty-choices { grid-template-columns:1fr; gap:8px; }.start-screen .difficulty-choice { justify-content:flex-start; padding:14px; gap:16px; font-size:24px; }.start-screen .start-audio { padding:18px; }.start-screen .start-audio-copy h2 { font-size:24px; }.start-screen .start-audio-copy p { font-size:20px; }.start-screen .start-audio-note { font-size:18px; }.start-screen .start-role { font-size:22px; }
   .nika-story-copy h2 { font-size:36px; overflow-wrap:normal; }.nika-art>.nika-name { max-width:46%; font-size:26px; }.nika-name small { font-size:18px; }.nika-story-actions .primary { max-width:100%; white-space:normal; line-height:1.35; text-align:left; }
   .game-topbar .brand { font-size:24px; }.game-topbar .brand small { font-size:10px; }.hud-stat { padding:0; border:0; }.hud-stat:first-child>svg { display:none; }.hud-stat:nth-child(2) { display:none; }.hud-stat strong { font-size:24px; }.hud-stat small { font-size:16px; }
   .game-shell .game-topbar { min-height:80px; gap:8px; }.hud-stats { gap:6px; }.hud-stats .sound-toggle,.game-topbar .icon-btn { min-width:42px; width:42px; height:46px; }

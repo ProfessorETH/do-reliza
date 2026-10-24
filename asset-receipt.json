@@ -68,5 +68,13 @@
         "outputSha256": "317a3c4adce08bf041b4549fa53e55670801f0af68bd2880c297f1b94acd3b5a"
       }
     ]
+  },
+  "mobileBackground": {
+    "source": "assets/office.webp",
+    "output": "assets/office-mobile.webp",
+    "method": "ffmpeg 8.0.1, scale=768:-2, libwebp quality 75",
+    "bytes": 61196,
+    "sha256": "2b187c736a209469f0ba1adf74e3164d8900fc80e23a78e619ee890f78dd7f6b",
+    "note": "Existing still image resized; no generation or paid request"
   }
 }

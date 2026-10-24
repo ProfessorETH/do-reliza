@@ -1,6 +1,7 @@
 import { STORY, guideFor } from './onboarding-model.js?v=shift-ux-20261024-v2';
 
-const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
+import { assetURL } from '../../asset-url.js';
+const AVATAR = assetURL('onboarding/nika-avatar.webp');
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 const character = expression => `<span class="nika-character" data-expression="${expression}" role="img" aria-label="Ника, помощница студии"></span>`;
 
@@ -50,12 +51,13 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     const page = STORY[preferences.story];
     storyDialog.innerHTML = `<div class="nika-art">${character(preferences.story === 0 ? 'thoughtful' : preferences.story === 2 ? 'happy' : 'neutral')}<span class="nika-name">НИКА <small>помощница студии</small></span></div>
       <div class="nika-story-copy"><p class="nika-eyebrow">${page.chapter}</p><p class="nika-story-progress" aria-label="Часть ${preferences.story + 1} из ${STORY.length}">${STORY.map((_, i) => `<span class="${i <= preferences.story ? 'read' : ''}"></span>`).join('')}</p>
-      <h2 id="nika-story-title">${page.title}</h2><p>${page.text}</p><blockquote>${page.note}</blockquote>
+      <h2 id="nika-story-title" tabindex="-1">${page.title}</h2><p>${page.text}</p><blockquote>${page.note}</blockquote>
       ${preferences.story === 2 ? `<p class="nika-contract">На проект: <b>${money(currentGame.initialBudget)}</b> · <b>${currentGame.deadline} игровых часов</b><small>Аренда уже оплачена. Резерв — на команду и непредвиденные задачи.</small></p>` : ''}
-      <div class="nika-story-actions"><button class="primary" data-guide="next" autofocus>${page.next} <span aria-hidden="true">→</span></button>${preferences.story > 0 ? '<button class="text-button" data-guide="back">Назад</button>' : ''}</div>
+      <div class="nika-story-actions"><button class="primary" data-guide="next">${page.next} <span aria-hidden="true">→</span></button>${preferences.story > 0 ? '<button class="text-button" data-guide="back">Назад</button>' : ''}</div>
       <button class="text-button nika-skip" data-guide="skip-story">Пропустить историю</button><button class="text-button nika-skip" data-guide="skip-all">Играть без подсказок</button><div class="nika-audio-tools">${sound?.hasVoice(`story-${preferences.story}`)?'<button class="text-button nika-skip" data-guide="replay">Прослушать ещё раз</button>':''}<button class="text-button nika-skip" data-guide="sound">${sound?.enabled?'Выключить':'Включить'} звук</button></div></div>`;
     if (!storyDialog.open) { returnFocus = document.activeElement; storyDialog.showModal(); }
-    else storyDialog.querySelector('[data-guide="next"]').focus({ preventScroll: true });
+    storyDialog.scrollTop=0;
+    storyDialog.querySelector('#nika-story-title').focus({preventScroll:true});
     animateCharacters(`story-${preferences.story}`, page.text);
   }
 
