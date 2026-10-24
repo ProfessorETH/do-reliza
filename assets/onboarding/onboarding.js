@@ -1,18 +1,21 @@
 import { STORY, guideFor } from './onboarding-model.js?v=team-hud-20261024';
 
 import { assetURL } from '../../asset-url.js';
+import { createGuideBubble } from './guide-bubble.js';
 const AVATAR = assetURL('onboarding/nika-avatar.webp');
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 const character = expression => `<span class="nika-character" data-expression="${expression}" role="img" aria-label="Ника, помощница студии"></span>`;
 
-export function createOnboarding({ storageKey, pause, refresh, sound }) {
+export function createOnboarding({ storageKey, pause, refresh, sound, onOpen = () => {} }) {
   let preferences = { enabled: true, collapsed: true, story: null };
   let currentGame = null, moving = false, returnFocus = null;
+  const bubble=createGuideBubble({storageKey:`${storageKey}-bubble`,onToggle:()=>{sound?.unlock();sound?.effect('page');toggleGuide();refresh();if(!preferences.collapsed)document.querySelector('.nika-toggle')?.focus({preventScroll:true});else bubble.focus();}});
   let lastLine = '';
   let lastActivity=Date.now();
   function updateInvitation() {
     const guide=document.querySelector('.nika-guide');
-    guide?.classList.toggle('nika-attention',preferences.enabled&&preferences.collapsed&&Date.now()-lastActivity>=10000&&!document.hidden&&!document.querySelector('dialog[open]'));
+    const attention=preferences.enabled&&preferences.collapsed&&Date.now()-lastActivity>=10000&&!document.hidden&&!document.querySelector('dialog[open]');
+    guide?.classList.toggle('nika-attention',attention);bubble.attention(attention);
   }
   function noteActivity(){lastActivity=Date.now();document.querySelector('.nika-guide')?.classList.remove('nika-attention');}
   for(const event of ['pointerdown','pointermove','keydown','input','wheel'])document.addEventListener(event,noteActivity,{passive:true});
@@ -41,7 +44,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
   function finishStory(enabled = true) {
     preferences.story = null; preferences.enabled = enabled; preferences.collapsed = true; save();
     storyDialog.close(); stopAnimation(); sound?.stopVoice(); refresh();
-    const fallback=[document.querySelector('[data-action="guide-open"]'),document.querySelector('[data-guide="toggle"]')].find(el=>el?.getClientRects().length);
+    const fallback=document.querySelector('[data-nika-bubble]');
     const focus = returnFocus?.isConnected ? returnFocus : fallback;
     focus?.focus({ preventScroll: true });
   }
@@ -66,16 +69,19 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     currentGame = game; moving = busy;
     document.querySelector('.nika-guide')?.remove();
     document.querySelectorAll('.nika-target').forEach(el => el.classList.remove('nika-target'));
-    if (!game) { if (storyDialog.open) storyDialog.close(); stopAnimation(); sound?.stopVoice(); lastLine = ''; return; }
+    if (!game) { bubble.sync(false,false);if (storyDialog.open) storyDialog.close(); stopAnimation(); sound?.stopVoice(); lastLine = ''; return; }
     const step = guideFor(game, busy);
     if (!step) return;
     const collapsed = !preferences.enabled || preferences.collapsed;
+    bubble.sync(true,!collapsed);
     document.querySelector('[data-action="guide-open"]')?.setAttribute('aria-expanded',String(!collapsed));
     const guide = document.createElement('aside');
     guide.className = `nika-guide${collapsed ? ' nika-collapsed' : ''}`;
+    guide.id='nika-guide';
+    if(!collapsed){guide.setAttribute('role','dialog');guide.setAttribute('aria-labelledby','nika-guide-title');}
     guide.setAttribute('aria-label', 'Подсказка Ники');
     guide.innerHTML = `<div class="nika-guide-head"><span class="nika-avatar" style="background-image:url('${AVATAR}')" aria-hidden="true"></span><div><b>Ника</b><span>${collapsed ? 'Помощница студии' : `Заказ ${game.life ? game.life.completed + (game.stage === 'result' ? 0 : 1) : 1} · шаг ${step.number} / 5`}</span></div><button class="nika-toggle" data-guide="toggle" aria-expanded="${!collapsed}" aria-label="${collapsed ? 'Открыть подсказку Ники' : 'Свернуть подсказку Ники'}">${collapsed ? 'Подсказка' : 'Свернуть'}</button></div>
-      ${collapsed ? '<span class="nika-idle-invitation" aria-hidden="true">Хочешь подсказку?</span>' : `<div class="nika-guide-copy"><h2>${step.title}</h2><p>${step.text}</p>${step.hint ? `<strong class="nika-hint">${step.hint}</strong>` : ''}<div class="nika-guide-actions"><button data-guide="locate">Показать где <span aria-hidden="true">↗</span></button>${sound?.hasVoice(step.voice||`guide-${step.id}`)?'<button data-guide="replay-guide">Повторить голос</button>':''}<button data-guide="story">История</button><button data-guide="disable">${step.id==='result'?'Спасибо, Ника!':'Без подсказок'}</button></div></div>`}`;
+      ${collapsed ? '' : `<div class="nika-guide-copy"><h2 id="nika-guide-title">${step.title}</h2><p>${step.text}</p>${step.hint ? `<strong class="nika-hint">${step.hint}</strong>` : ''}<div class="nika-guide-actions"><button data-guide="locate">Показать где <span aria-hidden="true">↗</span></button>${sound?.hasVoice(step.voice||`guide-${step.id}`)?'<button data-guide="replay-guide">Повторить голос</button>':''}<button data-guide="story">История</button><button data-guide="disable">${step.id==='result'?'Спасибо, Ника!':'Без подсказок'}</button></div><p class="nika-move-note">Значок Ники можно перетащить в удобное место.</p><button class="nika-reset-position" data-guide="bubble-reset">Вернуть значок в угол</button></div>`}`;
     document.body.append(guide);
     updateInvitation();
     if (preferences.story !== null && !storyDialog.open && !document.querySelector('dialog[open]')) showStory();
@@ -87,6 +93,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     const button = event.target.closest('[data-guide]');
     if (!button) return;
     const action = button.dataset.guide;
+    if(action==='bubble-reset'){bubble.reset();bubble.focus();return;}
     if (action === 'sound') { sound?.toggle(); button.textContent = `${sound?.enabled?'Выключить':'Включить'} звук`; if(sound?.enabled) sound.speak(`story-${preferences.story}`, true); return; }
     sound?.unlock();
     sound?.effect('page');
@@ -108,7 +115,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
         document.querySelector(`[data-action="workspace"][data-id="${inOffice ? 'office' : 'project'}"]`)?.click();
         target = document.querySelector(selector);
       }
-      if(target?.dataset.action==='team-focus' && (target.getAttribute('aria-pressed')!=='true' || target.closest('.team-hud')?.dataset.open!=='true')) {
+      if(target?.dataset.action==='team-focus') {
         target.click(); target=document.querySelector(selector);
       }
       if(document.querySelector('#info-dialog[open] .mobile-team-card'))return;
@@ -122,16 +129,21 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
       if (action === 'disable') preferences.enabled = false;
       if (action === 'toggle') { if (!preferences.enabled) { preferences.enabled = true; preferences.collapsed = false; } else preferences.collapsed = !preferences.collapsed; }
       save(); sync(currentGame, moving);
-      [document.querySelector('[data-action="guide-open"]'),document.querySelector('[data-guide="toggle"]')].find(el=>el?.getClientRects().length)?.focus({ preventScroll: true });
+      bubble.focus();
     }
   });
   storyDialog.addEventListener('cancel', event => { event.preventDefault(); finishStory(); });
   document.addEventListener('nika-voice-state', event => { document.querySelectorAll('.nika-character').forEach(el => el.classList.toggle('is-speaking', event.detail.speaking)); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopAnimation(); else if (currentGame) sync(currentGame, moving); });
   reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) stopAnimation(); });
+  function toggleGuide(){if(!preferences.enabled){preferences.enabled=true;preferences.collapsed=false;}else preferences.collapsed=!preferences.collapsed;if(!preferences.collapsed)onOpen();save();}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.querySelector('dialog[open]')&&!preferences.collapsed){preferences.collapsed=true;save();sync(currentGame,moving);bubble.focus();e.stopImmediatePropagation();}});
   return {
     sync,
-    toggleGuide() { if(!preferences.enabled){preferences.enabled=true;preferences.collapsed=false;}else preferences.collapsed=!preferences.collapsed;save(); },
+    isOpen(){return preferences.enabled&&!preferences.collapsed;},
+    toggleGuide,
+    openGuide(){preferences.enabled=true;preferences.collapsed=false;onOpen();save();},
+    resetBubble(){bubble.reset();},
     collapseGuide() { preferences.collapsed=true;save(); },
     start(game) { currentGame = game; preferences = { enabled: true, collapsed: true, story: 0 }; save(); sync(game); },
   };

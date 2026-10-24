@@ -42,6 +42,8 @@ class OfficeWorld {
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
     this.art = createOfficeAtmosphere(this.scene, this.renderer);
     mountStudioSurroundings(this.scene);
+    this.neighborhood=this.scene.getObjectByName('EveningNeighborhood');
+    this.neighborhood.visible=false;
     this.keys = new Set();
     this.renderer.domElement.tabIndex = 0;
     this.renderer.domElement.removeAttribute('aria-hidden');
@@ -176,11 +178,14 @@ class OfficeWorld {
   }
   labels() {
     const parent = this.container.closest('.office-room');
+    const viewRect=this.container.getBoundingClientRect(),roomRect=parent.getBoundingClientRect();
+    const point=()=>({x:viewRect.left-roomRect.left+(this.projected.x*.5+.5)*viewRect.width,y:viewRect.top-roomRect.top+(-this.projected.y*.5+.5)*viewRect.height});
     for (const [i, d] of DESKS.entries()) {
       const button = parent.querySelector(`[data-action="office-desk"][data-id="${i}"]`); if (!button) continue;
       this.projected.set(d.seat[0], .35, d.seat[1] + .5).project(this.camera);
-      button.style.setProperty('--desk-x', `${(this.projected.x * .5 + .5) * 100}%`);
-      button.style.setProperty('--desk-y', `${(-this.projected.y * .5 + .5) * 100}%`);
+      const screen=point();
+      button.style.setProperty('--desk-x', `${screen.x}px`);
+      button.style.setProperty('--desk-y', `${screen.y}px`);
       const actor = this.actors.get(this.game.seats[i]);
       button.dataset.motion = actor?.moving ? actor.state : actor?.sit > .98 ? 'seated' : 'empty';
       const text = button.querySelector('small');
@@ -202,14 +207,14 @@ class OfficeWorld {
     const menu=parent.querySelector('.actor-actions'), actor=this.actors.get(this.selected);
     if(menu&&actor){
       this.projected.copy(actor.group.position).add(new THREE.Vector3(0,actor.sit>.5?1.5:2.1,0)).project(this.camera);
-      const rect=parent.getBoundingClientRect(), width=menu.offsetWidth;
-      menu.style.left=Math.max(width/2+8,Math.min(rect.width-width/2-8,(this.projected.x*.5+.5)*rect.width))+'px';
-      menu.style.top=Math.max(10,Math.min(rect.height-menu.offsetHeight-10,(-this.projected.y*.5+.5)*rect.height-menu.offsetHeight-12))+'px';
+      const screen=point(),width=menu.offsetWidth;
+      menu.style.left=Math.max(width/2+8,Math.min(roomRect.width-width/2-8,screen.x))+'px';
+      menu.style.top=Math.max(10,Math.min(viewRect.bottom-roomRect.top-menu.offsetHeight-10,screen.y-menu.offsetHeight-12))+'px';
     }
     for(const el of parent.querySelectorAll('[data-hotspot]')){
       const points={coffee:[-1,1.5,-3.4],arcade:[3.85,2,-3.38],office:[-3.68,1.1,2.77]};
       this.projected.fromArray(points[el.dataset.hotspot]).project(this.camera);
-      el.style.left=((this.projected.x*.5+.5)*100)+'%';el.style.top=((-this.projected.y*.5+.5)*100)+'%';
+      const screen=point();el.style.left=screen.x+'px';el.style.top=screen.y+'px';
     }
     const info = parent.querySelector('.office-movement');
     const walking = [...this.actors.values()].filter(a => a.moving).map(a => agentById(a.id).name);
@@ -248,6 +253,8 @@ class OfficeWorld {
     this.controls.target.add(delta);this.camera.position.add(delta);
   }
   cameraAction(action) {
+    if(this.neighborhood&&['flight','flight-off'].includes(action))this.neighborhood.visible=action==='flight'&&!this.flying;
+    if(this.neighborhood&&action==='reset')this.neighborhood.visible=false;
     if(action==='flight'||action==='flight-off'){this.flying=action==='flight'&&!this.flying;this.keys.clear();this.cameraGoal=null;this.controls.minPolarAngle=this.flying ? .1 : .45;this.controls.maxPolarAngle=this.flying?1.5:1.28;this.refreshContainer();if(this.flying)this.renderer.domElement.focus({preventScroll:true});return;}
     if(['forward','back','up','down'].includes(action)){this.cameraGoal=null;const vector=this.controls.target.clone().sub(this.camera.position);vector.y=0;vector.normalize().multiplyScalar(action==='forward'?1:-1);if(action==='up'||action==='down')vector.set(0,action==='up'?1:-1,0);vector.y=THREE.MathUtils.clamp(this.camera.position.y+vector.y,.7,25)-this.camera.position.y;if(this.controls.target.clone().add(vector).length()<22){this.camera.position.add(vector);this.controls.target.add(vector);}this.controls.update();return;}
     if (action === 'in' || action === 'out') {
