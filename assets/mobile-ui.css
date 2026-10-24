@@ -96,7 +96,8 @@
   .nika-story-actions .primary { flex:1; min-height:48px; font-size:14px; padding:10px; }.nika-story-actions .text-button { min-height:48px; padding:10px; font-size:14px; }
   .nika-story-copy .nika-skip { min-height:44px; margin:0; padding:8px 0; font-size:13px!important; }.nika-audio-tools { gap:8px 16px; margin-top:8px; }
   #info-dialog:has(.mini-game) { padding:16px 12px; }.mini-game .orbit-objectives { gap:6px; }.orbit-objectives>span { font-size:12px; padding:6px 8px; }
-  #info-dialog .mini-board { width:100%; max-width:calc((100dvh - 170px) * 1.4); margin-inline:auto; }
+  #info-dialog .mini-board { width:100%; max-width:calc((100dvh - 190px) * 1.4); margin-inline:auto; }
+  .mini-game .orbit-feedback { font-size:14px; line-height:1.5; min-height:2em; margin-top:12px; }.mini-game .mini-controls { margin-top:8px; }
   #info-dialog .mini-board .tile { min-height:0; padding:0; }.mini-controls { justify-content:center; gap:8px; padding:8px 0; border-top:1px solid var(--line); }.mini-controls p { display:none; }#info-dialog .mini-controls button { width:52px; min-height:48px; }.mini-controls>div { display:contents; }
   .mini-game .dialog-actions { flex-direction:column; gap:8px; }.mini-game .dialog-actions button { flex:auto; min-height:48px; }
   body:has(.team-hud-layout) #toast { bottom:calc(76px + env(safe-area-inset-bottom,0px)); max-width:calc(100vw - 24px); font-size:13px; }
