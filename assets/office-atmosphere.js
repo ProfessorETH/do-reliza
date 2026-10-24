@@ -4,6 +4,7 @@ import { GLTFLoader } from '../vendor/three/loaders/GLTFLoader.js';
 const DESKS = [[-2.65, 1.95], [1.4, 1.95], [-.9, -1.45]];
 const dressingURL = new URL('./models/office-dressing.glb', import.meta.url);
 const cozyURL = new URL('./models/office-cozy.glb?v=1', import.meta.url);
+const shellURL = new URL('./models/office-shell.glb?v=1', import.meta.url);
 const decorationLoads = new Map();
 
 function eveningWindow(mesh) {
@@ -71,6 +72,7 @@ export function createOfficeAtmosphere(scene, renderer) {
   key.shadow.camera.updateProjectionMatrix(); scene.add(key);
   const moon = new THREE.DirectionalLight(0x86accf, .9); moon.position.set(-7, 4, -1); scene.add(moon);
   const fill = new THREE.DirectionalLight(0xc7d7e1, .55); fill.position.set(7, 4, 6); scene.add(fill);
+  const reverseFill = new THREE.DirectionalLight(0xffd6b2, .85); reverseFill.position.set(-6, 5, -7); scene.add(reverseFill);
   for (const x of [-2.65, 1.4, 3.8]) {
     const lamp = new THREE.PointLight(0xffbd72, 11, 4.5, 2); lamp.position.set(x, 2.38, -3.57); scene.add(lamp);
   }
@@ -108,10 +110,11 @@ export function createOfficeAtmosphere(scene, renderer) {
         }
         node.material = materialCopies.get(old);
       });
-      // Both decorative assets preserve all original furniture and character rigs.
+      // Additive assets preserve all original furniture and character rigs.
       await Promise.all([
         ['StudioArtDressing', dressingURL, 'artDressing'],
         ['StudioCozyDetails', cozyURL, 'cozyDetails'],
+        ['StudioShell', shellURL, 'shellDetails'],
       ].map(async ([name, url, statusKey]) => {
         if (!decorationLoads.has(name)) decorationLoads.set(name, new GLTFLoader().loadAsync(url.href));
         try {
