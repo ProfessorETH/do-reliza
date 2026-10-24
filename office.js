@@ -97,14 +97,14 @@ function room() {
   <text x="700" y="151" transform="rotate(26.5 700 151)" fill="#cad2c4" font-size="16" font-family="Bahnschrift, sans-serif" letter-spacing="3">ДО РЕЛИЗА.</text>`;
 }
 
-export function renderOffice(game, selectedId, moving = false) {
+export function renderOffice(game, selectedId, moving = false, lifeHTML = '') {
   const editable = ['hire', 'plan'].includes(game.stage), active = activeTasks(game);
   const idleStatus = id => TASKS.some(t => game.assignments[t.id] === id && game.progress[t.id] < 100) ? 'Ждёт этап' : 'Задачи готовы';
   const selected = agentById(selectedId), unseated = game.team.filter(id => !game.seats.includes(id));
   const seated = game.seats.filter(Boolean).length;
   const hint = editable ? selected ? `${selected.name}: выбери компьютер${game.seats.includes(selectedId) ? ' для пересадки' : ''} или свободный участок пола.` : seated === 3 ? moving ? 'Команда занимает места. Пока можно осмотреть офис.' : game.stage === 'plan' ? 'Распредели задачи. Код и экран можно делать параллельно.' : 'Все на местах. Пора распределить задачи.' : game.team.length ? 'Выбери персонажа в команде, затем компьютер.' : 'Найми первого агента — он придёт в студию.' : game.stage === 'event' ? 'Команда ждёт твоего решения. Время на паузе.' : game.stage === 'result' ? 'Релиз готов. Пора сыграть в «Орбиту»!' : 'Нажми на сотрудника, чтобы узнать, как идут дела.';
   return `<section class="studio-scene playable-office" aria-label="Офис команды">
-    <header class="office-heading"><div><span class="eyebrow">СТУДИЯ 01 · ВЕЧЕР ПЕРЕД ФЕСТИВАЛЕМ</span><h2>Офис твоей команды</h2></div><button class="office-brief" data-action="brief">Задание ↗</button></header>
+    <header class="office-heading"><div><span class="eyebrow">СТУДИЯ 01 · ВЕЧЕРНЯЯ СМЕНА</span><h2>Офис твоей команды</h2></div><button class="office-brief" data-action="brief">Задание ↗</button></header>
     <div class="office-room" data-office-state="loading"><div id="office-webgl"></div><div class="office-camera-controls" aria-label="Камера офиса"><button data-action="office-camera" data-id="focus" aria-label="Приблизить выбранного персонажа" ${game.team.length?'':'disabled'}>⌕</button><button data-action="office-camera" data-id="left" aria-label="Повернуть офис влево">↶</button><button data-action="office-camera" data-id="right" aria-label="Повернуть офис вправо">↷</button><button data-action="office-camera" data-id="reset" aria-label="Вернуть исходный вид офиса">⌂</button></div><span class="office-render-status" role="status">Загружаем 3D-студию…</span><span class="office-movement" aria-live="polite"></span><svg class="room-art" viewBox="0 -20 1000 700" aria-hidden="true">${room()}${stations.map((_, i) => workstation(i, agentById(game.seats[i]), active.find(t => game.assignments[t.id] === game.seats[i]), game)).join('')}</svg>
       <div class="desk-interactions">${stations.map(({ x, y }, i) => {
         const agent = agentById(game.seats[i]), task = active.find(t => game.assignments[t.id] === agent?.id);
@@ -114,6 +114,7 @@ export function renderOffice(game, selectedId, moving = false) {
     </div>
     <div class="office-guidance" role="status"><span class="office-step">${editable ? `${seated}/3` : `${totalProgress(game)}%`}</span><p>${escape(hint)}</p>${editable && selected ? '<button class="text-button" data-action="office-cancel">Отмена</button>' : '<span class="office-live-dot"></span>'}</div>
     <div class="office-arrivals ${!unseated.length&&!selected?'vacant-row':''}">${selected&&editable?'<button class="office-walk-button" data-action="office-walk">Пройтись к входу ↗</button>':''}${unseated.length ? `<span>В СТУДИИ</span>${unseated.map(id => { const a = agentById(id); return `<button class="arrival ${selectedId === id ? 'selected' : ''}" data-action="office-select" data-id="${id}" aria-pressed="${selectedId === id}" style="--person:${a.color}"><span class="arrival-head">${a.name[0]}</span>${a.name}<small>Выбрать →</small></button>`; }).join('')}` : ''}</div>
+    ${lifeHTML}
     <div class="office-roster"><div class="office-roster-title"><span>ТВОЯ КОМАНДА</span><b>${game.team.length} / 3</b></div><div class="office-roster-slots">${Array.from({ length: 3 }, (_, i) => {
       const a = agentById(game.team[i]);
       if (!a) return `<div class="office-roster-empty"><span>＋</span><small>Место для агента</small></div>`;
