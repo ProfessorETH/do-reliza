@@ -1,4 +1,6 @@
-import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, orbitFeatures } from './assets/orbit.js?v=orbit-3';
+import { ensureEventClock, advanceEventClock, eventKey } from './assets/event-clock.js';
+import { missionFor } from './assets/orbit-missions.js';
+import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, actOrbit, orbitFeatures, recordOrbitResult } from './assets/orbit.js?v=orbit-3';
 import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=shift-ux-20261024-v2';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
@@ -17,6 +19,8 @@ import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recomme
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
+const eventDialog=document.querySelector('#event-dialog');
+let shownEvent=null,eventSaveSecond=-1;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
 const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
@@ -80,7 +84,7 @@ function shiftBanner() {
   return `<section class="shift-banner" aria-label="Часы смены"><div><span>Сейчас в студии</span><strong data-clock="now">${time.now}</strong></div><div><span>Показ проекта</span><strong data-clock="end">${time.end}</strong></div><div><span>До показа</span><strong data-clock="remaining">${time.remaining}</strong></div><div class="shift-auto"><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!game.autoPlay}" ${game.stage==='result'?'disabled':''}>${icon(game.autoPlay?'pause':'play',20)} ${game.autoPlay?'Пауза':'Авто'}</button><span data-clock="status">${clockStatus()}</span></div></section>`;
 }
 let lastClockFrame=performance.now();
-setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();}},100);
+setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();updateEventClock(delta);}},100);
 document.addEventListener('visibilitychange',()=>{lastClockFrame=performance.now();persist();});
 window.addEventListener('pagehide',persist);
 let dialogOrigin = null;
@@ -149,7 +153,7 @@ function eventPanel() {
   if (game.currentEvent === 'life') {
     const incident = game.life.incident, ev = INCIDENTS[incident.type], speaker = agentById(incident.id);
     const covered = ev.upgrade && game.life.upgrades.includes(ev.upgrade);
-    return `<div class="event-heading"><span class="event-alert">ЖИЗНЬ КОМАНДЫ</span><span>Время на паузе</span></div><div class="speaker">${portrait(speaker)}<span><b>${speaker.name}</b><small>${condition(game,speaker.id).label}</small></span></div><div class="panel-header event-copy"><h1>${ev.title}</h1><p>${ev.text}</p></div><div class="event-options"><button class="event-option" data-action="decision" data-id="life-care"><span class="option-number">01</span><span><b>${ev.care}</b><small>${covered?'Улучшение офиса: без потери часа · напряжение −12':ev.effect}</small></span></button><button class="event-option" data-action="decision" data-id="life-wait"><span class="option-number">02</span><span><b>${incident.type==='idea'?'Записать и вернуться после релиза':'Отложить до релиза'}</b><small>${incident.type==='idea'?'Без задержки · настроение автора +2':'Без задержки · напряжение +10, настроение −8'}</small></span></button></div><p class="lesson-note">Случайное событие и его участник уже сохранены. Перезагрузка не меняет ситуацию.</p>`;
+    return `<div class="event-heading"><span class="event-alert">ЖИЗНЬ КОМАНДЫ</span><span>Время на паузе</span></div><div class="speaker">${portrait(speaker)}<span><b>${speaker.name}</b><small>${condition(game,speaker.id).label}</small></span></div><div class="panel-header event-copy"><h1>${ev.title}</h1><p>${ev.text}</p></div><div class="event-options"><button class="event-option" data-action="decision" data-id="life-care"><span class="option-number">01</span><span><b>${ev.care}</b><small>${covered?'Улучшение офиса: без потери часа · напряжение −12':ev.effect}</small></span></button><button class="event-option" data-action="decision" data-id="life-wait"><span class="option-number">02</span><span><b>${incident.type==='idea'?'Записать и вернуться после релиза':'Отложить до релиза'}</b><small>${incident.type==='idea'?'Без задержки · настроение автора +2':'Без задержки · напряжение +10, настроение −8'}</small></span></button></div><p class="lesson-note">Команда ждёт твоего решения.</p>`;
   }
   const ev=EVENTS[game.currentEvent], speaker=agentById(game.currentEvent==='bug'?game.assignments.qa:game.currentEvent==='review'?game.assignments.code:game.assignments.brief);
   return `<div class="event-heading"><span class="event-alert">${icon('bolt',17)} НУЖНО ВАШЕ РЕШЕНИЕ</span><span class="event-pause">Время на паузе</span><button class="text-button event-context" data-action="event-info">Контекст ↗</button></div>
@@ -181,8 +185,8 @@ function render() {
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task, oldSeat=focused?.dataset?.seat, oldGuide=focused?.dataset?.guide;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
-  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
-  const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:eventPanel,result:resultPanel};
+  if (!game) { syncEventDialog();detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
+  const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { workspaceView = 'project'; officeExpanded = false; }
   root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
@@ -195,6 +199,7 @@ function render() {
     onError:message=>{toast(message);if(game)render();},
   });
   onboarding.sync(game, officeMoving);
+  syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
   if (officeExpanded) root.querySelectorAll('.game-topbar,.game-footer,.workspace-tabs,.control-panel').forEach(el => { el.inert = true; });
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
@@ -206,6 +211,42 @@ function render() {
     window.scrollTo(0,0);
   }
 }
+function syncEventDialog() {
+  const key=eventKey(game);
+  if(!key){if(eventDialog.open)eventDialog.close();shownEvent=null;return;}
+  if(shownEvent!==key){
+    shownEvent=key;eventSaveSecond=-1;
+    const timer=ensureEventClock(game);persist();
+    const contents=eventPanel().replace('<h1>','<h2 id="event-title" tabindex="-1">').replace('</h1>','</h2>');
+    eventDialog.innerHTML='<div class="event-modal-label">СОБЫТИЕ В СТУДИИ</div>'+
+      (timer?'<div class="decision-clock"><div><b data-event-seconds></b><span>Если время закончится: отложим проблему до релиза. Напряжение +10, настроение −8.</span></div><progress max="'+(game.difficulty==='hard'?30000:45000)+'" value="'+timer.remaining+'" data-event-progress aria-label="Осталось времени"></progress><div class="event-timer-actions"><button class="secondary" data-action="event-pause"></button><button class="text-button" data-action="event-untimed">Играть без таймеров</button></div></div>':'<p class="event-unlimited">Без ограничения времени. Смена продолжится после решения.</p>')+
+      contents+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
+    eventDialog.classList.remove('event-clock-compact');eventDialog.scrollTop=0;sound.stopVoice();
+  }
+  if(!eventDialog.open){eventDialog.showModal();eventDialog.querySelector('#event-title')?.focus({preventScroll:true});}
+  updateEventClock(0);
+}
+function completeDecision(id,expired=false){
+  const error=resolveEvent(game,id);
+  if(error){toast(error);return;}
+  delete game.eventClock;
+  if(expired)game.log.push('Время решения вышло: проблема отложена до релиза.');
+  persist();render();
+  if(expired)toast('Время вышло: проблему отложили. Напряжение +10, настроение −8.');
+}
+function updateEventClock(delta){
+  if(!game||game.stage!=='event')return;
+  const clock=ensureEventClock(game);if(!clock)return;
+  const blocked=document.hidden||dialog.open||!eventDialog.open;
+  if(advanceEventClock(game,delta,blocked)){completeDecision('life-wait',true);return;}
+  const seconds=Math.ceil(clock.remaining/1000),label=eventDialog.querySelector('[data-event-seconds]');
+  if(label)label.textContent=(clock.paused?'Пауза · ':blocked?'Ожидание · ':'На решение · ')+seconds+' с';
+  const bar=eventDialog.querySelector('[data-event-progress]');if(bar)bar.value=clock.remaining;
+  const button=eventDialog.querySelector('[data-action="event-pause"]');if(button){button.textContent=clock.paused?'Продолжить таймер':'Пауза таймера';button.setAttribute('aria-pressed',String(clock.paused));}
+  if(seconds!==eventSaveSecond){eventSaveSecond=seconds;persist();}
+}
+eventDialog.addEventListener('scroll',()=>eventDialog.classList.toggle('event-clock-compact',eventDialog.scrollTop>80),{passive:true});
+eventDialog.addEventListener('cancel',e=>{e.preventDefault();const clock=game&&ensureEventClock(game);if(clock){clock.paused=true;persist();updateEventClock(0);}else eventDialog.querySelector('#event-title')?.focus();});
 function officeWalk(point) {
   if(!game||!officeSelection)return;
   if(!canWalkTo(officeSelection,point)){toast('Не пройти: выбери свободное место ближе к проходу.');return;}
@@ -239,6 +280,7 @@ function debrief() {
 
 let miniMessage = '', miniEffect = {}, miniStored = false;
 function saveMini() {
+  if(recordOrbitResult(game,mini))persist();
   miniStored=false;
   if(canSaveOrbit(game)){try{localStorage.setItem(MINI,JSON.stringify(mini));miniStored=true;}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
 }
@@ -249,11 +291,11 @@ function openMini(reloading=false) {
   mini = restoreOrbit(game, stored);miniEffect={};
   const mode=orbitFeatures(game,getResult(game).design).saveMode;
   miniMessage = stored && canSaveOrbit(game) && mini.moves === 0 && stored.release !== mini.release
-    ? 'Начат полёт для текущего релиза: старое сохранение не содержит этих решений команды.' : '';
+    ? 'Полёт начат заново для обновлённого релиза. Студия и решения команды сохранены.' : '';
   if(mode==='broken'){
     miniEffect={kind:'lost'};
     miniMessage=previous?.release===mini.release&&previous.moves>0
-      ? 'Ошибка сохранения. Батарей потеряно: '+previous.collected.length+' / 3. Ходов сброшено: '+previous.moves+'. Корабль снова на старте.'
+      ? 'Ошибка сохранения. Батарей потеряно: '+previous.collected.length+' / '+missionFor(game).batteries.length+'. Ходов сброшено: '+previous.moves+'. Корабль снова на старте.'
       : 'В релизе осталась ошибка сохранения. После перезапуска полёт всегда начинается заново.';
   }else if(mode==='removed')miniMessage='Короткая сессия без сохранения — так команда договорилась с заказчиком.';
   else if(reloading&&!miniMessage)miniMessage=mini.moves>0?'Положение корабля, батареи и заряд щита восстановлены.':'Сохранённый маршрут начинается здесь.';
@@ -309,6 +351,10 @@ document.addEventListener('click',e=>{
   if(action==='confirm-new'){dialog.close();newGame();return;}
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
+  if(action==='event-open'){syncEventDialog();return;}
+  if(action==='event-pause'){const clock=ensureEventClock(game);if(clock)clock.paused=!clock.paused;persist();updateEventClock(0);return;}
+  if(action==='event-untimed'){game.timedEvents=false;delete game.eventClock;shownEvent=null;persist();syncEventDialog();return;}
+  if(action==='orbit-scan'||action==='orbit-wait'){const outcome=actOrbit(game,mini,action==='orbit-scan'?'scan':'wait');miniEffect=outcome;miniMessage=outcome.message;saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
   if(action==='workspace'){workspaceView=id;render();}
   if(action==='office-expand'){officeExpanded=!officeExpanded;render();}
   if(action==='task-info'){const t=TASKS.find(t=>t.id===id);showDialog(`<div class="eyebrow">ЗАДАЧА КОМАНДЫ</div><h2 id="dialog-title">${t.name}</h2><p>${t.description}</p><button class="primary full" data-action="close-dialog">К плану</button>`);}
@@ -355,7 +401,7 @@ document.addEventListener('click',e=>{
   if(action==='tick')advance();
   if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');}}
   if(action==='auto'){game.autoPlay=!game.autoPlay;persist();render();}
-  if(action==='decision'){const error=resolveEvent(game,id);if(error)toast(error);else{persist();render();}}
+  if(action==='decision'){completeDecision(id);return;}
   if(action==='office-select'){officeSelection=officeSelection===id?null:id;render();}
   if(action==='office-walk')officeWalk(WAITING[game.team.indexOf(officeSelection)]);
   if(action==='office-cancel'){officeSelection=null;render();}
