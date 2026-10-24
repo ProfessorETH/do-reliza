@@ -80,8 +80,9 @@
 .crew-manage { flex:none; margin:0 0 10px; }.crew-manage>summary { cursor:pointer; list-style:none; padding:11px 0; color:#c6bca6; font-size:13px; }.crew-manage>summary::after { content:'＋'; float:right; }.crew-manage[open]>summary::after { content:'−'; }.crew-manage[open] { padding-bottom:10px; }
 .crew-seating { flex:none; display:flex; justify-content:flex-start; gap:9px; width:100%; min-height:44px; padding:9px 12px; background:#1e2630; color:#aebfc3; border:1px solid var(--hud-edge); border-radius:9px; font-size:13px; }.crew-seating b { margin-left:auto; color:#cad8c5; font-size:12px; }.crew-seating:hover { border-color:#d4c7a369; }
 .team-hud-layout .panel-bottom { flex:none; margin-top:auto; padding:18px 0 0; border:0; }.team-hud-layout .panel-bottom>span { font-size:12px; margin:0 0 12px; line-height:1.5; color:#a0b0b5; }
+.team-hud-layout[data-stage=hire]:has(.team-ready) .panel-bottom,.team-hud-layout[data-stage=plan] .panel-bottom { position:sticky; bottom:0; z-index:3; background:var(--hud-panel); box-shadow:0 -10px 12px var(--hud-panel); }
 .team-hud-layout .coverage { gap:16px; margin:0 0 8px; }.team-hud-layout .coverage span { font-size:12px; }.team-hud-layout .coverage span.covered { color:#b7cda8; }
-.team-hud-layout .candidate-grid { gap:8px; margin:0 0 14px; }.team-hud-layout .candidate { padding:8px 3px; display:flex; align-items:center; flex-direction:column; gap:4px; background:#202832; border-color:var(--hud-edge); border-radius:10px; }
+.team-hud-layout .candidate-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:0 0 14px; }.team-hud-layout .candidate { padding:8px 3px; display:flex; align-items:center; flex-direction:column; gap:4px; background:#202832; border-color:var(--hud-edge); border-radius:10px; }
 .team-hud-layout .candidate-art { position:relative; width:50px; height:50px; border-radius:50%; overflow:visible; background:none; }
 .team-hud-layout .candidate .candidate-portrait { position:static; display:block; width:50px; height:50px; border-radius:50%; transform:none; }.team-hud-layout .candidate-caption { padding:0; display:block; text-align:center; background:transparent; }
 .team-hud-layout .candidate b { font-size:13px; }.team-hud-layout .candidate-price { font-size:10px; color:#9dadb2; display:block; margin-top:3px; }.team-hud-layout .candidate.selected { border-color:#d7bf8a; background:#454840; }.team-hud-layout .candidate small { display:none; }.team-hud-layout .hired-check { width:17px; height:17px; top:auto; bottom:0; right:-4px; }
@@ -95,10 +96,14 @@
 .team-hud-layout .plan-task { padding:12px 0; grid-template-columns:26px 1fr; gap:9px; }.team-hud-layout .task-number { width:25px; height:25px; font-size:11px; }.team-hud-layout .task-body { display:block; }.team-hud-layout .task-body h2 { font-size:14px; margin:0 0 7px; }.team-hud-layout .task-body>p { display:none; }
 .team-hud-layout .task-select-row { gap:6px; }.team-hud-layout .task-select-row select { min-height:40px; font-size:12px; padding:7px 8px; background:#1c2530; }.team-hud-layout .fit { font-size:11px; }.team-hud-layout .warning-note { font-size:12px; padding:10px; }
 .team-hud-layout .work-controls { flex:none; }.team-hud-layout .work-controls button { min-height:44px; font-size:15px; }.team-hud-layout .time-strip { flex:none; font-size:12px; margin:10px 0; gap:10px; }
+.team-hud-layout[data-stage=work] .panel-header>p { display:none!important; }
 .team-hud-layout .work-tasks { flex:none; gap:8px; }.team-hud-layout .work-task { min-height:0; padding:12px; margin:0; border-radius:10px; background:#202832; }.team-hud-layout .work-task.active { background:#3b443e; border-color:#bfd4a85c; }.team-hud-layout .work-task.done { background:#2c3935; }
 .team-hud-layout .work-task h2 { font-size:14px; margin:0; }.team-hud-layout .work-task>div>span { font-size:11px; line-height:1.4; margin:0; }.team-hud-layout .work-task>div:nth-child(2) { display:grid; gap:4px; }.team-hud-layout .work-task-icon { width:28px; height:28px; }.team-hud-layout .work-task>strong { font-size:13px; }.team-hud-layout .work-task .meter { margin:0; height:4px; }
 .team-hud-layout .activity-log { padding:14px 0; margin:0; }.team-hud-layout .activity-log .eyebrow { font-size:10px; margin:0; }.team-hud-layout .activity-log p { font-size:12px; line-height:1.45; }.team-hud-layout .activity-log .text-button { float:right; margin:-20px 0 0; font-size:11px; min-height:24px; }
 .team-hud-layout .support-card { margin-top:auto; padding:12px; border-color:#a7b99140; background:#354337; }.team-hud-layout .support-card .eyebrow { font-size:9px; }.team-hud-layout .support-card h2 { font-size:15px; margin:6px 0 10px; }.team-hud-layout .support-card p { display:none; }.team-hud-layout .support-card .secondary { min-height:40px; font-size:13px; }.team-hud-layout .support-done { font-size:12px; }
+.team-hud-layout .support-card { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; align-items:center; }
+.team-hud-layout .support-card h2 { grid-column:1; margin:0; font-size:12px; line-height:1.4; }
+.team-hud-layout .support-card .secondary { grid-column:2; grid-row:1/3; width:auto; padding:8px; font-size:12px; }
 .team-hud-layout .event-heading { gap:8px; margin:0 0 8px; }.team-hud-layout .control-panel .event-heading>span { font-size:10px; }.team-hud-layout .event-context { font-size:11px; min-height:30px; }
 .team-hud-layout .speaker { padding:10px 0; margin:0; gap:10px; }.team-hud-layout .speaker .portrait { width:44px; height:44px; }.team-hud-layout .speaker b { font-size:15px; }.team-hud-layout .speaker small { font-size:12px; }
 .team-hud-layout .event-copy h1 { font-size:25px; }.team-hud-layout .event-copy>p { font-size:14px; line-height:1.55; }.team-hud-layout .event-options { gap:10px; }.team-hud-layout .event-option { min-height:0; padding:14px 12px; gap:10px; align-items:center; background:#2c353e; border-color:#aebbb04d; }
@@ -115,7 +120,7 @@
   .game-shell.team-hud-layout { grid-template-rows:54px 58px 30px 40px minmax(0,1fr); height:100dvh; min-height:0; overflow:hidden; }
   .team-hud-layout .game-topbar { padding:0 12px; gap:10px; }.team-hud-layout .game-topbar .brand { font-size:19px; }.team-hud-layout .brand small { font-size:7px; }.team-hud-layout .game-topbar .project-title { display:none; }.team-hud-layout .hud-stats { margin-left:auto; }.team-hud-layout .hud-stat small { font-size:10px; }.team-hud-layout .hud-stat strong { font-size:16px; }.team-hud-layout .hud-stat { padding:0 6px; }
   .team-hud-layout .shift-banner { padding:7px 12px; gap:8px; grid-template-columns:1fr 1fr 1fr auto; }.team-hud-layout .shift-banner span { font-size:9px; }.team-hud-layout .shift-banner strong { font-size:15px; }.team-hud-layout .shift-auto { display:block; }.team-hud-layout .shift-auto .secondary { min-width:38px; width:38px; height:38px; min-height:38px; padding:5px; font-size:0; }.team-hud-layout .shift-auto>span { display:none; }
-  .team-hud-layout .game-footer { padding:0 12px; }.team-hud-layout .timeline-step { font-size:10px; }.team-hud-layout .timeline-step>span { width:18px; height:18px; font-size:10px; }.team-hud-layout .save-status { display:none; }
+  .team-hud-layout .game-footer { padding:0 12px; }.team-hud-layout .timeline-step { flex-direction:row; gap:4px; font-size:10px; }.team-hud-layout .timeline-step>span { width:18px; height:18px; font-size:10px; }.team-hud-layout .save-status { display:none; }
   .team-hud-layout .workspace-tabs { display:grid; grid-template-columns:1fr 1fr; position:static; padding:0 10px 6px; gap:6px; }.team-hud-layout .workspace-tabs button { min-height:34px; font-size:12px; }.team-hud-layout .workspace-tabs button>span { font-size:10px; }
   .game-shell.team-hud-layout .game-layout,.game-shell.team-hud-layout.event-state .game-layout { display:grid; grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); gap:8px; min-height:0; padding:0 8px 8px; }
   .team-hud { position:relative; padding:0; min-height:0; overflow:visible; }.team-hud-heading { display:none; }.team-hud-members { grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }.team-hud-person { display:grid; grid-template-columns:46px minmax(0,1fr); grid-template-rows:repeat(3,auto); gap:2px 7px; padding:8px; text-align:left; border-radius:10px; }
@@ -130,6 +135,15 @@
   .team-hud-layout .team-ready { padding:16px; margin-bottom:12px; }.team-hud-layout .team-ready h2 { font-size:18px; }.team-hud-layout .team-ready p { font-size:13px; }.team-hud-layout .team-ready ol { margin-top:12px; font-size:12px; }.ready-symbol { width:38px; height:38px; margin-bottom:10px; }
   .team-hud-layout .team-ready ol { display:none; }
   .team-hud-layout[data-stage=plan] .panel-header>p { display:none!important; }
+  .team-hud-layout[data-stage=work] .panel-header { order:0; }
+  .team-hud-layout .work-controls { order:1; }
+  .team-hud-layout :is(.support-card,.support-done) { order:2; margin:10px 0 0; }
+  .team-hud-layout .support-done small { font-size:11px; }
+  .team-hud-layout .activity-log { order:3; display:flex; justify-content:flex-end; padding:0; }
+  .team-hud-layout .activity-log :is(.eyebrow,p) { display:none; }
+  .team-hud-layout .activity-log .text-button { float:none; margin:0; min-height:28px; }
+  .team-hud-layout .time-strip { order:4; margin:4px 0 10px; }
+  .team-hud-layout .work-tasks { order:5; }
 }
 @media(max-width:600px) {
   .team-hud-layout .hud-stats .icon-btn { width:32px; min-width:32px; height:34px; }.team-hud-layout .game-topbar .brand { font-size:17px; }.team-hud-layout .brand small { font-size:6px; }
@@ -143,6 +157,7 @@
   .game-shell.team-hud-layout { grid-template-rows:52px 54px 30px minmax(0,1fr); }.team-hud-layout .game-layout { padding-bottom:12px; }.team-hud-layout .game-topbar .brand { font-size:21px; }.team-hud-layout .shift-banner strong { font-size:17px; }
   .team-hud-person { padding:5px 4px; }.team-portrait-ring { width:52px; height:52px; }.team-hud-members { gap:3px; }.team-hud-person>b { font-size:14px; }.team-mood-label { font-size:11px; }.team-activity { font-size:10px; }.team-thought { margin-top:9px; padding:10px; }.team-thought p { font-size:11px; margin-bottom:8px; }.team-vitals { gap:5px; }.team-care { font-size:10px; min-height:28px; }
   .game-shell.team-hud-layout .control-panel { padding:16px; }.team-hud-layout .panel-header { margin-bottom:12px; }.team-hud-layout .panel-header h1 { font-size:24px; }.team-hud-layout .team-ready { padding:15px; margin-bottom:12px; }.team-hud-layout .team-ready h2 { font-size:18px; }.team-hud-layout .team-ready p { font-size:13px; }.team-hud-layout .team-ready ol { margin-top:12px; }.team-hud-layout .plan-task { padding:8px 0; }.team-hud-layout .work-task { padding:9px; }.team-hud-layout .work-tasks { gap:6px; }
+  .team-hud-layout .work-task { padding:6px 9px; }.team-hud-layout .activity-log { padding:10px 0; }.team-hud-layout .activity-log p { display:none; }
 }
 body:has(.team-hud-layout) #info-dialog { width:min(660px,calc(100vw - 24px)); max-width:660px; padding:28px; font-size:16px; line-height:1.5; }
 body:has(.team-hud-layout) #info-dialog h2 { font-size:27px; line-height:1.2; }
@@ -158,6 +173,8 @@ body:has(.team-hud-layout) #info-dialog .seating-card b { font-size:15px; }body:
 .team-hud-layout .hud-stat { margin-right:46px; }
 body:has(.team-hud-layout) .nika-guide.nika-collapsed { width:38px; height:38px; right:116px; top:11px; bottom:auto; }
 body:has(.team-hud-layout) .nika-guide.nika-collapsed .nika-toggle { width:38px; height:38px; min-height:38px; border-width:1px; }
+body:has(.team-hud-layout) .nika-idle-invitation { right:46px; bottom:-1px; padding:8px 10px; max-width:200px; font-size:12px; border-radius:9px; }
+body:has(.team-hud-layout) #toast { bottom:24px; max-width:min(480px,calc(100vw - 32px)); padding:10px 14px; font-size:13px; color:#dce5d8; background:#303b40; border-color:#baccb25a; }
 @media(max-width:1100px) {
   .team-hud-layout .hud-stat { margin-right:0; }.team-hud-layout .workspace-tabs { padding-right:54px; }
   body:has(.team-hud-layout) .nika-guide.nika-collapsed { width:32px; height:32px; top:145px; right:12px; }

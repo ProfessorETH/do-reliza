@@ -317,7 +317,7 @@ document.addEventListener('click',e=>{
   if(!game)return;
   if(action==='workspace'){workspaceView=id;if(dialog.open)dialog.close();render();}
   if(action==='team-focus'){hudSelection=hudSelection===id?null:id;render();}
-  if(action==='team-dismiss'){hudSelection=null;render();}
+  if(action==='team-dismiss'){const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
   if(action==='seating'){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);}
   if(action==='office-expand'){officeExpanded=!officeExpanded;render();}
   if(action==='task-info'){const t=TASKS.find(t=>t.id===id);showDialog(`<div class="eyebrow">ЗАДАЧА КОМАНДЫ</div><h2 id="dialog-title">${t.name}</h2><p>${t.description}</p><button class="primary full" data-action="close-dialog">К плану</button>`);}
