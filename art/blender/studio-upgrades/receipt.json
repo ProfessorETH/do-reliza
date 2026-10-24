@@ -1,0 +1,167 @@
+{
+  "source": "assets/models/office.glb",
+  "sourceSha256": "62c2e1d30eaf249bb27483cad06d23923839be757bf43776276415932f1fd20e",
+  "coordinates": "Blender Z-up; GLB Y-up",
+  "contacts": [
+    {
+      "interface": "back felt 0 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 0 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 0 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 0 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 0 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "back felt 1 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 1 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 1 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 1 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 1 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "back felt 2 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 2 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 2 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 2 / desk top",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "side felt 2 / back felt",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower feet 0 / floor",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower cap 0 / sides",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower feet 1 / floor",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower cap 1 / sides",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower feet 2 / floor",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "tower cap 2 / sides",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "throw / measured beanbag surface",
+      "signedGapMeters": 0.008,
+      "intent": "8 mm upholstery loft"
+    },
+    {
+      "interface": "tray / coffee tabletop",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "lid / carafe",
+      "signedGapMeters": 0.0
+    },
+    {
+      "interface": "cups and carafe / tray top",
+      "signedGapMeters": 0.0
+    }
+  ],
+  "upgrades": {
+    "lounge": {
+      "objectsBeforeBatching": 6,
+      "boundsBlender": [
+        [
+          -4.3,
+          -3.42
+        ],
+        [
+          -3.84,
+          -2.69
+        ],
+        [
+          0.415,
+          0.759
+        ]
+      ],
+      "meshes": 4
+    },
+    "quiet": {
+      "objectsBeforeBatching": 12,
+      "boundsBlender": [
+        [
+          -3.7425,
+          2.4925
+        ],
+        [
+          -1.8225,
+          2.4225
+        ],
+        [
+          0.8,
+          1.28
+        ]
+      ],
+      "meshes": 2
+    },
+    "computers": {
+      "objectsBeforeBatching": 63,
+      "boundsBlender": [
+        [
+          -2.03,
+          2.46
+        ],
+        [
+          -1.605,
+          2.305
+        ],
+        [
+          0.0,
+          0.69
+        ]
+      ],
+      "meshes": 4
+    }
+  },
+  "navigation": "All added geometry remains on/inside existing furniture footprints; floor walking obstacles unchanged.",
+  "sha256": "b8b19f80b03263a33e6148743df1747140be8dc96ca2eaa2910cb71571dd3483",
+  "bytes": 81508
+}

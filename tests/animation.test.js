@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 import * as THREE from '../vendor/three/three.module.js';
 import { OfficeActor } from '../office-actors.js';
-import { DESKS, isWalkable, distance } from '../office-layout.js';
+import { DESKS, REST_SPOTS, isWalkable, distance } from '../office-layout.js';
 import { poseActor } from '../office-pose.js';
 
 // Node has no browser import map; resolve the unmodified vendored addons locally.
@@ -89,5 +89,29 @@ test('hands reach keyboard and mouse without changing seated pelvis contact', as
       }
       assert.equal(a.joints.Hips.position.y, .6);
     }
+  }
+});
+
+test('employees leave each desk, rest at a separate lounge spot and return without teleporting',async()=>{
+  for(const dt of [1/30,1/60,1/120])for(let slot=0;slot<3;slot++){
+    const a=await actor('mira',slot),game={seats:[null,null,null],officeTargets:{},life:{members:{mira:{restTrip:null,restSerial:1}}}};
+    game.seats[slot]='mira';a.destination(game,true);const seats=[...game.seats];
+    game.life.members.mira.restTrip={phase:'outbound',slot};a.destination(game);
+    const states=new Set();let previous=a.point;
+    for(let frame=0;frame<45/dt&&a.moving;frame++){
+      a.update(dt,frame*dt,[a],{stage:'work',task:{skill:'code'}},false,false);states.add(a.state);
+      assert.ok(distance(previous,a.point)<.11,'continuous lounge travel');previous=a.point;
+      if(a.state==='walk')assert.ok(isWalkable(a.point));
+    }
+    assert.equal(a.failed,false);assert.equal(a.state,'idle');assert.equal(a.sit,0);
+    assert.ok(distance(a.point,REST_SPOTS[slot].point)<.001);
+    for(const state of ['pullout','rise','exit','walk'])assert.ok(states.has(state),state);
+    update(a,120,dt,{stage:'work',task:{skill:'code'}});assert.ok(a.workBlend<.01,'no typing during rest');
+    game.life.members.mira.restTrip.phase='returning';a.destination(game);previous=a.point;
+    for(let frame=0;frame<45/dt&&a.moving;frame++){
+      a.update(dt,frame*dt,[a],activity,false,false);assert.ok(distance(previous,a.point)<.11);previous=a.point;
+    }
+    assert.equal(a.failed,false);assert.equal(a.state,'seated',JSON.stringify({dt,slot,point:a.point,path:a.path,state:a.state,speed:a.speed}));assert.equal(a.sit,1);
+    assert.ok(distance(a.point,DESKS[slot].seat)<.001);assert.deepEqual(game.seats,seats);
   }
 });

@@ -1,4 +1,4 @@
-import { STORY, guideFor } from './onboarding-model.js?v=unified-20261024';
+import { STORY, guideFor } from './onboarding-model.js?v=office-life-20261024-v3';
 
 const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';

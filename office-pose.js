@@ -59,7 +59,7 @@ export function poseActor(actor, elapsed, reduced) {
     const [hip, knee] = legAngles(forward, j.Hips.position.y - sole - lift);
     j[side + 'Thigh'].rotation.set(hip, 0, 0); j[side + 'Shin'].rotation.set(knee, 0, 0); j[side + 'Foot'].rotation.set(-hip - knee + pitch, 0, 0);
     j[side + 'UpperArm'].rotation.set(-wave * sign * stride * .4, 0, -sign * .035);
-    j[side + 'Forearm'].rotation.set(.10 + stride * .16, 0, 0);
+    j[side + 'Forearm'].rotation.set(.10 + stride * .16 + (actor.restBlend || 0) * (side === 'Left' ? .45 : .18), 0, 0);
     if (j[side + 'Wrist']) j[side + 'Wrist'].rotation.set(.04, 0, 0);
     const mouse = side === 'Right' ? actor.mouseBlend || 0 : 0;
     const typing = actor.workBlend * (reduced ? 1 : smoothstep(t % 8, .3, .7) * (1 - smoothstep(t % 8, 5.7, 6.2)));
