@@ -1,0 +1,136 @@
+import { AGENTS } from '../data.js';
+
+const clamp = n => Math.max(0, Math.min(100, n));
+const member = () => ({ energy: 85, stress: 15, morale: 70, breaks: 0, raises: 0, praised: 0, warnings: 0 });
+export const CONTRACTS = [
+  { id: 'festival', name: 'Орбита · фестиваль', client: 'Школьный клуб', text: 'Первый показ космической игры. Собрать три батареи и доставить их на станцию.', budget: 36000, deadline: 16, reward: 4500, factors: {} },
+  { id: 'club', name: 'Орбита · исследователи', client: 'Кружок астрономии', text: 'Новый маршрут для кружка. Больше работы над картой и проверкой понятности интерфейса.', budget: 43000, deadline: 18, reward: 5500, factors: { design: 1.35, qa: 1.2 } },
+  { id: 'cup', name: 'Орбита · кубок пилотов', client: 'Организаторы турнира', text: 'Сложный маршрут для турнира. Механика и тесты займут больше времени; срок короче.', budget: 45000, deadline: 15, reward: 7000, factors: { code: 1.3, qa: 1.3 } },
+];
+export const UPGRADES = [
+  { id: 'lounge', name: 'Обустроить зону отдыха', price: 2500, text: 'Перерыв восстанавливает 45 энергии вместо 30. Используем существующую зону офиса.' },
+  { id: 'quiet', name: 'Организовать тихий офис', price: 3000, text: 'Договорённости о созвонах: напряжение от работы +1 вместо +2; событие с шумом решается без потери часа.' },
+  { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
+];
+export const INCIDENTS = {
+  noise: { title: 'Созвон за соседним столом', text: 'Громкое обсуждение мешает сосредоточиться. Сотрудник уже несколько раз терял мысль.', upgrade: 'quiet', care: 'Договориться о тихом часе', effect: 'Напряжение −12 · +1 ч без тихого офиса' },
+  computer: { title: 'Сборка снова зависла', text: 'Компьютер подвёл в середине работы. Сотрудник переживает, что задерживает всех.', upgrade: 'computers', care: 'Помочь настроить компьютер', effect: 'Напряжение −12 · +1 ч без обновления компьютеров' },
+  idea: { title: 'Получилось лучше, чем ожидали', text: 'Сотрудник нашёл удачный приём и хочет показать его коллегам. У команды появился повод порадоваться.', care: 'Дать поделиться находкой', effect: 'Настроение всей команды +8 · +1 ч' },
+};
+
+export function ensureLife(s) {
+  if (!s.life) s.life = { version: 1, cash: 5000, completed: 0, contract: 'festival', upgrades: [], members: {}, history: [], seed: Math.floor(Math.random() * 0x100000000), incident: null, incidentDone: false, settled: false, departures: [] };
+  for (const a of AGENTS) s.life.members[a.id] ||= member();
+  return s.life;
+}
+export const contractFor = s => CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0];
+export function condition(s, id) {
+  const m = ensureLife(s).members[id];
+  if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час; остальные продолжают работу.', factor: 1 };
+  if (m.energy <= 25 && m.stress >= 65) return { label: 'На грани выгорания', reason: 'Мало энергии и много напряжения. Нужны отдых и помощь с причиной затруднений.', factor: .75 };
+  if (m.energy < 35) return { label: 'Усталость', reason: 'Долго работает без отдыха. Перерыв вернёт энергию.', factor: .9 };
+  if (m.stress >= 65) return { label: 'Нужна поддержка', reason: 'Накопилось напряжение от работы и событий. Помогут разбор и отдых.', factor: .9 };
+  if (m.morale < 35) return { label: 'Настроение упало', reason: 'Неудачи и нерешённые проблемы расстраивают. Заметь результат и обсуди условия.', factor: .95 };
+  return { label: m.morale >= 80 ? 'Воодушевление' : 'В порядке', reason: 'Успехи поднимают настроение; сложная работа и нерешённые проблемы его снижают.', factor: 1 };
+}
+export function lifeHour(s, active, completed) {
+  const l = ensureLife(s);
+  for (const id of s.team) {
+    const m = l.members[id], task = active.find(t => s.assignments[t.id] === id);
+    if (m.breaks) { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); }
+    else if (task) {
+      m.energy = clamp(m.energy - 7);
+      const difficult = AGENTS.find(a => a.id === id).stats[task.skill] < 60;
+      m.stress = clamp(m.stress + (difficult ? 5 : l.upgrades.includes('quiet') ? 1 : 2));
+      if (difficult || m.energy < 25) m.morale = clamp(m.morale - 2);
+    } else { m.energy = clamp(m.energy + 3); m.stress = clamp(m.stress - 2); }
+    if (completed.some(t => s.assignments[t.id] === id)) { m.morale = clamp(m.morale + 8); m.stress = clamp(m.stress - 6); }
+  }
+}
+export function scheduleIncident(s) {
+  const l = ensureLife(s);
+  if (l.incidentDone || s.time < 4 + l.seed % 3 || !s.team.length) return false;
+  const type = Object.keys(INCIDENTS)[(l.seed >>> 8) % 3];
+  const id = s.team[(l.seed >>> 16) % s.team.length];
+  l.incident = { type, id }; s.currentEvent = 'life'; s.stage = 'event';
+  if (type !== 'idea') { l.members[id].stress = clamp(l.members[id].stress + 10); l.members[id].morale = clamp(l.members[id].morale - 6); }
+  s.log.push(`${AGENTS.find(a => a.id === id).name}: ${INCIDENTS[type].title}.`);
+  return true;
+}
+export function resolveIncident(s, option) {
+  const l = ensureLife(s), ev = l.incident;
+  if (s.stage !== 'event' || s.currentEvent !== 'life' || !ev || !['life-care', 'life-wait'].includes(option)) return 'Выбери решение события.';
+  const m = l.members[ev.id], info = INCIDENTS[ev.type];
+  if (option === 'life-care') {
+    if (!l.upgrades.includes(info.upgrade)) s.time++;
+    if (ev.type === 'idea') for (const id of s.team) l.members[id].morale = clamp(l.members[id].morale + 8);
+    else { m.stress = clamp(m.stress - 12); m.morale = clamp(m.morale + 6); }
+    s.log.push(`${info.care}. ${l.upgrades.includes(info.upgrade) ? 'Улучшение офиса сэкономило час.' : 'Обсуждение заняло один час.'}`);
+  } else {
+    if (ev.type === 'idea') m.morale = clamp(m.morale + 2);
+    else { m.stress = clamp(m.stress + 10); m.morale = clamp(m.morale - 8); }
+    s.log.push(ev.type === 'idea' ? 'Находку записали для следующей встречи; настроение автора +2.' : 'Проблема отложена: напряжение +10, настроение −8.');
+  }
+  l.incidentDone = true; l.incident = null; s.currentEvent = null; s.stage = 'work'; return null;
+}
+export function careFor(s, id, action) {
+  const l = ensureLife(s), m = l.members[id];
+  if (!s.team.includes(id)) return 'Выбери сотрудника команды.';
+  if (action === 'break') {
+    if (s.stage !== 'work' || m.breaks) return 'Перерыв доступен во время работы, один за раз.';
+    m.breaks = 1; s.log.push(`${AGENTS.find(a => a.id === id).name} отдыхает следующий час. Остальные продолжают работу.`);
+  } else if (action === 'praise') {
+    if (!['work', 'result'].includes(s.stage)) return 'Поблагодарить можно за готовую задачу.';
+    const count = Object.keys(s.progress).filter(t => s.assignments[t] === id && s.progress[t] >= 100).length;
+    if (count <= m.praised) return 'Пока нет нового завершённого результата. Похвала не повторяет один и тот же бонус.';
+    m.praised = count; m.morale = clamp(m.morale + 10); m.stress = clamp(m.stress - 5);
+    s.log.push(`Ты отметил вклад ${AGENTS.find(a => a.id === id).name}: настроение +10.`);
+  } else if (action === 'release') {
+    if (s.stage !== 'result') return 'Состав команды меняем между заказами.';
+    if (l.departures.includes(id)) return 'Следующий заказ уже запланирован без этого сотрудника.';
+    l.departures.push(id); s.log.push(`Контракт ${AGENTS.find(a => a.id === id).name} не будет продлён. Для следующего заказа понадобится замена.`);
+  } else if (action === 'raise') {
+    if (s.stage !== 'result') return 'Условия оплаты обсуждаем между заказами.';
+    if (m.raises >= 3) return 'Условия уже улучшены трижды.';
+    if (l.cash < 1000) return 'В кассе студии нужно 1 000 ₽.';
+    l.cash -= 1000; m.raises++; m.morale = clamp(m.morale + 15); m.warnings = 0;
+    l.departures = l.departures.filter(x => x !== id);
+    s.log.push(`Условия ${AGENTS.find(a => a.id === id).name} улучшены: +1 000 ₽ за каждый следующий заказ. Первые 1 000 ₽ выплачены сейчас.`);
+  } else return 'Неизвестное действие.';
+  return null;
+}
+export function buyUpgrade(s, id) {
+  const l = ensureLife(s), u = UPGRADES.find(x => x.id === id);
+  if (!['hire', 'plan', 'result'].includes(s.stage)) return 'Обустройство доступно до смены или после релиза.';
+  if (!u) return 'Нет такого улучшения.';
+  if (l.upgrades.includes(id)) return 'Уже установлено.';
+  if (l.cash < u.price) return 'Недостаточно денег в кассе студии.';
+  l.cash -= u.price; l.upgrades.push(id); s.log.push(`Студия: ${u.name}, ${u.price} ₽. ${u.text}`); return null;
+}
+export function settleProject(s, result) {
+  const l = ensureLife(s);
+  if (s.stage !== 'result' || l.settled) return;
+  const reward = result.passed ? contractFor(s).reward + result.score * 20 : 2000;
+  l.cash += reward; l.completed++; l.settled = true;
+  for (const id of s.team) {
+    const m = l.members[id];
+    m.morale = clamp(m.morale + (result.passed ? 5 : -10));
+    if (m.morale < 30 || (m.energy <= 25 && m.stress >= 65)) m.warnings++; else m.warnings = 0;
+    if (m.warnings >= 2 && !l.departures.includes(id)) l.departures.push(id);
+  }
+  l.history.push({ name: contractFor(s).name, score: result.score, reward, time: s.time });
+  s.log.push(`Заказ закрыт: в кассу студии +${reward} ₽. Резерв заказчика не переносится.`);
+}
+export function validLife(s) {
+  const l = s.life;
+  if (l === undefined) return true; // Safe migration of 0.5 saves.
+  const integer = (n, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
+  return l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
+    && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
+    && typeof l.settled === 'boolean' && typeof l.incidentDone === 'boolean'
+    && Array.isArray(l.departures) && l.departures.every(id => s.team.includes(id))
+    && (l.away === undefined || (Array.isArray(l.away) && l.away.every(id => AGENTS.some(a => a.id === id) && !s.team.includes(id))))
+    && Array.isArray(l.history) && l.history.every(h => h && typeof h.name === 'string' && integer(h.score, 0, 100) && integer(h.reward, 0) && Number.isFinite(h.time) && h.time >= 0)
+    && l.members && AGENTS.every(a => { const m = l.members[a.id]; return m && ['energy','stress','morale'].every(k => Number.isFinite(m[k]) && m[k] >= 0 && m[k] <= 100) && integer(m.breaks,0,1) && integer(m.raises,0,3) && integer(m.praised,0,5) && integer(m.warnings,0); })
+    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && !l.incidentDone);
+}

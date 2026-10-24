@@ -1,6 +1,8 @@
 # Local previews, screenshots, archives and transient logs
 /work/
 /outputs/
+/output/
+/.playwright-cli/
 /dist/
 /.playwright-mcp/
 *.log

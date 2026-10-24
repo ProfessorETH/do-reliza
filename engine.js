@@ -1,24 +1,28 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, CONTRACTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
 export function createGame(difficulty = 'normal') {
   const mode = DIFFICULTIES[difficulty] || DIFFICULTIES.normal;
-  return { version: VERSION, stage: 'hire', difficulty: DIFFICULTIES[difficulty] ? difficulty : 'normal',
+  const state = { version: VERSION, stage: 'hire', difficulty: DIFFICULTIES[difficulty] ? difficulty : 'normal',
     budget: mode.budget, initialBudget: mode.budget, deadline: mode.deadline, time: 0,
     team: [], seats: [null, null, null], officeTargets: {}, assignments: {}, progress: Object.fromEntries(TASKS.map(t => [t.id, 0])),
     workload: {}, choices: {}, currentEvent: null, trust: 80, designPenalty: 0,
     shield: false, checkpoint: true, criticalBug: false, extraCode: 0,
     log: ['Получен заказ: подготовить игру «Орбита» к школьному фестивалю.'] };
+  ensureLife(state); return state;
 }
 export function hire(state, id) {
   const a = agentById(id);
   if (!a || state.stage !== 'hire') return 'Сейчас команда уже работает.';
+  if (state.life?.away?.includes(id)) return 'Сотрудник ушёл из студии и пропускает этот заказ.';
   if (state.team.includes(id)) {
     state.team = state.team.filter(x => x !== id); state.budget += a.cost;
     state.seats = state.seats.map(x => x === id ? null : x);
     delete state.officeTargets[id];
+    if (state.life) state.life.departures = state.life.departures.filter(x => x !== id);
     Object.keys(state.assignments).forEach(k => { if (state.assignments[k] === id) delete state.assignments[k]; });
     return null;
   }
@@ -30,6 +34,8 @@ export function hire(state, id) {
 export function restoreOffice(state) {
   if (!state.seats) state.seats = Array.from({ length: 3 }, (_, i) => state.stage === 'hire' ? null : state.team[i] || null);
   if (!state.officeTargets) state.officeTargets = {};
+  ensureLife(state);
+  if (state.stage === 'result') settleProject(state, getResult(state));
   return state;
 }
 export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
@@ -68,6 +74,8 @@ export function supportTask(state, taskId) {
   const task = activeTasks(state).find(t => t.id === taskId);
   if (!task) return 'Помочь можно с задачей, которая сейчас в работе.';
   state.support = { taskId, agentId: state.assignments[taskId] };
+  const member = ensureLife(state).members[state.support.agentId];
+  member.stress = clamp(member.stress - 12); member.morale = clamp(member.morale + 5);
   state.time += 1;
   state.log.push(`Вы разобрали задачу «${task.name}» вместе с ${agentById(state.support.agentId).name}. Навык для этой задачи +15, потрачен 1 час.`);
   return null;
@@ -88,34 +96,40 @@ export function activeTasks(state) {
   const busy = new Set();
   return TASKS.filter(task => {
     const id = state.assignments[task.id];
-    if (!id || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
+    if (!id || state.life?.members[id]?.breaks || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
     busy.add(id); return true;
   });
 }
 export function tick(state) {
   if (state.stage !== 'work') return false;
   const active = activeTasks(state);
-  if (!active.length) return false;
+  if (!active.length && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
+  if (!active.length && !state.team.some(id => state.life?.members[id]?.breaks)) return false;
   state.time += 1;
+  const completed = [];
   for (const task of active) {
     const id = state.assignments[task.id], a = agentById(id);
     const hours = state.workload[id] || 0;
     const fatigue = hours > 7 ? .85 : 1;
-    const speed = (.7 + a.stats.pace / 180) * (.65 + fit(id, task, state) / 180) * fatigue;
-    const base = task.base + (task.id === 'code' ? state.extraCode : 0);
+    const equipment = state.life?.upgrades.includes('computers') && ['code','release'].includes(task.id) ? 1.1 : 1;
+    const speed = (.7 + a.stats.pace / 180) * (.65 + fit(id, task, state) / 180) * fatigue * condition(state,id).factor * equipment;
+    const base = (task.base + (task.id === 'code' ? state.extraCode : 0)) * (contractFor(state).factors[task.id] || 1);
     state.progress[task.id] = clamp(state.progress[task.id] + speed * 100 / base);
     state.workload[id] = hours + 1;
-    if (state.progress[task.id] >= 100) state.log.push(`${a.name}: «${task.name}» — готово.`);
+    if (state.progress[task.id] >= 100) { completed.push(task); state.log.push(`${a.name}: «${task.name}» — готово.`); }
   }
+  lifeHour(state, active, completed);
   if (!state.choices.scope && state.time >= 3) { state.currentEvent = 'scope'; state.stage = 'event'; }
   else if (!state.choices.review && state.progress.code >= 100) { state.currentEvent = 'review'; state.stage = 'event'; }
   else if (!state.choices.bug && state.progress.qa >= 100) { state.currentEvent = 'bug'; state.stage = 'event'; }
-  else if (TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; state.log.push('Версия передана заказчику. Пора проверить результат.'); }
+  else if (scheduleIncident(state)) { /* The persisted event pauses time like technical decisions. */ }
+  else if (TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; state.log.push('Версия передана заказчику. Пора проверить результат.'); settleProject(state,getResult(state)); }
   return true;
 }
 export function resolveEvent(state, optionId) {
   if (state.stage !== 'event') return 'Сейчас нет события.';
   const event = state.currentEvent;
+  if (event === 'life') return resolveIncident(state, optionId);
   if (event === 'scope') {
     if (!['focus', 'shield', 'swap'].includes(optionId)) return 'Выберите решение.';
     if (optionId === 'shield' && state.budget < 2000) return 'В резерве нужно 2 000 ₽.';
@@ -135,6 +149,11 @@ export function resolveEvent(state, optionId) {
     if (optionId === 'ignore') { state.criticalBug = true; state.trust -= 24; state.log.push('Известная ошибка попала в релиз: прогресс прототипа теряется при перезапуске.'); }
   } else return 'Неизвестное событие.';
   state.trust = clamp(state.trust); state.choices[event] = optionId;
+  if (event === 'bug' || event === 'review') {
+    const id = state.assignments[event === 'bug' ? 'qa' : 'code'], m = ensureLife(state).members[id];
+    const skipped = ['ignore','review-skip'].includes(optionId);
+    m.morale = clamp(m.morale + (skipped ? -8 : 5)); m.stress = clamp(m.stress + (skipped ? 10 : -8));
+  }
   state.currentEvent = null; state.stage = 'work'; return null;
 }
 export function getResult(state) {
@@ -148,6 +167,33 @@ export function getResult(state) {
     summary: critical ? 'В версии осталась ошибка. Запустите игру и посмотрите, как она влияет на игрока.' : late ? `Игра готова на ${late} ч позже. В следующей смене попробуйте распределить работу иначе.` : 'Команда закончила игру. Теперь можно проверить её самим.' };
 }
 export const totalProgress = s => Math.round(Object.values(s.progress).reduce((a, b) => a + b, 0) / TASKS.length);
+export function nextProject(state, contractId) {
+  if (state.stage !== 'result') return 'Сначала заверши текущий заказ.';
+  const contract = CONTRACTS.find(c => c.id === contractId && c.id !== 'festival');
+  if (!contract) return 'Выбери следующий заказ.';
+  settleProject(state, getResult(state));
+  const l = ensureLife(state);
+  const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
+  if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
+  const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
+  next.budget = next.initialBudget = contract.budget + DIFFICULTIES[state.difficulty].budget - 36000;
+  next.deadline = contract.deadline + DIFFICULTIES[state.difficulty].deadline - 16;
+  const fees = team.reduce((sum,id) => sum + agentById(id).cost, 0);
+  if (fees > next.budget) return 'Выбранный состав дороже бюджета заказа. Начни новую команду или выбери другой заказ.';
+  l.cash -= payroll; l.away = [...l.departures]; l.departures = [];
+  next.team = team; next.budget -= fees; next.seats = state.seats.map(id => team.includes(id) ? id : null);
+  for (const { id } of AGENTS) {
+    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.praised = 0;
+    if (l.away.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
+  }
+  l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
+  next.life = l;
+  next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽. Команда отдохнула между заказами.`];
+  if (l.away.length) next.log.push(`Команду покинули: ${l.away.map(id => agentById(id).name).join(', ')}. Найми замену; ушедшие пропустят этот заказ.`);
+  // Optional project flags (support, wallBug) must not leak into a new commission.
+  for (const key of Object.keys(state)) delete state[key];
+  Object.assign(state,next); return null;
+}
 export function validSave(s) {
   return s && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= 3 && new Set(s.team).size === s.team.length
@@ -164,5 +210,6 @@ export function validSave(s) {
     && (['hire','plan'].includes(s.stage) || TASKS.every(t => s.team.includes(s.assignments[t.id])))
     && s.choices && s.workload && Number.isFinite(s.trust) && Number.isFinite(s.designPenalty) && Number.isFinite(s.extraCode)
     && (!s.support || (s.team.includes(s.support.agentId) && TASKS.some(t => t.id === s.support.taskId)))
-    && Array.isArray(s.log) && s.log.every(x => typeof x === 'string') && (s.stage !== 'event' || ['scope','review','bug'].includes(s.currentEvent));
+    && Array.isArray(s.log) && s.log.every(x => typeof x === 'string') && (s.stage !== 'event' || ['scope','review','bug','life'].includes(s.currentEvent))
+    && (s.currentEvent !== 'life' || s.life?.incident) && validLife(s);
 }

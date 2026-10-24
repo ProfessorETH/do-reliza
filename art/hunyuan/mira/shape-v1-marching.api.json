@@ -1,0 +1,169 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "hunyuan3d-dit-v2-1-fp16-model-only.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPVisionLoader",
+    "inputs": {
+      "clip_name": "hunyuan3d-v2-1-conditioner-main-image-encoder.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "hunyuan3d-vae-v2-1-fp16.ckpt"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "reference-front-v1.png"
+    }
+  },
+  "5": {
+    "class_type": "EmptyImage",
+    "inputs": {
+      "width": 1536,
+      "height": 1536,
+      "batch_size": 1,
+      "color": 16777215
+    }
+  },
+  "6": {
+    "class_type": "InvertMask",
+    "inputs": {
+      "mask": [
+        "4",
+        1
+      ]
+    }
+  },
+  "7": {
+    "class_type": "ImageCompositeMasked",
+    "inputs": {
+      "destination": [
+        "5",
+        0
+      ],
+      "source": [
+        "4",
+        0
+      ],
+      "x": 256,
+      "y": 0,
+      "resize_source": false,
+      "mask": [
+        "6",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "CLIPVisionEncode",
+    "inputs": {
+      "clip_vision": [
+        "2",
+        0
+      ],
+      "image": [
+        "7",
+        0
+      ],
+      "crop": "none"
+    }
+  },
+  "9": {
+    "class_type": "Hunyuan3Dv2Conditioning",
+    "inputs": {
+      "clip_vision_output": [
+        "8",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "ModelSamplingAuraFlow",
+    "inputs": {
+      "model": [
+        "1",
+        0
+      ],
+      "shift": 1.0,
+      "sampling": "flow"
+    }
+  },
+  "11": {
+    "class_type": "EmptyLatentHunyuan3Dv2",
+    "inputs": {
+      "resolution": 4096,
+      "batch_size": 1
+    }
+  },
+  "12": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": [
+        "10",
+        0
+      ],
+      "seed": 241020261620,
+      "steps": 30,
+      "cfg": 5.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "positive": [
+        "9",
+        0
+      ],
+      "negative": [
+        "9",
+        1
+      ],
+      "latent_image": [
+        "11",
+        0
+      ],
+      "denoise": 1.0
+    }
+  },
+  "13": {
+    "class_type": "VAEDecodeHunyuan3D",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ],
+      "num_chunks": 8000,
+      "octree_resolution": 384
+    }
+  },
+  "14": {
+    "class_type": "VoxelToMesh",
+    "inputs": {
+      "voxel": [
+        "13",
+        0
+      ],
+      "algorithm": "basic",
+      "threshold": 0.6
+    }
+  },
+  "15": {
+    "class_type": "SaveGLB",
+    "inputs": {
+      "mesh": [
+        "14",
+        0
+      ],
+      "filename_prefix": "do-reliza/mira/hunyuan21-mira-v1-marching-20261024"
+    }
+  }
+}

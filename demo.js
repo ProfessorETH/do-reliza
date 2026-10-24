@@ -1,4 +1,4 @@
-import { createGame, hire, seatAgent, beginPlan, recommend } from './engine.js';
+import { createGame, hire, seatAgent, beginPlan, recommend } from './engine.js?v=unified-20261024';
 
 // A real playable setup. Separate browser storage keeps the player's own run intact.
 export function createDemoGame() {

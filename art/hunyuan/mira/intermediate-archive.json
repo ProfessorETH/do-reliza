@@ -1,0 +1,150 @@
+{
+  "location": "work/hunyuan-mira-intermediates (ignored, preserved locally)",
+  "files": [
+    {
+      "path": "final-topology-check.json",
+      "bytes": 331,
+      "sha256": "89a0074e85e72275418bc8ceb902c2ab3460e3aa8755008f14e29f16fd4de057"
+    },
+    {
+      "path": "marching-output/1ad44072_000.glb",
+      "bytes": 11080264,
+      "sha256": "f3f44634ed9652d06a94cf75b558a8c136e638bc9db00795db9d9795d46f8cb2"
+    },
+    {
+      "path": "mesh-qc.json",
+      "bytes": 352,
+      "sha256": "e5cdf73e103f917b5f5c500d54eb2394bd9e441e7ed2519a7691a9a067f16dbb"
+    },
+    {
+      "path": "mira-paint-v1.glb",
+      "bytes": 12741260,
+      "sha256": "178c9ad68d28cb271974dc42ef62b629f58237cb71fb9f4284131cc23fa5c595"
+    },
+    {
+      "path": "mira-paint-v1.mtl",
+      "bytes": 170,
+      "sha256": "4954bb267a243093fe3206d720c3ef8da327c27ab63eadb3201f0634f0e549a1"
+    },
+    {
+      "path": "mira-paint-v1.obj",
+      "bytes": 7793768,
+      "sha256": "c290873ebfaccfee57ce8cebb968c2c2bcd50c33bf3be6ae900389137f250562"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-0.png",
+      "bytes": 121674,
+      "sha256": "e1b8c371592e5193305bc268e1540ccbef5d1aa750b9abf03675ec4bbd217651"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-1.png",
+      "bytes": 78407,
+      "sha256": "582f43c1666a4d754342f37546f713d5245df484707be36a69b033715a6ca509"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-2.png",
+      "bytes": 1484607,
+      "sha256": "4546e5c6cc252167d9f792b08c6a59c226eeab9b22b7da208707bd89793c7344"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-3.png",
+      "bytes": 92503,
+      "sha256": "117dc1dbcf547eb8517bdd8304e29a71b5cdbce35950d22c1727cd60b7167832"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-4.png",
+      "bytes": 45952,
+      "sha256": "8a1321566e445c0f58782844370b8c07870df0066fae937e943afb74e43efa11"
+    },
+    {
+      "path": "mira-paint-v2-views/albedo-5.png",
+      "bytes": 50260,
+      "sha256": "76a55516bcfdd0a61ec8c76034c25c9d01b31c058b05426639f990f3d8c1ef80"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-0.png",
+      "bytes": 123987,
+      "sha256": "efdb4605e5140b37e0122a95cb17683a704f9457c26af2d8fa60cfb171a986b9"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-1.png",
+      "bytes": 83124,
+      "sha256": "7691c84ac37921af5820bcad918ee867f8cc0f05f9e7a8367ded04e78daf8cbf"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-2.png",
+      "bytes": 121067,
+      "sha256": "fb27af2b314cc2866c0dbf3ac9a444be441999f6bf7ae449a2030f0acd80572d"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-3.png",
+      "bytes": 85597,
+      "sha256": "022f89231f0e9ad103014f19c049ac968892c7213fefb3d87db728bd3b8c4965"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-4.png",
+      "bytes": 51761,
+      "sha256": "b55616c7068a1691644d1ed3fb20cd8f5b8aba8371173c4f0bd374648a4a0966"
+    },
+    {
+      "path": "mira-paint-v2-views/mr-5.png",
+      "bytes": 66418,
+      "sha256": "fe5e7e454d82cd72259cb3f869374f14399238c56c1d3fc315a2eaadfa2d3730"
+    },
+    {
+      "path": "mira-paint-v2.glb",
+      "bytes": 9740412,
+      "sha256": "ddb8e94c96eb8c186116e671d21267f32b1cf907b6e562044853cde0b291f62e"
+    },
+    {
+      "path": "paint-v1-textures/mira-paint-v1.png",
+      "bytes": 3507551,
+      "sha256": "59faa52e9f8c98b7529892ba03858cc8959672987bf5335d0271076d702cd9dc"
+    },
+    {
+      "path": "paint-v1-textures/mira-paint-v1_metallic.png",
+      "bytes": 781432,
+      "sha256": "ff7b046c0a005d8e7bef6ba3cc9ff687a8bcb198e86598598a2b88f8463b6f86"
+    },
+    {
+      "path": "paint-v1-textures/mira-paint-v1_roughness.png",
+      "bytes": 1182390,
+      "sha256": "068ebe67beaef60142147bd8676df61b5aaeb174353e5af9536464e8b5fa7a94"
+    },
+    {
+      "path": "paint-v1-textures/mr_combined.png",
+      "bytes": 1857632,
+      "sha256": "3d1a7bf3297ef9fe04b575ffaf5f964b0f6259e348ea2ca542d113864ba28a65"
+    },
+    {
+      "path": "paint-v2-textures/mira-paint-v1.png",
+      "bytes": 3244768,
+      "sha256": "1b5a8e9abe391bd2e85ef628a143482531e3dc6a214f5b37c25853bd583b61fe"
+    },
+    {
+      "path": "paint-v2-textures/mira-paint-v1_metallic.png",
+      "bytes": 638928,
+      "sha256": "91123284c8932ce232a9a55b1239bbb4073822192fbafd9cdc29d3429b78b217"
+    },
+    {
+      "path": "paint-v2-textures/mira-paint-v1_roughness.png",
+      "bytes": 835564,
+      "sha256": "1025a0436691bf5077a38a17608da8b156e037924eab22580b8432f5e68f828a"
+    },
+    {
+      "path": "paint-v2-textures/mr_combined.png",
+      "bytes": 1237620,
+      "sha256": "7002004fa49fbc0772f112918b342266d99fd4242a864521acb7a597aa160e17"
+    },
+    {
+      "path": "shape-clean-six-views.png",
+      "bytes": 305902,
+      "sha256": "aff5fdb7e212ce81e85d4f4484100af9dce05284445e0542e6781ab584f944b1"
+    },
+    {
+      "path": "shape-v1.clean.glb",
+      "bytes": 1726528,
+      "sha256": "f3ae786c125c59fe0963b5c2b9ba4f51826612bfab8d35de7ad15abc517073d0"
+    }
+  ]
+}

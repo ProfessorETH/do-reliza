@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1eee6">
+  <title>Мира — мастерская «До релиза»</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="preview.css">
+  <script type="importmap">{"imports":{"three":"../../vendor/three/three.module.js"}}</script>
+  <script type="module" src="preview.js"></script>
+</head>
+<body>
+  <header><a href="../../?demo=1">← В офис</a><span>ДО РЕЛИЗА <b>/</b> МАСТЕРСКАЯ</span><small>01 / 06</small></header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">ПЕРСОНАЖИ КОМАНДЫ</p><h1 id="title">Мира<span>Дизайнер</span></h1></div>
+      <p class="description">Первый образ из портрета.<br>Референс рядом с настоящей 3D-моделью.</p>
+    </section>
+    <div class="workspace">
+      <figure class="reference"><figcaption><span>01</span> Референс</figcaption><img src="mira/reference-front-v1.png" alt="Мира: рыжий пучок, зелёный джемпер, тёмные джинсы и светлые кеды" width="1024" height="1536"></figure>
+      <section class="model" aria-labelledby="model-title">
+        <div class="model-heading"><h2 id="model-title"><span>02</span> Объём</h2><span class="tag">3D-прототип</span></div>
+        <div id="viewport" aria-busy="true"><p id="status" role="status">Загружаем Миру…</p></div>
+        <div class="controls" aria-label="Управление просмотром">
+          <div><button data-view="front" disabled>Спереди</button><button data-view="back" disabled>Сзади</button><button id="rotate" aria-pressed="false" disabled>Вращать</button></div>
+          <div><button id="zoom-in" aria-label="Приблизить модель" disabled>+</button><button id="zoom-out" aria-label="Отдалить модель" disabled>−</button><button id="reset" disabled>Сбросить</button></div>
+        </div>
+        <p class="hint">Потяни, чтобы повернуть · колесо или щипок — приблизить</p>
+      </section>
+    </div>
+    <footer><p><strong>Следующий этап — скелет и движения.</strong> Здесь проверяем внешность. Модель ещё не подключена к ходьбе и посадке в игре.</p><dl><div><dt>Основа</dt><dd>Hunyuan3D 2.1 + Blender</dd></div><div><dt>Модель</dt><dd id="metrics">Подготовка просмотра</dd></div></dl></footer>
+  </main>
+  <noscript>Включи JavaScript для вращения 3D-модели. Референс доступен выше.</noscript>
+</body>
+</html>
