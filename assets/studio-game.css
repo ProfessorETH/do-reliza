@@ -361,6 +361,11 @@ dialog::backdrop { background: #06101bd9; backdrop-filter: blur(5px); }
   .office-brief { font-size: 11px; padding: 8px; }
   .game-layout .playable-office .office-room.is-3d { aspect-ratio: 1.15; }
   .office-render-status { max-width: 100%; font-size: 8px; }
+  .office-room.is-3d .desk-interactions, .office-room.is-3d .office-desk { height: 64px; }
+  .office-room.is-3d .desk-tag { padding: 6px 5px; }
+  .office-room.is-3d .desk-tag b { font-size: 13px; }
+  .office-room.is-3d .desk-tag small { font-size: 10px; line-height: 1.2; }
+  .office-movement { bottom: 69px; }
   .office-guidance { padding: 10px; flex-wrap: wrap; gap: 8px; }
   .office-guidance p { flex-basis: calc(100% - 48px); font-size: 12px; }
   .office-member { min-height: 62px; padding: 8px 6px; gap: 6px; }

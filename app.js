@@ -3,7 +3,7 @@ import { renderStartScreen } from './assets/start-screen.js';
 import { createSound } from './assets/sound.js';
 import { WAITING } from './office-layout.js?v=0.5.0';
 import { createDemoGame } from './demo.js?v=0.5.0';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.1-art';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.2-cozy';
 import { renderOffice } from './office.js?v=0.5.0';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js';
@@ -55,6 +55,7 @@ let dialogOrigin = null;
 function showDialog(html) {
   if (!dialog.open) { const trigger = document.activeElement?.closest('[data-action]'); dialogOrigin = trigger ? { action: trigger.dataset.action, id: trigger.dataset.id } : null; }
   if (automatic) { stopAuto(); render(); }
+  sound.stopVoice();
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
   if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus();
 }

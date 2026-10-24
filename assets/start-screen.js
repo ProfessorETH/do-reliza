@@ -16,7 +16,7 @@ export function renderStartScreen({ difficulty, saved, demo, logo, icon, money, 
       <div class="start-chapter"><span>01</span> ПЕРВЫЙ ЗАКАЗ <i></i> ВЕЧЕР ПЕРЕД РЕЛИЗОМ</div>
       <h1 id="start-title">Твоя студия.<br><em>Твои решения.</em></h1>
       <p class="start-lead">Три пустых стола. Один шанс начать заново.<br>И первая игра, которую ждут уже завтра.</p>
-      <p class="start-role">Стань <b>тимлидом</b>: найми команду, помоги ей справиться с трудностями и выпусти «Орбиту».</p>
+      <p class="start-role">Ты — <b>основатель студии и её тимлид</b>. Найми команду, помоги ей выпустить «Орбиту», затем развивай офис и бери новые заказы.</p>
       ${saved ? `<div class="start-save"><span class="live-dot"></span><div><b>Твоя студия ждёт</b><span>${stages[saved.stage]} · прошло ${saved.time} из ${saved.deadline} игровых часов</span></div></div>` : ''}
       <fieldset class="contract-picker"><legend>${saved ? 'Условия новой игры' : 'С каким запасом начнём?'}</legend><div class="contract-options">${CONTRACTS.map(contract => {
         const settings = DIFFICULTIES[contract.id];

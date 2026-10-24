@@ -3,7 +3,8 @@ import { GLTFLoader } from '../vendor/three/loaders/GLTFLoader.js';
 
 const DESKS = [[-2.65, 1.95], [1.4, 1.95], [-.9, -1.45]];
 const dressingURL = new URL('./models/office-dressing.glb', import.meta.url);
-let dressing;
+const cozyURL = new URL('./models/office-cozy.glb?v=1', import.meta.url);
+const decorationLoads = new Map();
 
 function eveningWindow(mesh) {
   const c=document.createElement('canvas');c.width=1024;c.height=344;
@@ -107,22 +108,35 @@ export function createOfficeAtmosphere(scene, renderer) {
         }
         node.material = materialCopies.get(old);
       });
-      // This additive asset has no collision surfaces and owns no character rigs.
-      dressing ||= new GLTFLoader().loadAsync(dressingURL.href);
-      try {
-        const additions = (await dressing).scene.clone(true);
-        additions.name = 'StudioArtDressing';
-        additions.traverse(node => { if(node.isMesh){node.castShadow=true;node.receiveShadow=true;if(node.userData.studioArtwork==='orbit')orbitPoster(node);} });
-        for (const child of [...additions.children]) {
-          if (!child.userData.wallSide) continue;
-          let wall;
-          room.traverse(node=>{if(node.userData.wallSide===child.userData.wallSide)wall=node;});
-          if(wall) wall.add(child);
+      // Both decorative assets preserve all original furniture and character rigs.
+      await Promise.all([
+        ['StudioArtDressing', dressingURL, 'artDressing'],
+        ['StudioCozyDetails', cozyURL, 'cozyDetails'],
+      ].map(async ([name, url, statusKey]) => {
+        if (!decorationLoads.has(name)) decorationLoads.set(name, new GLTFLoader().loadAsync(url.href));
+        try {
+          const additions = (await decorationLoads.get(name)).scene.clone(true);
+          additions.name = name;
+          additions.traverse(node => {
+            if (!node.isMesh) return;
+            node.castShadow = true; node.receiveShadow = true;
+            if (node.userData.studioArtwork === 'orbit') orbitPoster(node);
+          });
+          for (const child of [...additions.children]) {
+            if (!child.userData.wallSide) continue;
+            let wall;
+            // Attach to the base wall, never to another decorative collection.
+            room.traverse(node => {
+              if (node.name.startsWith('Release3D_') && node.userData.wallSide === child.userData.wallSide) wall = node;
+            });
+            if (wall) wall.add(child);
+          }
+          room.add(additions); room.userData[statusKey] = 'ready';
+        } catch (error) {
+          decorationLoads.delete(name); room.userData[statusKey] = 'unavailable';
+          console.warn(`${name} unavailable:`, error);
         }
-        room.add(additions); room.userData.artDressing = 'ready';
-      } catch (error) {
-        dressing = null; room.userData.artDressing = 'unavailable'; console.warn('Studio decoration unavailable:',error);
-      }
+      }));
     },
   };
 }
