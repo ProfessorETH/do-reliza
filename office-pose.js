@@ -77,6 +77,15 @@ export function poseActor(actor, elapsed, reduced) {
     target.lerp(new THREE.Vector3(sign * .30, .84 - j.Hips.position.y, -.30), event*(1-rest));
     target.lerp(new THREE.Vector3(sign*.21, .78-j.Hips.position.y, -.25), lounge*s);
     let palmAngle = lerp(.8, Math.PI / 2, actor.workBlend);
+    if (actor.activity.incident && side === 'Right' && !rest) {
+      // A quiet, repeated call for attention while the incident awaits the lead.
+      // Only the affected seated colleague gestures; feet and pelvis stay anchored.
+      const phase = reduced ? 0 : Math.sin(t * 2.6) * .045;
+      const gesture = actor.activity.incident === 'noise' ? new THREE.Vector3(.23+phase*.25,1.32+phase*.15-j.Hips.position.y,-.04)
+        : actor.activity.incident === 'computer' ? new THREE.Vector3(.38,1.08+phase-j.Hips.position.y,-.28)
+        : new THREE.Vector3(.35+phase,1.45-j.Hips.position.y,-.12);
+      target.lerp(gesture,event); palmAngle=lerp(palmAngle,2.6,event);
+    }
     if (result && actor.reactionTime < 2.8 && side === 'Right' && !reduced) {
       const wave = smoothstep(actor.reactionTime,0,.4) * (1 - smoothstep(actor.reactionTime,2,2.8));
       target.lerp(new THREE.Vector3(.38 + Math.sin(actor.reactionTime * 8) * .055, 1.35 - j.Hips.position.y, -.1),wave); palmAngle = lerp(palmAngle,2.8,wave);
