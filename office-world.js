@@ -5,6 +5,7 @@ import { OfficeActor } from './office-actors.js';
 import { DESKS } from './office-layout.js';
 import { agentById, activeTasks } from './engine.js';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
+import { createOfficeAtmosphere } from './assets/office-atmosphere.js';
 
 let world;
 const modelCache = new Map();
@@ -31,13 +32,7 @@ class OfficeWorld {
     this.controls.minAzimuthAngle = -.30; this.controls.maxAzimuthAngle = 1.30;
     this.controls.minZoom = .7; this.controls.maxZoom = 1.7; this.controls.update();
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
-    this.scene.add(new THREE.HemisphereLight(0xb9daec, 0x5a4330, 3));
-    const key = new THREE.DirectionalLight(0xffd29b, 3.5); key.position.set(-3, 8, 4); key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: .1, far: 30 });
-    key.shadow.normalBias = .025; key.shadow.bias = -.00015; this.scene.add(key);
-    key.shadow.camera.updateProjectionMatrix();
-    const fill = new THREE.DirectionalLight(0xa2c5df, 1.4); fill.position.set(6, 5, -3); this.scene.add(fill);
-    for (const x of [-2.65, 1.4, 3.8]) { const lamp = new THREE.PointLight(0xffbb65, 6, 5, 2); lamp.position.set(x, 2.38, -3.57); this.scene.add(lamp); }
+    this.art = createOfficeAtmosphere(this.scene, this.renderer);
     this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.renderer.domElement.addEventListener('pointerdown', e => { this.down = [e.clientX, e.clientY]; });
@@ -56,6 +51,7 @@ class OfficeWorld {
           if (node.userData.windowTexture) paintSunset(node);
         }
       });
+      await this.art.dress(this.room);
       this.ready = true; this.refreshContainer(); this.syncActors();
     } catch (error) { this.fail('Не удалось загрузить 3D-модели. Показан облегчённый офис.'); console.error('Office assets:', error); }
   }

@@ -1,0 +1,56 @@
+{
+  "method": "Native Blender MCP; additive collection; existing office and characters untouched",
+  "contacts": [
+    {
+      "interface": "lamp 0 base / desk top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "lamp 0 diffuser / shade rim",
+      "gapMeters": 0.003
+    },
+    {
+      "interface": "acoustic bed back / wall front",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "slat back / acoustic bed face",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "sign bed back / slat front",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "lamp 1 base / desk top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "lamp 1 diffuser / shade rim",
+      "gapMeters": 0.003
+    },
+    {
+      "interface": "lamp 2 base / desk top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "lamp 2 diffuser / shade rim",
+      "gapMeters": 0.003
+    },
+    {
+      "interface": "front LED back / foundation front",
+      "gapMeters": 0.001
+    },
+    {
+      "interface": "poster backing / wall front",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "poster frame / backing face",
+      "gapMeters": -0.0
+    }
+  ],
+  "objects": 56,
+  "meshSingleUser": true,
+  "sourceSceneUnchanged": "E:\\хакатон игра\\art\\blender\\do-reliza-office.blend"
+}
