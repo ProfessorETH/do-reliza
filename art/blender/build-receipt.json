@@ -4,7 +4,7 @@
   "mcpServer": "mcp-for-blender==2.2.4",
   "addonProtocol": 15,
   "runtime": "Three.js 0.186.1, local modules",
-  "method": "Blender-native bpy geometry through MCP; GLB export; browser procedural joint animation",
+  "method": "Blender-native bpy geometry through MCP; GLB export; articulated waist/wrist/fingers/eyelids; procedural two-bone IK; editable native Blender control poses",
   "externalModelGeneratorsUsed": false,
   "gpuRenderJobsSubmitted": false,
   "units": "metres; Blender Z-up exported as glTF Y-up",
@@ -17,62 +17,92 @@
     "meshDatablocksSingleUser": true,
     "deskLegGapMeters": 0,
     "baseTopMeters": -0.025,
-    "floorTopMeters": 0
+    "floorTopMeters": 0,
+    "runtimeAxes": "glTF nodes Y-up, position.y is height",
+    "nativeControlPoses": 19,
+    "runtimeFootToleranceMeters": 0.006,
+    "keyboardWristHeightMeters": 0.864,
+    "mouseWristHeightMeters": 0.87,
+    "chairSlideMeters": 0.28,
+    "animationStepRatesTested": [
+      30,
+      60,
+      120
+    ],
+    "allSixGLBRigsValidated": true,
+    "rigidMeshesBatchedPerPivotAndMaterial": true
   },
   "files": [
     {
       "file": "assets/models/echo.glb",
-      "bytes": 300032,
-      "sha256": "7023d27a2f3b36d4c4a99a8284a7f28e807c0d0168f23ffefae4957ef042011c",
-      "meshes": 50,
-      "triangles": 8888
+      "bytes": 387944,
+      "sha256": "d76dc2ff12f641b848207f96ab8a093d9290ce90a12388aeda377473a7a93914",
+      "meshes": 37,
+      "triangles": 11024
     },
     {
       "file": "assets/models/iskra.glb",
-      "bytes": 188172,
-      "sha256": "6a90af5d201d23c718ca4dcfb4d0ae0bf672eaad2c3a0c8d96dab538986fe7ba",
-      "meshes": 34,
-      "triangles": 5996
+      "bytes": 259092,
+      "sha256": "ef526be0cbeb9743a016577269056c53b94aace3e4408b05f98d4a22f2a17f3e",
+      "meshes": 36,
+      "triangles": 7856
     },
     {
       "file": "assets/models/mira.glb",
-      "bytes": 231520,
-      "sha256": "e641057e2ea5d6355e4ffee295417621aa3829096e8bdbde184ba96a63eb961b",
-      "meshes": 41,
-      "triangles": 7460
+      "bytes": 316200,
+      "sha256": "17d2e538baa3c30606391089d923d89fff3d0f218b2ac38bbda8beb37cf53cef",
+      "meshes": 36,
+      "triangles": 9652
     },
     {
       "file": "assets/models/nord.glb",
-      "bytes": 229384,
-      "sha256": "78d64b341401dc2bb794a839b769424d8ee5c61c8f1da46f4555cec4335ee32e",
-      "meshes": 36,
-      "triangles": 6656
+      "bytes": 324448,
+      "sha256": "f215b4e2206aad66d20ab02fccf3666b5ff418fcae44e7ba0866c0ab42a992a4",
+      "meshes": 37,
+      "triangles": 8792
     },
     {
       "file": "assets/models/office.glb",
-      "bytes": 922740,
-      "sha256": "38daa01953d24508448757c41dac6337ea0383670476c53704b99b45aeea9353",
-      "meshes": 66,
+      "bytes": 938564,
+      "sha256": "62c2e1d30eaf249bb27483cad06d23923839be757bf43776276415932f1fd20e",
+      "meshes": 88,
       "triangles": 16650
     },
     {
       "file": "assets/models/pixel.glb",
-      "bytes": 260168,
-      "sha256": "e9010ed98df73d68f1ec1a67b367f3d54f97518941690d0a59553a066eff3886",
-      "meshes": 49,
-      "triangles": 8396
+      "bytes": 325408,
+      "sha256": "e31932451e87c803941fd906bd792387341d864ee7e4a301316c15a4e521d319",
+      "meshes": 36,
+      "triangles": 10256
     },
     {
       "file": "assets/models/saga.glb",
-      "bytes": 203128,
-      "sha256": "e9378c37c039ab482c836d79403a7acfae130e90ee2387011231aaa0764122e8",
-      "meshes": 35,
-      "triangles": 6332
+      "bytes": 286708,
+      "sha256": "92ad999373d4d926aa9d0f02a2d4429188ba3991e0be005c4760e4bf9df54a64",
+      "meshes": 37,
+      "triangles": 8668
     },
     {
       "file": "art/blender/do-reliza-office.blend",
-      "bytes": 687763,
-      "sha256": "fff4d82fd2189d0b9005e151e95b6ec4a0f1aac67e30ae679ee59b7efa2b967a"
+      "bytes": 937888,
+      "sha256": "648757f3752e184d4afae025b24353b21b69a3803e4947c57dc4976efa72bba0"
+    },
+    {
+      "file": "art/blender/motion-preview.json",
+      "bytes": 35745,
+      "sha256": "a7513c6f989268be104577873b40f60eef884aa4629112519a9b472deb56854d"
     }
-  ]
+  ],
+  "version": "0.5.0",
+  "updatedAt": "2026-10-24T12:15:06.829409+00:00",
+  "sourceHashes": {
+    "office-actors.js": "edd196d0b48df9d9ce249ed17d8e1553bf49e649672de2ae941aac5968c1abbd",
+    "office-pose.js": "462b2d7acf1126bab46b91b24512f953fe32a3770e7309a750c5d842c29ac86d",
+    "office-layout.js": "af9710b813f9778ce6cdbaf3b21e669ed767702793566d13a4b0e1079682487f",
+    "art/blender/runner.py": "b4c6d817b2030c2e3ef14824aa2027b52801a632f3341e4fb44151651376e497",
+    "art/blender/characters_recipe.py": "4f1ac0858e6deefdce04bc759abb567a12747ca441e5b7e0352ae47a9049b588",
+    "art/blender/office_recipe.py": "61e0246ad7486944c617acb3f5b302eaefdcd553dc22db5c72fa17585b1b8460",
+    "art/blender/export_assets.py": "e5ba0f7f26461b03f90732466af3d325d09183eeab92bcc7fea834ca95d67836",
+    "art/blender/motion_preview.py": "b05e9de8baf207b497d1e8eab47b4ce687b3f908ad3855675659084fd5b986d8"
+  }
 }

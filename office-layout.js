@@ -24,16 +24,21 @@ export function isWalkable(point, radius = BODY_RADIUS) {
   if (x < b.minX || x > b.maxX || z < b.minZ || z > b.maxZ) return false;
   return !furniture.some(o => Math.abs(x - o.x) < o.w / 2 + radius && Math.abs(z - o.z) < o.d / 2 + radius);
 }
-export function clearSegment(a, b) {
+export const isChairClear = point => !DESKS.some(d => Math.abs(point[0] - d.seat[0]) < .68 && point[1] > d.seat[1] - .59 && point[1] < d.seat[1] + .95);
+export function clearSegment(a, b, avoidChairs = false) {
   const steps = Math.max(1, Math.ceil(distance(a, b) / .05));
-  for (let i = 0; i <= steps; i++) if (!isWalkable([a[0] + (b[0] - a[0]) * i / steps, a[1] + (b[1] - a[1]) * i / steps])) return false;
+  for (let i = 0; i <= steps; i++) {
+    const p = [a[0] + (b[0] - a[0]) * i / steps, a[1] + (b[1] - a[1]) * i / steps];
+    if (!isWalkable(p) || avoidChairs && !isChairClear(p)) return false;
+  }
   return true;
 }
 
 // A* on a 20 cm grid. Diagonal moves may not cut furniture corners.
-export function findOfficePath(start, end) {
-  if (!isWalkable(start) || !isWalkable(end)) return null;
-  if (clearSegment(start, end)) return distance(start, end) < .02 ? [] : [end];
+export function findOfficePath(start, end, avoidChairs = false) {
+  const segment = (a,b) => clearSegment(a,b,avoidChairs);
+  if (!isWalkable(start) || !isWalkable(end) || avoidChairs && (!isChairClear(start) || !isChairClear(end))) return null;
+  if (segment(start, end)) return distance(start, end) < .02 ? [] : [end];
   const step = .2, b = WALK_BOUNDS;
   const cols = Math.floor((b.maxX - b.minX) / step) + 1, rows = Math.floor((b.maxZ - b.minZ) / step) + 1;
   const point = id => [b.minX + id % cols * step, b.minZ + Math.floor(id / cols) * step];
@@ -44,7 +49,7 @@ export function findOfficePath(start, end) {
       const x = cx + dx, z = cz + dz;
       if (x < 0 || z < 0 || x >= cols || z >= rows) continue;
       const id = z * cols + x, q = point(id), d = distance(p, q);
-      if (d < bestDistance && clearSegment(p, q)) { best = id; bestDistance = d; }
+      if (d < bestDistance && segment(p, q)) { best = id; bestDistance = d; }
     }
     return best;
   }
@@ -61,7 +66,7 @@ export function findOfficePath(start, end) {
       let cursor = start, next = 0;
       while (next < route.length) {
         let far = next;
-        while (far + 1 < route.length && clearSegment(cursor, route[far + 1])) far++;
+        while (far + 1 < route.length && segment(cursor, route[far + 1])) far++;
         simplified.push(route[far]); cursor = route[far]; next = far + 1;
       }
       return simplified;
@@ -73,7 +78,7 @@ export function findOfficePath(start, end) {
       const x = cx + dx, z = cz + dz;
       if (x < 0 || z < 0 || x >= cols || z >= rows) continue;
       const id = z * cols + x, q = point(id);
-      if (closed.has(id) || !clearSegment(p, q)) continue;
+      if (closed.has(id) || !segment(p, q)) continue;
       const nextCost = cost.get(current) + Math.hypot(dx, dz) * step;
       if (nextCost < (cost.get(id) ?? Infinity)) { cost.set(id, nextCost); previous.set(id, current); open.add(id); }
     }
