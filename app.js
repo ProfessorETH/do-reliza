@@ -1,16 +1,16 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=1';
-import { renderStartScreen } from './assets/start-screen.js';
-import { createSound } from './assets/sound.js';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=unified-20261024';
+import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
+import { createSound } from './assets/sound.js?v=unified-20261024';
 import { WAITING } from './office-layout.js?v=0.5.0';
-import { createDemoGame } from './demo.js?v=0.5.0';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.2-cozy';
-import { renderOffice } from './office.js?v=0.5.0';
+import { createDemoGame } from './demo.js?v=unified-20261024';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=unified-20261024';
+import { renderOffice } from './office.js?v=unified-20261024';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js';
-import { ensureLife, condition, careFor, buyUpgrade, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js';
-import { nextProject } from './engine.js';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js';
+import { ensureLife, condition, careFor, buyUpgrade, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=unified-20261024';
+import { nextProject } from './engine.js?v=unified-20261024';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=unified-20261024';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');

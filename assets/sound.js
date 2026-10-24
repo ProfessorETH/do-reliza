@@ -1,4 +1,4 @@
-import { VOICE_ASSETS } from './onboarding/voice-manifest.js';
+import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=unified-20261024';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
 const CHORDS = [[48,55,59,62],[45,52,55,59],[41,48,52,57],[43,50,53,57]];
@@ -69,5 +69,5 @@ export function createSound() {
     return `<button class="icon-btn sound-toggle" data-action="sound" aria-pressed="${enabled}" aria-label="${enabled?'Выключить':'Включить'} звук" title="${enabled?'Выключить':'Включить'} музыку и голос">${icon('sound',18)}<span aria-hidden="true">${enabled?'ВКЛ':'ВЫКЛ'}</span></button>`;
   }
   document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();clearTimeout(timer);context?.suspend();}else if(unlocked&&enabled)unlock();});
-  return {unlock,effect,speak,stopVoice,toggle,button,get enabled(){return enabled;},get speaking(){return voiceOn;}};
+  return {unlock,effect,speak,stopVoice,toggle,button,hasVoice:key=>Boolean(VOICE_ASSETS[key]),get enabled(){return enabled;},get speaking(){return voiceOn;}};
 }

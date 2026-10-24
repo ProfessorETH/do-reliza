@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, CONTRACTS, contractFor } from './assets/studio-life.js';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, CONTRACTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));

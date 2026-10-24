@@ -3,7 +3,7 @@ import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
 import { OfficeActor } from './office-actors.js?v=0.5.0';
 import { DESKS } from './office-layout.js?v=0.5.0';
-import { agentById, activeTasks } from './engine.js';
+import { agentById, activeTasks } from './engine.js?v=unified-20261024';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=2-cozy';
 

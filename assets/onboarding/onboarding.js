@@ -1,4 +1,4 @@
-import { STORY, guideFor } from './onboarding-model.js';
+import { STORY, guideFor } from './onboarding-model.js?v=unified-20261024';
 
 const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
@@ -44,7 +44,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
       <h2 id="nika-story-title">${page.title}</h2><p>${page.text}</p><blockquote>${page.note}</blockquote>
       ${preferences.story === 2 ? `<p class="nika-contract">На проект: <b>${money(currentGame.initialBudget)}</b> · <b>${currentGame.deadline} игровых часов</b><small>Аренда уже оплачена. Резерв — на команду и непредвиденные задачи.</small></p>` : ''}
       <div class="nika-story-actions"><button class="primary" data-guide="next" autofocus>${page.next} <span aria-hidden="true">→</span></button>${preferences.story > 0 ? '<button class="text-button" data-guide="back">Назад</button>' : ''}</div>
-      <button class="text-button nika-skip" data-guide="skip-story">Пропустить историю</button><button class="text-button nika-skip" data-guide="skip-all">Играть без подсказок</button><div class="nika-audio-tools"><button class="text-button nika-skip" data-guide="replay">Прослушать ещё раз</button><button class="text-button nika-skip" data-guide="sound">${sound?.enabled?'Выключить':'Включить'} звук</button></div></div>`;
+      <button class="text-button nika-skip" data-guide="skip-story">Пропустить историю</button><button class="text-button nika-skip" data-guide="skip-all">Играть без подсказок</button><div class="nika-audio-tools">${sound?.hasVoice(`story-${preferences.story}`)?'<button class="text-button nika-skip" data-guide="replay">Прослушать ещё раз</button>':''}<button class="text-button nika-skip" data-guide="sound">${sound?.enabled?'Выключить':'Включить'} звук</button></div></div>`;
     if (!storyDialog.open) { returnFocus = document.activeElement; storyDialog.showModal(); }
     else storyDialog.querySelector('[data-guide="next"]').focus({ preventScroll: true });
     animateCharacters(`story-${preferences.story}`, page.text);
@@ -62,7 +62,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     guide.className = `nika-guide${collapsed ? ' nika-collapsed' : ''}`;
     guide.setAttribute('aria-label', 'Подсказка Ники');
     guide.innerHTML = `<div class="nika-guide-head"><span class="nika-avatar" style="background-image:url('${AVATAR}')" aria-hidden="true"></span><div><b>Ника</b><span>${collapsed ? 'Помощница студии' : `Заказ ${game.life ? game.life.completed + (game.stage === 'result' ? 0 : 1) : 1} · шаг ${step.number} / 5`}</span></div><button class="nika-toggle" data-guide="toggle" aria-expanded="${!collapsed}" aria-label="${collapsed ? 'Открыть подсказку Ники' : 'Свернуть подсказку Ники'}">${collapsed ? 'Подсказка' : 'Свернуть'}</button></div>
-      ${collapsed ? '' : `<div class="nika-guide-copy"><h2>${step.title}</h2><p>${step.text}</p>${step.hint ? `<strong class="nika-hint">${step.hint}</strong>` : ''}<div class="nika-guide-actions"><button data-guide="locate">Показать где <span aria-hidden="true">↗</span></button><button data-guide="replay-guide">Повторить голос</button><button data-guide="story">История</button><button data-guide="disable">${step.id==='result'?'Спасибо, Ника!':'Без подсказок'}</button></div></div>`}`;
+      ${collapsed ? '' : `<div class="nika-guide-copy"><h2>${step.title}</h2><p>${step.text}</p>${step.hint ? `<strong class="nika-hint">${step.hint}</strong>` : ''}<div class="nika-guide-actions"><button data-guide="locate">Показать где <span aria-hidden="true">↗</span></button>${sound?.hasVoice(step.voice||`guide-${step.id}`)?'<button data-guide="replay-guide">Повторить голос</button>':''}<button data-guide="story">История</button><button data-guide="disable">${step.id==='result'?'Спасибо, Ника!':'Без подсказок'}</button></div></div>`}`;
     panel.prepend(guide);
     if (preferences.story !== null && !storyDialog.open && !document.querySelector('dialog[open]')) showStory();
     else if (!storyDialog.open && !document.querySelector('dialog[open]')) animateCharacters(`guide-${step.id}-${step.title}`, step.text, step.voice || `guide-${step.id}`);
