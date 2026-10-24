@@ -10,6 +10,9 @@ const person = document.querySelector("#person"),
 const controlsButtons = [...document.querySelectorAll("button")];
 const loader = new GLTFLoader(),
   cache = new Map();
+const portraitPreview = new URLSearchParams(location.search).get('portrait') === '4';
+const reviewManifest = portraitPreview ? fetch('portrait-v4/review-manifest.json').then(response=>response.json()) : Promise.resolve(null);
+let faceView = portraitPreview;
 let model,
   mixer,
   skeleton,
@@ -18,12 +21,17 @@ let model,
   token = 0,
   paused = false;
 let renderer, scene, camera, orbit;
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+let expressionTime=0;
 
 function poseView(back = false) {
-  orbit.target.set(0, 0.94, 0);
-  camera.position.set(0, 1.04, back ? 3.9 : -3.9);
+  const bone=model?.getObjectByName(`Skin_${person.value}_Head`);
+  const target=faceView&&bone?bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,.21,0)):new THREE.Vector3(0,.94,0);
+  orbit.target.copy(target);
+  camera.position.copy(target).add(new THREE.Vector3(0,.04,back?(faceView?1.45:3.9):-(faceView?1.45:3.9)));
   orbit.update();
 }
+function angleView(angle){const d=camera.position.distanceTo(orbit.target);camera.position.copy(orbit.target).add(new THREE.Vector3(Math.sin(angle)*d,.04,-Math.cos(angle)*d));orbit.update();}
 function play() {
   if (!actions) return;
   const action = actions[motion.value];
@@ -47,10 +55,16 @@ async function load() {
   status.textContent = `Загружаем ${agent.name}…`;
   controlsButtons.forEach((b) => (b.disabled = true));
   try {
+    const manifest=await reviewManifest;
+    if(manifest){
+      for(const option of person.options)option.disabled=!manifest.models[option.value];
+      const label=document.querySelector('footer p');label.textContent='Предпросмотр новой головы. Тела и анимации взяты из рабочей игры. Сравниваем лицо и волосы с исходным портретом перед обновлением основной версии.';
+      if(!manifest.models[id])throw new Error('Head candidate is not ready');
+    }
     if (!cache.has(id))
       cache.set(
         id,
-        loader.loadAsync(`../../assets/models/${id}.glb?v=0.6-skin`),
+        loader.loadAsync(manifest?`portrait-v4/assembled/${manifest.models[id].file}?v=${manifest.updated}`:`../../assets/models/${id}.glb?v=portrait-v4`),
       );
     const gltf = await cache.get(id);
     if (request !== token) return;
@@ -172,6 +186,10 @@ try {
   person.addEventListener("change", load);
   motion.addEventListener("change", play);
   document.querySelector("#front").addEventListener("click", () => poseView());
+  document.querySelector('#quarter').addEventListener('click',()=>angleView(Math.PI/4));
+  document.querySelector('#profile').addEventListener('click',()=>angleView(Math.PI/2));
+  document.querySelector('#face-view').addEventListener('click',()=>{faceView=true;poseView();});
+  document.querySelector('#body-view').addEventListener('click',()=>{faceView=false;poseView();});
   document
     .querySelector("#back")
     .addEventListener("click", () => poseView(true));
@@ -193,7 +211,17 @@ try {
     const dt = Math.min((time - previous) / 1000, 0.05);
     previous = time;
     if (document.hidden) return;
-    if (!paused) mixer?.update(dt);
+    if (!paused){mixer?.update(dt);expressionTime+=dt;}
+    const head=model?.getObjectByName(`DR_${person.value}_PortraitHead`);
+    if(head?.morphTargetInfluences){
+      const phase=(expressionTime+person.selectedIndex*.43)%4.1;
+      head.morphTargetInfluences[head.userData.portraitBlinkMorph??0]=reducedMotion.matches?0:phase<.18?Math.sin(Math.PI*phase/.18):0;
+    }
+    if(faceView&&model){
+      model.updateMatrixWorld(true);
+      const bone=model.getObjectByName(`Skin_${person.value}_Head`);
+      if(bone){const next=bone.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,.21,0));camera.position.add(next.clone().sub(orbit.target));orbit.target.copy(next);}
+    }
     orbit.update();
     renderer.render(scene, camera);
   });

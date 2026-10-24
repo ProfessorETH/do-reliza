@@ -2,7 +2,7 @@ import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js?v=skinned-team-final-20261024';
+import { OfficeActor } from './office-actors.js?v=portrait-team-v4-20261024';
 import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
 import { agentById, activeTasks } from './engine.js?v=shift-ux-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
@@ -16,7 +16,7 @@ let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=skinned-team-20261024`)).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=portrait-team-v4-20261024`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 
