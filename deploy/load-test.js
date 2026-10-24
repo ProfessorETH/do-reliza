@@ -8,11 +8,12 @@ export const options = {
   discardResponseBodies: true,
 };
 const base = (__ENV.BASE_URL || 'http://127.0.0.1:5193').replace(/\/$/, '');
-const files = ['/', '/app.js', '/style.css', '/office.css', '/assets/agents.webp', '/assets/office.webp',
-  '/vendor/three/three.module.js', '/vendor/three/three.core.js',
-  '/assets/models/office.glb', '/assets/models/office-cozy.glb', '/assets/models/office-dressing.glb',
-  '/assets/models/mira.glb', '/assets/models/iskra.glb', '/assets/models/echo.glb',
-  '/assets/models/office-shell.glb', '/office-camera-fit.js'];
+const manifest = JSON.parse(open('../dist/build-manifest.json'));
+// Full cold 3D visit, including the lazy renderer chunk and portrait/background.
+// k6 has no browser cache; use browser probes separately for repeat visits.
+const scripts=Object.keys(manifest.outputs).filter(path=>path.endsWith('.js')).map(path=>manifest.prefix+path.split('/').pop());
+const files = [__ENV.PAGE_PATH || '/', ...[...scripts,manifest.css,manifest.images[__ENV.PROFILE==='mobile'?'mobile':'desktop'],manifest.images.agents].map(path=>'/'+path),
+  ...['office','office-cozy','office-dressing','mira','iskra','echo','office-shell','office-upgrades'].map(name=>'/'+manifest.prefix+'assets/models/'+name+'.glb')];
 export default function () {
   const responses = http.batch(files.map(path => ['GET', base + path, null, { headers: { 'Accept-Encoding': 'gzip' } }]));
   for (const response of responses) check(response, { 'asset delivered': r => r.status === 200 });

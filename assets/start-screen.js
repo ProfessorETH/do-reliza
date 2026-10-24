@@ -1,5 +1,5 @@
 import { DIFFICULTIES } from '../data.js';
-import { graphicsSettingsHTML } from './office-runtime.js?v=hosting-20261024';
+import { graphicsSettingsHTML } from './office-runtime.js?v=seated-breaks-20261024-v2';
 
 export const DIFFICULTY_OPTIONS = [
   { id: 'calm', title: 'Легко', description: 'Для первого знакомства. Больше времени и денег на исправление ошибок.' },

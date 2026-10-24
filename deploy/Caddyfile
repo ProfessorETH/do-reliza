@@ -1,18 +1,32 @@
 # Standalone template. On a shared host, add only this site block to the
 # existing configuration after backing it up; never replace other sites.
 {$GAME_ADDRESS:localhost} {
-	root * "{$GAME_ROOT:/srv/games/do-reliza/current}"
 	encode gzip
 	@models path *.glb
 	header @models Content-Type model/gltf-binary
 	header {
-		Cache-Control "no-cache"
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin
 	}
 	@private path_regexp private (^|/)\.
+	# Content-addressed releases are immutable. HTML/version remain revalidated.
+	@versioned path_regexp versioned ^/static/[a-f0-9]{24}/
+	header @versioned Cache-Control "public, max-age=31536000, immutable"
+	@mutable not path_regexp versioned ^/static/[a-f0-9]{24}/
+	header @mutable Cache-Control "no-cache"
 	respond @private 404
-	file_server {
-		precompressed gzip
+	# Retain immutable directories across releases so an already open game can
+	# still fetch its matching 3D/voice after a new HTML release goes live.
+	handle /static/* {
+		root * "{$GAME_STATIC_ROOT:/srv/games/do-reliza}"
+		file_server {
+			precompressed gzip
+		}
+	}
+	handle {
+		root * "{$GAME_ROOT:/srv/games/do-reliza/current}"
+		file_server {
+			precompressed gzip
+		}
 	}
 }
