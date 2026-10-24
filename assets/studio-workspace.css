@@ -238,6 +238,7 @@ dialog::backdrop { background:#17131cdc; backdrop-filter:blur(6px); }.dialog-clo
 .game-shell[data-expanded=true] .game-layout .playable-office {
   position:fixed; display:flex; inset:8px; z-index:20; width:auto; height:auto; max-width:none; border-color:#cfb39466;
 }
+.game-shell[data-expanded=true] .playable-office :is(.office-guidance,.office-arrivals,.life-console,.office-roster) { display:none; }
 .office-heading .office-header-actions { display:flex; gap:6px; flex:none; }
 .office-expand { width:36px; min-height:36px; font-size:18px; background:#29262c; border:1px solid #d4b89433; border-radius:7px; color:#dfc6ad; }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
