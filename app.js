@@ -1,3 +1,4 @@
+import { captureMembers, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 import { renderDecisionPanel } from './assets/decision-view.js';
 import { purchasePanel, contractPreview } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
@@ -266,8 +267,12 @@ function syncEventDialog(requestOpen=false) {
   if(fresh)sound.speakExchange(eventVoices(),true);
 }
 function completeDecision(id,expired=false){
+  const incident=game.life.incident,kind=game.currentEvent;
+  const affected=kind==='life'?(incident.type==='idea'&&id==='life-care'?[...game.team]:[incident.id,...(incident.type==='tension'?[incident.otherId]:[])]):kind==='bug'?[game.assignments.qa]:kind==='review'?[game.assignments.code]:[];
+  const before=captureMembers(game);
   const error=resolveEvent(game,id);
   if(error){toast(error);return;}
+  queueMemberFeedback(game,before,affected);
   delete game.eventClock;
   if(expired)game.log.push('Время решения вышло: проблема отложена до релиза.');
   persist();render();
@@ -422,8 +427,9 @@ document.addEventListener('click',e=>{
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
+    const before=captureMembers(game);
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee')toast('Напиток доставлен: энергия +15, настроение +5.');else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
+    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee')toast('Напиток доставлен: энергия +15, настроение +5.');else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;
@@ -438,13 +444,15 @@ document.addEventListener('click',e=>{
     showDialog(purchasePanel(game,u));return;
   }
   if(action==='life-buy'){
-    const error=buyUpgrade(game,id);if(error)toast(error);else{persist();render();showDialog(officePanel(game));}return;
+    const cost=UPGRADES.find(u=>u.id===id)?.price;
+    const error=buyUpgrade(game,id);if(error)toast(error);else{queuePurchaseFeedback(game,id,cost);dialog.close();officeSelection=null;workspaceView='office';officeExpanded=true;persist();render();}return;
   }
   if(action==='life-contract-preview'){
     const c=CONTRACTS.find(c=>c.id===id);if(!c||game.stage!=='result')return;
     showDialog(contractPreview(game,c));return;
   }
   if(action==='life-next'){
+    clearSceneFeedback(game);
     const error=nextProject(game,id);if(error)toast(error);else{dialog.close();stopAuto();resetOfficeWorld();officeMoving=false;officeSelection=null;mini=null;try{localStorage.removeItem(MINI);}catch{}persist();render();}return;
   }
   if(action==='candidate'){candidate=id;render();}
