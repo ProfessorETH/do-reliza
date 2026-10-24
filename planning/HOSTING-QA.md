@@ -2,6 +2,8 @@
 
 Integrated with main through UI PR #14 (58dc907). No production changes or purchases.
 
+Heartbeat integration with gameplay PR #16 (32098a0): 45/45 groups pass. The lightweight adapter now completes outbound/returning rest transitions through the normal onRest callback, so a break cannot block time waiting for absent 3D actors. Domain/server infrastructure setup is recorded separately in ignored work/server-setup-receipt.json; no game release has been deployed.
+
 - `npm run check`, `npm test`: 40/40 groups; existing 1269 full engine scenarios pass. `npm run build` and `node scripts/prepare-hosting.js` succeed.
 - Gitleaks history and staged scan: no findings. `git diff --check`: pass.
 - Stock Caddy 2.11.7: configuration validates. JavaScript MIME verified; GLB explicitly returns model/gltf-binary; gzip sidecars negotiate Content-Encoding/Vary; missing assets and .git paths return 404. The server is local; the future VPS remains untested.

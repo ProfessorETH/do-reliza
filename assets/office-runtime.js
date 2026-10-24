@@ -10,6 +10,18 @@ try {
 mode = mode === 'lite' ? 'lite' : '3d';
 let runtime, pending, generation = 0, importFailed = false;
 
+function settleFallback(game, callbacks, ticket) {
+  queueMicrotask(() => {
+    if (ticket !== generation) return;
+    callbacks.onBusy(false);
+    for (const id of game.team) {
+      if (ticket !== generation) return;
+      const phase = game.life?.members[id]?.restTrip?.phase;
+      if (phase === 'outbound' || phase === 'returning') callbacks.onRest?.(id, phase === 'outbound' ? 'resting' : 'back');
+    }
+  });
+}
+
 export function graphicsSettingsHTML() {
   const link = value => {
     const url = new URL(currentURL);
@@ -30,7 +42,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
     room.querySelector('.office-render-status').textContent = importFailed
       ? '3D недоступно. Можно играть в облегчённом офисе.'
       : 'Облегчённый офис · 3D-модели не загружаются';
-    queueMicrotask(() => { if (ticket === generation) callbacks.onBusy(false); });
+    settleFallback(game, callbacks, ticket);
     return;
   }
   if (runtime) { runtime.mountOfficeWorld(game, selected, callbacks); return; }
@@ -44,7 +56,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
     if (ticket !== generation || !container.isConnected) return;
     room.dataset.officeState = 'fallback';
     room.querySelector('.office-render-status').textContent = '3D недоступно. Можно играть в облегчённом офисе.';
-    callbacks.onBusy(false);
+    settleFallback(game, callbacks, ticket);
   });
 }
 
