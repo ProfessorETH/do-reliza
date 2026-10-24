@@ -150,7 +150,7 @@ class OfficeWorld {
       this.fly(dt);
       this.controls.update();
       const active = activeTasks(this.game), actors = [...this.actors.values()];
-      for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
+      for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
       this.reportRest();
       this.container.dataset.resting = actors.filter(a => a.state === 'resting').map(a=>a.id).join(',');
       this.loungeSeat?.update(Math.max(0,...actors.map(a=>(a.loungeBlend||0)*a.sit)));
@@ -191,6 +191,13 @@ class OfficeWorld {
         const label = actor?.moving ? `Компьютер ${i + 1}: ${agentById(actor.id).name}, ${actor.motionLabel.toLowerCase()}` : button.dataset.restLabel;
         if (button.getAttribute('aria-label') !== label) button.setAttribute('aria-label', label);
       }
+    }
+    const signal=parent.querySelector('[data-event-actor]'), subject=this.actors.get(signal?.dataset.eventActor);
+    if(signal&&subject){
+      this.projected.copy(subject.group.position).add(new THREE.Vector3(0,subject.sit>.5?1.85:2.25,0)).project(this.camera);
+      const rect=this.container.getBoundingClientRect(),room=parent.getBoundingClientRect(),half=signal.offsetWidth/2;
+      signal.style.left=Math.max(half+8,Math.min(room.width-half-8,rect.left-room.left+(this.projected.x*.5+.5)*rect.width))+'px';
+      signal.style.top=Math.max(70,Math.min(room.height-100,rect.top-room.top+(-this.projected.y*.5+.5)*rect.height))+'px';
     }
     const menu=parent.querySelector('.actor-actions'), actor=this.actors.get(this.selected);
     if(menu&&actor){

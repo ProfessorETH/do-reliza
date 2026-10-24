@@ -31,6 +31,22 @@ function update(a, frames, dt = 1 / 60, mode = activity) {
   }
 }
 
+test('incident gestures belong to one colleague, differ by situation and preserve the seated anchor',async()=>{
+  const a=await actor('mira'), hands=[];
+  a.destination({seats:['mira',null,null],officeTargets:{}},true);
+  for(const incident of ['noise','computer','idea','tension']){
+    update(a,120,1/60,{stage:'event',task:null,eventParticipant:true,incident});
+    assert.ok(a.eventBlend>.99);poseActor(a,2,true);a.group.updateMatrixWorld(true);
+    hands.push(a.joints.RightWrist.getWorldPosition(new THREE.Vector3()));
+    assert.equal(a.sit,1);assert.ok(distance(a.point,DESKS[0].seat)<.001);
+    const first=a.joints.RightWrist.position.clone();poseActor(a,9,true);
+    assert.ok(first.distanceTo(a.joints.RightWrist.position)<1e-9,'reduced motion keeps the gesture still');
+  }
+  assert.ok(hands[0].distanceTo(hands[1])>.05);assert.ok(hands[1].distanceTo(hands[2])>.05);
+  update(a,120,1/60,{stage:'event',task:null,eventParticipant:false,incident:null});
+  assert.ok(a.eventBlend<.01,'unaffected coworker does not gesture');
+});
+
 test('all six exported Blender rigs have wrists, fingers and blink pivots', async () => {
   for (const id of ids) {
     const a = await actor(id);

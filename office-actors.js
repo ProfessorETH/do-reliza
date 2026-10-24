@@ -150,7 +150,7 @@ export class OfficeActor {
     const gait = ['walk','align','exit','rest-align','rest-exit'].includes(this.state) ? Math.min(1, travel / dt / 1.35) : 0;
     this.gait = damp(this.gait, gait, 12, dt);
     this.workBlend = damp(this.workBlend, this.state === 'seated' && activity.stage === 'work' && activity.task ? 1 : 0, 4, dt);
-    this.eventBlend = damp(this.eventBlend, activity.stage === 'event' ? 1 : 0, 5, dt);
+    this.eventBlend = damp(this.eventBlend, activity.stage === 'event' && activity.eventParticipant!==false && this.state==='seated' ? 1 : 0, 5, dt);
     const mouseShare = activity.task?.skill === 'design' ? .68 : activity.task?.skill === 'qa' ? .35 : .12;
     this.mouseBlend = damp(this.mouseBlend, (elapsed + this.order * 1.73) % 7 < mouseShare * 7 ? 1 : 0, 5, dt);
     poseActor(this, elapsed, reducedMotion);

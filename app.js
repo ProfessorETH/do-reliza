@@ -1,3 +1,4 @@
+import { employeeEvent } from './assets/employee-event.js';
 import { studioCapacity, fundTeam } from './assets/studio-progression.js';
 import { ensureEventClock, advanceEventClock, eventKey } from './assets/event-clock.js';
 import { missionFor } from './assets/orbit-missions.js';
@@ -25,7 +26,7 @@ const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
 const mobileUI=matchMedia('(max-width:700px), (max-height:500px) and (pointer:coarse)');
 const eventDialog=document.querySelector('#event-dialog');
-let shownEvent=null,eventSaveSecond=-1;
+let shownEvent=null,eventSaveSecond=-1,openedIncidentKey=null;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
 const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
@@ -227,14 +228,14 @@ function render() {
     if(oldAction)root.querySelector(`[data-action="${oldAction}"]`)?.focus({preventScroll:true});
     if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);}return;
   }
-  const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
-  if (stageChanged) { workspaceView = game.stage==='work'?'office':'project'; officeExpanded = game.stage==='work'; }
+  const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>${employeeEvent(game)?employeeEvent(game).name+' ждёт тебя в офисе. Нажми на красный сигнал над сотрудником. Таймер решения начнётся после открытия.':'Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.'}</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
+  if (stageChanged) { const officeStage=game.stage==='work'||!!employeeEvent(game);workspaceView = officeStage?'office':'project'; officeExpanded = officeStage;if(employeeEvent(game))officeSelection=null; }
   root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
-    onActor:id=>{if(!game)return;officeSelection=officeSelection===id?null:id;render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
+    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}officeSelection=officeSelection===id?null:id;render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
     onObject:id=>officeObject(id),
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -257,9 +258,14 @@ function render() {
     window.scrollTo(0,0);
   }
 }
-function syncEventDialog() {
+function syncEventDialog(requestOpen=false) {
   const key=eventKey(game);
-  if(!key){if(eventDialog.open){eventDialog.close();sound.stopVoice('character');}shownEvent=null;return;}
+  if(!key){if(eventDialog.open){eventDialog.close();sound.stopVoice('character');}shownEvent=null;openedIncidentKey=null;return;}
+  const incident=employeeEvent(game);
+  if(incident){
+    if(requestOpen)openedIncidentKey=key;
+    if(openedIncidentKey!==key){if(eventDialog.open){eventDialog.close();sound.stopVoice('character');}return;}
+  }
   const fresh=shownEvent!==key;
   if(fresh){
     shownEvent=key;eventSaveSecond=-1;
@@ -267,7 +273,7 @@ function syncEventDialog() {
     const contents=eventPanel().replace('<h1>','<h2 id="event-title" tabindex="-1">').replace('</h1>','</h2>');
     eventDialog.innerHTML='<div class="event-modal-label">СОБЫТИЕ В СТУДИИ</div>'+
       (timer?'<div class="decision-clock"><div><b data-event-seconds></b><span>Если время закончится: отложим проблему до релиза. Напряжение +10, настроение −8.</span></div><progress max="'+(game.difficulty==='hard'?30000:45000)+'" value="'+timer.remaining+'" data-event-progress aria-label="Осталось времени"></progress><div class="event-timer-actions"><button class="secondary" data-action="event-pause"></button><button class="text-button" data-action="event-untimed">Играть без таймеров</button></div></div>':'<p class="event-unlimited">Без ограничения времени. Смена продолжится после решения.</p>')+
-      contents+eventVoices().map(line=>characterQuote(line.id,line.kind)).join('')+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
+      contents+eventVoices().map(line=>characterQuote(line.id,line.kind)).join('')+(incident?'<button class="secondary event-return" data-action="event-dismiss">Вернуться в офис · пауза решения</button>':'')+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
     eventDialog.classList.remove('event-clock-compact');eventDialog.scrollTop=0;sound.stopVoice();
   }
   if(!eventDialog.open){eventDialog.showModal();eventDialog.querySelector('#event-title')?.focus({preventScroll:true});}
@@ -293,8 +299,9 @@ function updateEventClock(delta){
   const button=eventDialog.querySelector('[data-action="event-pause"]');if(button){button.textContent=clock.paused?'Продолжить таймер':'Пауза таймера';button.setAttribute('aria-pressed',String(clock.paused));}
   if(seconds!==eventSaveSecond){eventSaveSecond=seconds;persist();}
 }
+eventDialog.addEventListener('close',()=>sound.stopVoice('character'));
 eventDialog.addEventListener('scroll',()=>eventDialog.classList.toggle('event-clock-compact',eventDialog.scrollTop>80),{passive:true});
-eventDialog.addEventListener('cancel',e=>{e.preventDefault();const clock=game&&ensureEventClock(game);if(clock){clock.paused=true;persist();updateEventClock(0);}else eventDialog.querySelector('#event-title')?.focus();});
+eventDialog.addEventListener('cancel',e=>{e.preventDefault();if(employeeEvent(game)){openedIncidentKey=null;eventDialog.close();return;}const clock=game&&ensureEventClock(game);if(clock){clock.paused=true;persist();updateEventClock(0);}else eventDialog.querySelector('#event-title')?.focus();});
 function officeWalk(point) {
   if(!game||!officeSelection)return;
   if(!canWalkTo(officeSelection,point)){toast('Не пройти: выбери свободное место ближе к проходу.');return;}
@@ -302,6 +309,7 @@ function officeWalk(point) {
   if(error)toast(error);else{persist();render();}
 }
 function officeDeskAction(index) {
+  if(employeeEvent(game)?.id===game.seats[index]){syncEventDialog(true);return;}
   const occupant=game.seats[index];
   if(['hire','plan'].includes(game.stage)){
     if(officeSelection){const name=agentById(officeSelection).name;const error=seatAgent(game,officeSelection,index);if(error)toast(error);else{officeSelection=null;persist();render();toast(`${name} направляется к компьютеру ${index+1}.`);}}
@@ -314,6 +322,7 @@ function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=cr
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ СТУДИЯ</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Команда, касса, улучшения и история заказов будут заменены. Для продолжения текущей студии выбери следующий заказ после релиза.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
 function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков: каждый сам займёт свободный компьютер. В панели команды можно выбрать, кто за каким компьютером сидит. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час» или на «Авто». Во время обсуждения и открытого окна часы стоят, затем автоход продолжается. Сложную задачу можно разобрать вместе с разработчиком.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
+  if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}
   const a=agentById(id); if(!a)return;
   if(game.stage==='hire'){candidate=id;render();return;}
   const task=activeTasks(game).find(t=>game.assignments[t.id]===id);
@@ -412,7 +421,8 @@ document.addEventListener('click',e=>{
   if(action==='character-voice'){sound.speakCharacter(id,el.dataset.kind,true);return;}
   if(action==='team-dismiss'){sound.stopVoice('character');const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
   if(action==='seating'){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);}
-  if(action==='event-open'){syncEventDialog();return;}
+  if(action==='event-open'){syncEventDialog(true);return;}
+  if(action==='event-dismiss'){openedIncidentKey=null;eventDialog.close();return;}
   if(action==='event-pause'){const clock=ensureEventClock(game);if(clock)clock.paused=!clock.paused;persist();updateEventClock(0);return;}
   if(action==='event-untimed'){game.timedEvents=false;delete game.eventClock;shownEvent=null;persist();syncEventDialog();return;}
   if(action==='orbit-scan'||action==='orbit-wait'){const outcome=actOrbit(game,mini,action==='orbit-scan'?'scan':'wait');miniEffect=outcome;miniMessage=outcome.message;saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
@@ -422,7 +432,7 @@ document.addEventListener('click',e=>{
   if(action==='event-info'){const ev=EVENTS[game.currentEvent];showDialog(`<div class="eyebrow">КОНТЕКСТ РЕШЕНИЯ</div><h2 id="dialog-title">${ev.title}</h2><p>${ev.text}</p>${ev.options.map(o=>`<p><b>${o.title}.</b> ${o.text}<br><small>${o.effect}</small></p>`).join('')}<p>${ev.lesson}</p><button class="primary full" data-action="close-dialog">Вернуться к решению</button>`);}
   if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
   if(action==='life-office'){showDialog(officePanel(game));return;}
-  if(action==='life-member'){if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
+  if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
     const error=careFor(game,id,action.slice(5));
