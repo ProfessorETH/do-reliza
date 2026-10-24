@@ -68,7 +68,8 @@ function topbar() {
 function scene() { return renderOffice(game, officeSelection, officeMoving); }
 function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<3&&game.budget>=a.cost);
-  return `<div class="panel-header"><div class="eyebrow">1 / 4 · ${DEMO?'ДЕМО-КОМАНДА':'КОМАНДА'}</div><h1>${DEMO?'Познакомься с командой':'Кого берём?'}</h1><p>${DEMO?'Начни с готового состава. Выбери персонажа, попробуй прогулку и переходи к задачам.':'Три места. Шесть кандидатов.<br>Найми агента, затем выбери для него компьютер в офисе.'}</p></div>
+  const quickTeam = DEMO && game.team.length === 3;
+  return `<div class="panel-header"><div class="eyebrow">1 / 4 · ${DEMO?'ДЕМО-КОМАНДА':'КОМАНДА'}</div><h1>${quickTeam?'Познакомься с командой':'Кого берём?'}</h1><p>${quickTeam?'Команда собрана. Выбери персонажа, попробуй прогулку и переходи к задачам.':'Три места. Шесть кандидатов.<br>Найми агента, затем выбери для него компьютер в офисе.'}</p></div>
     <div class="candidate-grid" aria-label="Кандидаты">${AGENTS.map(x=>`<button class="candidate ${candidate===x.id?'selected':''} ${game.team.includes(x.id)?'hired':''}" data-action="candidate" data-id="${x.id}" aria-label="${x.name}, ${x.role}, ${money(x.cost)}" aria-pressed="${candidate===x.id}">${portrait(x)}<span><b>${x.name}</b><small>${money(x.cost)}</small></span>${game.team.includes(x.id)?`<span class="hired-check">${icon('check',13)}</span>`:''}</button>`).join('')}</div>
     <section class="agent-detail" style="--agent:${a.color}"><div class="agent-profile"><div class="portrait-frame">${portrait(a,'large-portrait')}${badge(a.role)}</div><div class="radar-wrap">${radar(a)}</div></div>
       <dl class="mobile-skills">${SKILLS.map(s=>`<div><dt>${s.label}</dt><dd>${a.stats[s.key]}</dd></div>`).join('')}</dl>
