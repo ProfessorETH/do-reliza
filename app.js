@@ -1,3 +1,5 @@
+import { renderDecisionPanel } from './assets/decision-view.js';
+import { purchasePanel, contractPreview } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
 import { sceneHeader, sceneDock, managementBar } from './assets/play-shell.js';
 import { studioCapacity, fundTeam } from './assets/studio-progression.js';
@@ -17,7 +19,7 @@ import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
 import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-voices-20261024';
 import { characterLine, characterMoment } from './assets/character-dialogue.js';
-import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
 import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
 import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
@@ -85,9 +87,10 @@ function clockStatus() {
 function updateClock() {
   if(!game)return;
   const time=shiftTime(game);
-  for(const [key,value] of Object.entries({...time,now:time.now.split(' · ')[0],day:time.now.split(' · ')[1]||'В студии',status:clockStatus()})){const el=root.querySelector(`[data-clock="${key}"]`);if(el&&el.textContent!==String(value))el.textContent=value;}
-  const height=root.querySelector('.shift-banner')?.getBoundingClientRect().height;
-  if(height&&root.style.getPropertyValue('--shift-clock-height')!==`${height}px`)root.style.setProperty('--shift-clock-height',`${height}px`);
+  for(const [key,value] of Object.entries({...time,now:time.now.split(' · ')[0],day:time.now.split(' · ')[1]||'В студии',status:clockStatus()}))for(const el of root.querySelectorAll(`[data-clock="${key}"]`)){
+    const label=key==='now'&&el.closest('.scene-time')?time.now:value;
+    if(el.textContent!==String(label))el.textContent=label;
+  }
 }
 let lastClockFrame=performance.now();
 setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();updateEventClock(delta);}},100);
@@ -98,9 +101,11 @@ function showDialog(html) {
   if (!dialog.open) { const trigger = document.activeElement?.closest('[data-action]'); dialogOrigin = trigger ? { action: trigger.dataset.action, id: trigger.dataset.id } : null; }
   sound.stopVoice();
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
-  if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus();
+  if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus({preventScroll:true});
+  dialog.scrollTop=0;
 }
 dialog.addEventListener('cancel',()=>sound.stopVoice('character'));
+dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){sound.stopVoice('character');dialog.close();}});
 dialog.addEventListener('close', () => {
   if (dialogOrigin) [...root.querySelectorAll('[data-action]')].find(el => el.dataset.action === dialogOrigin.action && el.dataset.id === dialogOrigin.id)?.focus({ preventScroll: true });
 });
@@ -177,20 +182,7 @@ function syncCharacterSpeaking() {
   document.querySelectorAll('[data-character-speaker]').forEach(el=>el.classList.toggle('is-speaking',el.dataset.characterSpeaker===sound.speakingCharacter));
 }
 document.addEventListener('character-voice-state',syncCharacterSpeaking);
-function eventPanel() {
-  if (game.currentEvent === 'life') {
-    const incident = game.life.incident, ev = INCIDENTS[incident.type], speaker = agentById(incident.id);
-    const covered = ev.upgrade && game.life.upgrades.includes(ev.upgrade);
-    return `<div class="event-heading"><span class="event-alert">ЖИЗНЬ КОМАНДЫ</span><span>Время на паузе</span></div><div class="speaker">${portrait(speaker)}<span><b>${speaker.name}</b><small>${condition(game,speaker.id).label}</small></span></div><div class="panel-header event-copy"><h1>${ev.title}</h1><p>${ev.text}</p></div><div class="event-options"><button class="event-option" data-action="decision" data-id="life-care"><span class="option-number">01</span><span><b>${ev.care}</b><small>${covered?'Улучшение офиса: без потери часа · напряжение −12':ev.effect}</small></span></button><button class="event-option" data-action="decision" data-id="life-wait"><span class="option-number">02</span><span><b>${incident.type==='idea'?'Записать и вернуться после релиза':'Отложить до релиза'}</b><small>${incident.type==='idea'?'Без задержки · настроение автора +2':'Без задержки · напряжение +10, настроение −8'}</small></span></button></div><p class="lesson-note">Команда ждёт твоего решения.</p>`;
-  }
-  const ev=EVENTS[game.currentEvent], speaker=agentById(game.currentEvent==='bug'?game.assignments.qa:game.currentEvent==='review'?game.assignments.code:game.assignments.brief);
-  return `<div class="event-heading"><span class="event-alert">${icon('bolt',17)} НУЖНО ВАШЕ РЕШЕНИЕ</span><span class="event-pause">Время на паузе</span><button class="text-button event-context" data-action="event-info">Контекст ↗</button></div>
-    <div class="speaker">${portrait(speaker)}<span><b>${speaker.name}</b><small>${speaker.role}</small></span></div>
-    <div class="panel-header event-copy"><div class="eyebrow">${ev.tag}</div><h1>${ev.title}</h1><p>${ev.text}</p></div>
-    ${game.currentEvent==='review'?'<div class="code-review"><span>Сейчас в коде</span><ol><li>Передвинуть корабль</li><li>Проверить, есть ли астероид</li></ol><p>Проверка приходит слишком поздно.</p></div>':''}
-    <div class="event-options">${ev.options.map((o,i)=>{const cost=(o.id==='shield'?2000:o.id==='fix'?1500:0);return `<button class="event-option ${['ignore','review-skip'].includes(o.id)?'risky':''}" data-action="decision" data-id="${o.id}" ${game.budget<cost?'disabled':''}><span class="option-number">0${i+1}</span><span><b>${o.title}</b><span class="option-description">${o.text}</span><small>${o.effect}${game.budget<cost?' · не хватает резерва':''}</small></span>${icon('arrow',16)}</button>`;}).join('')}</div>
-    <div class="lesson-note">${icon('info',19)}<p>${ev.lesson}</p></div>`;
-}
+function eventPanel() { return renderDecisionPanel(game); }
 function resultPanel() {
   const r=getResult(game);
   return `<div class="panel-header"><div class="eyebrow">ШАГ 04 · РЕЗУЛЬТАТ</div><h1>${r.title}</h1><p>${r.summary}</p></div>
@@ -227,7 +219,7 @@ function render() {
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
-    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}workspaceView='office';officeSelection=officeSelection===id?null:id;onboarding.collapseGuide();render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
+    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}hudSelection=null;workspaceView='office';officeSelection=officeSelection===id?null:id;onboarding.collapseGuide();render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
     onObject:id=>officeObject(id),
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -269,11 +261,11 @@ function syncEventDialog(requestOpen=false) {
     const timer=ensureEventClock(game);persist();
     const contents=eventPanel().replace('<h1>','<h2 id="event-title" tabindex="-1">').replace('</h1>','</h2>');
     eventDialog.innerHTML='<div class="event-modal-label">СОБЫТИЕ В СТУДИИ</div>'+
-      (timer?'<div class="decision-clock"><div><b data-event-seconds></b><span>Если время закончится: отложим проблему до релиза. Напряжение +10, настроение −8.</span></div><progress max="'+(game.difficulty==='hard'?30000:45000)+'" value="'+timer.remaining+'" data-event-progress aria-label="Осталось времени"></progress><div class="event-timer-actions"><button class="secondary" data-action="event-pause"></button><button class="text-button" data-action="event-untimed">Играть без таймеров</button></div></div>':'<p class="event-unlimited">Без ограничения времени. Смена продолжится после решения.</p>')+
-      contents+eventVoices().map(line=>characterQuote(line.id,line.kind)).join('')+(incident?'<button class="secondary event-return" data-action="event-dismiss">Вернуться в офис · пауза решения</button>':'')+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
+      (timer?'<div class="decision-clock"><div><b data-event-seconds></b><span>По таймеру: отложить · напряжение +10 · настроение −8</span></div><progress max="'+(game.difficulty==='hard'?30000:45000)+'" value="'+timer.remaining+'" data-event-progress aria-label="Осталось времени"></progress><div class="event-timer-actions"><button class="secondary" data-action="event-pause"></button><button class="text-button" data-action="event-untimed">Играть без таймеров</button></div></div>':'<p class="event-unlimited">Без ограничения времени. Смена продолжится после решения.</p>')+
+      contents+'<details class="decision-details decision-voices"><summary>Что говорят коллеги</summary>'+eventVoices().map(line=>characterQuote(line.id,line.kind)).join('')+'</details>'+(incident?'<button class="secondary event-return" data-action="event-dismiss">Вернуться в офис · пауза решения</button>':'')+'<button class="text-button event-menu" data-action="menu">Меню игры</button>';
     eventDialog.classList.remove('event-clock-compact');eventDialog.scrollTop=0;sound.stopVoice();
   }
-  if(!eventDialog.open){eventDialog.showModal();eventDialog.querySelector('#event-title')?.focus({preventScroll:true});}
+  if(!eventDialog.open){eventDialog.showModal();eventDialog.querySelector('#event-title')?.focus({preventScroll:true});eventDialog.scrollTop=0;}
   updateEventClock(0);
   if(fresh)sound.speakExchange(eventVoices(),true);
 }
@@ -375,6 +367,7 @@ function moveMini(dx,dy) {
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!officeExpanded&&!document.querySelector('dialog[open]')) {
     if(officeSelection){officeSelection=null;render();}
+    else if(hudSelection){hudSelection=null;render();}
     else if(workspaceView==='project'){workspaceView='office';render();root.querySelector('.scene-dock [data-id="project"]')?.focus({preventScroll:true});}
   }
   if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
@@ -413,7 +406,7 @@ document.addEventListener('click',e=>{
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
   if(action==='workspace'){workspaceView=id==='project'&&workspaceView==='project'?'office':id;officeExpanded=false;officeSelection=null;if(dialog.open){sound.stopVoice('character');dialog.close();}onboarding.collapseGuide();render();}
-  if(action==='team-focus'){const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=id;onboarding.collapseGuide();render();showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
+  if(action==='team-focus'){officeSelection=null;const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=id;onboarding.collapseGuide();render();showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
   if(action==='guide-open'){if(dialog.open)dialog.close();onboarding.openGuide();render();return;}
   if(action==='panel-size'){managementExpanded=!managementExpanded;render();return;}
   if(action==='studio-project'){officeExpanded=false;workspaceView='project';onboarding.collapseGuide();render();root.querySelector('.management-topbar [data-id="office"]')?.focus({preventScroll:true});return;}
@@ -434,6 +427,8 @@ document.addEventListener('click',e=>{
   if(action==='activity')showDialog(`<div class="eyebrow">ИЗ СТУДИИ</div><h2 id="dialog-title">Журнал смены</h2><div class="activity-history">${game.log.slice().reverse().map(m=>`<p>${esc(m)}</p>`).join('')}</div><button class="primary full" data-action="close-dialog">К команде</button>`);
   if(action==='event-info'){const ev=EVENTS[game.currentEvent];showDialog(`<div class="eyebrow">КОНТЕКСТ РЕШЕНИЯ</div><h2 id="dialog-title">${ev.title}</h2><p>${ev.text}</p>${ev.options.map(o=>`<p><b>${o.title}.</b> ${o.text}<br><small>${o.effect}</small></p>`).join('')}<p>${ev.lesson}</p><button class="primary full" data-action="close-dialog">Вернуться к решению</button>`);}
   if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
+  if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
+  if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
   if(action==='life-office'){showDialog(officePanel(game));return;}
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
@@ -451,16 +446,14 @@ document.addEventListener('click',e=>{
   }
   if(action==='life-buy-preview'){
     const u=UPGRADES.find(u=>u.id===id);if(!u)return;
-    showDialog(`<div class="eyebrow">ОБУСТРОЙСТВО</div><h2 id="dialog-title">${u.name}</h2><p>${u.text}</p><p>Из кассы студии будет списано ${money(u.price)}. Резерв текущего заказчика: ${money(game.budget)}.</p><div class="dialog-actions"><button class="secondary" data-action="life-office">Назад</button><button class="primary" data-action="life-buy" data-id="${id}">Купить · ${money(u.price)}</button></div>`);return;
+    showDialog(purchasePanel(game,u));return;
   }
   if(action==='life-buy'){
     const error=buyUpgrade(game,id);if(error)toast(error);else{persist();render();showDialog(officePanel(game));}return;
   }
   if(action==='life-contract-preview'){
     const c=CONTRACTS.find(c=>c.id===id);if(!c||game.stage!=='result')return;
-    const l=ensureLife(game), team=game.team.filter(id=>!l.departures.includes(id));
-    const payroll=team.reduce((n,id)=>n+l.members[id].raises*1000,0), budget=c.budget+DIFFICULTIES[game.difficulty].budget-36000;
-    showDialog(`<div class="eyebrow">${c.client}</div><h2 id="dialog-title">Принять заказ «${c.name}»?</h2><p>${c.text}</p><ul class="debrief-list"><li>Бюджет заказчика: ${money(budget)}; оплата состава — ${money(team.reduce((n,id)=>n+agentById(id).cost,0))} из этого бюджета.</li><li>Срок: ${c.deadline+DIFFICULTIES[game.difficulty].deadline-16} ч.</li><li>Из кассы студии при старте: доплаты ${money(payroll)}; поддержка расширенного состава ${money(Math.max(0,team.reduce((n,id)=>n+agentById(id).cost,0)-budget))}.</li><li>Команда отдыхает: энергия +35, напряжение −20. Улучшения офиса сохраняются.</li></ul>${l.departures.length?`<p class="life-notice">Уходят: ${l.departures.map(id=>agentById(id).name).join(', ')}. Их места освободятся; перед работой нужно нанять замену.</p>`:''}<div class="dialog-actions"><button class="secondary" data-action="life-contracts">Назад</button><button class="primary" data-action="life-next" data-id="${id}">Принять заказ</button></div>`);return;
+    showDialog(contractPreview(game,c));return;
   }
   if(action==='life-next'){
     const error=nextProject(game,id);if(error)toast(error);else{dialog.close();stopAuto();resetOfficeWorld();officeMoving=false;officeSelection=null;mini=null;try{localStorage.removeItem(MINI);}catch{}persist();render();}return;
@@ -504,6 +497,7 @@ function showStudioTeam() {
   showDialog(`<h2 id="dialog-title">Команда студии · ${game.team.length}/${studioCapacity(game)}</h2><p>Выбери коллегу — камера найдёт его, а действия появятся рядом.</p><div class="studio-team-picker">${game.team.map(id=>`<button class="secondary" data-action="watch-agent" data-id="${id}">${agentById(id).name}<small>${condition(game,id).label} · энергия ${Math.round(game.life.members[id].energy)}</small></button>`).join('')}</div><button class="secondary" data-action="seating">Рассадка по компьютерам</button>`);
 }
 function officeObject(id) {
+  if(id==='clock'){document.querySelector('[data-action=scene-time]')?.click();return;}
   if(id==='arcade'){if(game.stage==='result')openMini();else toast('Игровой автомат включится после релиза. Сначала заверши заказ.');return;}
   if(id==='coffee'){if(officeSelection){showDialog(memberPanel(game,officeSelection));}else showStudioTeam();return;}
   showDialog(officePanel(game));

@@ -1,3 +1,4 @@
+import { mountSceneClock } from './assets/scene-clock.js';
 import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
@@ -75,6 +76,7 @@ class OfficeWorld {
         }
       });
       await this.art.dress(this.room);
+      this.sceneClock = mountSceneClock(this.room);
       this.purchases = await mountOfficeUpgrades(this.room);
       this.purchases.sync(this.game?.life?.upgrades);
       this.expansion.sync(this.game?.life?.upgrades);
@@ -167,6 +169,7 @@ class OfficeWorld {
       const viewDirection = this.camera.position.clone().sub(this.controls.target).toArray();
       for (const wall of this.walls || []) wall.visible = officeWallVisible(wall.userData.wallSide, viewDirection);
       for (const [index, screen] of this.screens) { const id = this.game.seats[index], task = active.find(t => this.game.assignments[t.id] === id); paintScreen(screen, task, task ? this.game.progress[task.id] : 0, this.game.stage); }
+      this.sceneClock?.update(this.game);
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
       this.labels();
       if (this.container.clientWidth && this.container.clientHeight) this.renderer.render(this.scene, this.camera);

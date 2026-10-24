@@ -62,14 +62,14 @@ export function renderTeamMemberPreview(game,id,activity) {
 
 export function renderTeamHUD(game, selected) {
   const states = game.team.map(id => teamMemberState(game,id));
-  const focused = states.find(s => s.agent.id===selected) || states[0];
+  const focused = states.find(s => s.agent.id===selected);
   return `<aside class="team-hud" data-count="${states.length}" data-open="${!!selected}" aria-label="Команда студии">
     <header class="team-hud-heading"><span>Команда</span><b>${states.length}<span>/${studioCapacity(game)}</span></b></header>
     <div class="team-hud-members">${Array.from({length:studioCapacity(game)},(_,i)=>{
       const s=states[i];
       if(!s)return `<div class="team-hud-vacant"><span aria-hidden="true">＋</span><small>Ждёт коллегу</small></div>`;
-      const a=s.agent, active=a.id===focused.agent.id;
-      return `<button class="team-hud-person ${active?'is-current':''}" data-character-speaker="${a.id}" data-action="team-focus" data-id="${a.id}" data-tone="${s.tone}" aria-pressed="${active}" aria-label="${esc(a.name)}. ${esc(s.mood)}. Показать реплику" aria-describedby="team-activity-${a.id}">
+      const a=s.agent, active=a.id===focused?.agent.id;
+      return `<button class="team-hud-person ${active?'is-current':''}" data-character-speaker="${a.id}" data-action="team-focus" data-id="${a.id}" data-tone="${s.tone}" aria-pressed="${active}" aria-expanded="${active}" aria-label="${esc(a.name)}. ${esc(s.mood)}. Показать реплику" aria-describedby="team-activity-${a.id}">
         <span class="team-portrait-ring" style="--morale:${s.morale}%"><span class="team-portrait" style="--px:${a.index%3*50}%;--py:${Math.floor(a.index/3)*100}%"></span><span class="team-mood-face">${face(s.tone)}</span></span>
         <b>${a.name}</b><span class="team-mood-label">${esc(s.mood)}</span><span class="team-activity" id="team-activity-${a.id}" data-team-activity="${a.id}" data-base-activity="${esc(s.activity)}${s.progress===null?'':` · ${s.progress}%`}">${esc(s.activity)}${s.progress===null?'':` · ${s.progress}%`}</span>
       </button>`;
@@ -78,6 +78,6 @@ export function renderTeamHUD(game, selected) {
       <div class="team-thought-who"><span>${focused.agent.name}</span>${CHARACTER_VOICES[`${focused.agent.id}-${focused.voice}`]?`<button class="team-voice" data-action="character-voice" data-id="${focused.agent.id}" data-kind="${focused.voice}" aria-label="Прослушать реплику: ${focused.agent.name}">Слушать</button>`:'<span aria-hidden="true">···</span>'}<button class="team-thought-close" data-action="team-dismiss" aria-label="Закрыть реплику">×</button></div><p>«${esc(focused.line)}»</p>
       <div class="team-vitals"><span>Энергия <b>${focused.energy}</b><i style="--value:${focused.energy}%"></i></span><span>Настроение <b>${focused.morale}</b><i style="--value:${focused.morale}%"></i></span></div>
       <button data-action="life-member" data-id="${focused.agent.id}" class="team-care">Состояние и забота ↗</button>
-    </section>`:`<p class="team-hud-invite">Здесь появятся твои коллеги — с настроением и своими задачами.</p>`}
+    </section>`:`<p class="team-hud-invite">${states.length?'Нажми на коллегу, чтобы открыть карточку.':'Здесь появятся твои коллеги.'}</p>`}
   </aside>`;
 }
