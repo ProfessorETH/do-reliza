@@ -20,6 +20,7 @@ export const INCIDENTS = {
   noise: { title: 'Созвон за соседним столом', text: 'Громкое обсуждение мешает сосредоточиться. Сотрудник уже несколько раз терял мысль.', upgrade: 'quiet', care: 'Договориться о тихом часе', effect: 'Напряжение −12 · +1 ч без тихого офиса' },
   computer: { title: 'Сборка снова зависла', text: 'Компьютер подвёл в середине работы. Сотрудник переживает, что задерживает всех.', upgrade: 'computers', care: 'Помочь настроить компьютер', effect: 'Напряжение −12 · +1 ч без обновления компьютеров' },
   idea: { title: 'Получилось лучше, чем ожидали', text: 'Сотрудник нашёл удачный приём и хочет показать его коллегам. У команды появился повод порадоваться.', care: 'Дать поделиться находкой', effect: 'Настроение всей команды +8 · +1 ч' },
+  tension: { title: 'Разговор на повышенных тонах', text: 'Напряжение накопилось. Коллеги спорят о том, как продолжать работу, и уже перестали слышать друг друга.', care: 'Выслушать обоих и договориться о задачах', effect: 'Напряжение обоих −18 · настроение +8 · +1 ч' },
 };
 
 export function ensureLife(s) {
@@ -85,8 +86,17 @@ export function lifeHour(s, active, completed) {
 }
 export function scheduleIncident(s) {
   const l = ensureLife(s);
+  if (s.stage !== 'work' || l.incident) return false;
+  const present = s.team.filter(id => !awayForRest(l.members[id]));
+  const upset = present.find(id => l.members[id].stress >= 75 || l.members[id].morale <= 25);
+  if (!l.conflictDone && s.time >= 2 && upset && present.length >= 2) {
+    const otherId = present.filter(id => id !== upset).sort((a,b) => l.members[a].stress - l.members[b].stress)[0];
+    l.incident = { type: 'tension', id: upset, otherId }; s.currentEvent = 'life'; s.stage = 'event';
+    s.log.push(`${AGENTS.find(a=>a.id===upset).name} и ${AGENTS.find(a=>a.id===otherId).name}: напряжение вылилось в спор.`);
+    return true;
+  }
   if (l.incidentDone || s.time < 4 + l.seed % 3 || !s.team.length) return false;
-  const type = Object.keys(INCIDENTS)[(l.seed >>> 8) % 3];
+  const type = ['noise','computer','idea'][(l.seed >>> 8) % 3];
   const id = s.team[(l.seed >>> 16) % s.team.length];
   l.incident = { type, id }; s.currentEvent = 'life'; s.stage = 'event';
   if (type !== 'idea') { l.members[id].stress = clamp(l.members[id].stress + 10); l.members[id].morale = clamp(l.members[id].morale - 6); }
@@ -97,6 +107,16 @@ export function resolveIncident(s, option) {
   const l = ensureLife(s), ev = l.incident;
   if (s.stage !== 'event' || s.currentEvent !== 'life' || !ev || !['life-care', 'life-wait'].includes(option)) return 'Выбери решение события.';
   const m = l.members[ev.id], info = INCIDENTS[ev.type];
+  if (ev.type === 'tension') {
+    const participants = [ev.id,ev.otherId];
+    if (option === 'life-care') s.time++;
+    for (const id of participants) {
+      l.members[id].stress = clamp(l.members[id].stress + (option === 'life-care' ? -18 : 10));
+      l.members[id].morale = clamp(l.members[id].morale + (option === 'life-care' ? 8 : -8));
+    }
+    s.log.push(option === 'life-care' ? 'Выслушали обоих и согласовали задачи. Спор улажен; потрачен один час.' : 'Спор оставили без решения. Напряжение обоих +10, настроение −8.');
+    l.conflictDone = true; l.incident = null; s.currentEvent = null; s.stage = 'work'; return null;
+  }
   if (option === 'life-care') {
     if (!l.upgrades.includes(info.upgrade)) s.time++;
     if (ev.type === 'idea') for (const id of s.team) l.members[id].morale = clamp(l.members[id].morale + 8);
@@ -176,7 +196,7 @@ export function validLife(s) {
     && (l.missionsWon === undefined || Array.isArray(l.missionsWon) && new Set(l.missionsWon).size === l.missionsWon.length && l.missionsWon.every(id=>Object.hasOwn(MISSION_REWARDS,id)))
     && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===MISSION_REWARDS[l.missionReward.contract].cash)
     && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
-    && typeof l.settled === 'boolean' && typeof l.incidentDone === 'boolean'
+    && typeof l.settled === 'boolean' && typeof l.incidentDone === 'boolean' && (l.conflictDone === undefined || typeof l.conflictDone === 'boolean')
     && Array.isArray(l.departures) && l.departures.every(id => s.team.includes(id))
     && (l.away === undefined || (Array.isArray(l.away) && l.away.every(id => AGENTS.some(a => a.id === id) && !s.team.includes(id))))
     && Array.isArray(l.history) && l.history.every(h => h && typeof h.name === 'string' && integer(h.score, 0, 100) && integer(h.reward, 0) && Number.isFinite(h.time) && h.time >= 0)
@@ -184,5 +204,5 @@ export function validLife(s) {
       && (m.coffee === undefined || typeof m.coffee === 'boolean')
       && (m.restSerial === undefined || integer(m.restSerial,0))
       && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,4) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
-    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && !l.incidentDone);
+    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && (l.incident.type === 'tension' ? !l.conflictDone && s.team.includes(l.incident.otherId) && l.incident.otherId !== l.incident.id : !l.incidentDone));
 }

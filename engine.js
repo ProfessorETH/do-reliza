@@ -196,7 +196,7 @@ export function nextProject(state, contractId) {
     const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0; m.coffee = false;
     if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
-  l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
+  l.contract = contract.id; l.incident = null; l.incidentDone = false; l.conflictDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
   next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
   next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽; поддержка расширенного состава: ${subsidy} ₽. Команда отдохнула между заказами.`];
   if(departed.length>away.length)next.log.push('Часть ушедших коллег готова обсудить новый контракт сразу: в списке найма всегда доступны минимум три специалиста.');

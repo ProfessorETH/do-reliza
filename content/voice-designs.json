@@ -1,0 +1,90 @@
+{
+  "provider": "ElevenLabs Voice Design",
+  "date": "2026-10-24",
+  "source": "Original synthetic voices created from descriptions. No reference audio or person.",
+  "voices": {
+    "nika": {
+      "character": "nika",
+      "purpose": "Original synthetic voice, no person or audio reference",
+      "prompt": "An original young adult female game character, 24 years old. Native Russian with neutral standard pronunciation and crisp, clear diction. Warm, friendly and quietly confident; a bright, full, natural mezzo-soprano voice with a gentle smile and conversational energy. Moderate pitch and pace, natural Russian R and S consonants. Clear voiced delivery rather than whispering or breathy ASMR. Pristine dry studio recording, open and balanced tone, very low noise floor. No hiss, room echo, metallic resonance, radio or telephone coloration. Perfect audio quality.",
+      "preview": "Привет! Я Ника, помощница студии. Впереди наш первый релиз. Разберём задачи, распределим роли и спокойно доведём игру до результата. Если что-то не получается, остановимся и обсудим это вместе. Здесь каждый занимается своей частью: кто-то пишет код, кто-то рисует экраны, а кто-то находит ошибки. Я помогу освоиться, а решения останутся за тобой. Ну что, начнём?",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:07:54.686Z",
+      "voiceId": "JhZZsbQ3jEXubrvCN7a2",
+      "selectedPreview": 1,
+      "name": "Ника — До релиза — original"
+    },
+    "mira": {
+      "id": "mira",
+      "name": "Мира",
+      "voiceName": "Мира — До релиза — original",
+      "description": "An original female character, age 26, native standard Russian. A natural warm clear alto, composed and thoughtful, articulate consonants, gentle confidence and an understated smile. Conversational, grounded and expressive, with a full voiced tone and moderate pace. Pristine dry studio sound, balanced open frequencies, perfect audio quality. No whispering, breathy ASMR, hiss, room echo, metallic resonance or telephone coloration.",
+      "preview": "Красивое меню хорошо. Понятное — ещё лучше. Хочу, чтобы игрок разобрался без длинных объяснений. Спасибо! Теперь понятно, что поправить. Покажу новый вариант. Давайте уточним, что должен понять игрок. Тогда найдём решение. Всё на своих местах. Можно звать первых игроков! Стоп. Мы опять всё переделываем в последний момент. Так не пойдёт.",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:18:44.430Z",
+      "voiceId": "dbmJURpS97E9e9zWbgfc",
+      "selectedPreview": 1
+    },
+    "pixel": {
+      "id": "pixel",
+      "name": "Пиксель",
+      "voiceName": "Пиксель — До релиза — original",
+      "description": "An original young adult male character, age 23, native standard Russian. Light bright tenor with lively conversational energy, quick wit and a playful friendly smile. Clear precise diction, natural Russian R consonants. Youthful and confident with varied intonation, never a caricature. Pristine dry studio recording, full open balanced tone and perfect audio quality. No background noise, echo, harsh rasp, radio filtering or metallic coloration.",
+      "preview": "Дайте мне час. У вас будет на что посмотреть. Сначала соберу рабочий набросок. Детали доведём после проверки. А, понял! Этот вариант и проще, и быстрее. Сейчас переделаю. Есть идея, как это обойти. Только давайте сначала проверим. А ведь начинали с пустого экрана. Теперь в это можно играть! Опять передумываем? Выберите уже один вариант, а то мы так ничего не закончим!",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:21:01.857Z",
+      "voiceId": "a5T8F0nD5iTzUMuDpTT1",
+      "selectedPreview": 1
+    },
+    "nord": {
+      "id": "nord",
+      "name": "Норд",
+      "voiceName": "Норд — До релиза — original",
+      "description": "An original adult male character, age 32, native standard Russian. A calm grounded mid-low baritone, steady measured pace, composed and matter-of-fact with quiet warmth. Crisp diction and natural Russian consonants. Confident but approachable; full voiced natural speaking tone. Pristine dry studio recording, clear open balanced frequencies, perfect audio quality. No whispering, artificial gravel, bass booming, background noise, reverb or telephone coloration.",
+      "preview": "Я сделаю. Но сначала договоримся, что значит «готово». Проверю обычный сценарий и то, что происходит на границе. Да, теперь причина ясна. Исправлю и проверю соседние случаи. Тут важно не торопиться. Сначала разберём причину, потом решение. Проверки пройдены. Эту версию можно показывать. Хватит торопить. Пропустим проверку — потом будем всё переделывать.",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:22:27.442Z",
+      "voiceId": "qZqSHXwY4VTpnEa2ANmZ",
+      "selectedPreview": 1
+    },
+    "iskra": {
+      "id": "iskra",
+      "name": "Искра",
+      "voiceName": "Искра — До релиза — original",
+      "description": "An original young adult female character, age 23, native standard Russian. A clear bright mid-pitched voice, energetic, quick-thinking and spirited, direct and friendly with a lively confident smile. Natural expressive conversational delivery and crisp Russian diction, full voiced rather than breathy. Pristine dry studio recording, balanced open tone and perfect audio quality. No squeaky childlike pitch, ASMR, hiss, distortion, echo, radio filtering or metallic coloration.",
+      "preview": "Играбельная версия сегодня? Это ко мне. Соберу первую версию, чтобы было что попробовать. Вот оно! Спасибо, теперь знаю, как доделать без лишних обходов. Кажется, здесь есть подвох. Давайте разберёмся, пока есть время. Есть! Оно работает. Ну что, кто первым сыграет? Да решите уже, что важнее! Я не могу делать всё одновременно!",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:24:58.573Z",
+      "voiceId": "ou1QM81onRA579nJezcf",
+      "selectedPreview": 1
+    },
+    "saga": {
+      "id": "saga",
+      "name": "Сага",
+      "voiceName": "Сага — До релиза — original",
+      "description": "An original adult female character, age 29, native standard Russian. A clear slightly lower feminine mezzo voice, observant and analytical with dry gentle humour. Precise consonants, balanced conversational pace, calm assertiveness and restrained natural emotion. A full open voiced tone, warm rather than severe. Pristine dry studio recording and perfect audio quality. No whispering, breathiness, hiss, room echo, metallic resonance or telephone coloration.",
+      "preview": "У меня хорошие новости: мы нашли это до релиза. Попробую необычный сценарий. Лучше найти проблему сейчас. Хорошо, проверю ещё раз. И соседний сценарий тоже. Давайте остановимся на минуту и проверим спорный момент. Основные сценарии проверены. Можно выдохнуть и сыграть самим. Я не буду закрывать глаза на проблемы ради красивого отчёта!",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:26:52.519Z",
+      "voiceId": "70lWwD9Fg8JVPZ4Qt7XW",
+      "selectedPreview": 1
+    },
+    "echo": {
+      "id": "echo",
+      "name": "Эхо",
+      "voiceName": "Эхо — До релиза — original",
+      "description": "An original young adult male character, age 27, native standard Russian. A warm open mid-range male voice, empathetic and sociable, relaxed natural rhythm, expressive welcoming smile and very clear diction. Friendly conversational delivery with a rounded smooth tone and natural Russian R consonants. Pristine dry studio recording, balanced full frequencies and perfect audio quality. No breathy ASMR, forced gravel, hiss, room echo, distortion or telephone coloration.",
+      "preview": "Переведу «хотим красиво» в понятную задачу. Сверю результат с заданием, чтобы все понимали его одинаково. Теперь договорились. Запишу решение, чтобы никто не потерялся. Давайте сверим, что обещали и что успеваем. Потом решим вместе. Мы договорились, помогли друг другу и выпустили игру. Классная команда! Так, стоп. Мы друг друга перебиваем. Сейчас никто никого не слышит.",
+      "source": "Voice Design; original synthetic voice without reference audio",
+      "status": "saved-private",
+      "submittedAt": "2026-10-24T18:28:24.937Z",
+      "voiceId": "h8IJHmzb5rhlPQXriJgv",
+      "selectedPreview": 1
+    }
+  }
+}
