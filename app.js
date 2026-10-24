@@ -1,4 +1,4 @@
-import { captureMembers, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
+import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 
 import { renderDecisionPanel, renderDecisionReceipt } from './assets/decision-view.js';
 import { discussionSpeakers, studyDecision } from './assets/team-discussion.js';
@@ -111,7 +111,7 @@ function showDialog(html) {
 dialog.addEventListener('cancel',()=>sound.stopVoice('character'));
 dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){sound.stopVoice('character');dialog.close();}});
 dialog.addEventListener('close', () => {
-  if(decisionFeedback){const feedback=decisionFeedback;decisionFeedback=null;if(feedback.game===game){queueMemberFeedback(game,feedback.before,feedback.affected);render();root.querySelector('[data-action="tick"]')?.focus({preventScroll:true});}}
+  if(decisionFeedback){const feedback=decisionFeedback;decisionFeedback=null;if(feedback.game===game){queueMemberFeedback(game,feedback.before,feedback.affected);for(const response of feedback.responses)queueActorReaction(game,response.id,response.kind==='agree'?'joy':response.kind==='reconsider'?'calm':'sad');render();root.querySelector('[data-action="tick"]')?.focus({preventScroll:true});}}
   if (dialogOrigin) [...root.querySelectorAll('[data-action]')].find(el => el.dataset.action === dialogOrigin.action && el.dataset.id === dialogOrigin.id)?.focus({ preventScroll: true });
 });
 function radar(a) {
@@ -282,7 +282,7 @@ function completeDecision(id,expired=false){
   const error=resolveEvent(game,id);
   if(error){toast(error);return;}
   if(event==='life')queueMemberFeedback(game,before,affected);
-  else decisionFeedback={game,before,affected};
+  else decisionFeedback={game,before,affected,responses:game.discussions[event].responses};
   delete game.eventClock;
   if(expired)game.log.push('Время решения вышло: проблема отложена до релиза.');
   persist();render();
