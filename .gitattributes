@@ -4,7 +4,10 @@
 *.html text eol=lf
 *.md text eol=lf
 *.json text eol=lf
+*.py text eol=lf
 *.png binary
 *.jpg binary
 *.glb binary
 *.blend binary
+# Keep the vendored upstream sources unchanged, including their whitespace.
+vendor/three/** -whitespace

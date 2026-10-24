@@ -1,4 +1,5 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
+import { isWalkable } from './office-layout.js';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -6,7 +7,7 @@ export function createGame(difficulty = 'normal') {
   const mode = DIFFICULTIES[difficulty] || DIFFICULTIES.normal;
   return { version: VERSION, stage: 'hire', difficulty: DIFFICULTIES[difficulty] ? difficulty : 'normal',
     budget: mode.budget, initialBudget: mode.budget, deadline: mode.deadline, time: 0,
-    team: [], seats: [null, null, null], assignments: {}, progress: Object.fromEntries(TASKS.map(t => [t.id, 0])),
+    team: [], seats: [null, null, null], officeTargets: {}, assignments: {}, progress: Object.fromEntries(TASKS.map(t => [t.id, 0])),
     workload: {}, choices: {}, currentEvent: null, trust: 80, designPenalty: 0,
     shield: false, checkpoint: true, criticalBug: false, extraCode: 0,
     log: ['Получен заказ: подготовить игру «Орбита» к школьному фестивалю.'] };
@@ -17,6 +18,7 @@ export function hire(state, id) {
   if (state.team.includes(id)) {
     state.team = state.team.filter(x => x !== id); state.budget += a.cost;
     state.seats = state.seats.map(x => x === id ? null : x);
+    delete state.officeTargets[id];
     Object.keys(state.assignments).forEach(k => { if (state.assignments[k] === id) delete state.assignments[k]; });
     return null;
   }
@@ -27,6 +29,7 @@ export function hire(state, id) {
 // Saves from checkpoint 01 had no office layout. Keep their project progress.
 export function restoreOffice(state) {
   if (!state.seats) state.seats = Array.from({ length: 3 }, (_, i) => state.stage === 'hire' ? null : state.team[i] || null);
+  if (!state.officeTargets) state.officeTargets = {};
   return state;
 }
 export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
@@ -37,6 +40,17 @@ export function seatAgent(state, agentId, index) {
   if (previous === index) return null;
   if (previous >= 0) state.seats[previous] = occupant;
   state.seats[index] = agentId;
+  delete state.officeTargets[agentId];
+  return null;
+}
+export function walkInOffice(state, agentId, point) {
+  if (!['hire', 'plan'].includes(state.stage)) return 'Во время смены команда занята задачами.';
+  if (!state.team.includes(agentId)) return 'Сначала выбери агента из команды.';
+  if (!isWalkable(point)) return 'Там мебель или край комнаты. Выбери свободный участок пола.';
+  const target = point.map(n => Math.round(n * 10000) / 10000);
+  if (!isWalkable(target)) return 'Слишком близко к мебели. Выбери точку чуть дальше.';
+  state.seats = state.seats.map(id => id === agentId ? null : id);
+  state.officeTargets[agentId] = target;
   return null;
 }
 export function beginPlan(state) {
@@ -141,7 +155,9 @@ export function validSave(s) {
     && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === 3
       && s.seats.every(id => id === null || s.team.includes(id))
       && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))
-    && (s.stage === 'hire' || s.seats === undefined || teamSeated(s))
+    && (['hire','plan'].includes(s.stage) || s.seats === undefined || teamSeated(s))
+    && (s.officeTargets === undefined || (s.officeTargets && typeof s.officeTargets === 'object' && !Array.isArray(s.officeTargets)
+      && Object.entries(s.officeTargets).every(([id,p]) => s.team.includes(id) && !s.seats?.includes(id) && isWalkable(p))))
     && Number.isFinite(s.time) && s.time >= 0 && Number.isFinite(s.deadline) && s.deadline > 0
     && s.progress && TASKS.every(t => Number.isFinite(s.progress[t.id]) && s.progress[t.id] >= 0 && s.progress[t.id] <= 100)
     && s.assignments && Object.values(s.assignments).every(id => s.team.includes(id))

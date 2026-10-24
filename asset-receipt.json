@@ -24,5 +24,18 @@
     ],
     "method": "Original inline SVG room and characters, CSS animation, authored in code by Codex. Existing portrait atlas reused in roster. No new image or video generation, external assets, GPU renders or dependencies.",
     "implementation": "2D isometric illustration; not a Blender or GLB scene."
+  },
+  "office3DIteration": {
+    "date": "2026-10-24",
+    "source": "art/blender/do-reliza-office.blend",
+    "receipt": "art/blender/build-receipt.json",
+    "method": "Blender-native bpy geometry through MCP; GLB export; browser procedural joint animation",
+    "tools": {
+      "Blender": "5.2.0 LTS",
+      "MCP for Blender": "2.2.4",
+      "Three.js": "0.186.1"
+    },
+    "externalGenerationUsed": false,
+    "localGPUGenerationUsed": false
   }
 }

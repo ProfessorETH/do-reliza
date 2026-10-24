@@ -1,12 +1,14 @@
+import { WAITING } from './office-layout.js';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js';
 import { renderOffice } from './office.js';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated } from './engine.js';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
 const SAVE = 'before-release-v1';
 const MINI = 'before-release-orbit-v1';
-let officeSelection = null;
+let officeSelection = null, officeMoving = false;
 let game = null, candidate = 'mira', difficulty = 'calm', automatic = null, saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
 try { const raw = JSON.parse(localStorage.getItem(SAVE)); if (validSave(raw)) saved = restoreOffice(raw); } catch { /* No usable saved session. */ }
@@ -62,13 +64,13 @@ function intro() {
       <div class="intro-cta">${saved?`<button class="primary large" data-action="continue">Продолжить смену ${icon('play',17)}</button><button class="text-button" data-action="new-game">Новая игра</button>`:`<button class="primary large" data-action="new-game">Собрать команду ${icon('arrow')}</button>`}</div>
     </section>
     <div class="office-caption"><span class="live-dot"></span> Студия ждёт команду</div>
-    <footer class="landing-footer"><span>Сохранение на этом устройстве</span><span>Живая студия · v0.3</span></footer>
+    <footer class="landing-footer"><span>Сохранение на этом устройстве</span><span>3D-студия · v0.4</span></footer>
   </main>`;
 }
 function topbar() {
   return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ПРОЕКТ 01</span>ОРБИТА ${badge('ФЕСТИВАЛЬ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div><div class="hud-stat ${game.time>game.deadline?'late':''}">${icon('clock')}<span><small>${game.time>game.deadline?'Задержка':'До показа'}</small><strong>${game.time>game.deadline?'+':''}${Math.abs(game.deadline-game.time)} ч</strong></span></div><button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
 }
-function scene() { return renderOffice(game, officeSelection); }
+function scene() { return renderOffice(game, officeSelection, officeMoving); }
 function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<3&&game.budget>=a.cost);
   return `<div class="panel-header"><div class="eyebrow">1 / 4 · КОМАНДА</div><h1>Кого берём?</h1><p>Три места. Шесть кандидатов.<br>Найми агента, затем выбери для него компьютер в офисе.</p></div>
@@ -79,7 +81,7 @@ function hirePanel() {
       <h3 class="agent-trait">${a.trait}</h3><p class="agent-description">${a.desc}</p><div class="agent-caution">${icon('info',14)} ${a.weakness}</div>
       <button class="${hired?'secondary hired-button':'primary'} full" data-action="hire" data-id="${a.id}" ${canHire?'':'disabled'}>${hired?`${icon('check')} В команде · убрать`:game.team.length===3?'Команда укомплектована':game.budget<a.cost?'Не хватает бюджета':`${icon('people')} Нанять за ${money(a.cost)}`}</button>
     </section>
-    <div class="panel-bottom"><div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div><span>${game.team.length===3?(game.budget<1500?'Резерв меньше 1 500 ₽. Исправить ошибку за деньги не получится.':'Состав готов. Деньги в резерве пригодятся на исправления.'):`Выбрано ${game.team.length} из 3. После найма нажми на свободный компьютер.`}</span><button class="primary full" data-action="plan" ${teamSeated(game)?'':'disabled'}>${game.team.length===3&&!teamSeated(game)?`Рассади команду · ${game.seats.filter(Boolean).length}/3`: 'Раздать задачи'} ${icon('arrow')}</button></div>`;
+    <div class="panel-bottom"><div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div><span>${game.team.length===3?(game.budget<1500?'Резерв меньше 1 500 ₽. Исправить ошибку за деньги не получится.':'Состав готов. Деньги в резерве пригодятся на исправления.'):`Выбрано ${game.team.length} из 3. После найма нажми на свободный компьютер.`}</span><button class="primary full" data-action="plan" ${teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving&&teamSeated(game)?'Команда занимает места…':game.team.length===3&&!teamSeated(game)?`Рассади команду · ${game.seats.filter(Boolean).length}/3`: 'Раздать задачи'} ${icon('arrow')}</button></div>`;
 }
 function planPanel() {
   const complete=TASKS.every(t=>game.assignments[t.id]);
@@ -88,7 +90,7 @@ function planPanel() {
     <div class="plan-toolbar"><span>Один агент — одна задача за раз</span><button class="text-button" data-action="recommend">Подсказать ${icon('info',14)}</button></div>
     <div class="task-plan">${TASKS.map((t,i)=>{const id=game.assignments[t.id];const f=fit(id,t);return `<article class="plan-task"><div class="task-number">0${i+1}</div><div class="task-body"><h2>${t.name}</h2><p>${t.description}</p><div class="task-select-row"><select aria-label="Исполнитель: ${t.name}" data-task="${t.id}"><option value="">Выбрать агента</option>${game.team.map(aid=>{const a=agentById(aid);return `<option value="${aid}" ${id===aid?'selected':''}>${a.name} · ${SKILLS.find(s=>s.key===t.skill).label} ${a.stats[t.skill]}</option>`;}).join('')}</select>${id?`<span class="fit ${f>=75?'good':f>=55?'medium':'low'}">${f}/100</span>`:''}</div></div></article>`;}).join('')}</div>
     ${game.assignments.design&&game.assignments.design===game.assignments.code?'<div class="warning-note">Один агент назначен на код и дизайн. Эти задачи будут выполняться по очереди.</div>':''}
-    <div class="panel-bottom"><button class="primary full" data-action="work" ${complete?'':'disabled'}>Начать смену ${icon('play',17)}</button><button class="text-button centered" data-action="back-hire">Изменить команду</button></div>`;
+    <div class="panel-bottom"><button class="primary full" data-action="work" ${complete&&teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving?'Команда занимает места…':!teamSeated(game)?'Сначала рассади команду':'Начать смену'} ${icon('play',17)}</button><button class="text-button centered" data-action="back-hire">Изменить команду</button></div>`;
 }
 function workPanel() {
   const active=activeTasks(game);
@@ -130,17 +132,41 @@ function render() {
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
-  if (!game) { root.innerHTML=intro(); if(stageChanged)window.scrollTo(0,0); return; }
+  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged)window.scrollTo(0,0); return; }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:eventPanel,result:resultPanel};
   root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}">${topbar()}<div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div>${timeline()}</main>`;
+  mountOfficeWorld(game,officeSelection,{
+    onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
+    onActor:id=>{if(!game)return;if(['hire','plan'].includes(game.stage)){officeSelection=officeSelection===id?null:id;render();}else inspect(id);},
+    onDesk:index=>{if(game)officeDeskAction(index);},
+    onFloor:point=>officeWalk(point),
+    onError:message=>{toast(message);if(game)render();},
+  });
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
   else if(oldAction) root.querySelector(`[data-action="${oldAction}"]${oldId?`[data-id="${oldId}"]`:''}`)?.focus({preventScroll:true});
-  if(stageChanged)window.scrollTo(0,0);
+  if(stageChanged){
+    if(window.innerWidth<=1000&&['plan','work','event','result'].includes(nextStage))root.querySelector('.control-panel').scrollIntoView({block:'start'});
+    else window.scrollTo(0,0);
+  }
+}
+function officeWalk(point) {
+  if(!game||!officeSelection)return;
+  if(!canWalkTo(officeSelection,point)){toast('Не пройти: выбери свободное место ближе к проходу.');return;}
+  const error=walkInOffice(game,officeSelection,point);
+  if(error)toast(error);else{persist();render();}
+}
+function officeDeskAction(index) {
+  const occupant=game.seats[index];
+  if(['hire','plan'].includes(game.stage)){
+    if(officeSelection){const name=agentById(officeSelection).name;const error=seatAgent(game,officeSelection,index);if(error)toast(error);else{officeSelection=null;persist();render();toast(`${name} направляется к компьютеру ${index+1}.`);}}
+    else if(occupant){officeSelection=occupant;render();}
+    else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми агента.');
+  }else if(occupant)inspect(occupant);
 }
 function advance() { if(tick(game)){if(game.stage!=='work')stopAuto(); persist();render();} }
-function newGame() { stopAuto(); game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); }
+function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ ПОПЫТКА</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Текущая команда и прогресс будут заменены. Можно попробовать другой состав и решения.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
-function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.3</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих агентов и посади каждого за компьютер: выбери персонажа, затем рабочее место. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро агент работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с агентом.</p><p class="small-muted">Это игровая модель профессии. Агенты — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
+function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.4</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих агентов и посади каждого за компьютер: выбери персонажа, затем рабочее место. Он дойдёт до него и сядет. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро агент работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с агентом.</p><p class="small-muted">Это игровая модель профессии. Агенты — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
   const a=agentById(id); if(!a)return;
   if(game.stage==='hire'){candidate=id;render();return;}
@@ -193,24 +219,19 @@ document.addEventListener('click',e=>{
   if(!game)return;
   if(action==='candidate'){candidate=id;render();}
   if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;persist();render();if(officeSelection)toast(`${agentById(id).name} в студии. Выбери компьютер в офисе.`);}}
-  if(action==='plan'){if(beginPlan(game)){officeSelection=null;persist();render();}}
+  if(action==='plan'){if(!officeMoving&&beginPlan(game)){officeSelection=null;persist();render();}}
   if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один агент не может делать код и экран одновременно.');}
   if(action==='back-hire'){game.stage='hire';persist();render();}
-  if(action==='work'){if(beginWork(game)){officeSelection=null;persist();render();}}
+  if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
   if(action==='tick')advance();
   if(action==='support'){if(dialog.open)dialog.close();stopAuto();const error=supportTask(game,id);if(error)toast(error);else{persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');}}
   if(action==='auto'){if(automatic)stopAuto();else automatic=setInterval(advance,1600);render();}
   if(action==='decision'){const error=resolveEvent(game,id);if(error)toast(error);else{persist();render();}}
   if(action==='office-select'){officeSelection=officeSelection===id?null:id;render();}
+  if(action==='office-walk')officeWalk(WAITING[game.team.indexOf(officeSelection)]);
   if(action==='office-cancel'){officeSelection=null;render();}
-  if(action==='office-desk'){
-    const index=Number(id), occupant=game.seats[index];
-    if(['hire','plan'].includes(game.stage)){
-      if(officeSelection){const name=agentById(officeSelection).name;const error=seatAgent(game,officeSelection,index);if(error)toast(error);else{officeSelection=null;persist();render();toast(`${name} за компьютером ${index+1}.`);}}
-      else if(occupant){officeSelection=occupant;render();}
-      else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми агента.');
-    }else if(occupant)inspect(occupant);
-  }
+  if(action==='office-desk')officeDeskAction(Number(id));
+  if(action==='office-camera')officeCamera(id);
   if(action==='inspect-agent')inspect(id);
   if(action==='restart')resetDialog();
   if(action==='debrief')debrief();

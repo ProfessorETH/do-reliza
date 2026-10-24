@@ -27,9 +27,39 @@
 .inspect-work{padding:16px 0;border-top:1px solid var(--line);margin-top:16px}.inspect-work h3{font-size:17px;margin-bottom:8px}.inspect-work p{font-size:13px}.inspect-work .meter{margin:12px 0}.inspect-work button{margin-top:12px}
 .inspect-details{margin:12px 0 20px}.inspect-details summary{cursor:pointer;font-size:13px;color:var(--mint);padding:12px 0;min-height:44px}.inspect-details summary:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
 @media(min-width:1440px){.playable-office{padding:32px 40px 24px}.office-heading h2{font-size:29px}.office-room{max-width:960px}.office-member{padding:10px 12px}.office-guidance p{font-size:13px}}
-@media(min-width:761px){.game-shell{min-height:900px}.playable-office{min-height:0}.office-room{max-width:650px}.playable-office:has(.office-arrivals) .office-room{max-width:560px}}
+@media(min-width:761px){.game-shell{min-height:900px}.playable-office{min-height:0}.office-room{max-width:580px}.playable-office:has(.office-arrivals) .office-room{max-width:580px}.office-arrivals{min-height:48px}.office-arrivals.vacant-row{visibility:hidden}}
 @media(max-width:1100px) and (min-width:761px){.playable-office{padding:24px 16px 16px}.office-heading h2{font-size:22px}.desk-tag{min-width:92px;padding:7px}.desk-tag b{font-size:11px}.desk-tag small{font-size:9px}.office-member{gap:6px;padding:6px}.roster-portrait{width:27px;height:32px}.office-member small{font-size:9px}.office-roster-empty small{font-size:9px}.arrival small{display:none}}
 @media(min-width:761px) and (max-width:1000px){.game-shell{height:auto;min-height:100svh}.game-layout{display:flex;flex-direction:column}.playable-office{height:auto;min-height:0;padding:28px}.office-room{margin:16px auto;max-width:620px}.control-panel{overflow:visible;border-left:0;border-top:1px solid var(--line);padding:28px}.office-heading h2 br{display:none}}
 @media(max-width:760px){.playable-office{height:auto;min-height:0;overflow:hidden;padding:24px 16px 16px}.office-heading h2{font-size:23px}.office-heading h2 br{display:none}.office-heading .eyebrow{font-size:8px;letter-spacing:1px}.office-brief{font-size:11px;white-space:nowrap}.office-room{margin:8px auto 12px;max-width:620px}.desk-tag{min-width:92px;padding:6px 8px}.desk-tag b{font-size:11px}.desk-tag small{font-size:9px}.office-guidance{min-height:60px}.office-guidance p{font-size:12px}.office-roster{padding-top:12px}.office-member{min-height:54px;padding:6px;gap:6px}.office-member b{font-size:11px}.office-member small{font-size:9px}.roster-portrait{width:28px;height:34px}.office-roster-empty{gap:4px;padding:6px}.office-roster-empty small{font-size:9px}.office-desk{width:27%;height:32%;min-height:66px}.arrival small{display:none}.office-arrivals{padding-top:8px}.office-arrivals>span{width:100%;font-size:9px}.office-roster-slots{gap:6px}.office-heading{gap:12px}}
 @media(max-width:380px){.playable-office{padding:20px 12px 12px}.office-heading h2{font-size:20px}.office-heading .eyebrow{font-size:7px;letter-spacing:.7px}.desk-tag{min-width:80px;padding:5px}.desk-tag b{font-size:10px}.desk-tag small{font-size:8px}.office-guidance p{font-size:11px}.office-member{gap:5px;padding:5px}.roster-portrait{width:23px;height:29px}.office-member small{font-size:8px}.office-member b{font-size:10px}.office-roster-empty small{font-size:8px}.office-roster-empty>span{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.office-person *,.station-art *{animation:none!important}}
+/* Blender GLB viewport. The SVG remains a functional fallback. */
+#office-webgl{position:absolute;inset:0;z-index:1;visibility:hidden;pointer-events:none}
+#office-webgl canvas{display:block;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+#office-webgl canvas:active{cursor:grabbing}
+.office-room.is-3d #office-webgl{visibility:visible;pointer-events:auto}
+.office-room.is-3d .room-art{visibility:hidden}
+.office-room.is-3d .desk-interactions{z-index:2;pointer-events:none}
+.office-room.is-3d .office-desk{width:118px;height:54px;min-height:44px;border:0;border-radius:6px;pointer-events:auto}
+.office-room.is-3d .desk-tag{position:static;transform:none;width:100%;min-width:0;height:100%;justify-content:center;padding:6px 10px;white-space:nowrap}
+.office-room.is-3d .office-desk.can-seat.empty{background:transparent}
+.office-camera-controls{display:none;position:absolute;right:0;top:4px;z-index:3;gap:4px}
+.is-3d .office-camera-controls{display:flex}
+.office-camera-controls button{height:36px;width:36px;border-radius:5px;background:#10232dcc;border:1px solid #9fb8b438;color:#d1ddd7;font-size:20px}
+.office-camera-controls button:hover{background:#314c52}
+.office-render-status{position:absolute;left:0;top:10px;max-width:72%;z-index:2;font-size:9px;line-height:1.5;color:#b8cacb;pointer-events:none}
+.office-movement{position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:center;font-size:11px;color:#f3cb8e;pointer-events:none}
+.office-walk-button{min-height:44px;padding:6px 10px;border:1px solid var(--office-edge);border-radius:5px;background:#1e3841;color:#edc88d;font-size:11px}
+.desk-counter{display:none}
+@media(max-width:760px){.office-room.is-3d .office-desk{width:89px;height:44px}.office-room.is-3d .desk-tag{padding:4px 5px}.office-render-status{font-size:8px;max-width:60%;top:1px}.office-camera-controls{top:0}.office-camera-controls button{width:30px;height:36px;font-size:17px}.office-movement{font-size:10px;bottom:-4px}}
+@media(max-width:380px){.office-room.is-3d .office-desk{width:78px;height:44px}.office-render-status{font-size:7px;max-width:58%}.office-camera-controls button{width:28px}.office-room.is-3d .desk-tag small{font-size:7px}}
+@media(max-width:760px){
+  .office-room.is-3d .desk-interactions{inset:auto 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;height:44px}
+  .office-room.is-3d .office-desk{position:relative;left:auto;top:auto;transform:none;width:100%;height:44px;min-width:0}
+  .office-room.is-3d .office-desk:not(:disabled):active{transform:translateY(1px)}
+  .office-room.is-3d .desk-counter{display:block;position:absolute;left:5px;top:4px;font-size:8px;color:var(--amber);z-index:1}
+  .office-room.is-3d .desk-tag{padding:4px 8px 4px 14px;white-space:normal}.office-room.is-3d .desk-tag small{font-size:8px}
+  .office-camera-controls button{width:44px;height:44px;font-size:19px}
+  .office-render-status{max-width:47%;font-size:8px;line-height:1.4;top:3px}
+  .office-movement{bottom:49px}
+}
