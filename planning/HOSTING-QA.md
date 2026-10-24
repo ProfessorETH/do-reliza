@@ -9,6 +9,7 @@ Integrated with main through UI PR #14 (58dc907). No production changes or purch
 - Before UI #14, a fresh isolated Chromium demo measured 399483 bytes in lite mode and 1537704 bytes in 3D through local Caddy. After integration, the 3D session measured 1545870 bytes. Counts depend on entry point, selected team, caching and voice; do not call the whole 2.34 MB distribution the first-page download.
 - Explicit lite mode: zero Three.js/GLB requests and zero WebGL canvases. First order played through actual buttons/events, including personal-care event; saved release survives reload; mini-game won using keyboard. Repeated on the integrated UI at 390×844 with no uncaught page errors.
 - Forced WebGL absence: selected 3D mode falls back to SVG, shows an explanation, and keeps planning/start available. This is capability simulation, not a physical weak GPU test.
+- Blocked 3D module request: import failure remains in playable SVG mode without a retry/render loop. Loading 3D gates planning until the runtime is attached; successful loading restores normal arrival gating.
 - Desktop 1440×1000: 3D room loads, agents reach desks, whole room remains visible after UI integration. Screenshots inspected. 320×740 and 390×844: no horizontal overflow. The integrated mobile project/studio tabs remain functional.
 - Source PNG → WebP: same dimensions; portraits, eyes, hair, clothing and office detail visually inspected. Source files retained; hashes and conversion settings in asset-receipt.json.
 

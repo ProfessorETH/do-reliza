@@ -8,7 +8,7 @@ try {
   else mode = localStorage.getItem(preferenceKey);
 } catch { /* URL selection also works when browser storage is unavailable. */ }
 mode = mode === 'lite' ? 'lite' : '3d';
-let runtime, pending, generation = 0;
+let runtime, pending, generation = 0, importFailed = false;
 
 export function graphicsSettingsHTML() {
   const link = value => {
@@ -25,18 +25,22 @@ export function mountOfficeWorld(game, selected, callbacks) {
   const ticket = ++generation;
   const room = container.closest('.office-room');
   room.insertAdjacentHTML('afterend', graphicsSettingsHTML());
-  if (mode === 'lite') {
+  if (mode === 'lite' || importFailed) {
     room.dataset.officeState = 'fallback';
-    room.querySelector('.office-render-status').textContent = 'Облегчённый офис · 3D-модели не загружаются';
+    room.querySelector('.office-render-status').textContent = importFailed
+      ? '3D недоступно. Можно играть в облегчённом офисе.'
+      : 'Облегчённый офис · 3D-модели не загружаются';
     queueMicrotask(() => { if (ticket === generation) callbacks.onBusy(false); });
     return;
   }
   if (runtime) { runtime.mountOfficeWorld(game, selected, callbacks); return; }
   pending ??= import('../office-world.js?v=hosting-20261024');
+  callbacks.onBusy(true);
   pending.then(module => {
     runtime = module;
     if (ticket === generation && container.isConnected) runtime.mountOfficeWorld(game, selected, callbacks);
   }).catch(() => {
+    importFailed = true;
     if (ticket !== generation || !container.isConnected) return;
     room.dataset.officeState = 'fallback';
     room.querySelector('.office-render-status').textContent = '3D недоступно. Можно играть в облегчённом офисе.';
