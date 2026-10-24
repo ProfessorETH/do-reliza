@@ -108,3 +108,38 @@
   .result-metrics { grid-template-columns:1fr 1fr; }.result-metrics small { min-height:0; font-size:20px; }.result-metrics b { font-size:28px; }.game-preview { flex-wrap:wrap; }.game-preview>span>b { font-size:36px; }.game-preview>span>span { font-size:22px; }.game-preview small { font-size:18px; }
 }
 @media(prefers-reduced-motion:reduce) { .nika-attention .nika-toggle,.nika-attention .nika-toggle::before { animation:none; }.nika-idle-invitation { transition:none; } }
+
+/* The released feature is visible on the ship, before the first collision. */
+#info-dialog:has(.mini-game) { width:760px; max-width:calc(100vw - 24px); }
+.orbit-shield { display:flex; align-items:center; gap:16px; padding:16px; margin:16px 0; border:1px solid var(--line); border-radius:12px; }
+.orbit-shield>svg { flex:none; }
+.orbit-shield strong { display:block; font-size:24px; line-height:1.3; }
+.orbit-shield span { display:block; margin-top:8px; font-size:20px; line-height:1.5; color:var(--text); }
+.orbit-shield.charged { color:var(--mint); border-color:var(--mint); background:#7ed9b812; }
+.mini-board { gap:6px; padding:12px; }
+#info-dialog .mini-board .tile { width:100%; min-height:0; }
+.tile.ship { position:relative; color:var(--amber); }
+.tile.ship.shielded { background:#7ed9b825; border-color:var(--mint); }
+.orbit-shield-ring { position:absolute; inset:8%; border:2px solid var(--mint); border-radius:50%; box-shadow:0 0 10px #7ed9b866,inset 0 0 8px #7ed9b844; pointer-events:none; }
+.orbit-feedback { margin-top:16px; min-height:3em; font-size:22px; line-height:1.5; color:var(--mint); }
+.mini-status { display:grid; gap:8px; font-size:20px; line-height:1.4; }
+.mini-game>p,.mini-controls p,.mini-win { font-size:22px; }
+.mini-game h2 { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; }
+.mini-game h2 span { float:none; font-size:24px; }
+.mini-controls { flex-wrap:wrap; gap:12px; }
+.mini-controls button { width:52px; min-height:48px; font-size:26px; }
+.mini-controls p { flex:1; min-width:140px; }
+.mini-game .dialog-actions { flex-wrap:wrap; }
+.mini-game .dialog-actions button { flex:1 1 180px; }
+.simple .mini-board { background:#0c1924; }
+.simple .tile:not(.ship) { border-radius:2px; }
+@media(max-width:480px) {
+  #info-dialog:has(.mini-game) { padding:24px 12px; }
+  .mini-board { gap:3px; padding:6px; }
+  .tile>svg { width:65%; height:65%; }
+  .orbit-shield { padding:12px; gap:10px; align-items:flex-start; }
+  .orbit-shield strong { font-size:22px; }
+  .orbit-shield>svg { display:none; }
+  .orbit-shield span,.mini-status { font-size:18px; }
+  .orbit-feedback,.mini-game>p,.mini-controls p { font-size:20px; }
+}
