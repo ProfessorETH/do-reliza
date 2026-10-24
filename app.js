@@ -253,7 +253,7 @@ function openMini(reloading=false) {
   if(mode==='broken'){
     miniEffect={kind:'lost'};
     miniMessage=previous?.release===mini.release&&previous.moves>0
-      ? 'Ошибка сохранения: потеряно '+previous.collected.length+' / 3 батареи и '+previous.moves+' ходов. Корабль снова на старте.'
+      ? 'Ошибка сохранения. Батарей потеряно: '+previous.collected.length+' / 3. Ходов сброшено: '+previous.moves+'. Корабль снова на старте.'
       : 'В релизе осталась ошибка сохранения. После перезапуска полёт всегда начинается заново.';
   }else if(mode==='removed')miniMessage='Короткая сессия без сохранения — так команда договорилась с заказчиком.';
   else if(reloading&&!miniMessage)miniMessage=mini.moves>0?'Положение корабля, батареи и заряд щита восстановлены.':'Сохранённый маршрут начинается здесь.';
