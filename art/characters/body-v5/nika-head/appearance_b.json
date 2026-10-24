@@ -1,0 +1,18 @@
+{
+  "nika-head": {
+    "hair": [
+      "#254f4d",
+      "#639994",
+      "#b4d8c9"
+    ],
+    "skin": [
+      "#b77969",
+      "#e9b7a0",
+      "#ffe3cf"
+    ],
+    "back_z": -0.82,
+    "side_z": -0.82,
+    "top_above_eyes": 0.34,
+    "neck_hair_start": -0.78
+  }
+}

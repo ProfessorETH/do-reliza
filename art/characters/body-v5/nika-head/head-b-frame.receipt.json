@@ -1,0 +1,120 @@
+{
+  "status": "measured_native_geometry_frame",
+  "source": "head-b-clean.glb",
+  "source_sha256": "bd880add618846bdc05164e9f3f6f922ca7676d6549e3c6d7849ec9aa97ab3a5",
+  "gray_source": "qa-b-raw-pose/front.png",
+  "gray_measured_pixels": {
+    "eye_left": [
+      223.5,
+      245.0
+    ],
+    "eye_right": [
+      318.0,
+      230.0
+    ],
+    "nose": [
+      265.5,
+      279.0
+    ],
+    "mouth": [
+      278.5,
+      315.5
+    ],
+    "chin": [
+      281.0,
+      351.0
+    ]
+  },
+  "gray_pixel_uncertainty": 2.0,
+  "raycast_target": "Actual cleaned geometry, nearest front +GLTFZ surface at measured XY",
+  "points_source_gltf": {
+    "eye_left": [
+      -0.151943244272843,
+      0.04551901435479522,
+      0.513365777151969
+    ],
+    "eye_right": [
+      0.25585281755775213,
+      0.11024854797869921,
+      0.5458748672894151
+    ],
+    "nose": [
+      0.029299449874088168,
+      -0.10120126185938716,
+      0.6712191850406666
+    ],
+    "mouth": [
+      0.08539837901480496,
+      -0.25870979367755353,
+      0.5854626272894853
+    ],
+    "chin": [
+      0.09618663461878896,
+      -0.4119030232541263,
+      0.4898115830036831
+    ]
+  },
+  "source_eyeline_roll_degrees": 9.019322431381683,
+  "source_eyeline_depth_yaw_degrees": 4.501799391156695,
+  "nose_forward_score": 0.14295140629925968,
+  "frame_method": "Actual eye-right minus eye-left gives horizontal; source world up projected orthogonal to eye-line gives vertical; cross product forward checked against measured3D nose; neutralizes measured yaw/roll without assuming front+Z",
+  "transform_gltf_4x4": [
+    [
+      0.9845885436863449,
+      0.15628389582322935,
+      0.07849040417730398,
+      0.0015936486583755533
+    ],
+    [
+      -0.15578964907755882,
+      0.9877121766518392,
+      -0.012419393462527786,
+      -0.001837185927256069
+    ],
+    [
+      -0.0794668791503329,
+      1.734723475976807e-18,
+      0.9968375068776788,
+      -0.0008664776387684626
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "points_neutral_gltf": {
+    "eye_left": [
+      -0.10059975270634679,
+      0.06041799194849039,
+      0.5229502392040618
+    ],
+    "eye_right": [
+      0.31357941324635447,
+      0.060417991948490374,
+      0.5229502392040618
+    ],
+    "nose": [
+      0.06730968900050577,
+      -0.11469559073097112,
+      0.6659016455033215
+    ],
+    "mouth": [
+      0.09119693808884292,
+      -0.2779432735860829,
+      0.5759582854537338
+    ],
+    "chin": [
+      0.07036960710494261,
+      -0.4297468624201011,
+      0.4797524279333037
+    ]
+  },
+  "neutral_eye_delta": [
+    0.41417916595270127,
+    -1.3877787807814457e-17,
+    0.0
+  ],
+  "gpu_used": false
+}

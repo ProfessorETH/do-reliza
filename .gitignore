@@ -68,3 +68,11 @@ art/characters/body-v5/*/appearance*.json
 art/characters/body-v5/*/head*.json
 art/characters/body-v5/*/paint*.json
 art/characters/body-v5/*/*.history.json
+art/characters/body-v5/nika-head/front_anchor.py
+art/characters/body-v5/nika-head/front_anchor_b.py
+art/characters/body-v5/nika-head/*.v[0-9].py
+art/characters/body-v5/nika-head/*.executed-*.py.txt
+art/characters/body-v5/nika-head/preview_cpu.py
+art/characters/body-v5/nika-head/landmarks.json
+art/characters/body-v5/nika-head/landmarks_b.json
+art/characters/body-v5/nika-head/shape-a.api.json

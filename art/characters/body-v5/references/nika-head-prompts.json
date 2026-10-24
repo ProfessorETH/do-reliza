@@ -1,0 +1,21 @@
+{
+  "status": "Exact original imagegen prompts recovered from this task tool records",
+  "references": [
+    {
+      "output": "art/characters/body-v5/references/nika-head-front-v1.png",
+      "sha256": "0dda379e3a643ddfa5addf69a990173008e2bcff23f66c812b3bb0b00dc75010",
+      "source": "assets/onboarding/nika-portrait.webp",
+      "prompt": "Create a faithful high quality 3D modelling reference of ONLY the head and full neck of the supplied fictional adult female mentor Nika, age 27. Preserve her recognizable face, turquoise-green eyes, soft smile, mint/teal shoulder-length layered bob with wispy bangs, triangular gold hair clip on her anatomical left, black earpiece and small angular gold earring. Same attractive stylized animated videogame character identity as the supplied portrait, including her eye and nose shapes, natural adult proportions. Perfectly straight-on front orthographic view, both eyes level, neutral head without tilt or turn. Hair, ears, full chin and neck included. End at base of neck: no chest, shoulders, jacket or clothing, no pedestal or neck stand. Delicate natural skin surface with clean soft neutral studio light, no colored rim light, no halo, no dark glow, no background plane. One isolated head-and-neck only on genuine transparent background, centered large with modest margin, square composition. Do not include alternate views, text, a grid, floor or props. This is a separate detailed head reference to join her generated office body.",
+      "transparent_background": true,
+      "tool_call_id": "call_00d66f26688942219e4bcecb869ced97"
+    },
+    {
+      "output": "art/characters/body-v5/references/nika-head-quarter-v2.png",
+      "sha256": "f996b882e15513745839881efe04c6bd4728affc61338dd6ef2b78a1c80f44c0",
+      "source": "assets/onboarding/nika-portrait.webp",
+      "prompt": "Make a physical-looking, fully three-dimensional stylized videogame character HEAD AND NECK sculpt of the fictional adult mentor Nika in the supplied identity portrait, age27. This must look like a real rendered 3D collectible figurine with strong readable sculptural depth, a rounded cranium, modeled eye sockets/eyelids, a projecting three-dimensional nose, modeled lips/jaw/ears and an elliptical cut surface at the neck base. Turn the head 30 degrees into a clear three-quarter view, at eye level, no head tilt. Preserve Nika's recognizable turquoise-green eyes, fair skin, friendly face and small soft closed smile, mint/teal medium-length wavy bob with bangs, triangular gold clip on her anatomical left, black earpiece and small gold diamond earring. Adapt her into a polished animated-feature/Sims-quality 3D game art style with natural adult face structure and believable eye size. Hair must be a substantial continuous solid sculpt made of broad clean flowing locks with shallow sculpted strand grooves; smooth connected filled volumes, clean strong silhouette and no lace-like loops, holes, spaghetti strands, see-through wisps or thin disconnected filaments. High quality PBR material, visible volumetric form through neutral diffuse studio key/fill lighting and soft self shading. Head and full neck only, no chest/shoulders, no clothing, no pedestal or background card, no frame or ground. Genuine transparent background without glow or halos. Center large in square composition, modest margin all around. One single head only; no grid, lettering, multi-view collage, painted/anime illustration or flat cutout.",
+      "transparent_background": true,
+      "tool_call_id": "call_09b08a749eac4ef4a4075c620ad209ca"
+    }
+  ]
+}
