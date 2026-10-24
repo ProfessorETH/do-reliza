@@ -23,3 +23,16 @@ Thumbs.db
 *.blend1
 *.blend2
 __pycache__/
+
+# Portrait reconstruction intermediates remain local; final heads and receipts are versioned.
+art/characters/portrait-v4/*/raw/
+art/characters/portrait-v4/*/head-clean.blend
+art/characters/portrait-v4/*/head-painted.glb
+art/characters/portrait-v4/*/head-painted-views/
+art/characters/portrait-v4/*/head-final.blend
+art/characters/portrait-v4/*/head-paint-smooth.*
+art/characters/portrait-v4/*/head-normal-sample.glb
+art/characters/portrait-v4/*/head-normal-sample.blend
+art/characters/portrait-v4/*/*-test.*
+art/characters/portrait-v4/assembled/*-test.*
+art/characters/portrait-v4/assembled/*-preview.*

@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "id": "saga",
+  "baseSha256": "64598102f232783227600c8abb73991299e138594e9ea348ed75ec84b24fb261",
+  "headSha256": "176b6c32786a12c49aa7b5c5c1cc573738403fb892b4519f52f5bcbcc635dec2",
+  "outputSha256": "906c9010fd9acb0cc426a4b4fcc71f30b11a60669f94927e5cd84e9c49d9096b",
+  "sourceBounds": {
+    "min": [
+      -0.9480429887771606,
+      -0.9831950068473816,
+      -0.8288270235061646
+    ],
+    "max": [
+      0.8957120180130005,
+      0.9842020273208618,
+      0.8848360180854797
+    ]
+  },
+  "alignment": {
+    "scale": 0.264542987741842,
+    "eyeRatio": 0.40803986288657274,
+    "chinRatio": 0.8,
+    "targetEyeY": 1.599,
+    "targetChinY": 1.395,
+    "neckCutY": 1.4,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0
+  },
+  "headWorldMatrix": [
+    -0.264542987741842,
+    0,
+    -3.239717231749243e-17,
+    0,
+    0,
+    0.264542987741842,
+    0,
+    0,
+    3.239717231749243e-17,
+    0,
+    -0.264542987741842,
+    0,
+    -0.006921895678690957,
+    1.551005126745606,
+    0.0074083933832143345,
+    1
+  ],
+  "headBoneWorldMatrix": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1.3849999904632568,
+    0,
+    1
+  ],
+  "removedOldHeadTriangles": [
+    16718
+  ],
+  "originalBinaryBytesPreserved": 2519504,
+  "originalAnimationsPreserved": true,
+  "portraitNode": 60,
+  "originalHeadJoint": 6,
+  "headMeshes": 1,
+  "blink": {
+    "affected": [
+      152,
+      221
+    ],
+    "maxDisplacement": 0.01291199025037722,
+    "settings": {
+      "eyeX": 0.061,
+      "eyeY": 1.599,
+      "radiusX": 0.038,
+      "radiusY": 0.023,
+      "depth": 0.035,
+      "strength": 0.97,
+      "frontLimits": [
+        -0.14099476846187148,
+        -0.14136353446299577
+      ]
+    }
+  },
+  "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained.",
+  "base": "work/portrait-baseline/models/saga.glb",
+  "head": "art/characters/portrait-v4/saga/head-detailed.glb",
+  "output": "art/characters/portrait-v4/assembled/saga.glb"
+}

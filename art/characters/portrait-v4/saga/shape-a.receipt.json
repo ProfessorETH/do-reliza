@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "reference": "../references/saga-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/saga-head-20261024-a",
+  "steps": 40,
+  "latent_tokens": 4096,
+  "octree": 512,
+  "method": "Same validated local Hunyuan3D2.1 head-only reconstruction as Mira; distinct portrait and seed",
+  "resource_authorization": "Secondary always allowed per human2026-10-22; no foreign interrupt/unload",
+  "prompt_id": "4d120eed-f4ba-4ab4-967b-bc73f3850d0a",
+  "raw_file": "raw/4d120eed_000.glb",
+  "raw_bytes": 152636008,
+  "raw_sha256": "3c153dcc606f35d8ae7df0d79df43804904e897163f51458fb8e853583ce8a69",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "f0bef9a61085b074b1e2870c66ded4fbaed07c672e84238da538a602d44aec7c",
+  "workflow_sha256": "4599fd6db1e0e1c44061aeaba769a7e436f1ee9f036cd0415374f5aec239cbc0"
+}

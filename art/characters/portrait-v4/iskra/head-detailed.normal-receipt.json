@@ -1,0 +1,20 @@
+{
+  "input": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\iskra\\head-normal-sample.glb",
+  "output": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\iskra\\head-detailed.glb",
+  "sourceSha256": "ab83d1147e164d9fb6ef3535aeb82fac61e3881c16a9513ff797d6d5143a29bc",
+  "outputSha256": "0cee6d536bb7e0b3d2f6676addc947b9b13deb43a190f5136c20ada3ed39a9b7",
+  "albedoSource": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\iskra\\head-final.glb",
+  "albedoSha256": "854212de02e5e14bd99ce47baba9d6262064ee4ff5c36404308f3a8dc6d8665e",
+  "albedoSurfaceValidation": {
+    "triangles": 58486,
+    "epsilon": 0.00001,
+    "comparison": "One-to-one world POSITION+TEXCOORD_0 triangle multiset; vertex/triangle order and winding independent"
+  },
+  "normalResolution": 1024,
+  "normalChannels": 3,
+  "normalStrength": 0.35,
+  "normalBytes": 2407991,
+  "outputBytes": 5783584,
+  "geometry": "All geometry buffer views preserved byte for byte",
+  "method": "Stock FFmpeg Lanczos data-texture resize; RGB lossless PNG; GLB buffer-view compaction; optional verified albedo replacement"
+}

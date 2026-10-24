@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "id": "pixel",
+  "baseSha256": "a04649f2632415c1d6998e51390993ab52efaac13f6d9aad5bb71db3661bd7c3",
+  "headSha256": "66aff1c8b99eb1a5277bf2af5838651b427fb3b22af510c4e605ee3ad60f37b9",
+  "outputSha256": "755b81a2fe1c2809e2ed269d809340ec6376cc1c01925b788a0697061e76acb9",
+  "sourceBounds": {
+    "min": [
+      -0.9046580195426941,
+      -0.984906017780304,
+      -0.912680983543396
+    ],
+    "max": [
+      0.8965759873390198,
+      0.9792029857635498,
+      0.9092540144920349
+    ]
+  },
+  "alignment": {
+    "scale": 0.3136836515669078,
+    "eyeRatio": 0.4688896959675659,
+    "chinRatio": 0.8,
+    "targetEyeY": 1.599,
+    "targetChinY": 1.395,
+    "neckCutY": 1.4,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0
+  },
+  "headWorldMatrix": [
+    -0.3136836515669078,
+    0,
+    -3.8415167983626726e-17,
+    0,
+    0,
+    0.3136836515669078,
+    0,
+    0,
+    3.8415167983626726e-17,
+    0,
+    -0.3136836515669078,
+    0,
+    -0.0012676006868649512,
+    1.5807271392461322,
+    -0.0005374920829188635,
+    1
+  ],
+  "headBoneWorldMatrix": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1.3849999904632568,
+    0,
+    1
+  ],
+  "removedOldHeadTriangles": [
+    16814
+  ],
+  "originalBinaryBytesPreserved": 2643556,
+  "originalAnimationsPreserved": true,
+  "portraitNode": 60,
+  "originalHeadJoint": 6,
+  "headMeshes": 1,
+  "blink": {
+    "affected": [
+      69,
+      59
+    ],
+    "maxDisplacement": 0.012755436670528163,
+    "settings": {
+      "eyeX": 0.061,
+      "eyeY": 1.599,
+      "radiusX": 0.038,
+      "radiusY": 0.023,
+      "depth": 0.035,
+      "strength": 0.97,
+      "frontLimits": [
+        -0.16603780993336784,
+        -0.16228019852811396
+      ]
+    }
+  },
+  "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained.",
+  "base": "work/portrait-baseline/models/pixel.glb",
+  "head": "art/characters/portrait-v4/pixel/head-detailed.glb",
+  "output": "art/characters/portrait-v4/assembled/pixel.glb"
+}

@@ -59,6 +59,8 @@
       .controls {
         justify-content: start;
       }
+      .controls > div { flex-wrap: wrap; }
+      button[aria-pressed="true"]:hover { background: var(--accent); color: white; }
       #viewport {
         height: 500px;
       }
@@ -152,7 +154,11 @@
           </div>
           <div class="controls">
             <button id="front" disabled>Спереди</button
+            ><button id="quarter" disabled>¾</button
+            ><button id="profile" disabled>Профиль</button
             ><button id="back" disabled>Сзади</button
+            ><button id="face-view" disabled>Лицо крупно</button
+            ><button id="body-view" disabled>Весь персонаж</button
             ><button id="pause" aria-pressed="false" disabled>Пауза</button
             ><button id="toggle-bones" aria-pressed="false" disabled>
               Показать скелет

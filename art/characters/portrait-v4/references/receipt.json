@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-24",
+  "authority": "assets/agents.png; derivative references are aids, original portraits remain likeness authority",
+  "atlas_sha256": "6ec6228bb3a5c7e23ea4b07a2eba1627bc7a3c6a4454378935406a50130b9e23",
+  "references": [
+    {
+      "id": "mira",
+      "original_crop": "mira-portrait.png",
+      "original_crop_sha256": "12768d42a6b04d38cc142ef0b14eee455191b9fef21916d58c9c857119bee88c",
+      "generated_front": "mira-head-front-v1.png",
+      "generated_front_sha256": "342f6bf4b495b700066be0ebfb43860ac9dd7081d67c0ebcb74db832ed69ad17",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-63eed7ab-073f-49e2-ab10-b234875a4ec9.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    },
+    {
+      "id": "pixel",
+      "original_crop": "pixel-portrait.png",
+      "original_crop_sha256": "5a9cd77fb5ee5401b2016683a7cfd246c825f43c49e6d1b31b1ba449a092a89f",
+      "generated_front": "pixel-head-front-v1.png",
+      "generated_front_sha256": "b8e43830f287c65f01d4063cc8f0e8b3b68666eca1940065e3f9d637ec1b1819",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-a86fd4f1-fc7e-48de-830a-e3f5200bdd31.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    },
+    {
+      "id": "nord",
+      "original_crop": "nord-portrait.png",
+      "original_crop_sha256": "fd7fd7dcfafa719a4f93e7313379fd5678aa57d49da19230ab83ed9e3d9534d1",
+      "generated_front": "nord-head-front-v1.png",
+      "generated_front_sha256": "65ab48cc5f85d63fa4039c7847cc0b01a07b9ebe76ae56a4a527e9500d973305",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-869d09f7-d4ff-4887-b6ba-442c99d9fb28.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    },
+    {
+      "id": "iskra",
+      "original_crop": "iskra-portrait.png",
+      "original_crop_sha256": "108b133d1708fd7802e144a978eae16530ac7a65dc167fa9cf83893d3406adca",
+      "generated_front": "iskra-head-front-v1.png",
+      "generated_front_sha256": "982b5bc8718518d4b99f1c0b9afdc1cc21827f3a612a337f8f002b55bf55dbb3",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-9e5a7f58-139e-4bb5-b415-5fd149a531b2.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    },
+    {
+      "id": "saga",
+      "original_crop": "saga-portrait.png",
+      "original_crop_sha256": "5bd0e0d0944a919ab2a9fcf381eba845fbc7592ff10a3c5d92ff43f924dd4627",
+      "generated_front": "saga-head-front-v1.png",
+      "generated_front_sha256": "f0bef9a61085b074b1e2870c66ded4fbaed07c672e84238da538a602d44aec7c",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-bdb79374-b59e-4ace-9fb4-8ab3d7d9b58e.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    },
+    {
+      "id": "echo",
+      "original_crop": "echo-portrait.png",
+      "original_crop_sha256": "d300e64733348e53cf364c2c80af341f472b380082f38f88f097bd0890924148",
+      "generated_front": "echo-head-front-v1.png",
+      "generated_front_sha256": "9343f449fd815b3ed820bfabff7e674d9a2260612173e294cc91a5d3259db777",
+      "generator": "Built-in imagegen, one head-only transparent frontal reference per fictional character",
+      "generated_source_basename": "exec-480bd28a-2f66-4b15-816f-c2b450f9c363.png",
+      "prompt_intent_summary": "Preserve the original adult fictional character identity, individual facial shape, eyes, smile, hair silhouette and accessories; neutral front view; no body, text or props. This is an intent summary, not a verbatim prompt log."
+    }
+  ]
+}

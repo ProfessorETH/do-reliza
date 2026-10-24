@@ -1,7 +1,7 @@
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
 import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
-import { poseActor } from './office-pose.js?v=skinned-team-final-20261024';
+import { poseActor } from './office-pose.js?v=portrait-team-v4-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
@@ -17,6 +17,7 @@ export class OfficeActor {
       if (node.name.startsWith(`Team3D_${id}_`)) this.joints[node.name.slice(`Team3D_${id}_`.length)] = node;
       if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
     });
+    this.portraitHead=model.getObjectByName(`DR_${id}_PortraitHead`)||null;
     this.skinBindings=bindOfficeSkin(model,this.joints);
     this.group.updateMatrixWorld(true); this.soles = {}; this.footMeshes={}; this.eyeMeshes={};
     for (const side of ['Left','Right']) {

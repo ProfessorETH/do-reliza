@@ -1,0 +1,26 @@
+{
+  "status": "completed",
+  "started_unix": 1792866518.5174487,
+  "method": "installed Hunyuan3D 2.1 Paint package API, offline",
+  "source_package": "E:\\AI\\ComfyUI-Hunyuan21\\custom_nodes\\ComfyUI-Hunyuan3d-2-1\\hy3dpaint",
+  "mesh": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\pixel\\head-clean.glb",
+  "reference": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\references\\pixel-head-front-v1.png",
+  "script_sha256": "d037ae663d7703ea88c700e13b3f9e554e79f4653a8779214ee1672663d7c72e",
+  "settings": {
+    "views": 6,
+    "view_resolution": 512,
+    "texture_resolution": 2048,
+    "steps": 15,
+    "guidance": 3.0,
+    "seed": 24102026,
+    "torch_memory_cap_gib": 14
+  },
+  "scope": "texture candidate; not rigged or game approved",
+  "preflight_free_bytes": 32496418816,
+  "views_directory": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\pixel\\head-painted-views",
+  "finished_unix": 1792866671.3044384,
+  "recovered_export_error": "UnicodeEncodeError: 'charmap' codec can't encode characters in position 7-11: character maps to <undefined>",
+  "export_staging": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-paint-r8j_4h34",
+  "output_sha256": "9eeac9a51832bbd9fdff2a76f70ad4147f4988f392cd8e5824b07a05579d8a2b",
+  "recovery": "GLB was fully saved before Chinese console status raised cp1251 UnicodeEncodeError; copied existing verified export; zero diffusion retries"
+}

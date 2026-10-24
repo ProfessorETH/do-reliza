@@ -1,0 +1,19 @@
+{
+  "source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\\u0445\u0430\u043a\u0430\u0442\u043e\u043d \u0438\u0433\u0440\u0430\\art\\characters\\portrait-v4\\nord\\raw\\0a644500_000.glb",
+  "original_vertices": 6633760,
+  "original_triangles": 3316880,
+  "vertices": 29434,
+  "triangles": 59995,
+  "boundary_edges": 14,
+  "nonmanifold_edges": 366,
+  "dimensions_blender": [
+    1.4743962287902832,
+    1.5937247276306152,
+    1.9600722789764404
+  ],
+  "smoothing": {
+    "factor": 0.16,
+    "iterations": 2
+  },
+  "method": "Weld duplicate vertices, recalculate normals, mild smoothing, collapse decimation; no voxel re-meshing or change of identity geometry"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "reference": "../references/nord-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/nord-head-20261024-a",
+  "steps": 40,
+  "latent_tokens": 4096,
+  "octree": 512,
+  "method": "Same validated local Hunyuan3D2.1 head-only reconstruction as Mira; distinct portrait and seed",
+  "resource_authorization": "Secondary always allowed per human2026-10-22; no foreign interrupt/unload",
+  "prompt_id": "0a644500-aa66-4173-83c1-9926db99ce4a",
+  "raw_file": "raw/0a644500_000.glb",
+  "raw_bytes": 119410740,
+  "raw_sha256": "8af4e6c92437947735f9541bd39d7f0ab3e597a8e9e2e672eb4e6bd972697c9a",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "65ab48cc5f85d63fa4039c7847cc0b01a07b9ebe76ae56a4a527e9500d973305",
+  "workflow_sha256": "7020681a33e172f1e40e8efc3bb6bd736e949f3b2e851d8146907199b4714d63"
+}

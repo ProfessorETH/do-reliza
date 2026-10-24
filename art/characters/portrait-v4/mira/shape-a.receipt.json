@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\hunyuan\\mira\\shape-v1-marching.api.json",
+  "source_sha256": "f21f6fc0575b54434b59717a502d1be8ab35ef2c9c01d29fc034c0e01f9b630b",
+  "reference": "art/characters/portrait-v4/references/mira-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/mira-head-20261024-a",
+  "resource_authorization": "Secondary allowed at any time per human 2026-10-22; actual queue empty and 29.7 GiB free before dispatch; no unload/restart/foreign job interruption",
+  "steps": 40,
+  "octree": 512,
+  "prompt_id": "86914c60-7099-404b-ab6e-5455220de821",
+  "raw_file": "raw/86914c60_000.glb",
+  "raw_bytes": 98737668,
+  "raw_sha256": "0de5bb2bc4b6c0410b26bf6d11ea422ec3ba8f7ec8b0c56c494cccd9f4b0950c",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "342f6bf4b495b700066be0ebfb43860ac9dd7081d67c0ebcb74db832ed69ad17",
+  "workflow_sha256": "5b8b9e93b3a14d6360c9151ee794727a08c561c2bacbd3a5d6af34ab97c737cd"
+}

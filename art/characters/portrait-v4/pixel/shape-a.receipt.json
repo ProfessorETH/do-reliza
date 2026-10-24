@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "reference": "../references/pixel-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/pixel-head-20261024-a",
+  "steps": 40,
+  "latent_tokens": 4096,
+  "octree": 512,
+  "method": "Same validated local Hunyuan3D2.1 head-only reconstruction as Mira; distinct portrait and seed",
+  "resource_authorization": "Secondary always allowed per human2026-10-22; no foreign interrupt/unload",
+  "prompt_id": "397c1cda-c65f-4a12-894b-9ac9d929eb1f",
+  "raw_file": "raw/397c1cda_000.glb",
+  "raw_bytes": 112947304,
+  "raw_sha256": "ac2607b979d53cd3a15d8b433355ac8fbb248bc37d76752a89ad37a731e1d190",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "b8e43830f287c65f01d4063cc8f0e8b3b68666eca1940065e3f9d637ec1b1819",
+  "workflow_sha256": "7949e84efbcaed0508f6a988b41bc338e4e502f06de5e50387461dd09f4048c7"
+}

@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-24",
+  "method": "Shared existing Hunyuan Mira jeans scan; Blender-authored continuous sweater/sleeves, hands, shoes, head and hair; UV-baked existing portrait atlas; weighted 25-bone armatures and five portable clips. Runtime IK retargets office controls onto the deform bones.",
+  "blender": "5.2.0 LTS",
+  "newDiffusionJobs": 0,
+  "videoGeneration": false,
+  "faceBake": "Blender CPU EMIT, 1024px per character",
+  "source": {
+    "file": "art/characters/team-rigged-v3.blend",
+    "bytes": 12223277,
+    "sha256": "e08324edc642573cb3c20d54a0865cd749377daa79eae7104bafa924411dcccf"
+  },
+  "references": [
+    {
+      "file": "art/hunyuan/mira/mira-review-v2.glb",
+      "bytes": 1631784,
+      "sha256": "93c2cb0e35293b77309efbc7897cff29d2b3c9085e7004cfd3241b34dbeb1698"
+    },
+    {
+      "file": "assets/agents.png",
+      "bytes": 2601975,
+      "sha256": "6ec6228bb3a5c7e23ea4b07a2eba1627bc7a3c6a4454378935406a50130b9e23"
+    }
+  ],
+  "characters": [
+    {
+      "id": "mira",
+      "file": "assets/models/mira.glb",
+      "bytes": 2785664,
+      "sha256": "31cffb209ea72433f1fbc8d622160e80521f3c0a487f6295de243fd83df20c4b",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 70524
+    },
+    {
+      "id": "pixel",
+      "file": "assets/models/pixel.glb",
+      "bytes": 2724928,
+      "sha256": "a04649f2632415c1d6998e51390993ab52efaac13f6d9aad5bb71db3661bd7c3",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 68916
+    },
+    {
+      "id": "nord",
+      "file": "assets/models/nord.glb",
+      "bytes": 2534764,
+      "sha256": "cc7c2dc855f7b96a0020f5bd4fcd55a90fa2aa83e759452ecfe7679a97f2d5c7",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 63878
+    },
+    {
+      "id": "iskra",
+      "file": "assets/models/iskra.glb",
+      "bytes": 2590588,
+      "sha256": "8f1a92e51e856298221589bf80bbc05b682407ee9393f0ae6bc514fbb36f02f3",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 65432
+    },
+    {
+      "id": "saga",
+      "file": "assets/models/saga.glb",
+      "bytes": 2600808,
+      "sha256": "64598102f232783227600c8abb73991299e138594e9ea348ed75ec84b24fb261",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 65692
+    },
+    {
+      "id": "echo",
+      "file": "assets/models/echo.glb",
+      "bytes": 2649836,
+      "sha256": "064b707d6a0b26164413f1fef7581011385041b510aa53844adfd3174ebb8b5e",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "meshCount": 6,
+      "triangles": 66852
+    }
+  ]
+}
