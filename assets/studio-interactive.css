@@ -19,7 +19,7 @@
 .camera-advanced summary { min-height:36px; display:flex; align-items:center; padding:0 10px; font:600 14px 'Golos Text',sans-serif; cursor:pointer; }
 .camera-advanced>div { position:absolute; top:42px; right:0; display:grid; grid-template-columns:repeat(3,44px); gap:6px; padding:10px; background:#27383eee; border:1px solid #a6b8aa66; border-radius:10px; }
 .camera-advanced>div button { width:44px; font-size:18px; }.camera-advanced>div button:first-child { grid-column:1/-1; width:auto; font-size:15px; }
-body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed { width:56px; height:56px; right:22px; top:auto; bottom:22px; }
+body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed { display:block; width:56px; height:56px; right:22px; top:auto; bottom:22px; }
 body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed .nika-toggle { width:56px; height:56px; min-height:56px; }
 .game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d #office-webgl { inset:0; }
 .game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-interactions { display:block; position:absolute; inset:0; height:auto; pointer-events:none; }
@@ -31,7 +31,9 @@ body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed .nika-
 .game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-tag small { font-size:13px; }
 .team-hud-layout .office-room.is-3d .desk-interactions { grid-template-columns:repeat(auto-fit,minmax(60px,1fr)); }
 .game-shell.team-hud-layout[data-expanded=true] .office-render-status { display:block; position:absolute; bottom:8px; top:auto; left:8px; padding:6px 10px; max-width:calc(100% - 16px); background:#1b2b31de; color:#ded6c8; font-size:13px; border-radius:6px; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .office-camera-controls { top:4px; bottom:auto; right:0; left:auto; display:flex; width:auto; height:auto; gap:2px; }
 .game-shell.team-hud-layout[data-expanded=true] .shift-banner { display:flex; visibility:visible; position:fixed; inset:8px 8px auto; width:calc(100% - 16px); z-index:32; }
+.game-shell.team-hud-layout[data-expanded=true]>:not(.game-layout):not(.shift-banner),.game-shell.team-hud-layout[data-expanded=true] .game-layout>:not(.playable-office) { visibility:hidden; }
 .game-shell.team-hud-layout[data-expanded=true] .game-layout .playable-office { inset:calc(var(--shift-clock-height,78px) + 16px) 8px 8px; padding:16px; overflow:hidden; }
 .game-shell.team-hud-layout[data-expanded=true] .playable-office .office-room { max-width:none; flex:1 1 auto; min-height:180px; margin:0; }
 .game-shell.team-hud-layout[data-expanded=true] .playable-office :is(.office-roster,.life-console,.office-arrivals,.office-activity,.studio-wallet-row,.office-guidance) { display:none; }
@@ -49,10 +51,16 @@ body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed .nika-
 .staffing-budget { padding:12px; background:#ffffff08; border-radius:10px; font-size:16px; }.staffing-budget button { display:block; margin-top:8px; font-size:16px; }
 .life-team,.office-roster-slots { grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
 @media(max-width:640px) {
+  .game-shell.team-hud-layout[data-expanded=true] .shift-banner { display:grid; grid-template-columns:.8fr 1.2fr 1fr; }
+  .game-shell.team-hud-layout[data-expanded=true] .shift-banner>div:nth-child(2) { display:block; }
+  .game-shell.team-hud-layout[data-expanded=true] .shift-banner .shift-auto { display:none; }
+  .game-shell.team-hud-layout[data-expanded=true] .shift-banner strong { font-size:14px; }
   .game-shell.team-hud-layout[data-expanded=true] .game-layout .playable-office { padding:8px; }
   .game-shell.team-hud-layout[data-expanded=true] .office-heading h2 { font-size:18px; }
   .studio-dock { gap:6px; margin:6px 0; }.studio-dock button { font-size:14px; padding:8px 10px; flex:1 1 auto; }
   .actor-actions { width:248px; padding:10px; }.actor-actions header b { font-size:18px; }
   .office-camera-controls button { min-width:32px; min-height:36px; }.office-camera-controls { gap:3px; }
   .object-hotspots button { width:36px; height:36px; }
+  .game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .office-camera-controls { max-width:100%; }
+  .game-shell.team-hud-layout[data-expanded=true] .office-render-status { max-width:calc(100% - 84px); font-size:12px; }
 }
