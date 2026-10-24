@@ -1,4 +1,5 @@
-import { rocks, batteriesFor, canSaveOrbit, freshOrbit, restoreOrbit, moveOrbit } from './assets/orbit.js?v=orbit-2';
+import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, orbitFeatures } from './assets/orbit.js?v=orbit-3';
+import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=team-hud-20261024';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
@@ -242,37 +243,42 @@ function debrief() {
   showDialog(`<div class="eyebrow">РАЗБОР ПРОЕКТА</div><h2 id="dialog-title">Что изменили ваши решения</h2><ul class="debrief-list"><li><b>Подбор и распределение.</b> Среднее соответствие навыков задачам — ${r.quality}%. Самое слабое место: «${weakest.name}» (${fit(game.assignments[weakest.id],weakest)}/100).</li><li><b>Объём.</b> ${game.choices.scope==='focus'?'Вы договорились перенести новую функцию. Это сохранило время и резерв.':game.choices.scope==='shield'?'Добавили щит за 2 000 ₽ и увеличили объём кода. Щит работает в вашей мини-игре.':'Обменяли часть оформления на щит. Дополнительная механика появилась, интерфейс стал проще.'}</li><li><b>Качество.</b> ${game.choices.bug==='fix'?'Вы потратили 2 часа и 1 500 ₽, чтобы исправить сохранение. Теперь мини-игра восстанавливает прогресс.':game.choices.bug==='cut'?'Вы честно сократили функциональность. Мини-игру нужно проходить за одну сессию.':'Вы выпустили известную ошибку. При перезапуске мини-игры прогресс теряется.'}</li><li><b>Проверка кода.</b> ${game.wallBug ? 'Проверка пропущена. В мини-игре корабль проходит сквозь астероиды.' : 'Вы исправили порядок действий: проверка препятствия выполняется до движения.'}</li><li><b>Помощь.</b> ${game.support ? 'Вы провели совместный разбор: разработчик лучше справился с конкретной задачей, но понадобился дополнительный час.' : 'В этой смене команда справлялась без совместного разбора.'}</li><li><b>Срок.</b> ${r.late?`Задержка ${r.late} ч. Резерв времени и параллельная работа помогут в следующей попытке.`:'Команда уложилась в согласованный срок.'}</li></ul><p class="small-muted">Оценка: качество — до 45 баллов; срок — до 25; бюджет — 10; доверие — до 10; отсутствие критического бага — 10. Упрощение визуала снижает оценку на 2,4 балла.</p><button class="primary full" data-action="close-dialog">Вернуться к результату</button>`);
 }
 
-let miniMessage = '';
+let miniMessage = '', miniEffect = {}, miniStored = false;
 function saveMini() {
-  if(canSaveOrbit(game)){try{localStorage.setItem(MINI,JSON.stringify(mini));}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
+  miniStored=false;
+  if(canSaveOrbit(game)){try{localStorage.setItem(MINI,JSON.stringify(mini));miniStored=true;}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
 }
-function openMini() {
+function openMini(reloading=false) {
+  const previous=mini;
   let stored = null;
   try { stored = JSON.parse(localStorage.getItem(MINI)); } catch {}
-  mini = restoreOrbit(game, stored);
+  mini = restoreOrbit(game, stored);miniEffect={};
+  const mode=orbitFeatures(game,getResult(game).design).saveMode;
   miniMessage = stored && canSaveOrbit(game) && mini.moves === 0 && stored.release !== mini.release
     ? 'Начат полёт для текущего релиза: старое сохранение не содержит этих решений команды.' : '';
+  if(mode==='broken'){
+    miniEffect={kind:'lost'};
+    miniMessage=previous?.release===mini.release&&previous.moves>0
+      ? 'Ошибка сохранения. Батарей потеряно: '+previous.collected.length+' / 3. Ходов сброшено: '+previous.moves+'. Корабль снова на старте.'
+      : 'В релизе осталась ошибка сохранения. После перезапуска полёт всегда начинается заново.';
+  }else if(mode==='removed')miniMessage='Короткая сессия без сохранения — так команда договорилась с заказчиком.';
+  else if(reloading&&!miniMessage)miniMessage=mini.moves>0?'Положение корабля, батареи и заряд щита восстановлены.':'Сохранённый маршрут начинается здесь.';
   saveMini();
   showDialog('<h2 id="dialog-title">Орбита</h2>');renderMini();
 }
 function renderMini() {
-  const full=game.choices.scope!=='swap'&&getResult(game).design>=70, batteries=batteriesFor(game);
-  const shieldText = mini.shield ? 'Щит активен · 1 / 1' : game.shield ? 'Щит израсходован · 0 / 1' : 'Без щита · отложен командой';
-  const shieldReason = game.choices.scope === 'swap' ? 'Команда заменила часть оформления на защиту.' : game.shield ? 'Команда добавила защиту за 2 000 ₽.' : 'Команда сохранила основной объём релиза.';
-  document.querySelector('#dialog-content').innerHTML=`<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button><div class="mini-game ${full?'polished':'simple'}"><div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ</div><h2 id="dialog-title">ОРБИТА <span>0${mini.collected.length} / 03</span></h2><p>${mini.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p>
-    <div class="orbit-shield ${mini.shield?'charged':''}">${icon('shield',32)}<div><strong>${shieldText}</strong><span>${shieldReason} ${game.shield?'Щит автоматически защищает при одном столкновении.':''}</span></div></div>
-    <div class="mini-board" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>{const x=i%7,y=Math.floor(i/7),key=`${x},${y}`,ship=mini.x===x&&mini.y===y,rock=rocks.has(key),bat=batteries.includes(key)&&!mini.collected.includes(key),end=x===6&&y===4;return `<button class="tile ${ship?'ship':''} ${ship&&mini.shield?'shielded':''} ${rock?'rock':''} ${end?'station':''} ${bat?'battery':''}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${ship?(mini.shield?'Корабль под щитом':'Корабль'):rock?'Астероид':end?'Станция':bat?'Батарея':'Космос'}, ${x+1}, ${y+1}">${ship?icon('rocket',30):rock?'◆':bat?icon('bolt',23):end?icon('flag',24):'<span>·</span>'}${ship&&mini.shield?'<span class="orbit-shield-ring" aria-hidden="true"></span>':''}</button>`;}).join('')}</div>
-    <div class="orbit-feedback" role="status">${miniMessage||'Корабль готов. Выбери направление.'}</div>
-    <div class="mini-status"><span>${game.criticalBug?'Баг сохранения: полёт теряется при открытии':game.checkpoint?'Автосохранение полёта работает':'Одна сессия: сохранение убрано из релиза'}</span><span>${game.wallBug?'Ошибка: корабль проходит сквозь астероиды':'Проверка движения исправлена'}</span><span>${game.choices.scope==='swap'?'Оформление упрощено ради щита':full?'Оформление команды: полная версия':'Оформление команды: базовая версия'}</span></div>
-    <div class="mini-controls"><button class="secondary" data-action="move" data-dir="left" aria-label="Влево">←</button><div><button class="secondary" data-action="move" data-dir="up" aria-label="Вверх">↑</button><button class="secondary" data-action="move" data-dir="down" aria-label="Вниз">↓</button></div><button class="secondary" data-action="move" data-dir="right" aria-label="Вправо">→</button><p>Стрелки или соседняя клетка.</p></div>${mini.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}<div class="dialog-actions"><button class="secondary" data-action="reload-mini">${icon('reset',15)} Проверить сохранение</button><button class="secondary" data-action="fresh-mini">Новый полёт</button><button class="primary" data-action="close-dialog">В студию</button></div></div>`;
+  document.querySelector('#dialog-content').innerHTML=renderOrbit(game,mini,{icon,design:getResult(game).design,message:miniMessage,effect:miniEffect,stored:miniStored});
 }
 function moveMini(dx,dy) {
   if(!mini)return;
   const focus=document.activeElement?.closest('[data-action]');
   const selector=focus?.dataset.action==='move'?`[data-action="move"][data-dir="${focus.dataset.dir}"]`:'.tile.ship';
-  miniMessage=moveOrbit(game,mini,dx,dy);
+  const outcome=stepOrbit(game,mini,dx,dy);
+  if(outcome.kind==='idle')return;
+  miniEffect=outcome;miniMessage=outcome.message;
   saveMini();renderMini();
-  dialog.querySelector(selector)?.focus({preventScroll:true});
+  const next=dialog.querySelector(selector);
+  (next&&!next.disabled?next:dialog.querySelector('.tile.ship'))?.focus({preventScroll:true});
 }
 document.addEventListener('keydown',e=>{
   if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
@@ -371,8 +377,8 @@ document.addEventListener('click',e=>{
   if(action==='play-mini')openMini();
   if(action==='tile')moveMini(Number(el.dataset.x)-mini.x,Number(el.dataset.y)-mini.y);
   if(action==='move'){const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[el.dataset.dir];moveMini(...d);}
-  if(action==='fresh-mini'){mini=freshOrbit(game);miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();return;}
-  if(action==='reload-mini'){openMini();toast(game.criticalBug?'Прогресс потерян: известный баг попал в релиз.':game.checkpoint?'Прогресс восстановлен из сохранения.':'Короткая сессия началась заново — как согласовано с заказчиком.');}
+  if(action==='fresh-mini'){mini=freshOrbit(game);miniEffect={};miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
+  if(action==='reload-mini'){openMini(true);dialog.querySelector('.tile.ship')?.focus({preventScroll:true});}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
   if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();persist();game=null;render();}
