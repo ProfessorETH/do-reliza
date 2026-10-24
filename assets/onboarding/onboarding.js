@@ -1,11 +1,11 @@
-import { STORY, guideFor } from './onboarding-model.js?v=office-life-20261024';
+import { STORY, guideFor } from './onboarding-model.js?v=office-life-20261024-v2';
 
 const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 const character = expression => `<span class="nika-character" data-expression="${expression}" role="img" aria-label="Ника, помощница студии"></span>`;
 
 export function createOnboarding({ storageKey, pause, refresh, sound }) {
-  let preferences = { enabled: true, collapsed: false, story: null };
+  let preferences = { enabled: true, collapsed: true, story: null };
   let currentGame = null, moving = false, returnFocus = null;
   let lastLine = '';
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -29,7 +29,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
   }
 
   function finishStory(enabled = true) {
-    preferences.story = null; preferences.enabled = enabled; preferences.collapsed = false; save();
+    preferences.story = null; preferences.enabled = enabled; preferences.collapsed = true; save();
     storyDialog.close(); stopAnimation(); sound?.stopVoice(); refresh();
     const focus = returnFocus?.isConnected ? returnFocus : document.querySelector('[data-guide="toggle"]');
     focus?.focus({ preventScroll: true });
@@ -86,11 +86,18 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     else if (action === 'replay') sound?.speak(`story-${preferences.story}`, true);
     else if (action === 'replay-guide') { const step=guideFor(currentGame,moving); if(step) sound?.speak(step.voice || `guide-${step.id}`,true); }
     else if (action === 'locate') {
-      const target = document.querySelector(guideFor(currentGame, moving)?.target);
+      const selector = guideFor(currentGame, moving)?.target;
+      const inOffice = document.querySelector(selector)?.closest('.playable-office');
+      preferences.collapsed = true; save(); refresh();
+      let target = document.querySelector(selector);
+      if (target && !target.getClientRects().length) {
+        document.querySelector(`[data-action="workspace"][data-id="${inOffice ? 'office' : 'project'}"]`)?.click();
+        target = document.querySelector(selector);
+      }
       if (target) {
         document.querySelectorAll('.nika-target').forEach(el => el.classList.remove('nika-target'));
         target.classList.add('nika-target');
-        target.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+        target.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
         (target.matches('button,select') ? target : target.querySelector('button,select'))?.focus({ preventScroll: true });
       }
     } else {
@@ -106,6 +113,6 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
   reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) stopAnimation(); });
   return {
     sync,
-    start(game) { currentGame = game; preferences = { enabled: true, collapsed: false, story: 0 }; save(); sync(game); },
+    start(game) { currentGame = game; preferences = { enabled: true, collapsed: true, story: 0 }; save(); sync(game); },
   };
 }

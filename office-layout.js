@@ -13,7 +13,8 @@ export const REST_SPOTS = [
   { point: [-3.2, 1.55], yaw: Math.PI },
   { point: [-4.25, 1.55], yaw: Math.PI },
 ];
-export const WALK_BOUNDS = { minX: -4.65, maxX: 4.65, minZ: -3.65, maxZ: 3.65 };
+// All four inner wall faces are x=±4.91 / z=±3.91. Keep a body-width margin.
+export const WALK_BOUNDS = { minX: -4.55, maxX: 4.55, minZ: -3.55, maxZ: 3.55 };
 export const BODY_RADIUS = .34;
 const furniture = [
   ...DESKS.map(d => ({ x: d.x, z: d.z, w: 2.3, d: 1 })),

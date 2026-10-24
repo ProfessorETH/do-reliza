@@ -1,0 +1,70 @@
+{
+  "sourceSceneNotSaved": "E:\\хакатон игра\\art\\blender\\do-reliza-office.blend",
+  "walls": [
+    "right",
+    "front"
+  ],
+  "meshes": 13,
+  "triangles": 308,
+  "contacts": [
+    {
+      "interface": "acoustic fabric / frame",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "acoustic frame / wall",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "door lintel / opening top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "door plate / timber face",
+      "gapMeters": -0.001
+    },
+    {
+      "interface": "front cap / wall top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "front end / door aperture",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "front main / door aperture",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "front wall / inner room plane",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "right cap / wall top",
+      "gapMeters": 0.0
+    },
+    {
+      "interface": "right wall / inner room plane",
+      "gapMeters": -0.0
+    },
+    {
+      "interface": "skirting / original floor",
+      "gapMeters": 0.0
+    }
+  ],
+  "furnitureUnchanged": true,
+  "walkBounds": {
+    "x": [
+      -4.55,
+      4.55
+    ],
+    "z": [
+      -3.55,
+      3.55
+    ]
+  },
+  "sha256": {
+    "art/blender/studio-shell/studio-shell.blend": "8aa5a377942d7ce8347ded297541b45ea2a52aa8f154d472729232a17df78ac6",
+    "assets/models/office-shell.glb": "4ad565500175dc7aca2090b391b46ad3ddaf963fcec1f19d0abef4dca41dbe22"
+  }
+}
