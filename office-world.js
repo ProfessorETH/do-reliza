@@ -1,7 +1,8 @@
+import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js?v=shift-ux-20261024-v2';
+import { OfficeActor } from './office-actors.js?v=skinned-team-final-20261024';
 import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
 import { agentById, activeTasks } from './engine.js?v=shift-ux-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
@@ -15,7 +16,7 @@ let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=0.5.0`)).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=skinned-team-20261024`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 
@@ -103,7 +104,7 @@ class OfficeWorld {
       if (this.loadingActors.has(id)) continue;
       this.loadingActors.add(id);
       try {
-        const model = (await loadModel(id)).scene.clone(true);
+        const model = cloneSkeleton((await loadModel(id)).scene);
         if (!this.game.team.includes(id)) continue;
         actor = new OfficeActor(id, model, agentById(id).color, order);
         actor.destination(this.game, this.initialTeam.has(id)); actor.pose(false, false, 0, this.reduced.matches);

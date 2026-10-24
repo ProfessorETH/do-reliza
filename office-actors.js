@@ -1,6 +1,7 @@
+import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
 import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
-import { poseActor } from './office-pose.js?v=shift-ux-20261024-v2';
+import { poseActor } from './office-pose.js?v=skinned-team-final-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
@@ -13,12 +14,16 @@ export class OfficeActor {
     this.group.add(model); this.group.position.set(ENTRANCE[0], 0, ENTRANCE[1]); this.joints = {};
     model.traverse(node => {
       if (node.name.startsWith(`Release3D_${id}_`)) this.joints[node.name.slice(`Release3D_${id}_`.length)] = node;
+      if (node.name.startsWith(`Team3D_${id}_`)) this.joints[node.name.slice(`Team3D_${id}_`.length)] = node;
       if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
     });
-    this.group.updateMatrixWorld(true); this.soles = {};
+    this.skinBindings=bindOfficeSkin(model,this.joints);
+    this.group.updateMatrixWorld(true); this.soles = {}; this.footMeshes={}; this.eyeMeshes={};
     for (const side of ['Left','Right']) {
       const foot = this.joints[side+'Foot'], inverse = foot.matrixWorld.clone().invert(), points = [];
-      foot.traverse(node => {
+      const footMesh=model.getObjectByName(`DR_${id}_${side}Foot_Rigid`)||foot;
+      this.footMeshes[side]=footMesh;this.eyeMeshes[side]=model.getObjectByName(`DR_${id}_Eye${side}_Rigid`);
+      footMesh.traverse(node => {
         if (!node.isMesh) return;
         const matrix = inverse.clone().multiply(node.matrixWorld), positions = node.geometry.attributes.position;
         for (let i=0;i<positions.count;i++) { const p = new THREE.Vector3().fromBufferAttribute(positions,i).applyMatrix4(matrix); points.push(p.y,p.z); }

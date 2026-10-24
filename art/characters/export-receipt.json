@@ -1,0 +1,96 @@
+{
+  "characters": [
+    {
+      "id": "mira",
+      "bytes": 2784420,
+      "sha256": "2313c386fa9f012408827f59fbe862756dd1df408e89a9a782df733f0cf1a775",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    },
+    {
+      "id": "pixel",
+      "bytes": 2723684,
+      "sha256": "8846a0cd4f98569854258d3d5826f67a33b8a3bf9f4d8cc8492e217f4c447c0e",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    },
+    {
+      "id": "nord",
+      "bytes": 2533520,
+      "sha256": "bf5748b5be2f306ece3c7a8c1007bb322b503af40cc5171cf106ae5cd5016d2d",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    },
+    {
+      "id": "iskra",
+      "bytes": 2589344,
+      "sha256": "7a51597221247add6279af059cf08184bff4d4c265099467bdec074246a44121",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    },
+    {
+      "id": "saga",
+      "bytes": 2599564,
+      "sha256": "c4d9d7bfaabef5229690377a54bc33d755432d0645df74299ca261c37efc06fe",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    },
+    {
+      "id": "echo",
+      "bytes": 2648592,
+      "sha256": "0c4ff1db6755dde8d7716eda74b04d4962a6bc0aa65be1d8730178b4ab97e572",
+      "bones": 25,
+      "clips": [
+        "Idle",
+        "Walk",
+        "Sit",
+        "Stand",
+        "Work"
+      ],
+      "method": "Hunyuan Mira clothing scan, rebuilt anatomy/hair/hands, approved portrait material, Blender armature weights",
+      "game_control": "procedural IK retargeted onto actual deform bones"
+    }
+  ],
+  "blender": "5.2.0 LTS",
+  "animation_fps": 30
+}

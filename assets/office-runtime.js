@@ -46,7 +46,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
     return;
   }
   if (runtime) { runtime.mountOfficeWorld(game, selected, callbacks); return; }
-  pending ??= import('../office-world.js?v=shift-ux-20261024-v2');
+  pending ??= import('../office-world.js?v=skinned-team-final-20261024');
   callbacks.onBusy(true);
   pending.then(module => {
     runtime = module;
