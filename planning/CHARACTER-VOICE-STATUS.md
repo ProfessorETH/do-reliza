@@ -1,7 +1,7 @@
 # Original character voices — ready
 
 Execution owner: story/onboarding chat, branch `codex/character-voices`.
-Integrated with main through 56acd1a: portrait-based 3D models and the mobile interface are preserved.
+Integrated with main through f4a9e79: portrait-based 3D models, mobile navigation, title-screen clarity and studio growth are preserved.
 
 ## Delivered pack
 
@@ -14,13 +14,13 @@ Integrated with main through 56acd1a: portrait-based 3D models and the mobile in
 
 ## Game behavior
 
-One speech channel handles Nika and the cast. Music ducks during speech. Two-person exchanges run in order and cancel on mute, hidden tab or closing the discussion. A collapsed Nika cannot cancel a developer's speech. Desktop speech bubbles and mobile character cards include replay controls.
+One speech channel handles Nika and the cast. Music ducks during speech. Two-person exchanges run in order and cancel on mute, hidden tab or closing the discussion. A collapsed Nika cannot cancel a developer's speech. Desktop speech bubbles and mobile character cards include replay controls. The fullscreen office also offers «Поговорить» in a selected developer’s actions; its reply and voice follow the current game state.
 
 A dispute requires stress ≥75 or morale ≤25 and two present colleagues. It can occur once per project. Mediation spends one hour and helps both people; ignoring it affects both without spending an hour. Technical decisions and the ordinary studio incident remain intact. Existing saves are supported.
 
 ## Validation
 
-- Syntax checks and 95 tests pass after integrating the newer models and mobile interface.
+- Syntax checks and 103 tests pass after integrating the newer models and mobile interface.
 - Real browser: all seven local voices decode and play; the two-speaker log is `mira-conflict`, then `nord-concern`; mute cancels the queued reply. In the actual game, a distress-triggered discussion plays Mira, displays both captions and stops speech when resolved.
 - Mobile 390×844: Echo's card plays the matching work line, replay is available, closing the card removes the audio. Desktop/mobile screenshots are in ignored `output/voices-*.png`. Browser console has no game errors.
 - Temporary QA fixtures use only the separate demo save; the prior demo state is restored after the check.

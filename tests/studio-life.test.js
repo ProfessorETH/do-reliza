@@ -1,3 +1,4 @@
+import { upgradeLock } from '../assets/studio-progression.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDemoGame } from '../demo.js';
@@ -152,7 +153,7 @@ test('campaign survives many orders and upgrades without losing its ledger or te
   for(let n=0;n<9;n++) {
     finish(s);
     for(const id of s.team) { if(s.life.departures.includes(id)&&s.life.members[id].raises<3)assert.equal(careFor(s,id,'raise'),null); }
-    for(const u of UPGRADES)if(s.life.cash>=u.price&&!s.life.upgrades.includes(u.id))assert.equal(buyUpgrade(s,u.id),null);
+    for(const u of UPGRADES)if(!upgradeLock(s,u.id)&&s.life.cash>=u.price&&!s.life.upgrades.includes(u.id))assert.equal(buyUpgrade(s,u.id),null);
     assert.equal(s.life.completed,n+1);assert.ok(validSave(JSON.parse(JSON.stringify(s))));
     if(n<8){assert.equal(nextProject(s,n%2?'cup':'club'),null);beginPlan(s);recommend(s);beginWork(s);}
   }
