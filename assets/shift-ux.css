@@ -1,0 +1,105 @@
+/* Readable shift controls. Existing studio type is doubled; layouts may scroll. */
+:root { font-size:20px; }
+.game-shell { grid-template-rows:auto auto auto minmax(0,1fr); grid-template-columns:minmax(0,1fr); width:100%; min-width:0; }
+.game-shell>* { min-width:0; max-width:100%; }
+.game-shell .game-topbar { min-height:86px; padding:14px 24px; flex-wrap:wrap; }
+.game-topbar .brand { font-size:32px; }.game-topbar .brand small { font-size:14px; letter-spacing:1px; }
+.game-topbar .project-title { font-size:22px; letter-spacing:0; flex:1; }.hud-stat { padding:0 12px; }
+.hud-stat strong { font-size:28px; }.hud-stat small { font-size:18px; }.hud-stats { gap:8px; }
+.hud-stats .sound-toggle,.icon-btn { min-width:48px; width:48px; height:48px; }
+.game-shell .game-footer { min-height:52px; padding:10px 24px; }.timeline-step:not(:last-child)::after { width:12px; margin:0 8px; }
+.timeline-step>span { width:28px; height:28px; }.save-status { font-size:18px; }
+.shift-banner { display:grid; grid-template-columns:1fr 1fr 1.25fr auto; gap:24px; align-items:center; padding:16px 24px; border-bottom:1px solid var(--line); background:#322e30; }
+.shift-banner>div { min-width:0; }.shift-banner span { display:block; font-size:18px; color:var(--muted); line-height:1.4; }
+.shift-banner>div:not(.shift-auto) { contain:paint; }
+.shift-banner strong { display:block; font-size:clamp(22px,2vw,32px); line-height:1.3; color:#f3dfc8; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.shift-auto { display:flex; gap:14px; align-items:center; max-width:420px; }.shift-auto .secondary { flex:none; min-width:124px; font-size:24px; min-height:52px; }.shift-auto>span { max-width:180px; }
+.game-shell .game-layout { grid-template-columns:minmax(0,1fr) clamp(560px,47vw,760px); padding:0 20px 20px; gap:20px; }
+.game-shell .control-panel { padding:28px 28px 140px; scroll-padding:24px; }
+.game-shell .game-layout .playable-office { overflow:auto; padding:22px; }
+.game-shell .playable-office .office-room { flex:none; height:clamp(340px,45vh,600px); min-height:340px; }
+.office-heading { flex-wrap:wrap; gap:12px; padding-bottom:16px; }.office-heading h2 { font-size:36px; line-height:1.15; }
+.office-room.is-3d #office-webgl { inset:0 0 112px; }.office-room.is-3d .desk-interactions { height:102px; }
+.office-room.is-3d .office-desk { height:102px; }.office-room.is-3d .desk-tag { padding:12px 6px 10px; }
+.office-room.is-3d .desk-tag b { font-size:24px; }.office-room.is-3d .desk-tag small { font-size:18px; line-height:1.25; white-space:normal; }
+.office-room.is-3d .desk-counter { display:none; }.office-camera-controls { top:0; right:0; gap:2px; }
+.office-camera-controls button { width:40px; height:44px; min-height:44px; font-size:24px; }
+.office-render-status { position:static; display:block; max-width:none; font-size:18px; padding-top:54px; pointer-events:none; }
+.office-guidance { padding:14px; align-items:flex-start; }.office-guidance p { font-size:22px; }.office-guidance .text-button { font-size:20px; }
+.office-arrivals { display:flex; gap:10px; flex-wrap:wrap; }.arrival { min-height:50px; padding:10px; }
+.office-step { font-size:26px; }.office-roster { padding:16px 0; }.office-member { min-height:72px; }
+.life-console-heading { flex-wrap:wrap; margin:14px 0 10px; }.life-console-heading button { min-height:48px; font-size:22px; padding:10px 14px; }
+.life-console-heading small { font-size:18px; }.life-person { padding:12px 10px; min-height:74px; }.life-person b { font-size:24px; }.life-person span { font-size:18px; line-height:1.35; white-space:normal; }
+.graphics-settings { flex-wrap:wrap; gap:10px; padding:16px 0; }.graphics-settings small { font-size:18px; }.graphics-settings a,.graphics-settings>span { font-size:20px; }
+.panel-header h1 { line-height:1.12; overflow-wrap:anywhere; }.panel-header>p { display:block!important; font-size:24px; line-height:1.55; margin-top:14px; }
+.panel-header { margin-bottom:26px; }.candidate-art { height:100px; }.candidate-caption { display:flex; flex-wrap:wrap; gap:4px 12px; padding:12px; }.candidate-price { font-size:18px; }
+.candidate-grid { gap:12px; margin-bottom:24px; }.agent-detail.agent-dossier { padding:24px 24px 0; }
+.dossier-header { flex-wrap:wrap; padding-bottom:20px; }.dossier-identity { min-width:120px; }.dossier-portrait { width:70px; height:70px; }.dossier-offer { flex-wrap:wrap; gap:16px; padding:20px 24px; margin:0 -24px; }.dossier-offer button { flex:auto; min-height:58px; }
+.dossier-skills { padding:22px 0; }.skill-list { gap:18px; }.skill-list>div { grid-template-columns:120px 1fr; }.skill-list b { width:42px; }.skill-track { height:8px; }
+.agent-dossier .agent-caution { margin:18px 0; line-height:1.5; }.panel-bottom { padding-top:24px; }.panel-bottom>span { font-size:20px; line-height:1.5; margin-bottom:18px; }.coverage { flex-wrap:wrap; }
+.plan-task { padding:22px 0; }.task-body { display:block; }.task-body h2 { margin-bottom:14px; }.task-select-row { gap:12px; }.task-select-row select { min-height:56px; font-size:22px; padding:10px; }
+.task-number { width:42px; height:42px; }.plan-toolbar { padding:16px 0; flex-wrap:wrap; gap:10px; }.dependency-map { padding:16px; flex-wrap:wrap; }
+.work-task { padding:22px; min-height:100px; }.work-task-icon { width:44px; height:44px; }.work-task>div>span { display:block; margin-top:6px; }.work-tasks { gap:14px; }.work-controls button { min-height:58px; }
+.activity-log { padding:24px 0; }.activity-log .text-button { float:none; margin:8px 0; }.support-card { margin-top:24px; padding:22px; }.support-card p { display:block; font-size:22px; line-height:1.5; }.support-card .secondary { min-height:52px; }
+.time-strip { gap:12px; flex-wrap:wrap; margin:20px 0; }.event-heading { flex-wrap:wrap; gap:12px; margin-bottom:18px; }.event-context { min-height:44px; }
+.game-shell .control-panel .event-heading>span { font-size:20px; line-height:1.4; white-space:normal; }
+.speaker { gap:16px; padding:20px 0; }.speaker .portrait { width:72px; height:72px; }.speaker b { font-size:28px; }.speaker small { font-size:20px; }
+.event-copy h1 { font-size:clamp(38px,3.2vw,54px); }.event-copy>p { font-size:26px; line-height:1.6; }
+.event-options { gap:20px; }.event-option { min-height:126px; padding:24px; gap:18px; align-items:flex-start; }.event-option b { font-size:28px; line-height:1.35; }.event-option small { display:block; font-size:22px; line-height:1.5; margin-top:12px; }.option-description { font-size:22px; line-height:1.5; margin-top:8px; }
+.lesson-note { margin-top:28px; font-size:22px; line-height:1.65; }.lesson-note p { font-size:22px; line-height:1.6; }.code-review { padding:22px; }.code-review ol { line-height:1.6; padding-left:28px; }.code-review p { display:block; }
+.game-shell.event-state .game-layout { grid-template-columns:minmax(280px,.65fr) minmax(640px,1.35fr); }
+.seating-panel { padding:22px; margin-bottom:24px; border:1px solid #d5b89566; border-radius:14px; background:#443a35; }.seating-panel h2 { font-size:28px; line-height:1.3; margin:0 0 12px; }.seating-panel p { font-size:20px; line-height:1.5; margin:8px 0 18px; color:#dfcdbb; }
+.seating-cards { display:grid; gap:14px; }.seating-card { display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; align-items:center; }.seating-card b { font-size:22px; }.seating-card>span { font-size:18px; color:#d0c2b5; grid-column:1; }.seating-card select { grid-column:2; grid-row:1/3; width:100%; min-width:0; min-height:54px; font-size:20px; padding:10px; background:#29262b; color:var(--text); border:1px solid #a88e77; border-radius:8px; }
+#info-dialog { width:min(900px,calc(100vw - 32px)); max-width:900px; padding:32px; font-size:24px; line-height:1.55; }#info-dialog h2 { font-size:40px; line-height:1.2; padding-right:30px; }#info-dialog :is(p,li,small,.small-muted) { font-size:22px; line-height:1.6; }#info-dialog :is(button,select) { font-size:22px; min-height:52px; }.dialog-close { width:48px; height:48px; }
+.life-shop article { padding:22px; gap:20px; flex-wrap:wrap; }.life-shop h3 { font-size:28px; }.life-stats { gap:20px; }.life-stats dt { font-size:20px; }.life-stats dd { font-size:30px; }.life-result>p { font-size:22px; line-height:1.5; }.life-result button { font-size:22px; min-height:56px; }.life-result { padding:22px; gap:14px; }
+.game-shell .life-result h2,.game-shell .career-result h2,.game-shell .career-result .lead-recap { display:block; }.game-shell .career-result>.eyebrow { display:block; }.game-preview { padding:24px; min-height:130px; }.result-metrics { grid-template-columns:repeat(2,1fr); padding:22px; gap:20px; }.result-metrics small { font-size:20px; }.result-metrics b { font-size:32px; }.release-features { flex-wrap:wrap; gap:18px; }
+.nika-guide { position:fixed; right:24px; bottom:24px; z-index:40; width:min(460px,calc(100% - 32px)); max-height:calc(100dvh - 48px); overflow:auto; margin:0; border:1px solid #d1aa89; background:#443c3b; box-shadow:0 16px 64px #100b0f99; border-radius:18px; }
+.nika-guide-head { padding:20px; gap:14px; }.nika-guide-head .nika-avatar { display:block; width:72px; height:72px; margin:0; }.nika-guide-head b { font-size:26px; }.nika-guide-head span { font-size:18px; }.nika-guide-head>div { display:block; }
+.nika-guide .nika-toggle { min-height:48px; font-size:18px; padding:8px; }.nika-guide-copy { padding:0 24px 24px; }.nika-guide-copy h2 { font-size:30px; }.nika-guide-copy p { font-size:22px; line-height:1.6; }.nika-guide-actions { gap:12px; }.nika-guide-actions button { font-size:20px; min-height:48px; }.nika-hint { font-size:20px; }
+.nika-guide.nika-collapsed { width:88px; height:88px; overflow:visible; border:0; background:none; box-shadow:none; }.nika-collapsed .nika-guide-head { padding:0; }.nika-guide.nika-collapsed .nika-toggle { width:88px; height:88px; min-height:88px; padding:0; font-size:0; border:2px solid #e5bc9d; box-shadow:0 8px 24px #0007; overflow:hidden; }.nika-guide.nika-collapsed .nika-toggle::after { font-size:20px; width:28px; height:28px; right:0; bottom:0; }
+.nika-guide.nika-collapsed .nika-avatar,.nika-guide.nika-collapsed .nika-guide-head>div { display:none; }
+.office-room.is-3d .office-movement { display:none; }
+.office-room.is-3d .office-render-status { position:absolute; top:52px; left:8px; padding:8px; max-width:calc(100% - 16px); background:#302e33e8; border-radius:8px; font-size:18px; line-height:1.35; z-index:3; }
+.office-room.is-3d #office-webgl { inset:112px 0 112px; }
+.nika-idle-invitation { position:absolute; right:102px; bottom:16px; width:max-content; max-width:calc(100vw - 148px); font-size:22px; line-height:1.3; padding:14px 18px; border:1px solid #d1aa89; background:#443c3b; border-radius:16px 16px 0 16px; opacity:0; pointer-events:none; transition:opacity .3s; }
+.nika-attention .nika-idle-invitation { opacity:1; }.nika-attention .nika-toggle { animation:nika-invite 3s ease-in-out infinite; }.nika-attention .nika-toggle::before { content:''; position:absolute; inset:-30%; background:linear-gradient(110deg,transparent 35%,#fff6 50%,transparent 65%); transform:translateX(-100%); animation:nika-glint 3s ease-in-out infinite; }
+@keyframes nika-invite { 0%,100% { box-shadow:0 0 0 0 #e7b58d33; } 50% { box-shadow:0 0 0 12px #e7b58d00,0 8px 30px #e7b58d44; } }@keyframes nika-glint { 0%,35% { transform:translateX(-100%); } 75%,100% { transform:translateX(100%); } }
+#toast { bottom:130px; font-size:22px; max-width:calc(100vw - 40px); }
+.game-shell[data-expanded=true] .shift-banner { position:fixed; inset:8px 8px auto; width:calc(100% - 16px); visibility:visible; z-index:30; padding:10px 16px; border:1px solid var(--line); border-radius:12px; }
+.game-shell[data-expanded=true] .game-layout .playable-office { top:calc(var(--shift-clock-height,100px) + 16px); }
+.game-shell[data-expanded=true] .playable-office .office-room { flex:1 1 auto; height:auto; }
+.nika-guide-head { position:sticky; top:0; background:inherit; z-index:2; }.nika-target { scroll-margin-top:calc(var(--shift-clock-height,100px) + 100px); }
+.onboarding-story { width:min(1000px,calc(100% - 32px)); max-width:1000px; }.nika-story-copy h2 { overflow-wrap:anywhere; }.nika-story-actions .primary { min-height:54px; }
+@media(min-width:1600px) { .game-shell .game-layout { grid-template-columns:minmax(0,1fr) minmax(660px,40vw); }.game-shell.event-state .game-layout { grid-template-columns:minmax(0,1fr) minmax(760px,50vw); } }
+@media(max-width:1199px) {
+  .game-shell { height:auto; min-height:100dvh; overflow:visible; grid-template-rows:auto auto auto auto 1fr; }
+  .game-shell .game-layout { display:block; padding:0 16px 24px; }.game-shell .control-panel { height:auto; min-height:0; overflow:visible; padding:26px 22px 150px; }
+  .shift-banner { position:sticky; top:0; z-index:18; }
+  .workspace-tabs { display:flex; gap:12px; padding:12px 16px; position:sticky; top:var(--shift-clock-height,200px); z-index:15; background:#242329; }.workspace-tabs button { flex:1; min-height:54px; font-size:22px; }
+  .game-shell[data-workspace=project] .playable-office,.game-shell[data-workspace=office] .control-panel { display:none; }.game-shell[data-workspace=office] .game-layout .playable-office { display:flex; height:auto; padding-bottom:140px; }
+  .game-shell .playable-office .office-room { height:520px; min-height:360px; }.game-shell .game-footer { padding:12px 16px; }.save-status { display:none; }
+  .game-shell .game-topbar { padding:14px 16px; gap:12px; }.game-topbar .project-title { display:none; }.hud-stats { margin-left:auto; }.game-topbar .brand { font-size:28px; }.game-topbar .brand small { font-size:12px; }
+  .shift-banner { grid-template-columns:1fr 1fr 1.15fr; padding:14px 16px; gap:12px; }.shift-auto { grid-column:1/-1; max-width:none; }.shift-auto>span { max-width:none; font-size:20px; }
+  .shift-banner strong { font-size:24px; }.shift-banner span { font-size:18px; }.panel-header h1 { font-size:44px; }
+  .nika-guide { right:16px; bottom:16px; }.control-panel .panel-bottom { margin-bottom:0; }
+}
+@media(max-width:600px) {
+  .nika-story-copy h2 { font-size:36px; overflow-wrap:normal; }.nika-art>.nika-name { max-width:46%; font-size:26px; }.nika-name small { font-size:18px; }.nika-story-actions .primary { max-width:100%; white-space:normal; line-height:1.35; text-align:left; }
+  .game-topbar .brand { font-size:24px; }.game-topbar .brand small { font-size:10px; }.hud-stat { padding:0; border:0; }.hud-stat:first-child>svg { display:none; }.hud-stat:nth-child(2) { display:none; }.hud-stat strong { font-size:24px; }.hud-stat small { font-size:16px; }
+  .game-shell .game-topbar { min-height:80px; gap:8px; }.hud-stats { gap:6px; }.hud-stats .sound-toggle,.game-topbar .icon-btn { min-width:42px; width:42px; height:46px; }
+  .shift-banner { grid-template-columns:1fr 1fr; gap:12px 20px; }.shift-banner>div:nth-child(3) { grid-column:1; }.shift-auto { grid-column:2; display:grid; gap:6px; }.shift-auto .secondary { min-width:0; width:100%; font-size:22px; }.shift-auto>span { font-size:16px; }.shift-banner strong { font-size:24px; }
+  .timeline { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); width:100%; gap:5px; }.timeline-step { font-size:18px; gap:5px; flex-direction:column; min-width:0; }.timeline-step:not(:last-child)::after { display:none; }.timeline-step>span { width:24px; height:24px; font-size:16px; }.game-shell .game-footer { padding:12px 10px; }
+  .workspace-tabs { padding:10px; gap:8px; }.workspace-tabs button { font-size:20px; }.game-shell .game-layout { padding:0 10px 16px; }.game-shell .control-panel { padding:24px 18px 140px; }
+  .panel-header h1,.event-copy h1 { font-size:40px; }.panel-header>p,.event-copy>p { font-size:24px; }.event-option { padding:22px 18px; gap:12px; }.event-option b { font-size:26px; }.event-option small,.option-description { font-size:22px; }.option-number { font-size:18px; }
+  .candidate-grid { grid-template-columns:repeat(2,1fr); }.candidate-art { height:100px; }.candidate b { font-size:24px; }.candidate-price { font-size:18px; }.agent-detail.agent-dossier { padding:20px 18px 0; }.dossier-identity h2 { font-size:40px; }.dossier-offer { margin:0 -18px; padding:20px 18px; }.dossier-offer>strong { font-size:32px; }.dossier-offer small { font-size:18px; }.dossier-offer button { font-size:24px; }
+  .skill-list>div { grid-template-columns:100px 1fr; }.skill-list dt,.skill-list b { font-size:22px; }.dossier-note h3 { font-size:24px; }.agent-dossier .agent-caution { font-size:20px; }.dossier-skills .skill-list dt { text-align:left; font-size:22px; }
+  .plan-toolbar>span { font-size:20px; }.task-body { display:block; }.task-body h2 { font-size:26px; }.plan-task { gap:12px; }.task-select-row select { font-size:22px; }.task-select-row { flex-wrap:wrap; }.fit { font-size:22px; }
+  .work-task { padding:18px; gap:12px; }.work-task h2 { font-size:26px; }.work-task>div>span { font-size:20px; }.work-task>strong { font-size:24px; }.work-task-icon { display:none; }.time-strip { font-size:22px; }
+  .seating-panel { padding:18px; }.seating-panel h2 { font-size:28px; }.seating-card { grid-template-columns:1fr; gap:8px; }.seating-card select { grid-column:1; grid-row:auto; font-size:22px; }
+  .office-heading h2 { font-size:32px; }.office-heading .eyebrow { font-size:18px; }.game-shell .playable-office .office-room { height:480px; }.office-camera-controls { flex-wrap:wrap; max-width:100%; }.office-camera-controls button { width:38px; }
+  .office-room.is-3d .desk-tag b { font-size:20px; }.office-room.is-3d .desk-tag small { font-size:18px; }.office-guidance p { font-size:22px; }.life-team { grid-template-columns:1fr; }.life-person { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px; }.life-person span { font-size:20px; }.life-person b { font-size:24px; }.life-console-heading small { font-size:18px; }
+  .nika-guide { max-height:calc(100dvh - 32px); }.nika-guide:not(.nika-collapsed) { bottom:16px; right:16px; }.nika-guide-head { padding:18px; gap:10px; }.nika-guide-head .nika-avatar { width:56px; height:56px; }.nika-guide-head b { font-size:24px; }.nika-guide-head span { font-size:16px; }.nika-guide-copy h2 { font-size:28px; }.nika-guide-copy p { font-size:22px; }
+  #info-dialog { padding:26px 20px; }#info-dialog h2 { font-size:34px; }.life-stats { grid-template-columns:1fr; }.life-result { grid-template-columns:1fr; }.life-result>p { grid-column:auto; }.life-result button { font-size:22px; }
+  .result-metrics { grid-template-columns:1fr 1fr; }.result-metrics small { min-height:0; font-size:20px; }.result-metrics b { font-size:28px; }.game-preview { flex-wrap:wrap; }.game-preview>span>b { font-size:36px; }.game-preview>span>span { font-size:22px; }.game-preview small { font-size:18px; }
+}
+@media(prefers-reduced-motion:reduce) { .nika-attention .nika-toggle,.nika-attention .nika-toggle::before { animation:none; }.nika-idle-invitation { transition:none; } }

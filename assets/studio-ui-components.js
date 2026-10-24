@@ -12,7 +12,7 @@ export function candidatePicker(agents, selected, team, {portrait, icon, money, 
 }
 
 export function agentDossier(a, {hired, canHire, teamCount, budget}, {portrait, icon, money, esc, radar}) {
-  const action = hired ? `${icon('check',18)} В команде · убрать` : teamCount===3 ? 'Команда укомплектована' : budget<a.cost ? 'Не хватает бюджета' : `В команду ${icon('arrow',18)}`;
+  const action = hired ? `${icon('check',18)} В команде · убрать` : teamCount===3 ? 'Команда укомплектована' : budget<a.cost ? 'Не хватает бюджета' : `Нанять и посадить ${icon('arrow',18)}`;
   return `<section class="agent-detail agent-dossier" style="--agent:${a.color}" aria-label="Досье: ${esc(a.name)}">
     <header class="dossier-header"><div class="dossier-portrait">${portrait(a,'dossier-face')}</div>
       <div class="dossier-identity"><span class="dossier-role">${esc(a.role)}</span><h2>${esc(a.name)}</h2></div>

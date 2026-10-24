@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
-import { isWalkable } from './office-layout.js?v=seated-breaks-20261024-v2';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
+import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -198,6 +198,8 @@ export function nextProject(state, contractId) {
 }
 export function validSave(s) {
   return s && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
+    && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
+    && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= 3 && new Set(s.team).size === s.team.length
     && s.team.every(id => !!agentById(id)) && Number.isFinite(s.budget) && s.budget >= 0
     && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === 3
