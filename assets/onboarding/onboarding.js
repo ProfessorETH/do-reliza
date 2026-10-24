@@ -1,4 +1,4 @@
-import { STORY, guideFor } from './onboarding-model.js?v=nika-alina-20261024';
+import { STORY, guideFor } from './onboarding-model.js?v=nika-alina-20261024-v3';
 
 const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
@@ -25,7 +25,8 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
 
   function animateCharacters(key, text, voiceKey = key) {
     if (document.hidden || (!storyDialog.open && (!preferences.enabled || preferences.collapsed))) { stopAnimation(); sound?.stopVoice(); return; }
-    if (lastLine !== key) { lastLine = key; sound?.speak(voiceKey); }
+    const lineKey = `${key}:${voiceKey}`;
+    if (lastLine !== lineKey) { lastLine = lineKey; sound?.speak(voiceKey); }
   }
 
   function finishStory(enabled = true) {

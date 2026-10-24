@@ -1,4 +1,4 @@
-import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=nika-alina-20261024';
+import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=nika-alina-20261024-v3';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
 const CHORDS = [[48,55,59,62],[45,52,55,59],[41,48,52,57],[43,50,53,57]];

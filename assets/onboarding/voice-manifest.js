@@ -14,5 +14,6 @@ export const VOICE_ASSETS = {
   "guide-team-care": "audio/guide-team-care-alina.mp3",
   "guide-event": "audio/guide-event-alina.mp3",
   "guide-team-event": "audio/guide-team-event-alina.mp3",
-  "guide-studio-result": "audio/guide-studio-result-alina.mp3"
+  "guide-studio-result": "audio/guide-studio-result-alina.mp3",
+  "guide-rest-travel": "audio/guide-rest-travel-alina.mp3"
 };
