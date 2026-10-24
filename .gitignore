@@ -1,6 +1,8 @@
 # Local previews, screenshots, archives and transient logs
 /work/
 /outputs/
+/dist/
+/.playwright-mcp/
 *.log
 node_modules/
 .DS_Store
