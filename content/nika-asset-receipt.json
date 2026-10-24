@@ -19,7 +19,7 @@
   ],
   "exports": [
     {
-      "file": "assets/nika-expressions.webp",
+      "file": "assets/onboarding/nika-expressions.webp",
       "size": [
         960,
         960
@@ -30,7 +30,7 @@
       "conversion": "Pillow LANCZOS resize, WebP quality 85 method 6, alpha preserved"
     },
     {
-      "file": "assets/nika-avatar.webp",
+      "file": "assets/onboarding/nika-avatar.webp",
       "size": [
         96,
         96

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, hire, seatAgent, beginPlan, recommend, beginWork, tick, restoreOffice } from '../engine.js';
-import { guideFor, STORY } from '../onboarding-model.js';
+import { guideFor, STORY } from '../assets/onboarding/onboarding-model.js';
 
 test('guidance follows real hiring, seating and assignment prerequisites without changing the game', () => {
   const game = createGame('calm');

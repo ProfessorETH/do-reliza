@@ -1,4 +1,4 @@
-import { createOnboarding } from './onboarding.js?v=1';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=1';
 import { WAITING } from './office-layout.js';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js';
 import { renderOffice } from './office.js';

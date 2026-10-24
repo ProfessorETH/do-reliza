@@ -1,6 +1,6 @@
 import { STORY, guideFor } from './onboarding-model.js';
 
-const AVATAR = new URL('./assets/nika-avatar.webp', import.meta.url).href;
+const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 const character = expression => `<span class="nika-character" data-expression="${expression}" role="img" aria-label="Ника, помощница студии"></span>`;
 
