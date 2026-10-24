@@ -1,4 +1,5 @@
 import { DIFFICULTIES } from '../data.js';
+import { assetURL } from '../asset-url.js';
 import { graphicsSettingsHTML } from './office-runtime.js?v=seated-breaks-20261024-v2';
 
 export const DIFFICULTY_OPTIONS = [
@@ -21,7 +22,7 @@ export function renderStartScreen({ difficulty, saved, demo, logo, icon, money, 
       <p class="start-lead">Три пустых стола. Один шанс начать заново.<br>И первая игра, которую ждут уже завтра.</p>
       <p class="start-role">Ты — <b>основатель студии и её тимлид</b>. Найми команду, помоги ей выпустить «Орбиту», затем развивай офис и бери новые заказы.</p>
       <section class="start-audio" aria-labelledby="start-audio-title">
-        <img src="assets/onboarding/nika-avatar.webp" alt="" width="48" height="48">
+        <img src="${assetURL('onboarding/nika-avatar.webp')}" alt="" width="48" height="48">
         <div class="start-audio-copy"><h2 id="start-audio-title">${audioReady?'Звук включён. Ника на связи!':'Включи звук, чтобы услышать Нику'}</h2><p>Голосовая помощница объяснит правила и поможет освоиться.</p></div>
         <button class="start-audio-button" data-action="start-sound">${icon('sound',18)} ${audioReady?'Послушать ещё раз':'Включить и послушать'}</button>
         <p class="start-audio-note" role="status">${audioReady?'Проверь громкость на устройстве. Звук можно выключить кнопкой сверху.':'Приготовь наушники или включи динамики.'}</p>
