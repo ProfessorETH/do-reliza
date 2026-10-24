@@ -22,7 +22,7 @@ function finish(s,scope='focus',bug='fix',review='review-fix') {
 test('hiring respects budget, headcount and refunds',()=>{
   const s=createGame();hire(s,'mira');hire(s,'nord');
   assert.match(hire(s,'saga'),/бюджета/);assert.equal(s.budget,7000);
-  hire(s,'echo');assert.match(hire(s,'pixel'),/три места/);
+  hire(s,'echo');assert.match(hire(s,'pixel'),/места заняты/);
   hire(s,'mira');assert.equal(s.budget,12000);assert.equal(s.team.length,2);
   assert.equal(beginPlan(s),false);
 });

@@ -1,3 +1,4 @@
+import { studioCapacity } from './assets/studio-progression.js';
 import { validEventClock } from './assets/event-clock.js';
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
@@ -27,22 +28,22 @@ export function hire(state, id) {
     Object.keys(state.assignments).forEach(k => { if (state.assignments[k] === id) delete state.assignments[k]; });
     return null;
   }
-  if (state.team.length >= 3) return 'В студии три места. Сначала освободите одно.';
+  if (state.team.length >= studioCapacity(state)) return 'Все рабочие места заняты. Купи расширение офиса или освободи место.';
   if (state.budget < a.cost) return 'Не хватает бюджета. Попробуйте другую комбинацию.';
   state.team.push(id); state.budget -= a.cost; return null;
 }
 // Saves from checkpoint 01 had no office layout. Keep their project progress.
 export function restoreOffice(state) {
-  if (!state.seats) state.seats = Array.from({ length: 3 }, (_, i) => state.stage === 'hire' ? null : state.team[i] || null);
+  if (!state.seats) state.seats = Array.from({ length: studioCapacity(state) }, (_, i) => state.stage === 'hire' ? null : state.team[i] || null);
   if (!state.officeTargets) state.officeTargets = {};
   ensureLife(state);
   if (state.stage === 'result') settleProject(state, getResult(state));
   return state;
 }
-export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
+export const teamSeated = state => state.team.length >= 3 && state.team.length <= studioCapacity(state) && state.team.every(id => state.seats?.includes(id));
 export function seatAgent(state, agentId, index) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Пересадить команду можно до начала смены.';
-  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери разработчика из команды и рабочее место.';
+  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index >= studioCapacity(state)) return 'Выбери разработчика из команды и рабочее место.';
   const previous = state.seats.indexOf(agentId), occupant = state.seats[index];
   if (previous === index) return null;
   if (previous >= 0) state.seats[previous] = occupant;
@@ -53,9 +54,9 @@ export function seatAgent(state, agentId, index) {
 export function walkInOffice(state, agentId, point) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Во время смены команда занята задачами.';
   if (!state.team.includes(agentId)) return 'Сначала выбери разработчика из команды.';
-  if (!isWalkable(point)) return 'Там мебель или край комнаты. Выбери свободный участок пола.';
+  if (!isWalkable(point, undefined, studioCapacity(state))) return 'Там мебель или край комнаты. Выбери свободный участок пола.';
   const target = point.map(n => Math.round(n * 10000) / 10000);
-  if (!isWalkable(target)) return 'Слишком близко к мебели. Выбери точку чуть дальше.';
+  if (!isWalkable(target, undefined, studioCapacity(state))) return 'Слишком близко к мебели. Выбери точку чуть дальше.';
   state.seats = state.seats.map(id => id === agentId ? null : id);
   state.officeTargets[agentId] = target;
   return null;
@@ -172,7 +173,7 @@ export function getResult(state) {
 export const totalProgress = s => Math.round(Object.values(s.progress).reduce((a, b) => a + b, 0) / TASKS.length);
 export function nextProject(state, contractId) {
   if (state.stage !== 'result') return 'Сначала заверши текущий заказ.';
-  const contract = CONTRACTS.find(c => c.id === contractId && c.id !== 'festival');
+  const contract = CONTRACTS.find(c => c.id === contractId);
   if (!contract) return 'Выбери следующий заказ.';
   settleProject(state, getResult(state));
   const l = ensureLife(state);
@@ -181,17 +182,24 @@ export function nextProject(state, contractId) {
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
   next.budget = next.initialBudget = contract.budget + DIFFICULTIES[state.difficulty].budget - 36000;
   next.deadline = contract.deadline + DIFFICULTIES[state.difficulty].deadline - 16;
+  const departed=[...l.departures], away=departed.slice(0,AGENTS.length-3);
   const fees = team.reduce((sum,id) => sum + agentById(id).cost, 0);
-  if (fees > next.budget) return 'Выбранный состав дороже бюджета заказа. Начни новую команду или выбери другой заказ.';
-  l.cash -= payroll; l.away = [...l.departures]; l.departures = [];
+  const replacements=AGENTS.filter(a=>!team.includes(a.id)&&!away.includes(a.id)).sort((a,b)=>a.cost-b.cost).slice(0,Math.max(0,3-team.length));
+  const minimumFees=fees+replacements.reduce((sum,a)=>sum+a.cost,0);
+  if (next.budget+l.cash-payroll<minimumFees) return 'Не хватает общего бюджета для состава команды (нужно минимум трое). Выбери более оплачиваемый заказ или сохрани часть команды.';
+  const subsidy = Math.max(0, fees - next.budget);
+  if (l.cash < payroll + subsidy) return `Для доплат и расширенного состава нужно ${payroll + subsidy} ₽ в кассе. Выбери другой заказ или не продлевай один из контрактов.`;
+  next.budget += subsidy;
+  l.cash -= payroll + subsidy; l.away = away; l.departures = [];
   next.team = team; next.budget -= fees; next.seats = state.seats.map(id => team.includes(id) ? id : null);
   for (const { id } of AGENTS) {
-    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0;
-    if (l.away.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
+    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0; m.coffee = false;
+    if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
   next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
-  next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽. Команда отдохнула между заказами.`];
+  next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽; поддержка расширенного состава: ${subsidy} ₽. Команда отдохнула между заказами.`];
+  if(departed.length>away.length)next.log.push('Часть ушедших коллег готова обсудить новый контракт сразу: в списке найма всегда доступны минимум три специалиста.');
   if (l.away.length) next.log.push(`Команду покинули: ${l.away.map(id => agentById(id).name).join(', ')}. Найми замену; ушедшие пропустят этот заказ.`);
   // Optional project flags (support, wallBug) must not leak into a new commission.
   for (const key of Object.keys(state)) delete state[key];
@@ -201,14 +209,14 @@ export function validSave(s) {
   return s && (s.orbitRecords===undefined || s.orbitRecords && typeof s.orbitRecords==='object' && !Array.isArray(s.orbitRecords) && Object.entries(s.orbitRecords).every(([key,value])=>['festival','club','cup'].includes(key)&&Number.isSafeInteger(value)&&value>=0)) && validEventClock(s) && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
     && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
     && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
-    && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= 3 && new Set(s.team).size === s.team.length
+    && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= studioCapacity(s) && new Set(s.team).size === s.team.length
     && s.team.every(id => !!agentById(id)) && Number.isFinite(s.budget) && s.budget >= 0
-    && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === 3
+    && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === studioCapacity(s)
       && s.seats.every(id => id === null || s.team.includes(id))
       && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))
     && (['hire','plan'].includes(s.stage) || s.seats === undefined || teamSeated(s))
     && (s.officeTargets === undefined || (s.officeTargets && typeof s.officeTargets === 'object' && !Array.isArray(s.officeTargets)
-      && Object.entries(s.officeTargets).every(([id,p]) => s.team.includes(id) && !s.seats?.includes(id) && isWalkable(p))))
+      && Object.entries(s.officeTargets).every(([id,p]) => s.team.includes(id) && !s.seats?.includes(id) && isWalkable(p, undefined, studioCapacity(s)))))
     && Number.isFinite(s.time) && s.time >= 0 && Number.isFinite(s.deadline) && s.deadline > 0
     && s.progress && TASKS.every(t => Number.isFinite(s.progress[t.id]) && s.progress[t.id] >= 0 && s.progress[t.id] <= 100)
     && s.assignments && Object.values(s.assignments).every(id => s.team.includes(id))

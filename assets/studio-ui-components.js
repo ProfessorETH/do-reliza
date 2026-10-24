@@ -11,8 +11,8 @@ export function candidatePicker(agents, selected, team, {portrait, icon, money, 
   </button>`).join('')}</div>`;
 }
 
-export function agentDossier(a, {hired, canHire, teamCount, budget}, {portrait, icon, money, esc, radar}) {
-  const action = hired ? `${icon('check',18)} В команде · убрать` : teamCount===3 ? 'Команда укомплектована' : budget<a.cost ? 'Не хватает бюджета' : `Нанять и посадить ${icon('arrow',18)}`;
+export function agentDossier(a, {hired, canHire, teamCount, budget, capacity=3}, {portrait, icon, money, esc, radar}) {
+  const action = hired ? `${icon('check',18)} В команде · убрать` : teamCount===capacity ? 'Команда укомплектована' : budget<a.cost ? 'Не хватает бюджета' : `Нанять и посадить ${icon('arrow',18)}`;
   return `<section class="agent-detail agent-dossier" style="--agent:${a.color}" aria-label="Досье: ${esc(a.name)}">
     <header class="dossier-header"><div class="dossier-portrait">${portrait(a,'dossier-face')}</div>
       <div class="dossier-identity"><span class="dossier-role">${esc(a.role)}</span><h2>${esc(a.name)}</h2></div>

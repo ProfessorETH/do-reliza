@@ -1,0 +1,58 @@
+/* The office is a playable surface; management stays one click away. */
+.studio-dock { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.studio-dock button { min-height:44px; padding:9px 14px; border:1px solid #817568; border-radius:10px; background:#39363b; color:#f7e8ce; font:600 16px 'Golos Text',sans-serif; }
+.studio-dock button:hover,.studio-dock button[aria-pressed=true] { background:#526255; border-color:#9dceb1; }
+.actor-actions { position:absolute; z-index:12; width:280px; max-width:calc(100% - 20px); left:50%; top:12px; transform:translateX(-50%); border:1px solid #bba37d; border-radius:16px; background:#292a2df5; color:#f4e7d1; padding:14px; box-shadow:0 14px 40px #0008; font:16px/1.45 'Golos Text',sans-serif; }
+.actor-actions header { display:flex; justify-content:space-between; align-items:center; }
+.actor-actions header b { font-size:21px; }
+.actor-actions header button { width:36px; min-height:36px; border:0; background:transparent; color:inherit; font-size:26px; }
+.actor-actions p { margin:5px 0 12px; font-size:15px; color:#c7d9c8; }
+.actor-actions>div { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.actor-actions>div button { min-height:44px; padding:8px; border:1px solid #74756a; border-radius:8px; background:#42453f; color:inherit; font:600 14px 'Golos Text',sans-serif; }
+.actor-actions button:disabled { opacity:.45; cursor:not-allowed; }
+.actor-actions small { display:block; margin-top:10px; font-size:13px; }
+.object-hotspots button { position:absolute; z-index:6; width:40px; height:40px; transform:translate(-50%,-50%); border-radius:50%; background:#273c37ed; border:1px solid #bdd4b6; color:#f7e8cb; font-size:20px; box-shadow:0 4px 12px #0006; }
+.object-hotspots [data-hotspot=office] { left:15%;top:70%; }.object-hotspots [data-hotspot=coffee] { left:45%;top:25%; }.object-hotspots [data-hotspot=arcade] { left:80%;top:30%; }
+.office-camera-controls { flex-wrap:wrap; max-width:calc(100% - 24px); }
+.office-camera-controls button { min-width:36px; min-height:36px; }
+.camera-advanced { position:relative; }
+.camera-advanced summary { min-height:36px; display:flex; align-items:center; padding:0 10px; font:600 14px 'Golos Text',sans-serif; cursor:pointer; }
+.camera-advanced>div { position:absolute; top:42px; right:0; display:grid; grid-template-columns:repeat(3,44px); gap:6px; padding:10px; background:#27383eee; border:1px solid #a6b8aa66; border-radius:10px; }
+.camera-advanced>div button { width:44px; font-size:18px; }.camera-advanced>div button:first-child { grid-column:1/-1; width:auto; font-size:15px; }
+body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed { width:56px; height:56px; right:22px; top:auto; bottom:22px; }
+body:has(.team-hud-layout[data-expanded=true]) .nika-guide.nika-collapsed .nika-toggle { width:56px; height:56px; min-height:56px; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d #office-webgl { inset:0; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-interactions { display:block; position:absolute; inset:0; height:auto; pointer-events:none; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .office-desk { position:absolute; left:var(--desk-x); top:var(--desk-y); transform:translate(-50%,-50%); width:40px; height:40px; min-height:40px; border:1px solid #d8c7aa99; border-radius:50%; background:#293b3ada; pointer-events:auto; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-counter { display:block; position:static; font-size:16px; color:#f5e7d1; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-tag { display:none; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .office-desk:is(:hover,:focus-visible) .desk-tag { display:flex; position:absolute; top:44px; left:50%; transform:translateX(-50%); min-width:130px; width:max-content; height:auto; padding:10px; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-tag b { font-size:16px; }
+.game-shell.team-hud-layout[data-expanded=true] .office-room.is-3d .desk-tag small { font-size:13px; }
+.team-hud-layout .office-room.is-3d .desk-interactions { grid-template-columns:repeat(auto-fit,minmax(60px,1fr)); }
+.game-shell.team-hud-layout[data-expanded=true] .office-render-status { display:block; position:absolute; bottom:8px; top:auto; left:8px; padding:6px 10px; max-width:calc(100% - 16px); background:#1b2b31de; color:#ded6c8; font-size:13px; border-radius:6px; }
+.game-shell.team-hud-layout[data-expanded=true] .shift-banner { display:flex; visibility:visible; position:fixed; inset:8px 8px auto; width:calc(100% - 16px); z-index:32; }
+.game-shell.team-hud-layout[data-expanded=true] .game-layout .playable-office { inset:calc(var(--shift-clock-height,78px) + 16px) 8px 8px; padding:16px; overflow:hidden; }
+.game-shell.team-hud-layout[data-expanded=true] .playable-office .office-room { max-width:none; flex:1 1 auto; min-height:180px; margin:0; }
+.game-shell.team-hud-layout[data-expanded=true] .playable-office :is(.office-roster,.life-console,.office-arrivals,.office-activity,.studio-wallet-row,.office-guidance) { display:none; }
+.game-shell.team-hud-layout[data-expanded=true] .office-heading h2 { font-size:24px; }
+.game-shell.team-hud-layout[data-expanded=true] .office-heading .eyebrow { display:none; }
+.studio-team-picker { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0; }
+.studio-team-picker button { text-align:left; font-size:22px; padding:18px; }
+.studio-team-picker small { display:block; font-size:16px; margin-top:8px; }
+.studio-milestones { display:grid; gap:8px; margin:24px 0; }
+.studio-milestones p { padding:14px 18px; margin:0; border-left:3px solid #807664; background:#ffffff06; }
+.studio-milestones p.unlocked { border-color:#94c8ad; }.studio-milestones span { display:block; font-size:16px; margin-top:6px; }
+.upgrade-lock { color:#e5b578; font-size:16px; }
+.mission-reward { margin:18px 0; padding:20px; border:1px solid #88ba9b; border-radius:14px; background:#2d423b; }
+.mission-reward b { font-size:22px; }.mission-reward p { font-size:17px; }
+.staffing-budget { padding:12px; background:#ffffff08; border-radius:10px; font-size:16px; }.staffing-budget button { display:block; margin-top:8px; font-size:16px; }
+.life-team,.office-roster-slots { grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
+@media(max-width:640px) {
+  .game-shell.team-hud-layout[data-expanded=true] .game-layout .playable-office { padding:8px; }
+  .game-shell.team-hud-layout[data-expanded=true] .office-heading h2 { font-size:18px; }
+  .studio-dock { gap:6px; margin:6px 0; }.studio-dock button { font-size:14px; padding:8px 10px; flex:1 1 auto; }
+  .actor-actions { width:248px; padding:10px; }.actor-actions header b { font-size:18px; }
+  .office-camera-controls button { min-width:32px; min-height:36px; }.office-camera-controls { gap:3px; }
+  .object-hotspots button { width:36px; height:36px; }
+}

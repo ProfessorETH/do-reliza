@@ -1,3 +1,4 @@
+import { studioCapacity } from './studio-progression.js';
 import { AGENTS } from '../data.js';
 import { activeTasks } from '../engine.js?v=shift-ux-20261024-v2';
 import { condition } from './studio-life.js?v=shift-ux-20261024-v2';
@@ -46,8 +47,8 @@ export function renderTeamHUD(game, selected) {
   const states = game.team.map(id => teamMemberState(game,id));
   const focused = states.find(s => s.agent.id===selected) || states[0];
   return `<aside class="team-hud" data-open="${!!selected}" aria-label="Команда студии">
-    <header class="team-hud-heading"><span>Команда</span><b>${states.length}<span>/3</span></b></header>
-    <div class="team-hud-members">${Array.from({length:3},(_,i)=>{
+    <header class="team-hud-heading"><span>Команда</span><b>${states.length}<span>/${studioCapacity(game)}</span></b></header>
+    <div class="team-hud-members">${Array.from({length:studioCapacity(game)},(_,i)=>{
       const s=states[i];
       if(!s)return `<div class="team-hud-vacant"><span aria-hidden="true">＋</span><small>Ждёт коллегу</small></div>`;
       const a=s.agent, active=a.id===focused.agent.id;
