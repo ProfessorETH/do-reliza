@@ -1,3 +1,4 @@
+import { settleCoffeeFallback } from './coffee-trip.js';
 import { positionFallbackFeedback } from './scene-feedback.js';
 // Keep Three.js and GLB downloads out of the lightweight mode and start screen.
 const currentURL = new URL(globalThis.location?.href ?? 'http://localhost/');
@@ -12,6 +13,7 @@ mode = mode === 'lite' ? 'lite' : '3d';
 let runtime, pending, generation = 0, importFailed = false;
 
 function settleFallback(game, callbacks, ticket) {
+  settleCoffeeFallback(game,callbacks.onCoffee);
   queueMicrotask(() => {
     if (ticket !== generation) return;
     callbacks.onBusy(false);

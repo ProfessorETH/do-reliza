@@ -1,3 +1,4 @@
+import { coffeeArrival } from '../assets/coffee-trip.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDemoGame } from '../demo.js';
@@ -22,7 +23,7 @@ test('both conflict participants receive feedback and unrelated employees do not
 });
 test('energy popup uses the delivered coffee amount when the employee is near full energy',()=>{
   const s=createDemoGame(),id=s.team[0];s.stage='work';s.life.upgrades=['coffee'];s.life.members[id].energy=96;
-  const before=captureMembers(s);assert.equal(careFor(s,id,'coffee'),null);
+  const before=captureMembers(s);assert.equal(careFor(s,id,'coffee'),null);coffeeArrival(s,id,'station');coffeeArrival(s,id,'drank');
   assert.equal(memberChanges(s,before).find(x=>x.id===id).changes.find(c=>c.key==='energy').delta,4);
 });
 

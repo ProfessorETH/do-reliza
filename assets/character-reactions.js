@@ -27,7 +27,7 @@ export function inspectionSpots(id,capacity) {
 }
 export function planInspection(game,id,actors) {
   const look=UPGRADE_LOOK[id],spots=inspectionSpots(id,game.seats.length);if(!look)return [];
-  const eligible=actors.filter(a=>!a.visit&&!game.life.members[a.id]?.restTrip&&['seated','idle'].includes(a.state));
+  const eligible=actors.filter(a=>!a.visit&&!game.life.members[a.id]?.restTrip&&!game.life.members[a.id]?.coffeeTrip&&['seated','idle'].includes(a.state));
   eligible.sort((a,b)=>distance(a.point,look)-distance(b.point,look));
   const result=[];
   for(const a of eligible){
