@@ -1,7 +1,7 @@
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
-import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=seated-breaks-20261024-v2';
-import { poseActor } from './office-pose.js?v=skinned-team-20261024';
+import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
+import { poseActor } from './office-pose.js?v=skinned-team-final-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };

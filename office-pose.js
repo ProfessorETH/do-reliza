@@ -1,6 +1,6 @@
 import { updateOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
-import { LOUNGE_SEAT } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { LOUNGE_SEAT } from './office-layout.js?v=shift-ux-20261024-v2';
 
 const { lerp, clamp, smoothstep } = THREE.MathUtils;
 const DOWN = new THREE.Vector3(0, -1, 0);

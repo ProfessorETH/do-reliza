@@ -1,16 +1,18 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=seated-breaks-20261024-v2';
+import { rocks, batteriesFor, canSaveOrbit, freshOrbit, restoreOrbit, moveOrbit } from './assets/orbit.js?v=orbit-2';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=shift-ux-20261024-v2';
+import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
 import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
-import { WAITING } from './office-layout.js?v=seated-breaks-20261024-v2';
-import { createDemoGame } from './demo.js?v=seated-breaks-20261024-v2';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './assets/office-runtime.js?v=seated-breaks-20261024-v2';
-import { renderOffice } from './office.js?v=seated-breaks-20261024-v2';
+import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
+import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './assets/office-runtime.js?v=shift-ux-20261024-v2';
+import { renderOffice } from './office.js?v=shift-ux-20261024-v2';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
-import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=3-workspace';
-import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=seated-breaks-20261024-v2';
-import { nextProject } from './engine.js?v=seated-breaks-20261024-v2';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=seated-breaks-20261024-v2';
+import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
+import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
@@ -22,10 +24,10 @@ let officeSelection = null, officeMoving = false;
 let workspaceView = 'project';
 let soundPreviewed = false;
 let officeExpanded = false;
-let game = null, candidate = 'mira', difficulty = 'calm', automatic = null, saved = null, savingAvailable = true, mini = null;
+let game = null, candidate = 'mira', difficulty = 'calm', saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
 const sound = createSound();
-const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: stopAuto, refresh: render, sound });
+const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: () => {}, refresh: render, sound });
 try { const raw = JSON.parse(localStorage.getItem(SAVE)); if (validSave(raw)) saved = restoreOffice(raw); } catch { /* No usable saved session. */ }
 const money = n => new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 const esc = x => String(x).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -39,6 +41,7 @@ const icon = (name, size = 20) => {
     rocket: '<path d="M9 15 5 19m4-4 6-6m-6 6-4-1 2-6 5-1 3-4 6-1-1 6-4 3-1 5-6 2-1-4z"/><circle cx="16" cy="7" r="1"/>',
     reset: '<path d="M3 10a9 9 0 1 1 1 8M3 4v6h6"/>', sound: '<path d="m4 9 5 0 5-4v14l-5-4H4zm13-1a6 6 0 0 1 0 8"/>',
     brief: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v4H9zm0 9h6m-6 4h4"/>',
+    shield: '<path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/>',
     flag: '<path d="M5 22V3m0 1h14l-3 5 3 5H5"/>',
   }[name] || '<circle cx="12" cy="12" r="7"/>';
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
@@ -53,11 +56,35 @@ function persist() {
 }
 let toastTimeout;
 function toast(message) { const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('visible'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => el.classList.remove('visible'), 3400); }
-function stopAuto() { clearInterval(automatic); automatic = null; }
+function stopAuto() { if(game) game.autoPlay = false; }
+function clockBlocked() { return document.hidden || !!document.querySelector('dialog[open],.nika-guide:not(.nika-collapsed)') || restInTransit(game); }
+function clockStatus() {
+  if(game.stage==='result')return 'Смена завершена';
+  if(!game.autoPlay)return 'Авто выключено';
+  if(game.stage==='event')return 'Авто ждёт твоего решения';
+  if(game.stage!=='work')return 'Авто начнётся со сменой';
+  if(document.querySelector('dialog[open],.nika-guide:not(.nika-collapsed)'))return 'Авто ждёт закрытия окна';
+  if(restInTransit(game))return 'Авто ждёт сотрудника';
+  return 'Авто ведёт смену';
+}
+function updateClock() {
+  if(!game)return;
+  const time=shiftTime(game);
+  for(const [key,value] of Object.entries({...time,status:clockStatus()})){const el=root.querySelector(`[data-clock="${key}"]`);if(el&&el.textContent!==String(value))el.textContent=value;}
+  const height=root.querySelector('.shift-banner')?.getBoundingClientRect().height;
+  if(height&&root.style.getPropertyValue('--shift-clock-height')!==`${height}px`)root.style.setProperty('--shift-clock-height',`${height}px`);
+}
+function shiftBanner() {
+  const time=shiftTime(game);
+  return `<section class="shift-banner" aria-label="Часы смены"><div><span>Сейчас в студии</span><strong data-clock="now">${time.now}</strong></div><div><span>Показ проекта</span><strong data-clock="end">${time.end}</strong></div><div><span>До показа</span><strong data-clock="remaining">${time.remaining}</strong></div><div class="shift-auto"><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!game.autoPlay}" ${game.stage==='result'?'disabled':''}>${icon(game.autoPlay?'pause':'play',20)} ${game.autoPlay?'Пауза':'Авто'}</button><span data-clock="status">${clockStatus()}</span></div></section>`;
+}
+let lastClockFrame=performance.now();
+setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();}},100);
+document.addEventListener('visibilitychange',()=>{lastClockFrame=performance.now();persist();});
+window.addEventListener('pagehide',persist);
 let dialogOrigin = null;
 function showDialog(html) {
   if (!dialog.open) { const trigger = document.activeElement?.closest('[data-action]'); dialogOrigin = trigger ? { action: trigger.dataset.action, id: trigger.dataset.id } : null; }
-  if (automatic) { stopAuto(); render(); }
   sound.stopVoice();
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
   if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus();
@@ -80,14 +107,19 @@ function intro() {
   return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundButton: sound.button(icon), soundEnabled:sound.enabled, soundPreviewed });
 }
 function topbar() {
-  return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div><div class="hud-stat ${game.time>game.deadline?'late':''}">${icon('clock')}<span><small>${game.time>game.deadline?'Задержка':'До показа'}</small><strong>${game.time>game.deadline?'+':''}${Math.abs(game.deadline-game.time)} ч</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
+  return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
 }
 function scene() { return renderOffice(game, officeSelection, officeMoving, lifeSummary(game), officeExpanded); }
+function seatingPanel() {
+  if(!game.team.length)return '';
+  return `<section class="seating-panel" aria-label="Рассадка команды"><div><h2>Кто за каким компьютером?</h2><p>После найма место назначается автоматически. Здесь можно пересадить коллег.</p></div><div class="seating-cards">${game.seats.map((id,index)=>`<label class="seating-card"><b>Компьютер ${index+1}</b><span>${id?`${agentById(id).name} · место назначено`:'Свободное место'}</span><select data-seat="${index}" aria-label="Кто за компьютером ${index+1}"><option value="" disabled ${id?'':'selected'}>Выбрать сотрудника</option>${game.team.map(aid=>`<option value="${aid}" ${id===aid?'selected':''}>${agentById(aid).name}${game.seats.includes(aid)?` · ПК ${game.seats.indexOf(aid)+1}`:' · ждёт места'}</option>`).join('')}</select></label>`).join('')}</div><p class="seating-status" role="status">${officeMoving?'Команда занимает места. Когда все сядут, можно раздать задачи.':teamSeated(game)?'Все места назначены. Можно переходить к задачам.':'Выбери сотрудника для свободного компьютера.'}</p><button class="text-button" data-action="workspace" data-id="office">Посмотреть рассадку в офисе ↗</button></section>`;
+}
 function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<3&&game.budget>=a.cost&&!game.life.away?.includes(a.id));
   const quickTeam = DEMO && game.team.length === 3;
   return `<div class="panel-header"><div class="eyebrow">01 / КОМАНДА</div><h1>${quickTeam?'Твоя команда':'Собери команду'}</h1><p>${quickTeam?'Все трое здесь. Пора составить план.':'Три специалиста для твоей студии.'}</p></div>
     ${candidatePicker(AGENTS,candidate,game.team,{portrait,icon,money,esc})}
+    ${seatingPanel()}
     ${agentDossier(a,{hired,canHire,teamCount:game.team.length,budget:game.budget},{portrait,icon,money,esc,radar})}
     ${game.life.away?.includes(a.id)?'<p class="life-notice">Сотрудник покинул студию и пропускает этот заказ. Выбери другого кандидата.</p>':''}
     <div class="panel-bottom"><div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div><span>${game.team.length===3?(game.budget<1500?'Резерв меньше 1 500 ₽. Исправить ошибку за деньги не получится.':'Состав готов. Деньги в резерве пригодятся на исправления.'):`Выбрано ${game.team.length} из 3. После найма нажми на свободный компьютер.`}</span><button class="primary full" data-action="plan" ${teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving&&teamSeated(game)?'Команда занимает места…':game.team.length===3&&!teamSeated(game)?`Рассади команду · ${game.seats.filter(Boolean).length}/3`: 'Раздать задачи'} ${icon('arrow')}</button></div>`;
@@ -106,7 +138,7 @@ function workPanel() {
   const travelling=restInTransit(game);
   const support=active.reduce((low,t)=>!low||fit(game.assignments[t.id],t)<fit(game.assignments[low.id],low)?t:low,null);
   return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги разработчику с его задачей.</p></div>
-    <div class="work-controls"><button class="primary" data-action="tick" ${travelling?'disabled':''}>${icon('clock',18)} ${travelling?'В пути…':'Следующий час'}</button><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!automatic}">${icon(automatic?'pause':'play',16)} ${automatic?'Пауза':'Авто'}</button></div>
+    <div class="work-controls"><button class="primary" data-action="tick" ${travelling?'disabled':''}>${icon('clock',18)} ${travelling?'В пути…':'Следующий час'}</button></div>
     <div class="time-strip" role="status">Прошло <strong>${game.time} ч</strong><span>${travelling?'Дорога не расходует часы':`План: ${game.deadline} ч`}</span></div>
     <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':'Разработчик занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
     <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div><button class="text-button" data-action="activity">Журнал ↗</button>${game.log.slice(-1).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
@@ -143,14 +175,15 @@ function timeline() {
 }
 let renderedStage = null;
 function render() {
+  const panelScroll=root.querySelector('.control-panel')?.scrollTop||0;
   const focused=document.activeElement;
-  const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task;
+  const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task, oldSeat=focused?.dataset?.seat, oldGuide=focused?.dataset?.guide;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
   if (!game) { detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:eventPanel,result:resultPanel};
   if (stageChanged) { workspaceView = 'project'; officeExpanded = false; }
-  root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
+  root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
@@ -161,8 +194,11 @@ function render() {
     onError:message=>{toast(message);if(game)render();},
   });
   onboarding.sync(game, officeMoving);
+  if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
   if (officeExpanded) root.querySelectorAll('.game-topbar,.game-footer,.workspace-tabs,.control-panel').forEach(el => { el.inert = true; });
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
+  else if(oldSeat!==undefined) root.querySelector(`[data-seat="${oldSeat}"]`)?.focus({preventScroll:true});
+  else if(oldGuide) document.querySelector(`[data-guide="${oldGuide}"]`)?.focus({preventScroll:true});
   else if(oldAction) root.querySelector(`[data-action="${oldAction}"]${oldId?`[data-id="${oldId}"]`:''}`)?.focus({preventScroll:true});
   if(stageChanged){
     if(nextStage==='result')sound.effect('result');
@@ -183,10 +219,10 @@ function officeDeskAction(index) {
     else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми разработчика.');
   }else if(occupant)inspect(occupant);
 }
-function advance() { if(tick(game)){if(game.stage!=='work')stopAuto(); persist();render();} }
+function advance() { if(!game||clockBlocked())return;if(tick(game)){game.clockFraction=0;if(game.stage==='result')stopAuto();persist();render();} }
 function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ СТУДИЯ</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Команда, касса, улучшения и история заказов будут заменены. Для продолжения текущей студии выбери следующий заказ после релиза.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
-function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков и посади каждого за компьютер: выбери персонажа, затем рабочее место. Он дойдёт до него и сядет. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с разработчиком.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
+function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков: каждый сам займёт свободный компьютер. В панели команды можно выбрать, кто за каким компьютером сидит. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час» или на «Авто». Во время обсуждения и открытого окна часы стоят, затем автоход продолжается. Сложную задачу можно разобрать вместе с разработчиком.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
   const a=agentById(id); if(!a)return;
   if(game.stage==='hire'){candidate=id;render();return;}
@@ -200,27 +236,37 @@ function debrief() {
   showDialog(`<div class="eyebrow">РАЗБОР ПРОЕКТА</div><h2 id="dialog-title">Что изменили ваши решения</h2><ul class="debrief-list"><li><b>Подбор и распределение.</b> Среднее соответствие навыков задачам — ${r.quality}%. Самое слабое место: «${weakest.name}» (${fit(game.assignments[weakest.id],weakest)}/100).</li><li><b>Объём.</b> ${game.choices.scope==='focus'?'Вы договорились перенести новую функцию. Это сохранило время и резерв.':game.choices.scope==='shield'?'Добавили щит за 2 000 ₽ и увеличили объём кода. Щит работает в вашей мини-игре.':'Обменяли часть оформления на щит. Дополнительная механика появилась, интерфейс стал проще.'}</li><li><b>Качество.</b> ${game.choices.bug==='fix'?'Вы потратили 2 часа и 1 500 ₽, чтобы исправить сохранение. Теперь мини-игра восстанавливает прогресс.':game.choices.bug==='cut'?'Вы честно сократили функциональность. Мини-игру нужно проходить за одну сессию.':'Вы выпустили известную ошибку. При перезапуске мини-игры прогресс теряется.'}</li><li><b>Проверка кода.</b> ${game.wallBug ? 'Проверка пропущена. В мини-игре корабль проходит сквозь астероиды.' : 'Вы исправили порядок действий: проверка препятствия выполняется до движения.'}</li><li><b>Помощь.</b> ${game.support ? 'Вы провели совместный разбор: разработчик лучше справился с конкретной задачей, но понадобился дополнительный час.' : 'В этой смене команда справлялась без совместного разбора.'}</li><li><b>Срок.</b> ${r.late?`Задержка ${r.late} ч. Резерв времени и параллельная работа помогут в следующей попытке.`:'Команда уложилась в согласованный срок.'}</li></ul><p class="small-muted">Оценка: качество — до 45 баллов; срок — до 25; бюджет — 10; доверие — до 10; отсутствие критического бага — 10. Упрощение визуала снижает оценку на 2,4 балла.</p><button class="primary full" data-action="close-dialog">Вернуться к результату</button>`);
 }
 
-const rocks=new Set(['1,1','3,1','5,1','1,3','3,3','5,3']);
-let batteries=['2,0','4,2','0,4'];
-function freshMini(){return {x:0,y:0,collected:[],shield:game.shield,won:false,moves:0};}
+let miniMessage = '';
+function saveMini() {
+  if(canSaveOrbit(game)){try{localStorage.setItem(MINI,JSON.stringify(mini));}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
+}
 function openMini() {
-  batteries = game.life?.contract === 'club' ? ['1,0','4,4','6,2'] : game.life?.contract === 'cup' ? ['2,4','4,0','6,2'] : ['2,0','4,2','0,4'];
-  mini=freshMini();
-  if(game.checkpoint&&!game.criticalBug){try{const m=JSON.parse(localStorage.getItem(MINI));if(m&&Number.isInteger(m.x)&&Number.isInteger(m.y)&&m.x>=0&&m.x<7&&m.y>=0&&m.y<5&&Array.isArray(m.collected)&&m.collected.every(k=>batteries.includes(k)))mini=m;}catch{}}
+  let stored = null;
+  try { stored = JSON.parse(localStorage.getItem(MINI)); } catch {}
+  mini = restoreOrbit(game, stored);
+  miniMessage = stored && canSaveOrbit(game) && mini.moves === 0 && stored.release !== mini.release
+    ? 'Начат полёт для текущего релиза: старое сохранение не содержит этих решений команды.' : '';
+  saveMini();
   showDialog('<h2 id="dialog-title">Орбита</h2>');renderMini();
 }
 function renderMini() {
-  const full=getResult(game).design>=70;
-  document.querySelector('#dialog-content').innerHTML=`<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button><div class="mini-game ${full?'polished':'simple'}"><div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ</div><h2 id="dialog-title">ОРБИТА <span>0${mini.collected.length} / 03</span></h2><p>${mini.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p><div class="mini-board" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>{const x=i%7,y=Math.floor(i/7),key=`${x},${y}`,ship=mini.x===x&&mini.y===y,rock=rocks.has(key),bat=batteries.includes(key)&&!mini.collected.includes(key),end=x===6&&y===4;return `<button class="tile ${ship?'ship':''} ${rock?'rock':''} ${end?'station':''} ${bat?'battery':''}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${ship?'Корабль':rock?'Астероид':end?'Станция':bat?'Батарея':'Космос'}, ${x+1}, ${y+1}">${ship?icon('rocket',30):rock?'◆':bat?icon('bolt',23):end?icon('flag',24):'<span>·</span>'}</button>`;}).join('')}</div><div class="mini-status"><span>${mini.shield?'◈ Щит готов':game.shield?'Щит израсходован':'Без щита'}</span><span>${game.criticalBug?'Баг сохранения':game.checkpoint?'Автосохранение':'Одна сессия'}</span></div><div class="mini-controls"><button class="secondary" data-action="move" data-dir="left" aria-label="Влево">←</button><div><button class="secondary" data-action="move" data-dir="up" aria-label="Вверх">↑</button><button class="secondary" data-action="move" data-dir="down" aria-label="Вниз">↓</button></div><button class="secondary" data-action="move" data-dir="right" aria-label="Вправо">→</button><p>Стрелки или соседняя клетка.${game.shield?' Щит позволяет один раз пройти через астероид.':''}</p></div>${mini.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}<div class="dialog-actions"><button class="secondary" data-action="reload-mini">${icon('reset',15)} Перезапустить</button><button class="primary" data-action="close-dialog">В студию</button></div></div>`;
+  const full=game.choices.scope!=='swap'&&getResult(game).design>=70, batteries=batteriesFor(game);
+  const shieldText = mini.shield ? 'Щит активен · 1 / 1' : game.shield ? 'Щит израсходован · 0 / 1' : 'Без щита · отложен командой';
+  const shieldReason = game.choices.scope === 'swap' ? 'Команда заменила часть оформления на защиту.' : game.shield ? 'Команда добавила защиту за 2 000 ₽.' : 'Команда сохранила основной объём релиза.';
+  document.querySelector('#dialog-content').innerHTML=`<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button><div class="mini-game ${full?'polished':'simple'}"><div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ</div><h2 id="dialog-title">ОРБИТА <span>0${mini.collected.length} / 03</span></h2><p>${mini.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p>
+    <div class="orbit-shield ${mini.shield?'charged':''}">${icon('shield',32)}<div><strong>${shieldText}</strong><span>${shieldReason} ${game.shield?'Щит автоматически защищает при одном столкновении.':''}</span></div></div>
+    <div class="mini-board" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>{const x=i%7,y=Math.floor(i/7),key=`${x},${y}`,ship=mini.x===x&&mini.y===y,rock=rocks.has(key),bat=batteries.includes(key)&&!mini.collected.includes(key),end=x===6&&y===4;return `<button class="tile ${ship?'ship':''} ${ship&&mini.shield?'shielded':''} ${rock?'rock':''} ${end?'station':''} ${bat?'battery':''}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${ship?(mini.shield?'Корабль под щитом':'Корабль'):rock?'Астероид':end?'Станция':bat?'Батарея':'Космос'}, ${x+1}, ${y+1}">${ship?icon('rocket',30):rock?'◆':bat?icon('bolt',23):end?icon('flag',24):'<span>·</span>'}${ship&&mini.shield?'<span class="orbit-shield-ring" aria-hidden="true"></span>':''}</button>`;}).join('')}</div>
+    <div class="orbit-feedback" role="status">${miniMessage||'Корабль готов. Выбери направление.'}</div>
+    <div class="mini-status"><span>${game.criticalBug?'Баг сохранения: полёт теряется при открытии':game.checkpoint?'Автосохранение полёта работает':'Одна сессия: сохранение убрано из релиза'}</span><span>${game.wallBug?'Ошибка: корабль проходит сквозь астероиды':'Проверка движения исправлена'}</span><span>${game.choices.scope==='swap'?'Оформление упрощено ради щита':full?'Оформление команды: полная версия':'Оформление команды: базовая версия'}</span></div>
+    <div class="mini-controls"><button class="secondary" data-action="move" data-dir="left" aria-label="Влево">←</button><div><button class="secondary" data-action="move" data-dir="up" aria-label="Вверх">↑</button><button class="secondary" data-action="move" data-dir="down" aria-label="Вниз">↓</button></div><button class="secondary" data-action="move" data-dir="right" aria-label="Вправо">→</button><p>Стрелки или соседняя клетка.</p></div>${mini.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}<div class="dialog-actions"><button class="secondary" data-action="reload-mini">${icon('reset',15)} Проверить сохранение</button><button class="secondary" data-action="fresh-mini">Новый полёт</button><button class="primary" data-action="close-dialog">В студию</button></div></div>`;
 }
 function moveMini(dx,dy) {
-  if(!mini||mini.won||Math.abs(dx)+Math.abs(dy)!==1)return;
-  const x=mini.x+dx,y=mini.y+dy,key=`${x},${y}`;if(x<0||x>6||y<0||y>4)return;
-  if(rocks.has(key)&&!game.wallBug){if(!mini.shield){toast('Астероид. Найди обходной маршрут.');return;} mini.shield=false;}
-  mini.x=x;mini.y=y;mini.moves++;if(batteries.includes(key)&&!mini.collected.includes(key))mini.collected.push(key);
-  if(x===6&&y===4){if(mini.collected.length===3)mini.won=true;else toast('Для станции нужны все три батареи.');}
-  if(game.checkpoint&&!game.criticalBug){try{localStorage.setItem(MINI,JSON.stringify(mini));}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
-  renderMini();
+  if(!mini)return;
+  const focus=document.activeElement?.closest('[data-action]');
+  const selector=focus?.dataset.action==='move'?`[data-action="move"][data-dir="${focus.dataset.dir}"]`:'.tile.ship';
+  miniMessage=moveOrbit(game,mini,dx,dy);
+  saveMini();renderMini();
+  dialog.querySelector(selector)?.focus({preventScroll:true});
 }
 document.addEventListener('keydown',e=>{
   if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
@@ -235,6 +281,7 @@ document.addEventListener('keydown',e=>{
   if(dialog.open&&document.querySelector('.mini-board')){const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();moveMini(...d);}}
 });
 document.addEventListener('change',e=>{
+  if(e.target.dataset.seat!==undefined&&game){const error=seatAgent(game,e.target.value,Number(e.target.dataset.seat));if(error)toast(error);else{officeSelection=e.target.value;persist();render();toast(`${agentById(officeSelection).name}: компьютер ${Number(e.target.dataset.seat)+1}.`);}return;}
   if(e.target.name==='difficulty'){difficulty=e.target.value;render();root.querySelector(`[name="difficulty"][value="${difficulty}"]`)?.focus({preventScroll:true});}
   if(e.target.dataset.task&&game){assign(game,e.target.dataset.task,e.target.value);persist();render();}
 });
@@ -294,14 +341,14 @@ document.addEventListener('click',e=>{
     const error=nextProject(game,id);if(error)toast(error);else{dialog.close();stopAuto();resetOfficeWorld();officeMoving=false;officeSelection=null;mini=null;try{localStorage.removeItem(MINI);}catch{}persist();render();}return;
   }
   if(action==='candidate'){candidate=id;render();}
-  if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;if(officeSelection)workspaceView='office';persist();render();if(officeSelection)toast(`${agentById(id).name} в студии. Выбери компьютер в офисе.`);}}
+  if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;if(officeSelection){const free=game.seats.indexOf(null);if(free>=0)seatAgent(game,id,free);}persist();render();if(officeSelection)toast(`${agentById(id).name} идёт за компьютер ${game.seats.indexOf(id)+1}.`);}}
   if(action==='plan'){if(!officeMoving&&beginPlan(game)){officeSelection=null;persist();render();}}
   if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один разработчик не может делать код и экран одновременно.');}
   if(action==='back-hire'){game.stage='hire';persist();render();}
   if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
   if(action==='tick')advance();
-  if(action==='support'){if(dialog.open)dialog.close();stopAuto();const error=supportTask(game,id);if(error)toast(error);else{persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');}}
-  if(action==='auto'){if(automatic)stopAuto();else automatic=setInterval(advance,1600);render();}
+  if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');}}
+  if(action==='auto'){game.autoPlay=!game.autoPlay;persist();render();}
   if(action==='decision'){const error=resolveEvent(game,id);if(error)toast(error);else{persist();render();}}
   if(action==='office-select'){officeSelection=officeSelection===id?null:id;render();}
   if(action==='office-walk')officeWalk(WAITING[game.team.indexOf(officeSelection)]);
@@ -315,12 +362,12 @@ document.addEventListener('click',e=>{
   if(action==='play-mini')openMini();
   if(action==='tile')moveMini(Number(el.dataset.x)-mini.x,Number(el.dataset.y)-mini.y);
   if(action==='move'){const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[el.dataset.dir];moveMini(...d);}
+  if(action==='fresh-mini'){mini=freshOrbit(game);miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();return;}
   if(action==='reload-mini'){openMini();toast(game.criticalBug?'Прогресс потерян: известный баг попал в релиз.':game.checkpoint?'Прогресс восстановлен из сохранения.':'Короткая сессия началась заново — как согласовано с заказчиком.');}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
-  if(action==='menu'){stopAuto();render();showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
-  if(action==='home'){dialog.close();stopAuto();persist();game=null;render();}
+  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
+  if(action==='home'){dialog.close();persist();game=null;render();}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&automatic){stopAuto();render();}});
 let demoArrival = false;
 if (DEMO) {
   demoArrival = !saved; game = saved ? structuredClone(saved) : createDemoGame();

@@ -1,5 +1,5 @@
 import { Vector3, MathUtils } from '../vendor/three/three.module.js';
-import { LOUNGE_SEAT } from '../office-layout.js?v=seated-breaks-20261024-v2';
+import { LOUNGE_SEAT } from '../office-layout.js?v=shift-ux-20261024-v2';
 
 // Compress the existing Blender upholstery, including both cloth layers. All
 // geometry is cloned before deformation; cached GLBs and floor bounds stay put.
