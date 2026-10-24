@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "reference": "../references/iskra-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/iskra-head-20261024-a",
+  "steps": 40,
+  "latent_tokens": 4096,
+  "octree": 512,
+  "method": "Same validated local Hunyuan3D2.1 head-only reconstruction as Mira; distinct portrait and seed",
+  "resource_authorization": "Secondary always allowed per human2026-10-22; no foreign interrupt/unload",
+  "prompt_id": "592341e6-34e7-40f5-9d97-d8d986a4b67f",
+  "raw_file": "raw/592341e6_000.glb",
+  "raw_bytes": 130608760,
+  "raw_sha256": "0e754692e598dc842b66552d1f8b3293c34b2fc540b664f289941e976129c380",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "982b5bc8718518d4b99f1c0b9afdc1cc21827f3a612a337f8f002b55bf55dbb3",
+  "workflow_sha256": "10480e5b2a285d2ceca79cd41f6d2ea88a03f93cfb74517911538a5fe4083d8e"
+}

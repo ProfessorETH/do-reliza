@@ -1,0 +1,68 @@
+{
+  "status": "completed",
+  "high_source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\nord\\raw\\0a644500_000.glb",
+  "low_source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\nord\\head-final.glb",
+  "high_sha256": "8af4e6c92437947735f9541bd39d7f0ab3e597a8e9e2e672eb4e6bd972697c9a",
+  "low_sha256": "d69958442a62845f6122dcc347a9b943a8f9f229064ba33f0dfe316c342f7466",
+  "blender": "5.2.0 LTS",
+  "method": "Native Blender CPU Cycles selected-to-active tangent normal bake; no generation",
+  "settings": {
+    "size": 1024,
+    "cage_extrusion": 0.008,
+    "max_ray_distance": 0.02,
+    "normal_strength": 0.35,
+    "normal_space": "TANGENT",
+    "green_axis": "+Y",
+    "high_weld": 1e-05,
+    "high_smooth_factor": 0.16,
+    "high_smooth_iterations": 2,
+    "samples": 1,
+    "cpu_threads": 12
+  },
+  "stages_seconds": {
+    "prepare_high": 38.44,
+    "bake": 2.598
+  },
+  "elapsed_seconds": 52.068,
+  "original_high_vertices": 6633760,
+  "original_high_triangles": 3316880,
+  "prepared_high_vertices": 1657874,
+  "prepared_high_triangles": 3316880,
+  "low_geometry": {
+    "positions_sha256": "f3a038d7a15b8e5b90653deb4f9aeada424b972de2b31b6a8b53120dd609f5c6",
+    "uv_sha256": "2a9b64a4876227bb1a1d047b418802784915a5dad94c993248db56ac91e9205d",
+    "vertices": 45817,
+    "loops": 177813,
+    "triangles": 59271
+  },
+  "albedo_pixels_sha256": "20d72c7878d126ba6e8d393efb35137e665c7652a7335feb75f3c023af36e972",
+  "albedo_jpeg_sha256": "008d6a4638fbe164f61d63e47b7d9d9a520c5c7883992af0b67e584073459922",
+  "normal_statistics": {
+    "evaluated_pixels": 1048576,
+    "total_pixels": 1048576,
+    "alpha_is_not_uv_coverage": true,
+    "rgb_mean": [
+      0.49996086955070496,
+      0.5009352564811707,
+      0.9649091362953186
+    ],
+    "rgb_std": [
+      0.1019086241722107,
+      0.11613968014717102,
+      0.06906792521476746
+    ],
+    "vector_length_mean": 0.9853286743164062,
+    "negative_z_fraction": 0.0047855377197265625,
+    "invalid_vector_fraction": 0.008933067321777344
+  },
+  "normal_texture_scale_exported": 0.3499999940395355,
+  "albedo_payload_restored_after_export": false,
+  "low_geometry_preserved": true,
+  "low_uvs_preserved": true,
+  "albedo_preserved_verbatim": true,
+  "output_bytes": 5997704,
+  "blend_bytes": 6297076,
+  "output_sha256": "f117780f27f57c9eedb6c47afc05228125aaaca9e84c6911258d8857eabe6722",
+  "normal_png_sha256": "18a5056f7098b198088b4c01cb7417815868f5d659cd5b6c22bdc5aaf105ecd3",
+  "low_source_changed_during_bake": false
+}

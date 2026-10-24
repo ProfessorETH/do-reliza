@@ -12,7 +12,7 @@ const loader = new GLTFLoader(),
   cache = new Map();
 const portraitPreview = new URLSearchParams(location.search).get('portrait') === '4';
 const reviewManifest = portraitPreview ? fetch('portrait-v4/review-manifest.json').then(response=>response.json()) : Promise.resolve(null);
-let faceView = portraitPreview;
+let faceView = true;
 let model,
   mixer,
   skeleton,
@@ -58,7 +58,7 @@ async function load() {
     const manifest=await reviewManifest;
     if(manifest){
       for(const option of person.options)option.disabled=!manifest.models[option.value];
-      const label=document.querySelector('footer p');label.textContent='Предпросмотр новой головы. Тела и анимации взяты из рабочей игры. Сравниваем лицо и волосы с исходным портретом перед обновлением основной версии.';
+      const label=document.querySelector('footer p');label.textContent=manifest.acceptance?'Портретные модели уже в игре. Сравнивай их с исходными портретами, меняй ракурс и проверяй движения.':'Предпросмотр новой головы. Тела и анимации взяты из рабочей игры. Сравниваем лицо и волосы с исходным портретом перед обновлением основной версии.';
       if(!manifest.models[id])throw new Error('Head candidate is not ready');
     }
     if (!cache.has(id))

@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "id": "iskra",
+  "baseSha256": "8f1a92e51e856298221589bf80bbc05b682407ee9393f0ae6bc514fbb36f02f3",
+  "headSha256": "0cee6d536bb7e0b3d2f6676addc947b9b13deb43a190f5136c20ada3ed39a9b7",
+  "outputSha256": "34758c48fbc425cc2461d7138ae32def7a384918113269651b08aee2517cf9b5",
+  "sourceBounds": {
+    "min": [
+      -0.9633780121803284,
+      -0.9398810267448425,
+      -0.8976500034332275
+    ],
+    "max": [
+      0.9552680253982544,
+      0.9484249949455261,
+      0.8911510109901428
+    ]
+  },
+  "alignment": {
+    "scale": 0.2890454925925568,
+    "eyeRatio": 0.4262410612006639,
+    "chinRatio": 0.8,
+    "targetEyeY": 1.599,
+    "targetChinY": 1.395,
+    "neckCutY": 1.4,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0
+  },
+  "headWorldMatrix": [
+    -0.2890454925925568,
+    0,
+    -3.539786373114447e-17,
+    0,
+    0,
+    0.2890454925925568,
+    0,
+    0,
+    3.539786373114447e-17,
+    0,
+    -0.2890454925925568,
+    0,
+    -0.001172077562171848,
+    1.5575071055128644,
+    -0.0009392522360333631,
+    1
+  ],
+  "headBoneWorldMatrix": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1.3849999904632568,
+    0,
+    1
+  ],
+  "removedOldHeadTriangles": [
+    16458
+  ],
+  "originalBinaryBytesPreserved": 2509216,
+  "originalAnimationsPreserved": true,
+  "portraitNode": 60,
+  "originalHeadJoint": 6,
+  "headMeshes": 1,
+  "blink": {
+    "affected": [
+      209,
+      203
+    ],
+    "maxDisplacement": 0.012814558673826899,
+    "settings": {
+      "eyeX": 0.061,
+      "eyeY": 1.599,
+      "radiusX": 0.038,
+      "radiusY": 0.023,
+      "depth": 0.035,
+      "strength": 0.97,
+      "frontLimits": [
+        -0.16919576195493097,
+        -0.1666981185347039
+      ]
+    }
+  },
+  "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained.",
+  "base": "work/portrait-baseline/models/iskra.glb",
+  "head": "art/characters/portrait-v4/iskra/head-detailed.glb",
+  "output": "art/characters/portrait-v4/assembled/iskra.glb"
+}

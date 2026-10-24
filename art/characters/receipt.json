@@ -1,14 +1,20 @@
 {
   "date": "2026-10-24",
-  "method": "Shared existing Hunyuan Mira jeans scan; Blender-authored continuous sweater/sleeves, hands, shoes, head and hair; UV-baked existing portrait atlas; weighted 25-bone armatures and five portable clips. Runtime IK retargets office controls onto the deform bones.",
+  "method": "Six individual local Hunyuan3D2.1 head reconstructions; 6-view local Paint; measured three-point frontal identity bake; high-to-low tangent normals; rigid Head-bone attachment. Existing Blender bodies, 25-bone binds and five animation sample buffers preserved.",
   "blender": "5.2.0 LTS",
-  "newDiffusionJobs": 0,
+  "newDiffusionJobs": 12,
+  "generationStages": {
+    "shape": 6,
+    "paint": 6,
+    "headReferenceStillImages": 6
+  },
+  "portraitPipeline": "art/characters/portrait-v4/README.md",
   "videoGeneration": false,
-  "faceBake": "Blender CPU EMIT, 1024px per character",
+  "faceBake": "Blender CPU EMIT, 2048px albedo; 1024px RGB tangent normal",
   "source": {
-    "file": "art/characters/team-rigged-v3.blend",
-    "bytes": 12223277,
-    "sha256": "e08324edc642573cb3c20d54a0865cd749377daa79eae7104bafa924411dcccf"
+    "file": "art/characters/team-portrait-v4.blend",
+    "bytes": 45461851,
+    "sha256": "375c63a1053eeb50af9a144ce7d21c2286bb70c339cc20f1565879a622d447ef"
   },
   "references": [
     {
@@ -26,8 +32,8 @@
     {
       "id": "mira",
       "file": "assets/models/mira.glb",
-      "bytes": 2785664,
-      "sha256": "31cffb209ea72433f1fbc8d622160e80521f3c0a487f6295de243fd83df20c4b",
+      "bytes": 9002572,
+      "sha256": "f1af17d4f6ea1a250ae8478fd09980364b916a55b66098bb47a044fd4acc4ad0",
       "bones": 25,
       "clips": [
         "Idle",
@@ -36,14 +42,15 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 70524
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 95375
     },
     {
       "id": "pixel",
       "file": "assets/models/pixel.glb",
-      "bytes": 2724928,
-      "sha256": "a04649f2632415c1d6998e51390993ab52efaac13f6d9aad5bb71db3661bd7c3",
+      "bytes": 9120152,
+      "sha256": "755b81a2fe1c2809e2ed269d809340ec6376cc1c01925b788a0697061e76acb9",
       "bones": 25,
       "clips": [
         "Idle",
@@ -52,14 +59,15 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 68916
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 102418
     },
     {
       "id": "nord",
       "file": "assets/models/nord.glb",
-      "bytes": 2534764,
-      "sha256": "cc7c2dc855f7b96a0020f5bd4fcd55a90fa2aa83e759452ecfe7679a97f2d5c7",
+      "bytes": 8775860,
+      "sha256": "7406a9f968e6f1a30f64b69982a5097d23804f24fc5a0b7b1620de59db7fa92d",
       "bones": 25,
       "clips": [
         "Idle",
@@ -68,14 +76,15 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 63878
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 99479
     },
     {
       "id": "iskra",
       "file": "assets/models/iskra.glb",
-      "bytes": 2590588,
-      "sha256": "8f1a92e51e856298221589bf80bbc05b682407ee9393f0ae6bc514fbb36f02f3",
+      "bytes": 9256952,
+      "sha256": "34758c48fbc425cc2461d7138ae32def7a384918113269651b08aee2517cf9b5",
       "bones": 25,
       "clips": [
         "Idle",
@@ -84,14 +93,15 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 65432
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 98872
     },
     {
       "id": "saga",
       "file": "assets/models/saga.glb",
-      "bytes": 2600808,
-      "sha256": "64598102f232783227600c8abb73991299e138594e9ea348ed75ec84b24fb261",
+      "bytes": 9267588,
+      "sha256": "906c9010fd9acb0cc426a4b4fcc71f30b11a60669f94927e5cd84e9c49d9096b",
       "bones": 25,
       "clips": [
         "Idle",
@@ -100,14 +110,15 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 65692
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 97954
     },
     {
       "id": "echo",
       "file": "assets/models/echo.glb",
-      "bytes": 2649836,
-      "sha256": "064b707d6a0b26164413f1fef7581011385041b510aa53844adfd3174ebb8b5e",
+      "bytes": 8834688,
+      "sha256": "488c19df89f056858928c5cc05b0ecf1f0f41adc72cd1b80fc7828c6138b70ac",
       "bones": 25,
       "clips": [
         "Idle",
@@ -116,8 +127,9 @@
         "Stand",
         "Work"
       ],
-      "meshCount": 6,
-      "triangles": 66852
+      "portraitVersion": 4,
+      "meshCount": 4,
+      "triangles": 99210
     }
   ]
 }

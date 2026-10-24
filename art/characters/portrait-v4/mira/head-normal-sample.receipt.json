@@ -1,0 +1,70 @@
+{
+  "status": "completed",
+  "high_source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\С…Р°РєР°С‚РѕРЅ РёРіСЂР°\\art\\characters\\portrait-v4\\mira\\raw\\86914c60_000.glb",
+  "low_source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\С…Р°РєР°С‚РѕРЅ РёРіСЂР°\\art\\characters\\portrait-v4\\mira\\head-final.glb",
+  "high_sha256": "0de5bb2bc4b6c0410b26bf6d11ea422ec3ba8f7ec8b0c56c494cccd9f4b0950c",
+  "low_sha256": "ccb083f40a6e9faf994fc7bcecec8f4b44a776426dfe51a332dd4ef6645ffe06",
+  "blender": "5.2.0 LTS",
+  "method": "Native Blender CPU Cycles selected-to-active tangent normal bake; no generation",
+  "settings": {
+    "size": 2048,
+    "cage_extrusion": 0.008,
+    "max_ray_distance": 0.02,
+    "normal_strength": 0.55,
+    "normal_space": "TANGENT",
+    "green_axis": "+Y",
+    "high_weld": 1e-05,
+    "high_smooth_factor": 0.16,
+    "high_smooth_iterations": 2,
+    "samples": 1,
+    "cpu_threads": 12
+  },
+  "stages_seconds": {
+    "prepare_high": 53.954,
+    "bake": 6.239
+  },
+  "elapsed_seconds": 83.732,
+  "original_high_vertices": 5485256,
+  "original_high_triangles": 2742628,
+  "prepared_high_vertices": 1370935,
+  "prepared_high_triangles": 2742628,
+  "low_geometry": {
+    "positions_sha256": "f77fd00410befe5dd14205f9ba11a1dd0190dea1ca7b18618ef94e413925ab9a",
+    "uv_sha256": "910dadadb0212c7f760e8e9050cf63f3a3b367bd2094ed1191d74047b5d0a0af",
+    "vertices": 47726,
+    "loops": 167019,
+    "triangles": 55673
+  },
+  "albedo_pixels_sha256": "dd6dacdee747681c060cd77603b6774f8eee84efe8053a80fcc2ad10d25eb268",
+  "albedo_jpeg_sha256": "3ce5c6b7830ce322e1cf9b53a9e172f993a797fc0698bace29cf141b6649d9b4",
+  "normal_statistics": {
+    "total_pixels": 4194304,
+    "rgb_mean": [
+      0.5006315112113953,
+      0.5020119547843933,
+      0.9813357591629028
+    ],
+    "rgb_std": [
+      0.0989203080534935,
+      0.11151280999183655,
+      0.0618734210729599
+    ],
+    "vector_length_mean": 0.9909030795097351,
+    "negative_z_fraction": 0.0035359859466552734,
+    "invalid_vector_fraction": 0.004637479782104492,
+    "evaluated_pixels": 4194304,
+    "alpha_is_not_uv_coverage": true
+  },
+  "normal_texture_scale_exported": 0.550000011920929,
+  "albedo_payload_restored_after_export": false,
+  "low_geometry_preserved": true,
+  "low_uvs_preserved": true,
+  "albedo_preserved_verbatim": true,
+  "output_bytes": 12930232,
+  "blend_bytes": 13162818,
+  "output_sha256": "383aed2f43b6fe776d3c6245183bc445a038274ef0bd0e957b7dacfff90a478d",
+  "normal_png_sha256": "82b9625c829a98e49518b835d6582caed966ddf90a20b9d7a73d6a08b2bd38f3",
+  "low_source_changed_during_bake": false,
+  "normal_png_bytes": 9739146,
+  "albedo_jpeg_bytes": 559079
+}
