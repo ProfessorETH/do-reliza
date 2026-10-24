@@ -1,0 +1,16 @@
+# Standalone template. On a shared host, add only this site block to the
+# existing configuration after backing it up; never replace other sites.
+{$GAME_ADDRESS:localhost} {
+	root * "{$GAME_ROOT:/srv/games/do-reliza/current}"
+	encode gzip
+	header {
+		Cache-Control "no-cache"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	@private path_regexp private (^|/)\.
+	respond @private 404
+	file_server {
+		precompressed gzip
+	}
+}

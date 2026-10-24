@@ -183,7 +183,7 @@ class OfficeWorld {
 export function mountOfficeWorld(game, selected, callbacks) {
   const container = document.querySelector('#office-webgl'); if (!container) return;
   try { if (!world) world = new OfficeWorld(callbacks); world.attach(container, game, selected, callbacks); }
-  catch (error) { const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.'; console.warn('Office WebGL:', error.message); }
+  catch (error) { container.parentElement.dataset.officeState = 'fallback'; const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.'; callbacks.onBusy(false); console.warn('Office WebGL:', error.message); }
 }
 export const detachOfficeWorld = () => world?.detach();
 export const resetOfficeWorld = () => world?.reset();
