@@ -1,3 +1,4 @@
+import { positionFallbackFeedback } from './scene-feedback.js';
 // Keep Three.js and GLB downloads out of the lightweight mode and start screen.
 const currentURL = new URL(globalThis.location?.href ?? 'http://localhost/');
 const parameters = currentURL.searchParams;
@@ -42,6 +43,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
     room.querySelector('.office-render-status').textContent = importFailed
       ? '3D недоступно. Можно играть в облегчённом офисе.'
       : 'Облегчённый офис · 3D-модели не загружаются';
+    requestAnimationFrame(()=>positionFallbackFeedback(room));
     settleFallback(game, callbacks, ticket);
     return;
   }
@@ -56,6 +58,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
     if (ticket !== generation || !container.isConnected) return;
     room.dataset.officeState = 'fallback';
     room.querySelector('.office-render-status').textContent = '3D недоступно. Можно играть в облегчённом офисе.';
+    requestAnimationFrame(()=>positionFallbackFeedback(room));
     settleFallback(game, callbacks, ticket);
   });
 }
