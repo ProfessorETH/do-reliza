@@ -143,3 +143,7 @@
   .orbit-shield span,.mini-status { font-size:18px; }
   .orbit-feedback,.mini-game>p,.mini-controls p { font-size:20px; }
 }
+
+/* Keep a usable scene after the clock and larger control text take their space. */
+.game-shell .playable-office .office-room { min-height:360px; }
+.office-room.is-3d #office-webgl { inset:0 0 112px; }
