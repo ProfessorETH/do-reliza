@@ -163,7 +163,7 @@ def body_mesh(ctx):
     remove = [
         v
         for v in bm.verts
-        if v.co.z > 1.365
+        if v.co.z > 0.99
         or v.co.z < 0.145
         or (abs(v.co.x) > 0.21 and v.co.z > 0.98)
         or (abs(v.co.x) > 0.27 and v.co.z > 0.65)
@@ -193,7 +193,13 @@ def body_mesh(ctx):
         v.co.y = -v.co.y
     for v in obj.data.vertices:
         p = v.co
+        if p.z > 1.275:
+            p.x *= 1 - 0.64 * smooth(1.275, 1.365, p.z)
         if ctx["male"]:
+            if 0.97 < p.z < 1.26:
+                p.x *= 1 + 0.30 * smooth(0.97, 1.04, p.z) * (
+                    1 - smooth(1.15, 1.26, p.z)
+                )
             if 0.76 < p.z < 1.04:
                 p.x *= 0.94
             if 1.06 < p.z < 1.28 and abs(p.x) < 0.20:
@@ -233,6 +239,38 @@ def body_mesh(ctx):
     ctx["deform_parts"].append(obj)
 
 
+def sweater_torso(ctx):
+    """Closed garment shell with a shaped waist, shoulders and collar opening."""
+    male = ctx["male"]
+    rings = [
+        (0, 0, 0.97, 0.18 if male else 0.17, 0.105),
+        (0, 0, 1.02, 0.18 if male else 0.155, 0.103),
+        (0, 0, 1.10, 0.185 if male else 0.16, 0.108),
+        (0, 0, 1.18, 0.205 if male else 0.19, 0.116),
+        (0, 0, 1.24, 0.205, 0.107),
+        (0, 0, 1.28, 0.175, 0.087),
+        (0, 0, 1.32, 0.105, 0.064),
+        (0, 0, 1.35, 0.064, 0.056),
+    ]
+    obj = loft(
+        "DR_" + ctx["id"] + "_Sweater",
+        rings,
+        ctx["mats"]["cloth"],
+        col,
+        ctx["root"],
+        48,
+    )
+    hips = obj.vertex_groups.new(name="Skin_" + ctx["id"] + "_Hips")
+    torso = obj.vertex_groups.new(name="Skin_" + ctx["id"] + "_Torso")
+    for vertex in obj.data.vertices:
+        blend = smooth(0.96, 1.08, vertex.co.z)
+        if blend < 1:
+            hips.add([vertex.index], 1 - blend, "REPLACE")
+        if blend > 0:
+            torso.add([vertex.index], blend, "REPLACE")
+    ctx["deform_parts"].append(obj)
+
+
 def sleeves(ctx):
     for sign, label in [(-1, "Left"), (1, "Right")]:
         S = Vector((sign * 0.245, 0, 1.258))
@@ -242,15 +280,15 @@ def sleeves(ctx):
         full = ctx["id"] != "nord"
         end = 0.255 if full else 0.175
         points = [
-            tuple(S + Vector((-sign * 0.040, 0, 0.014))),
-            tuple(S),
-            tuple(S + D * 0.12),
+            tuple(S + Vector((-sign * 0.105, 0, -0.015))),
+            tuple(S + Vector((0, 0, -0.045))),
+            tuple(S + D * 0.12 + Vector((0, 0, -0.020))),
             tuple(E - D * 0.035),
             tuple(E),
             tuple(E + D * 0.04),
             tuple(E + D * end),
         ]
-        radii = [0.055, 0.063, 0.057, 0.050, 0.048, 0.044, 0.034 if full else 0.042]
+        radii = [0.065, 0.063, 0.057, 0.050, 0.048, 0.044, 0.034 if full else 0.042]
         ob = sweep(
             "DR_" + ctx["id"] + "_" + label + "Sleeve",
             points,
@@ -276,23 +314,6 @@ def sleeves(ctx):
                 if w > 0.0001:
                     groups[n].add([v.index], w, "REPLACE")
         ctx["deform_parts"].append(ob)
-        shoulder = oval(
-            "DR_" + ctx["id"] + "_" + label + "Deltoid",
-            (sign * 0.228, 0, 1.258),
-            (0.069, 0.065, 0.075),
-            ctx["mats"]["cloth"],
-            col,
-            ctx["root"],
-            24,
-            16,
-        )
-        vg = shoulder.vertex_groups.new(name="Skin_" + ctx["id"] + "_Torso")
-        vg.add(list(range(len(shoulder.data.vertices))), 0.65, "REPLACE")
-        vg = shoulder.vertex_groups.new(
-            name="Skin_" + ctx["id"] + "_" + label + "UpperArm"
-        )
-        vg.add(list(range(len(shoulder.data.vertices))), 0.35, "REPLACE")
-        ctx["deform_parts"].append(shoulder)
         fore = sweep(
             "DR_" + ctx["id"] + "_" + label + "ForearmSkin",
             [
@@ -521,6 +542,59 @@ def accessories(ctx):
         rigid_weight(obj, "Torso", ctx)
 
 
+def unify_clothing(ctx):
+    """Join overlapping scan/arm surfaces into one continuous deforming garment."""
+    from mathutils.kdtree import KDTree
+
+    pants = ctx["deform_parts"][0]
+    parts = ctx["deform_parts"][1:]
+    bpy.ops.object.select_all(action="DESELECT")
+    for part in parts:
+        part.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    obj = bpy.context.object
+    vertices = KDTree(len(obj.data.vertices))
+    names = [group.name for group in obj.vertex_groups]
+    source_weights = []
+    for vertex in obj.data.vertices:
+        vertices.insert(vertex.co, vertex.index)
+        source_weights.append([(group.group, group.weight) for group in vertex.groups])
+    vertices.balance()
+    faces = KDTree(len(obj.data.polygons))
+    materials = []
+    for face in obj.data.polygons:
+        faces.insert(face.center, face.index)
+        materials.append(face.material_index)
+    faces.balance()
+    remesh = obj.modifiers.new("ContinuousGarment", "REMESH")
+    remesh.mode = "VOXEL"
+    remesh.voxel_size = 0.009
+    remesh.use_smooth_shade = True
+    bpy.ops.object.modifier_apply(modifier=remesh.name)
+    relax = obj.modifiers.new("ClothRelax", "SMOOTH")
+    relax.factor = 0.45
+    relax.iterations = 3
+    bpy.ops.object.modifier_apply(modifier=relax.name)
+    obj.vertex_groups.clear()
+    groups = [obj.vertex_groups.new(name=name) for name in names]
+    for vertex in obj.data.vertices:
+        blend = {}
+        for _, index, distance in vertices.find_n(vertex.co, 4):
+            factor = 1 / max(0.00001, distance) ** 2
+            for index, weight in source_weights[index]:
+                blend[index] = blend.get(index, 0) + factor * weight
+        strongest = sorted(blend.items(), key=lambda item: item[1], reverse=True)[:4]
+        total = sum(weight for _, weight in strongest)
+        for index, weight in strongest:
+            groups[index].add([vertex.index], weight / total, "REPLACE")
+    for face in obj.data.polygons:
+        _, index, _ = faces.find(face.center)
+        face.material_index = materials[index]
+        face.use_smooth = True
+    ctx["deform_parts"] = [pants, obj]
+
+
 def vertex_tint_and_join(objects, parent, name):
     # Baked palette in COLOR_0: no image requests, one draw surface per object.
     for obj in objects:
@@ -576,7 +650,9 @@ for person in PEOPLE:
     }
     create_rig(ctx)
     body_mesh(ctx)
+    sweater_torso(ctx)
     sleeves(ctx)
+    unify_clothing(ctx)
     neck = loft(
         "DR_" + ctx["id"] + "_Neck",
         [

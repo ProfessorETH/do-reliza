@@ -2,8 +2,8 @@
   "characters": [
     {
       "id": "mira",
-      "bytes": 2163224,
-      "sha256": "a8c4754ed1de69e37686da9afd7a8feb763f37049cd5f8deac22d788171fd2c9",
+      "bytes": 2784420,
+      "sha256": "2313c386fa9f012408827f59fbe862756dd1df408e89a9a782df733f0cf1a775",
       "bones": 25,
       "clips": [
         "Idle",
@@ -17,8 +17,8 @@
     },
     {
       "id": "pixel",
-      "bytes": 2090636,
-      "sha256": "76884679171ef46066e523a88cabc0b26e015fe42262b88935fcf73ddbd52ecc",
+      "bytes": 2723684,
+      "sha256": "8846a0cd4f98569854258d3d5826f67a33b8a3bf9f4d8cc8492e217f4c447c0e",
       "bones": 25,
       "clips": [
         "Idle",
@@ -32,8 +32,8 @@
     },
     {
       "id": "nord",
-      "bytes": 1905480,
-      "sha256": "472f6240343b017037691abe4f282cf438eb3fd9f78427e1222cca5f63f9edcf",
+      "bytes": 2533520,
+      "sha256": "bf5748b5be2f306ece3c7a8c1007bb322b503af40cc5171cf106ae5cd5016d2d",
       "bones": 25,
       "clips": [
         "Idle",
@@ -47,8 +47,8 @@
     },
     {
       "id": "iskra",
-      "bytes": 1968152,
-      "sha256": "5ee4cd63143de023a4f224794b088cecf6518dda7bb4391b5fa787ae051c0a7c",
+      "bytes": 2589344,
+      "sha256": "7a51597221247add6279af059cf08184bff4d4c265099467bdec074246a44121",
       "bones": 25,
       "clips": [
         "Idle",
@@ -62,8 +62,8 @@
     },
     {
       "id": "saga",
-      "bytes": 1978368,
-      "sha256": "83140869acc47e309410c1d331fb5f5b7887bc424b7c62168766850d7dea6bd4",
+      "bytes": 2599564,
+      "sha256": "c4d9d7bfaabef5229690377a54bc33d755432d0645df74299ca261c37efc06fe",
       "bones": 25,
       "clips": [
         "Idle",
@@ -77,8 +77,8 @@
     },
     {
       "id": "echo",
-      "bytes": 2015540,
-      "sha256": "7ea5dd190912ce044a404ee2ccb4de80f2672f6467e8e9da2181ddb78b477a94",
+      "bytes": 2648592,
+      "sha256": "0c4ff1db6755dde8d7716eda74b04d4962a6bc0aa65be1d8730178b4ab97e572",
       "bones": 25,
       "clips": [
         "Idle",

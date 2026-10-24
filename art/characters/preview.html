@@ -1,25 +1,186 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Команда в движении — До релиза</title>
-  <link rel="icon" href="../../assets/favicon.svg"><link rel="stylesheet" href="../hunyuan/preview.css">
-  <style>
-    .choices{display:flex;gap:20px;flex-wrap:wrap;margin:0 0 24px;font:14px/1.5 'Segoe UI',sans-serif}.choices label{display:flex;align-items:center;gap:8px}select{font:inherit;min-height:44px;padding:8px 36px 8px 12px;color:var(--ink);background:var(--surface);border:1px solid var(--line)}.portrait{aspect-ratio:1;background-image:url('../../assets/agents.png');background-size:300% 200%;margin:auto 24px;align-self:stretch}.reference{justify-content:space-between;padding-bottom:24px}.reference p{padding:0 24px;font:14px/1.6 'Segoe UI',sans-serif;color:var(--muted)}.reference figcaption{margin-bottom:24px}.model{min-width:0}.tag{white-space:nowrap}.controls{justify-content:start}#viewport{height:500px}#toggle-bones{margin-left:auto}@media(max-width:760px){.portrait{width:calc(100% - 48px);margin:0 24px}.reference figcaption{margin-bottom:16px}#viewport{height:400px}#toggle-bones{margin-left:0}h1{font-size:44px}}
-  </style>
-  <script type="importmap">{"imports":{"three":"../../vendor/three/three.module.js"}}</script>
-  <script type="module" src="preview.js"></script>
-</head>
-<body>
-  <header><a href="../../?demo=1">← В игру</a><span>ДО РЕЛИЗА <b>/</b> КОМАНДА В ДВИЖЕНИИ</span><small>06 ПЕРСОНАЖЕЙ</small></header>
-  <main>
-    <section class="intro"><div><p class="eyebrow">ПЕРСОНАЖИ КОМАНДЫ</p><h1 id="title">Мира<span>Дизайнер</span></h1></div><p class="description">Настоящий скелет и деформация сетки.<br>Выбери персонажа и посмотри движения.</p></section>
-    <div class="choices"><label>Персонаж <select id="person"><option value="mira">Мира</option><option value="pixel">Пиксель</option><option value="nord">Норд</option><option value="iskra">Искра</option><option value="saga">Сага</option><option value="echo">Эхо</option></select></label><label>Действие <select id="motion"><option value="Idle">Ожидание</option><option value="Walk">Ходьба</option><option value="Sit">Сесть</option><option value="Work">Печатать</option><option value="Stand">Встать</option></select></label></div>
-    <div class="workspace">
-      <figure class="reference"><figcaption><span>01</span> Исходный портрет</figcaption><div class="portrait" id="portrait" role="img" aria-label="Исходный портрет Миры"></div><p>Лицо, причёска, одежда и аксессуары опираются на существующие портреты команды.</p></figure>
-      <section class="model" aria-labelledby="model-title"><div class="model-heading"><h2 id="model-title"><span>02</span> Персонаж в 3D</h2><span class="tag" id="rig-info">Загрузка</span></div><div id="viewport" aria-busy="true"><p id="status" role="status">Загружаем персонажа…</p></div><div class="controls"><button id="front" disabled>Спереди</button><button id="back" disabled>Сзади</button><button id="pause" aria-pressed="false" disabled>Пауза</button><button id="toggle-bones" aria-pressed="false" disabled>Показать скелет</button></div><p class="hint">Потяни — повернуть · колесо или щипок — приблизить</p></section>
-    </div>
-    <footer><p><strong>Эти модели уже используются в офисе.</strong> Здесь воспроизводятся сохранённые анимации. В игре движение следует маршруту, а руки подстраиваются к клавиатуре и мыши.</p><dl><div><dt>Модель</dt><dd id="metrics">Загружается</dd></div><div><dt>Набор</dt><dd>Ожидание · шаг · посадка · печать</dd></div></dl></footer>
-  </main>
-  <noscript>Включи JavaScript, чтобы посмотреть персонажей в движении.</noscript>
-</body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Команда в движении — До релиза</title>
+    <link rel="icon" href="../../assets/favicon.svg" />
+    <link rel="stylesheet" href="../hunyuan/preview.css" />
+    <style>
+      .choices {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 0 0 24px;
+        font:
+          14px/1.5 "Segoe UI",
+          sans-serif;
+      }
+      .choices label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      select {
+        font: inherit;
+        min-height: 44px;
+        padding: 8px 36px 8px 12px;
+        color: var(--ink);
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+      .portrait {
+        aspect-ratio: 1;
+        background-image: url("../../assets/agents.png");
+        background-size: 300% 200%;
+        margin: auto 24px;
+        align-self: stretch;
+      }
+      .reference {
+        justify-content: space-between;
+        padding-bottom: 24px;
+      }
+      .reference p {
+        padding: 0 24px;
+        font:
+          14px/1.6 "Segoe UI",
+          sans-serif;
+        color: var(--muted);
+      }
+      .reference figcaption {
+        margin-bottom: 24px;
+      }
+      .model {
+        min-width: 0;
+      }
+      .tag {
+        white-space: nowrap;
+      }
+      .controls {
+        justify-content: start;
+      }
+      #viewport {
+        height: 500px;
+      }
+      #toggle-bones {
+        margin-left: auto;
+      }
+      @media (max-width: 760px) {
+        .portrait {
+          width: calc(100% - 48px);
+          margin: 0 24px;
+        }
+        .reference figcaption {
+          margin-bottom: 16px;
+        }
+        #viewport {
+          height: 400px;
+        }
+        #toggle-bones {
+          margin-left: 0;
+        }
+        h1 {
+          font-size: 44px;
+        }
+      }
+    </style>
+    <script type="importmap">
+      { "imports": { "three": "../../vendor/three/three.module.js" } }
+    </script>
+    <script type="module" src="preview.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="../../?demo=1">← В игру</a
+      ><span>ДО РЕЛИЗА <b>/</b> КОМАНДА В ДВИЖЕНИИ</span
+      ><small>06 ПЕРСОНАЖЕЙ</small>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">ПЕРСОНАЖИ КОМАНДЫ</p>
+          <h1 id="title">Мира<span>Дизайнер</span></h1>
+        </div>
+        <p class="description">
+          Настоящий скелет и деформация сетки.<br />Выбери персонажа и посмотри
+          движения.
+        </p>
+      </section>
+      <div class="choices">
+        <label
+          >Персонаж
+          <select id="person">
+            <option value="mira">Мира</option>
+            <option value="pixel">Пиксель</option>
+            <option value="nord">Норд</option>
+            <option value="iskra">Искра</option>
+            <option value="saga">Сага</option>
+            <option value="echo">Эхо</option>
+          </select></label
+        ><label
+          >Действие
+          <select id="motion">
+            <option value="Idle">Ожидание</option>
+            <option value="Walk">Ходьба</option>
+            <option value="Sit">Сесть</option>
+            <option value="Work">Печатать</option>
+            <option value="Stand">Встать</option>
+          </select></label
+        >
+      </div>
+      <div class="workspace">
+        <figure class="reference">
+          <figcaption><span>01</span> Исходный портрет</figcaption>
+          <div
+            class="portrait"
+            id="portrait"
+            role="img"
+            aria-label="Исходный портрет Миры"
+          ></div>
+          <p>
+            Лицо, причёска, одежда и аксессуары опираются на существующие
+            портреты команды.
+          </p>
+        </figure>
+        <section class="model" aria-labelledby="model-title">
+          <div class="model-heading">
+            <h2 id="model-title"><span>02</span> Персонаж в 3D</h2>
+            <span class="tag" id="rig-info">Загрузка</span>
+          </div>
+          <div id="viewport" aria-busy="true">
+            <p id="status" role="status">Загружаем персонажа…</p>
+          </div>
+          <div class="controls">
+            <button id="front" disabled>Спереди</button
+            ><button id="back" disabled>Сзади</button
+            ><button id="pause" aria-pressed="false" disabled>Пауза</button
+            ><button id="toggle-bones" aria-pressed="false" disabled>
+              Показать скелет
+            </button>
+          </div>
+          <p class="hint">Потяни — повернуть · колесо или щипок — приблизить</p>
+        </section>
+      </div>
+      <footer>
+        <p>
+          <strong>Эти модели уже используются в офисе.</strong> Здесь
+          воспроизводятся сохранённые анимации. В игре движение следует
+          маршруту, а руки подстраиваются к клавиатуре и мыши.
+        </p>
+        <dl>
+          <div>
+            <dt>Модель</dt>
+            <dd id="metrics">Загружается</dd>
+          </div>
+          <div>
+            <dt>Набор</dt>
+            <dd>Ожидание · шаг · посадка · печать</dd>
+          </div>
+        </dl>
+      </footer>
+    </main>
+    <noscript
+      >Включи JavaScript, чтобы посмотреть персонажей в движении.</noscript
+    >
+  </body>
+</html>

@@ -46,6 +46,15 @@ test('six portable skins contain weighted bones, five clips and bone-attached ey
     a.group.traverse(mesh=>{
       if(!mesh.isSkinnedMesh)return;skins++;
       assert.equal(mesh.skeleton.bones.length,25);
+      if(mesh.name===`DR_${id}_Skin`){
+        const positions=mesh.geometry.attributes.position;let legs=0,torso=0;
+        for(let i=0;i<positions.count;i++){
+          const x=Math.abs(positions.getX(i)),y=positions.getY(i);
+          if(x<.2&&y>.2&&y<.7)legs++;
+          if(x<.18&&y>1.05&&y<1.25)torso++;
+        }
+        assert.ok(legs>200&&torso>200,`${id}: intact torso and legs`);
+      }
       const weights=mesh.geometry.attributes.skinWeight;
       for(let i=0;i<weights.count;i++)assert.ok(Math.abs(weights.getX(i)+weights.getY(i)+weights.getZ(i)+weights.getW(i)-1)<.001,`${id}: normalized weights`);
     });
@@ -62,6 +71,17 @@ test('six portable skins contain weighted bones, five clips and bone-attached ey
       const foot=copy.getObjectByName(`DR_${id}_${side}Foot_Rigid`),box=new THREE.Box3().setFromObject(foot,true);
       assert.ok(Math.abs(box.min.y)<.012,`${id}: portable Sit sole ${box.min.y}`);
     }
+    mixer.stopAllAction();
+    const walk=mixer.clipAction(gltf.animations.find(c=>c.name==='Walk'));walk.play();
+    const ankle=copy.getObjectByName(`Skin_${id}_LeftFoot`),steps=[];
+    for(let frame=0;frame<20;frame++){
+      mixer.update(.04);copy.updateMatrixWorld(true);steps.push(ankle.getWorldPosition(new THREE.Vector3()).z);
+      for(const side of ['Left','Right'])assert.ok(new THREE.Box3().setFromObject(copy.getObjectByName(`DR_${id}_${side}Foot_Rigid`),true).min.y>-.012,`${id}: portable Walk stays above floor`);
+    }
+    assert.ok(Math.max(...steps)-Math.min(...steps)>.3,`${id}: Walk advances feet`);
+    mixer.stopAllAction();mixer.clipAction(gltf.animations.find(c=>c.name==='Work')).play();mixer.update(.1);
+    const finger=copy.getObjectByName(`Skin_${id}_LeftFinger1`),before=finger.quaternion.clone();mixer.update(.13);
+    assert.ok(before.angleTo(finger.quaternion)>.002,`${id}: Work animates fingers`);
   }
 });
 
