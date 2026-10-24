@@ -85,12 +85,6 @@ function updateClock() {
   if(!game)return;
   const time=shiftTime(game);
   for(const [key,value] of Object.entries({...time,status:clockStatus()})){const el=root.querySelector(`[data-clock="${key}"]`);if(el&&el.textContent!==String(value))el.textContent=value;}
-  const height=root.querySelector('.shift-banner')?.getBoundingClientRect().height;
-  if(height&&root.style.getPropertyValue('--shift-clock-height')!==`${height}px`)root.style.setProperty('--shift-clock-height',`${height}px`);
-}
-function shiftBanner() {
-  const time=shiftTime(game);
-  return `<section class="shift-banner" aria-label="Часы смены"><div><span>Сейчас в студии</span><strong data-clock="now">${time.now}</strong></div><div><span>Показ проекта</span><strong data-clock="end">${time.end}</strong></div><div><span>До показа</span><strong data-clock="remaining">${time.remaining}</strong></div><div class="shift-auto"><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!game.autoPlay}" ${game.stage==='result'?'disabled':''}>${icon(game.autoPlay?'pause':'play',20)} ${game.autoPlay?'Пауза':'Авто'}</button><span data-clock="status">${clockStatus()}</span></div></section>`;
 }
 let lastClockFrame=performance.now();
 setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();updateEventClock(delta);}},100);
@@ -230,7 +224,7 @@ function render() {
   }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>${employeeEvent(game)?employeeEvent(game).name+' ждёт тебя в офисе. Нажми на красный сигнал над сотрудником. Таймер решения начнётся после открытия.':'Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.'}</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { const officeStage=game.stage==='work'||!!employeeEvent(game);workspaceView = officeStage?'office':'project'; officeExpanded = officeStage;if(employeeEvent(game))officeSelection=null; }
-  root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
+  root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${timeline()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
@@ -431,6 +425,8 @@ document.addEventListener('click',e=>{
   if(action==='activity')showDialog(`<div class="eyebrow">ИЗ СТУДИИ</div><h2 id="dialog-title">Журнал смены</h2><div class="activity-history">${game.log.slice().reverse().map(m=>`<p>${esc(m)}</p>`).join('')}</div><button class="primary full" data-action="close-dialog">К команде</button>`);
   if(action==='event-info'){const ev=EVENTS[game.currentEvent];showDialog(`<div class="eyebrow">КОНТЕКСТ РЕШЕНИЯ</div><h2 id="dialog-title">${ev.title}</h2><p>${ev.text}</p>${ev.options.map(o=>`<p><b>${o.title}.</b> ${o.text}<br><small>${o.effect}</small></p>`).join('')}<p>${ev.lesson}</p><button class="primary full" data-action="close-dialog">Вернуться к решению</button>`);}
   if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
+  if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
+  if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
   if(action==='life-office'){showDialog(officePanel(game));return;}
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
@@ -501,6 +497,7 @@ function showStudioTeam() {
   showDialog(`<h2 id="dialog-title">Команда студии · ${game.team.length}/${studioCapacity(game)}</h2><p>Выбери коллегу — камера найдёт его, а действия появятся рядом.</p><div class="studio-team-picker">${game.team.map(id=>`<button class="secondary" data-action="watch-agent" data-id="${id}">${agentById(id).name}<small>${condition(game,id).label} · энергия ${Math.round(game.life.members[id].energy)}</small></button>`).join('')}</div><button class="secondary" data-action="seating">Рассадка по компьютерам</button>`);
 }
 function officeObject(id) {
+  if(id==='clock'){document.querySelector('[data-action=scene-time]')?.click();return;}
   if(id==='arcade'){if(game.stage==='result')openMini();else toast('Игровой автомат включится после релиза. Сначала заверши заказ.');return;}
   if(id==='coffee'){if(officeSelection){showDialog(memberPanel(game,officeSelection));}else showStudioTeam();return;}
   showDialog(officePanel(game));
