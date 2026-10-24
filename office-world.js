@@ -178,6 +178,13 @@ class OfficeWorld {
     const info = parent.querySelector('.office-movement');
     const walking = [...this.actors.values()].filter(a => a.moving).map(a => agentById(a.id).name);
     if (info) { const text = walking.length ? `${walking.join(', ')} — в пути` : ''; if (info.textContent !== text) info.textContent = text; }
+    const shell = parent.closest('.game-shell');
+    for (const actor of this.actors.values()) {
+      const status = shell?.querySelector(`[data-team-activity="${actor.id}"]`);
+      if (!status) continue;
+      const text = actor.moving ? actor.motionLabel : status.dataset.baseActivity;
+      if (status.textContent !== text) status.textContent = text;
+    }
   }
   pick(event) {
     if (!this.down || Math.hypot(event.clientX - this.down[0], event.clientY - this.down[1]) > 6 || !this.room) return;

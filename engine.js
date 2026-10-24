@@ -1,3 +1,4 @@
+import { validEventClock } from './assets/event-clock.js';
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
 import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
@@ -189,7 +190,7 @@ export function nextProject(state, contractId) {
     if (l.away.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
-  next.life = l;
+  next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
   next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽. Команда отдохнула между заказами.`];
   if (l.away.length) next.log.push(`Команду покинули: ${l.away.map(id => agentById(id).name).join(', ')}. Найми замену; ушедшие пропустят этот заказ.`);
   // Optional project flags (support, wallBug) must not leak into a new commission.
@@ -197,7 +198,7 @@ export function nextProject(state, contractId) {
   Object.assign(state,next); return null;
 }
 export function validSave(s) {
-  return s && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
+  return s && (s.orbitRecords===undefined || s.orbitRecords && typeof s.orbitRecords==='object' && !Array.isArray(s.orbitRecords) && Object.entries(s.orbitRecords).every(([key,value])=>['festival','club','cup'].includes(key)&&Number.isSafeInteger(value)&&value>=0)) && validEventClock(s) && s.version === VERSION && ['hire', 'plan', 'work', 'event', 'result'].includes(s.stage)
     && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
     && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= 3 && new Set(s.team).size === s.team.length
