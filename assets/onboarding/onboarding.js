@@ -1,4 +1,4 @@
-import { STORY, guideFor } from './onboarding-model.js?v=shift-ux-20261024-v2';
+import { STORY, guideFor } from './onboarding-model.js?v=team-hud-20261024';
 
 import { assetURL } from '../../asset-url.js';
 const AVATAR = assetURL('onboarding/nika-avatar.webp');
@@ -105,6 +105,9 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
       if (target && !target.getClientRects().length) {
         document.querySelector(`[data-action="workspace"][data-id="${inOffice ? 'office' : 'project'}"]`)?.click();
         target = document.querySelector(selector);
+      }
+      if(target?.dataset.action==='team-focus' && (target.getAttribute('aria-pressed')!=='true' || target.closest('.team-hud')?.dataset.open!=='true')) {
+        target.click(); target=document.querySelector(selector);
       }
       if (target) {
         document.querySelectorAll('.nika-target').forEach(el => el.classList.remove('nika-target'));

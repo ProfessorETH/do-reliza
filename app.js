@@ -2,18 +2,19 @@ import { ensureEventClock, advanceEventClock, eventKey } from './assets/event-cl
 import { missionFor } from './assets/orbit-missions.js';
 import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, actOrbit, orbitFeatures, recordOrbitResult } from './assets/orbit.js?v=orbit-3';
 import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=shift-ux-20261024-v2';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=team-hud-20261024';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
 import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './assets/office-runtime.js?v=shift-ux-20261024-v2';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo, graphicsSettingsHTML } from './assets/office-runtime.js?v=team-hud-20261024';
 import { renderOffice } from './office.js?v=shift-ux-20261024-v2';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
+import { renderTeamHUD } from './assets/team-hud.js';
 import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
+import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
 import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
 import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
 
@@ -27,6 +28,7 @@ const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
 const MINI = DEMO ? 'before-release-demo-orbit-v1' : 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
 let workspaceView = 'project';
+let hudSelection = null;
 let soundPreviewed = false;
 let officeExpanded = false;
 let game = null, candidate = 'mira', difficulty = 'calm', saved = null, savingAvailable = true, mini = null;
@@ -114,19 +116,21 @@ function intro() {
 function topbar() {
   return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
 }
-function scene() { return renderOffice(game, officeSelection, officeMoving, lifeSummary(game), officeExpanded); }
+function scene() { return renderOffice(game, officeSelection, officeMoving, `<div class="studio-wallet-row"><span>Твоя студия</span><button data-action="life-office">Касса <b>${money(game.life.cash)}</b> · улучшения ↗</button></div>`, officeExpanded); }
 function seatingPanel() {
   if(!game.team.length)return '';
   return `<section class="seating-panel" aria-label="Рассадка команды"><div><h2>Кто за каким компьютером?</h2><p>После найма место назначается автоматически. Здесь можно пересадить коллег.</p></div><div class="seating-cards">${game.seats.map((id,index)=>`<label class="seating-card"><b>Компьютер ${index+1}</b><span>${id?`${agentById(id).name} · место назначено`:'Свободное место'}</span><select data-seat="${index}" aria-label="Кто за компьютером ${index+1}"><option value="" disabled ${id?'':'selected'}>Выбрать сотрудника</option>${game.team.map(aid=>`<option value="${aid}" ${id===aid?'selected':''}>${agentById(aid).name}${game.seats.includes(aid)?` · ПК ${game.seats.indexOf(aid)+1}`:' · ждёт места'}</option>`).join('')}</select></label>`).join('')}</div><p class="seating-status" role="status">${officeMoving?'Команда занимает места. Когда все сядут, можно раздать задачи.':teamSeated(game)?'Все места назначены. Можно переходить к задачам.':'Выбери сотрудника для свободного компьютера.'}</p><button class="text-button" data-action="workspace" data-id="office">Посмотреть рассадку в офисе ↗</button></section>`;
 }
 function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<3&&game.budget>=a.cost&&!game.life.away?.includes(a.id));
-  const quickTeam = DEMO && game.team.length === 3;
-  return `<div class="panel-header"><div class="eyebrow">01 / КОМАНДА</div><h1>${quickTeam?'Твоя команда':'Собери команду'}</h1><p>${quickTeam?'Все трое здесь. Пора составить план.':'Три специалиста для твоей студии.'}</p></div>
+  const quickTeam = game.team.length === 3;
+  return `<div class="panel-header"><div class="eyebrow">01 / КОМАНДА</div><h1>${quickTeam?'Пора за работу':'Собери команду'}</h1><p>${quickTeam?'Команда в сборе. Следующий шаг — распределить задачи.':'Три места в студии. Найди своих специалистов.'}</p></div>
+    ${quickTeam?`<div class="team-ready"><span class="ready-symbol">${icon('rocket',28)}</span><h2>Ваша цель — релиз</h2><p>Собери план, помогай коллегам и проверь игру перед показом.</p><ol><li>Распредели пять задач</li><li>Помоги с трудными моментами</li><li>Выпусти «Орбиту»</li></ol></div><details class="crew-manage"><summary>Изменить состав команды</summary>`:''}
     ${candidatePicker(AGENTS,candidate,game.team,{portrait,icon,money,esc})}
-    ${seatingPanel()}
     ${agentDossier(a,{hired,canHire,teamCount:game.team.length,budget:game.budget},{portrait,icon,money,esc,radar})}
     ${game.life.away?.includes(a.id)?'<p class="life-notice">Сотрудник покинул студию и пропускает этот заказ. Выбери другого кандидата.</p>':''}
+    ${quickTeam?'</details>':''}
+    ${game.team.length?`<button class="crew-seating" data-action="seating">${icon('people',16)} Рабочие места <b>${game.seats.filter(Boolean).length}/3</b> <span>↗</span></button>`:''}
     <div class="panel-bottom"><div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div><span>${game.team.length===3?(game.budget<1500?'Резерв меньше 1 500 ₽. Исправить ошибку за деньги не получится.':'Состав готов. Деньги в резерве пригодятся на исправления.'):`Выбрано ${game.team.length} из 3. После найма нажми на свободный компьютер.`}</span><button class="primary full" data-action="plan" ${teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving&&teamSeated(game)?'Команда занимает места…':game.team.length===3&&!teamSeated(game)?`Рассади команду · ${game.seats.filter(Boolean).length}/3`: 'Раздать задачи'} ${icon('arrow')}</button></div>`;
 }
 function planPanel() {
@@ -181,6 +185,7 @@ function timeline() {
 let renderedStage = null;
 function render() {
   const panelScroll=root.querySelector('.control-panel')?.scrollTop||0;
+  const manageOpen=!!root.querySelector('.crew-manage')?.open;
   const focused=document.activeElement;
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task, oldSeat=focused?.dataset?.seat, oldGuide=focused?.dataset?.guide;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
@@ -188,7 +193,7 @@ function render() {
   if (!game) { syncEventDialog();detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { workspaceView = 'project'; officeExpanded = false; }
-  root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
+  root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
@@ -199,9 +204,10 @@ function render() {
     onError:message=>{toast(message);if(game)render();},
   });
   onboarding.sync(game, officeMoving);
+  if(manageOpen&&!stageChanged&&root.querySelector('.crew-manage'))root.querySelector('.crew-manage').open=true;
   syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
-  if (officeExpanded) root.querySelectorAll('.game-topbar,.game-footer,.workspace-tabs,.control-panel').forEach(el => { el.inert = true; });
+  if (officeExpanded) root.querySelectorAll('.game-topbar,.shift-banner,.game-footer,.workspace-tabs,.control-panel,.team-hud').forEach(el => { el.inert = true; });
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
   else if(oldSeat!==undefined) root.querySelector(`[data-seat="${oldSeat}"]`)?.focus({preventScroll:true});
   else if(oldGuide) document.querySelector(`[data-guide="${oldGuide}"]`)?.focus({preventScroll:true});
@@ -329,7 +335,7 @@ document.addEventListener('keydown',e=>{
   if(dialog.open&&document.querySelector('.mini-board')){const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();moveMini(...d);}}
 });
 document.addEventListener('change',e=>{
-  if(e.target.dataset.seat!==undefined&&game){const error=seatAgent(game,e.target.value,Number(e.target.dataset.seat));if(error)toast(error);else{officeSelection=e.target.value;persist();render();toast(`${agentById(officeSelection).name}: компьютер ${Number(e.target.dataset.seat)+1}.`);}return;}
+  if(e.target.dataset.seat!==undefined&&game){const error=seatAgent(game,e.target.value,Number(e.target.dataset.seat));if(error)toast(error);else{officeSelection=e.target.value;persist();render();if(dialog.open&&dialog.querySelector('.seating-panel')){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);dialog.querySelector(`[data-seat="${e.target.dataset.seat}"]`)?.focus();}toast(`${agentById(officeSelection).name}: компьютер ${Number(e.target.dataset.seat)+1}.`);}return;}
   if(e.target.name==='difficulty'){difficulty=e.target.value;render();root.querySelector(`[name="difficulty"][value="${difficulty}"]`)?.focus({preventScroll:true});}
   if(e.target.dataset.task&&game){assign(game,e.target.dataset.task,e.target.value);persist();render();}
 });
@@ -351,11 +357,14 @@ document.addEventListener('click',e=>{
   if(action==='confirm-new'){dialog.close();newGame();return;}
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
+  if(action==='workspace'){workspaceView=id;if(dialog.open)dialog.close();render();}
+  if(action==='team-focus'){hudSelection=hudSelection===id?null:id;render();}
+  if(action==='team-dismiss'){const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
+  if(action==='seating'){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);}
   if(action==='event-open'){syncEventDialog();return;}
   if(action==='event-pause'){const clock=ensureEventClock(game);if(clock)clock.paused=!clock.paused;persist();updateEventClock(0);return;}
   if(action==='event-untimed'){game.timedEvents=false;delete game.eventClock;shownEvent=null;persist();syncEventDialog();return;}
   if(action==='orbit-scan'||action==='orbit-wait'){const outcome=actOrbit(game,mini,action==='orbit-scan'?'scan':'wait');miniEffect=outcome;miniMessage=outcome.message;saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
-  if(action==='workspace'){workspaceView=id;render();}
   if(action==='office-expand'){officeExpanded=!officeExpanded;render();}
   if(action==='task-info'){const t=TASKS.find(t=>t.id===id);showDialog(`<div class="eyebrow">ЗАДАЧА КОМАНДЫ</div><h2 id="dialog-title">${t.name}</h2><p>${t.description}</p><button class="primary full" data-action="close-dialog">К плану</button>`);}
   if(action==='activity')showDialog(`<div class="eyebrow">ИЗ СТУДИИ</div><h2 id="dialog-title">Журнал смены</h2><div class="activity-history">${game.log.slice().reverse().map(m=>`<p>${esc(m)}</p>`).join('')}</div><button class="primary full" data-action="close-dialog">К команде</button>`);
@@ -417,7 +426,7 @@ document.addEventListener('click',e=>{
   if(action==='fresh-mini'){mini=freshOrbit(game);miniEffect={};miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
   if(action==='reload-mini'){openMini(true);dialog.querySelector('.tile.ship')?.focus({preventScroll:true});}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
-  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
+  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();persist();game=null;render();}
 });
 let demoArrival = false;
