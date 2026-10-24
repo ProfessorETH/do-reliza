@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-24",
+  "tool": "built-in image_gen",
+  "type": "still-image character atlas, not video generation",
+  "localGPUUsed": false,
+  "character": "Nika, adult studio assistant, original anime design; rejected initial vector drawing removed",
+  "sources": [
+    {
+      "file": "C:/Users/popka/.codex/generated_images/01a16dc1-5c06-7212-8cbe-da70fa7aaa63/exec-5ef2b199-23f3-4a67-b9e6-22f095104be3.png",
+      "sha256": "F1B5BA83C06175B5B339E50487DC22CA37BA246CEA622F6A73DB8E5AB52E2105",
+      "prompt": "Use case: stylized-concept. Asset type: production character portrait for a polished anime visual-novel onboarding in an indie browser game about running a small software studio. Create one beautiful, original adult anime woman named Nika, age 24, the capable friendly studio assistant. Premium contemporary anime game key visual quality: exquisite refined face, balanced expressive turquoise eyes, tiny natural smile, delicate clean linework, rich hand-painted cel shading, elegant detailed glossy mint-teal shoulder-length hair with softly layered fringe and a small gold geometric hairclip. Professional yet charming outfit: ivory blouse, neatly tailored dark teal cardigan jacket, discreet amber pin, small modern communication earpiece. Warm, inviting, confident, intelligent personality, not childish. Waist-up three-quarter portrait, looking toward viewer, torso slightly turned right; both arms relaxed, no objects, hands below lower crop; full head and shoulders comfortably inside frame. Strong beautiful silhouette, premium finish and dimensional lighting, warm amber rim light with soft mint fill, subtle fabric texture. Match a cozy evening game-development studio UI with deep teal and amber accents. Transparent background, genuine alpha, isolated clean cutout, no backdrop and no cast shadow. NO text, no watermark, no border, no extra characters, no chibi, no flat icon/vector look, no crude cartoon, no 3D plastic appearance, no pinup pose, no revealing clothing."
+    },
+    {
+      "file": "C:/Users/popka/.codex/generated_images/01a16dc1-5c06-7212-8cbe-da70fa7aaa63/exec-f485836d-0725-47bf-b5fc-1d50fceb34b2.png",
+      "sha256": "24AC9A8185F7CB94138028C46CEEF4BF45754CE28E589AB41B9D36C7F231AC87",
+      "reference": "first source portrait",
+      "prompt": "Use case: identity-preserve. Asset type: six-frame character expression sprite atlas for a browser visual novel. Input image is the EXACT approved character identity and outfit reference. Create a single transparent-background contact sheet in a strict equally spaced 3-column by 2-row grid. Six cells exactly equal, no gaps/margins/dividers/borders/text/labels. Overall image square so each cell is a tall portrait rectangle. In EVERY cell render the SAME adult anime woman Nika from the reference, same face anatomy, mint-teal detailed hair, turquoise eyes, ivory blouse, teal cardigan jacket, amber pin, geometric gold hairclip, small earpiece. Preserve the original premium anime illustration finish and lighting. Same exact head angle, camera distance, head size, torso pose and placement IN ALL SIX CELLS, suitable for aligned frame swapping with no jump. Full head with ample clearance, shoulders and bust to waist visible inside every cell. The only variation is facial expression. Cell ordering left to right: TOP LEFT relaxed neutral closed lips, TOP MIDDLE speaking with mouth gently open, TOP RIGHT speaking with slightly wider naturally open mouth; BOTTOM LEFT blink with both eyelids fully closed and lips relaxed, BOTTOM MIDDLE warm happy gentle smile with eyes open, BOTTOM RIGHT thoughtful concerned slightly knitted brows and closed mouth. No hands or props visible. All six are the SAME person, NOT six designs or outfits. No body repositioning. Genuine transparent alpha background around each portrait. No background, no shadows outside character, no lettering, no watermarks. Clean high-quality hair and alpha edges."
+    }
+  ],
+  "exports": [
+    {
+      "file": "assets/onboarding/nika-expressions.webp",
+      "size": [
+        960,
+        960
+      ],
+      "bytes": 278680,
+      "sha256": "E9135A031F200F3122F288FBEF325A912C9A4B43E23BC9F687016A4E37B1A06D",
+      "layout": "3 columns x 2 rows; cells 320 x 480; neutral, talk-small, talk-open, blink, happy, thoughtful",
+      "conversion": "Pillow LANCZOS resize, WebP quality 85 method 6, alpha preserved"
+    },
+    {
+      "file": "assets/onboarding/nika-avatar.webp",
+      "size": [
+        96,
+        96
+      ],
+      "bytes": 5950,
+      "sha256": "5FE2A2E1F6536399BB2FB8E64CF5FA47308D9335A82A9DDAE613B3CC037616AA",
+      "conversion": "Head crop of first atlas cell; WebP quality 86 method 6, alpha preserved"
+    }
+  ],
+  "qc": {
+    "identity": "all six frames visually reviewed against original portrait",
+    "anatomy": "eyes, hair, face, outfit checked; hands outside frame",
+    "browser": "desktop and mobile compositing inspected",
+    "limitations": "expression frames have small illustration differences; speech is a short decorative frame cycle, without synthesized voice or phoneme sync",
+    "approval": "user rejected original vector, requested polished anime art and animated states; final browser preview awaits user feedback"
+  }
+}
