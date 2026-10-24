@@ -5,9 +5,10 @@ import { createHash } from 'node:crypto';
 import { createGame, hire, beginPlan, recommend, beginWork } from '../engine.js';
 import { createDemoGame } from '../demo.js';
 import { AGENTS } from '../data.js';
-import { characterLine } from '../assets/character-dialogue.js';
+import { characterLine, CHARACTER_LINES } from '../assets/character-dialogue.js';
 import { VOICE_ASSETS } from '../assets/onboarding/voice-manifest.js';
-import { CHARACTER_VOICES } from '../assets/character-voice-manifest.js';
+import { CHARACTER_VOICES, CHARACTER_VOICE_TEXT } from '../assets/character-voice-manifest.js';
+import { characterVoicePath } from '../assets/character-voice.js';
 import { STORY, guideFor } from '../assets/onboarding/onboarding-model.js';
 
 const root = new URL('../', import.meta.url);
@@ -18,20 +19,26 @@ test('the shipped cast contains every line, seven original voices and the valida
   const designs=(await json('content/voice-designs.json')).voices;
   assert.equal(new Set(Object.values(designs).map(v=>v.voiceId)).size,7);
   assert.equal(Object.keys(VOICE_ASSETS).length,17);
-  assert.equal(Object.keys(CHARACTER_VOICES).length,36);
-  assert.equal(receipt.lines.length,53);
-  assert.equal(new Set(receipt.lines.map(l=>l.key)).size,53);
+  const expected=await json('content/voice-lines.json');
+  assert.equal(Object.keys(CHARACTER_VOICES).length,72);
+  assert.equal(receipt.lines.length,expected.length);
+  assert.equal(new Set(receipt.lines.map(l=>l.key)).size,expected.length);
+  assert.deepEqual(receipt.lines.map(l=>l.key).sort(),expected.map(l=>l.key).sort());
   for(const line of receipt.lines){
     assert.equal(line.model,'eleven_v4');assert.equal(line.modelVerified,true);
     assert.equal(line.voiceId,designs[line.id].voiceId);
     const mapped=line.id==='nika'?`assets/onboarding/${VOICE_ASSETS[line.key]}`:`assets/${CHARACTER_VOICES[line.key]}`;
     assert.equal(mapped,line.path);
+    if(line.id!=='nika') {
+      assert.equal(CHARACTER_VOICE_TEXT[line.key],line.text);
+      assert.equal(characterVoicePath(line.id,line.kind),CHARACTER_VOICES[line.key]);
+    }
     const bytes=await readFile(new URL(mapped,root));
     assert.equal(bytes.length,line.bytes);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),line.sha256);
     assert.ok(line.durationSeconds>.5 && line.durationSeconds<90);
   }
-  for(const agent of AGENTS)for(const kind of ['intro','work','support','concern','release','conflict']){
+  for(const agent of AGENTS)for(const kind of Object.keys(CHARACTER_LINES[agent.id])){
     const line=receipt.lines.find(l=>l.key===`${agent.id}-${kind}`);
     assert.equal(line.text,characterLine(agent.id,kind));
   }

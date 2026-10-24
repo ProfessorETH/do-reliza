@@ -30,6 +30,7 @@ def now():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute", action="store_true", help="Record missing lines using the existing subscription")
+    parser.add_argument("--refresh-changed", action="store_true", help="Archive accepted earlier takes whose script changed")
     parser.add_argument("--cli", default="elevenlabs", help="Path to the official native CLI executable")
     parser.add_argument("--key-file", type=Path, default=Path.home() / ".codex/secrets/elevenlabs.key")
     args = parser.parse_args()
@@ -39,7 +40,25 @@ def main():
     existing = {job["key"]: job for job in jobs}
     if len(existing) != len(jobs):
         raise ValueError("Duplicate job keys: reconcile receipts before recording")
-    missing = [line for line in lines if line["key"] not in existing]
+    changed = [line["key"] for line in lines if line["key"] in existing and any(line[field] != existing[line["key"]][field] for field in ("id", "kind", "text"))]
+    if changed and args.execute and not args.refresh_changed:
+        raise ValueError("Script changed: review and pass --refresh-changed to preserve and replace earlier takes")
+    if changed and args.execute:
+        if any(existing[key]["status"] != "ready-local" or not existing[key].get("modelVerified") for key in changed):
+            raise ValueError("Recover unknown earlier requests before revising their scripts")
+        archive = ROOT / "output" / ("voice-script-archive-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ"))
+        archive.mkdir(parents=True, exist_ok=False)
+        (archive / "jobs.json").write_text(json.dumps(jobs, ensure_ascii=False, indent=2), encoding="utf-8")
+        for key in changed:
+            raw = (ROOT / existing[key]["rawFile"]).resolve()
+            if not raw.is_relative_to((ROOT / "output/cast-audio/raw").resolve()):
+                raise ValueError("Unexpected raw path")
+            if raw.exists():
+                raw.rename(archive / raw.name)
+        jobs = [job for job in jobs if job["key"] not in changed]
+        persist(jobs)
+        existing = {job["key"]: job for job in jobs}
+    missing = [line for line in lines if line["key"] not in existing or line["key"] in changed]
     unresolved = [job for job in jobs if job["status"] != "ready-local" or not job.get("modelVerified")]
     print(f"Plan: {len(missing)} missing lines; {len(unresolved)} existing requests need recovery.")
     if not args.execute:

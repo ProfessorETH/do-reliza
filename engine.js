@@ -1,4 +1,6 @@
 import { studioCapacity } from './assets/studio-progression.js';
+import { studyDecision, recordDiscussion, validDiscussions } from './assets/team-discussion.js';
+export { studyDecision };
 import { validEventClock } from './assets/event-clock.js';
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
@@ -134,6 +136,7 @@ export function resolveEvent(state, optionId) {
   if (state.stage !== 'event') return 'Сейчас нет события.';
   const event = state.currentEvent;
   if (event === 'life') return resolveIncident(state, optionId);
+  const before = {time:state.time, budget:state.budget, trust:state.trust};
   if (event === 'scope') {
     if (!['focus', 'shield', 'swap'].includes(optionId)) return 'Выберите решение.';
     if (optionId === 'shield' && state.budget < 2000) return 'В резерве нужно 2 000 ₽.';
@@ -153,11 +156,8 @@ export function resolveEvent(state, optionId) {
     if (optionId === 'ignore') { state.criticalBug = true; state.trust -= 24; state.log.push('Известная ошибка попала в релиз: прогресс прототипа теряется при перезапуске.'); }
   } else return 'Неизвестное событие.';
   state.trust = clamp(state.trust); state.choices[event] = optionId;
-  if (event === 'bug' || event === 'review') {
-    const id = state.assignments[event === 'bug' ? 'qa' : 'code'], m = ensureLife(state).members[id];
-    const skipped = ['ignore','review-skip'].includes(optionId);
-    m.morale = clamp(m.morale + (skipped ? -8 : 5)); m.stress = clamp(m.stress + (skipped ? 10 : -8));
-  }
+  ensureLife(state);
+  recordDiscussion(state, event, optionId, before);
   state.currentEvent = null; state.stage = 'work'; return null;
 }
 export function getResult(state) {
@@ -210,7 +210,7 @@ export function validSave(s) {
     && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
     && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= studioCapacity(s) && new Set(s.team).size === s.team.length
-    && s.team.every(id => !!agentById(id)) && Number.isFinite(s.budget) && s.budget >= 0
+    && s.team.every(id => !!agentById(id)) && validDiscussions(s) && Number.isFinite(s.budget) && s.budget >= 0
     && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === studioCapacity(s)
       && s.seats.every(id => id === null || s.team.includes(id))
       && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))
