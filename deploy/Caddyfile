@@ -3,6 +3,8 @@
 {$GAME_ADDRESS:localhost} {
 	root * "{$GAME_ROOT:/srv/games/do-reliza/current}"
 	encode gzip
+	@models path *.glb
+	header @models Content-Type model/gltf-binary
 	header {
 		Cache-Control "no-cache"
 		X-Content-Type-Options nosniff
