@@ -1,3 +1,4 @@
+import { mountSceneClock } from './assets/scene-clock.js';
 import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
@@ -73,6 +74,7 @@ class OfficeWorld {
         }
       });
       await this.art.dress(this.room);
+      this.sceneClock = mountSceneClock(this.room);
       this.purchases = await mountOfficeUpgrades(this.room);
       this.purchases.sync(this.game?.life?.upgrades);
       this.expansion.sync(this.game?.life?.upgrades);
@@ -165,6 +167,7 @@ class OfficeWorld {
       const viewDirection = this.camera.position.clone().sub(this.controls.target).toArray();
       for (const wall of this.walls || []) wall.visible = officeWallVisible(wall.userData.wallSide, viewDirection);
       for (const [index, screen] of this.screens) { const id = this.game.seats[index], task = active.find(t => this.game.assignments[t.id] === id); paintScreen(screen, task, task ? this.game.progress[task.id] : 0, this.game.stage); }
+      this.sceneClock?.update(this.game);
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
       this.labels();
       if (this.container.clientWidth && this.container.clientHeight) this.renderer.render(this.scene, this.camera);
@@ -202,9 +205,9 @@ class OfficeWorld {
     const menu=parent.querySelector('.actor-actions'), actor=this.actors.get(this.selected);
     if(menu&&actor){
       this.projected.copy(actor.group.position).add(new THREE.Vector3(0,actor.sit>.5?1.5:2.1,0)).project(this.camera);
-      const rect=parent.getBoundingClientRect(), width=menu.offsetWidth;
-      menu.style.left=Math.max(width/2+8,Math.min(rect.width-width/2-8,(this.projected.x*.5+.5)*rect.width))+'px';
-      menu.style.top=Math.max(10,Math.min(rect.height-menu.offsetHeight-10,(-this.projected.y*.5+.5)*rect.height-menu.offsetHeight-12))+'px';
+      const rect=parent.getBoundingClientRect(),canvas=this.container.getBoundingClientRect(), width=menu.offsetWidth;
+      menu.style.left=Math.max(width/2+8,Math.min(rect.width-width/2-8,canvas.left-rect.left+(this.projected.x*.5+.5)*canvas.width))+'px';
+      menu.style.top=Math.max(10,Math.min(rect.height-menu.offsetHeight-10,canvas.top-rect.top+(-this.projected.y*.5+.5)*canvas.height-menu.offsetHeight-12))+'px';
     }
     for(const el of parent.querySelectorAll('[data-hotspot]')){
       const points={coffee:[-1,1.5,-3.4],arcade:[3.85,2,-3.38],office:[-3.68,1.1,2.77]};
