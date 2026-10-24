@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
-import { isWalkable } from './office-layout.js';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, CONTRACTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
+import { isWalkable } from './office-layout.js?v=office-life-20261024';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, CONTRACTS, contractFor } from './assets/studio-life.js?v=office-life-20261024';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -96,12 +96,13 @@ export function activeTasks(state) {
   const busy = new Set();
   return TASKS.filter(task => {
     const id = state.assignments[task.id];
-    if (!id || state.life?.members[id]?.breaks || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
+    if (!id || state.life?.members[id]?.breaks || state.life?.members[id]?.restTrip || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
     busy.add(id); return true;
   });
 }
 export function tick(state) {
   if (state.stage !== 'work') return false;
+  if (restInTransit(state)) return false; // Real-time travel never consumes extra game hours or skips the break.
   const active = activeTasks(state);
   if (!active.length && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
   if (!active.length && !state.team.some(id => state.life?.members[id]?.breaks)) return false;
@@ -183,7 +184,7 @@ export function nextProject(state, contractId) {
   l.cash -= payroll; l.away = [...l.departures]; l.departures = [];
   next.team = team; next.budget -= fees; next.seats = state.seats.map(id => team.includes(id) ? id : null);
   for (const { id } of AGENTS) {
-    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.praised = 0;
+    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0;
     if (l.away.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;

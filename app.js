@@ -1,16 +1,16 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=unified-20261024';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=office-life-20261024';
 import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
 import { createSound } from './assets/sound.js?v=unified-20261024';
-import { WAITING } from './office-layout.js?v=0.5.0';
-import { createDemoGame } from './demo.js?v=unified-20261024';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=unified-20261024';
-import { renderOffice } from './office.js?v=unified-20261024';
+import { WAITING } from './office-layout.js?v=office-life-20261024';
+import { createDemoGame } from './demo.js?v=office-life-20261024';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=office-life-20261024';
+import { renderOffice } from './office.js?v=office-life-20261024';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js';
-import { ensureLife, condition, careFor, buyUpgrade, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=unified-20261024';
-import { nextProject } from './engine.js?v=unified-20261024';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=unified-20261024';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=office-life-20261024';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=office-life-20261024';
+import { nextProject } from './engine.js?v=office-life-20261024';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=office-life-20261024';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
@@ -100,9 +100,11 @@ function planPanel() {
 }
 function workPanel() {
   const active=activeTasks(game);
+  const travelling=restInTransit(game);
   const support=active.reduce((low,t)=>!low||fit(game.assignments[t.id],t)<fit(game.assignments[low.id],low)?t:low,null);
   return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги агенту с его задачей.</p></div>
-    <div class="work-controls"><button class="primary" data-action="tick">${icon('clock',18)} Следующий час</button><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!automatic}">${icon(automatic?'pause':'play',16)} ${automatic?'Пауза':'Авто'}</button></div>
+    <div class="work-controls"><button class="primary" data-action="tick" ${travelling?'disabled':''}>${icon('clock',18)} ${travelling?'Сотрудники в пути…':'Следующий час'}</button><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!automatic}">${icon(automatic?'pause':'play',16)} ${automatic?'Пауза':'Авто'}</button></div>
+    ${travelling?'<p class="small-muted" role="status">Дождись прибытия. Дорога не расходует игровые часы; во время самого перерыва коллеги продолжат работу.</p>':''}
     <div class="time-strip">Прошло <strong>${game.time} ч</strong><span>План: ${game.deadline} ч</span></div>
     <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':'Агент занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
     <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div>${game.log.slice(-3).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
@@ -149,6 +151,7 @@ function render() {
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
+    onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
     onActor:id=>{if(!game)return;if(['hire','plan'].includes(game.stage)){officeSelection=officeSelection===id?null:id;render();}else inspect(id);},
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -246,7 +249,7 @@ document.addEventListener('click',e=>{
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-praise'||action==='life-raise'||action==='life-release'){
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{persist();render();showDialog(memberPanel(game,id));}return;
+    if(error)toast(error);else{if(action==='life-break')dialog.close();persist();render();if(action!=='life-break')showDialog(memberPanel(game,id));else toast(`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;

@@ -6,6 +6,13 @@ export const DESKS = [
 ];
 export const ENTRANCE = [4.1, 3.25];
 export const WAITING = [[3.9, 2.8], [3.1, 3.2], [2.3, 3.25]];
+// Standing rest positions around the existing beanbag; outside its collision box.
+// The three slots keep simultaneous breaks apart without changing desk ownership.
+export const REST_SPOTS = [
+  { point: [-2.85, 2.8], yaw: Math.PI / 2 },
+  { point: [-3.2, 1.55], yaw: Math.PI },
+  { point: [-4.25, 1.55], yaw: Math.PI },
+];
 export const WALK_BOUNDS = { minX: -4.65, maxX: 4.65, minZ: -3.65, maxZ: 3.65 };
 export const BODY_RADIUS = .34;
 const furniture = [

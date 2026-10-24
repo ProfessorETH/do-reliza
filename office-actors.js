@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three/three.module.js';
-import { DESKS, ENTRANCE, WAITING, findOfficePath, isWalkable, distance } from './office-layout.js?v=0.5.0';
-import { poseActor } from './office-pose.js?v=0.5.0';
+import { DESKS, ENTRANCE, WAITING, REST_SPOTS, findOfficePath, isWalkable, distance } from './office-layout.js?v=office-life-20261024';
+import { poseActor } from './office-pose.js?v=office-life-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
@@ -38,16 +38,18 @@ export class OfficeActor {
     return -min;
   }
   get moving() { return !['idle', 'seated'].includes(this.state); }
-  get motionLabel() { return ({ walk: 'Идёт к компьютеру', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
+  get motionLabel() { return ({ walk: this.restPhase === 'outbound' ? 'Идёт в зону отдыха' : this.restPhase === 'returning' ? 'Возвращается за компьютер' : 'Идёт к компьютеру', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
   transition(state) { this.state = state; this.stateTime = 0; this.stateStart = this.point; }
   destination(game, instant = false) {
-    const seat = game.seats.indexOf(this.id), point = seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
-    const signature = `${seat}:${point.join(',')}`;
+    const m = game.life?.members[this.id], trip = m?.restTrip, resting = trip && trip.phase !== 'returning';
+    this.restPhase = trip?.phase || null; this.restYaw = resting ? REST_SPOTS[trip.slot].yaw : null;
+    const seat = resting ? -1 : game.seats.indexOf(this.id), point = resting ? REST_SPOTS[trip.slot].point : seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
+    const signature = `${seat}:${point.join(',')}:${resting ? m.restSerial : 'desk'}`;
     if (signature === this.signature) return;
     this.signature = signature; this.seat = seat; this.goal = [...point]; this.failed = false;
     if (instant) {
       this.group.position.set(point[0], 0, point[1]); this.sit = seat >= 0 ? 1 : 0; this.path = [];
-      this.chairSeat = seat; this.chairPull = 0; this.group.rotation.y = seat >= 0 ? 0 : Math.PI; this.transition(seat >= 0 ? 'seated' : 'idle');
+      this.chairSeat = seat; this.chairPull = 0; this.group.rotation.y = resting ? this.restYaw : seat >= 0 ? 0 : Math.PI; this.transition(seat >= 0 ? 'seated' : 'idle');
     } else if (this.sit > .01 || ['lower', 'slide', 'align'].includes(this.state)) {
       this.speed = 0; this.riseStart = this.sit; this.transition(this.sit > .8 ? 'pullout' : 'rise');
     } else if (!['pullout', 'rise', 'exit'].includes(this.state)) this.route();
@@ -114,6 +116,8 @@ export class OfficeActor {
       if (t >= .95) { this.chairSeat = -1; this.chairPull = 0; this.route(); }
     }
     const travel = distance(before, this.point);
+    if (this.state === 'idle' && this.restYaw !== null && this.restYaw !== undefined) this.group.rotation.y += clamp(angle(this.group.rotation.y,this.restYaw),-dt*3,dt*3);
+    this.restBlend = damp(this.restBlend || 0, this.state === 'idle' && !!this.restPhase ? 1 : 0, 4, dt);
     if (['align','exit'].includes(this.state)) this.phase += travel / .8;
     const gait = ['walk','align','exit'].includes(this.state) ? Math.min(1, travel / dt / 1.35) : 0;
     this.gait = damp(this.gait, gait, 12, dt);

@@ -1,5 +1,5 @@
 import { TASKS } from './data.js';
-import { activeTasks, agentById, totalProgress } from './engine.js?v=unified-20261024';
+import { activeTasks, agentById, totalProgress } from './engine.js?v=office-life-20261024';
 
 const stations = [{ x: 300, y: 356 }, { x: 666, y: 356 }, { x: 482, y: 478 }];
 const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -99,7 +99,7 @@ function room() {
 
 export function renderOffice(game, selectedId, moving = false, lifeHTML = '') {
   const editable = ['hire', 'plan'].includes(game.stage), active = activeTasks(game);
-  const idleStatus = id => TASKS.some(t => game.assignments[t.id] === id && game.progress[t.id] < 100) ? 'Ждёт этап' : 'Задачи готовы';
+  const idleStatus = id => ({outbound:'Идёт на перерыв',resting:'В зоне отдыха',returning:'Возвращается за компьютер'})[game.life?.members[id]?.restTrip?.phase] || (TASKS.some(t => game.assignments[t.id] === id && game.progress[t.id] < 100) ? 'Ждёт этап' : 'Задачи готовы');
   const selected = agentById(selectedId), unseated = game.team.filter(id => !game.seats.includes(id));
   const seated = game.seats.filter(Boolean).length;
   const hint = editable ? selected ? `${selected.name}: выбери компьютер${game.seats.includes(selectedId) ? ' для пересадки' : ''} или свободный участок пола.` : seated === 3 ? moving ? 'Команда занимает места. Пока можно осмотреть офис.' : game.stage === 'plan' ? 'Распредели задачи. Код и экран можно делать параллельно.' : 'Все на местах. Пора распределить задачи.' : game.team.length ? 'Выбери персонажа в команде, затем компьютер.' : 'Найми первого агента — он придёт в студию.' : game.stage === 'event' ? 'Команда ждёт твоего решения. Время на паузе.' : game.stage === 'result' ? 'Релиз готов. Пора сыграть в «Орбиту»!' : 'Нажми на сотрудника, чтобы узнать, как идут дела.';
