@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "reference": "../references/echo-head-front-v1.png",
+  "output_prefix": "do-reliza/portrait-v4/echo-head-20261024-a",
+  "steps": 40,
+  "latent_tokens": 4096,
+  "octree": 512,
+  "method": "Same validated local Hunyuan3D2.1 head-only reconstruction as Mira; distinct portrait and seed",
+  "resource_authorization": "Secondary always allowed per human2026-10-22; no foreign interrupt/unload",
+  "prompt_id": "9ce11791-89c2-4ae9-bac7-a7b140296317",
+  "raw_file": "raw/9ce11791_000.glb",
+  "raw_bytes": 90797220,
+  "raw_sha256": "f23a229fc2be56fd6bc9917767411aa1b854b6b825b4c147bb7be0f671792247",
+  "actual_api_graph": "shape-a.api.json",
+  "reference_sha256": "9343f449fd815b3ed820bfabff7e674d9a2260612173e294cc91a5d3259db777",
+  "workflow_sha256": "e7af4089a3d00b2e5fd7eb22b127619a0414d5a0376c24a0cbbae83f31cb9aa5"
+}

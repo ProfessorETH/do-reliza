@@ -1,0 +1,438 @@
+{
+  "status": "ok",
+  "focused_references": [
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/mira-portrait.png",
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/pixel-portrait.png",
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/nord-portrait.png",
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/iskra-portrait.png",
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/saga-portrait.png",
+    "C:/Users/popka/.codex/worktrees/character-rigs/хакатон игра/art/characters/portrait-v4/references/echo-portrait.png"
+  ],
+  "view_analysis": {
+    "observed": "Six original near-frontal portraits; exact crop coordinates recorded in baseline manifest",
+    "inferred": "Profile and rear cranial depth are conservatively inferred, not source-grounded exact likeness",
+    "pipeline": "Local Hunyuan head-specific reconstruction, native Blender reduction/QC, local Paint, rigid bone attachment preserving existing body and animation binary data"
+  },
+  "anatomy": {
+    "facial_shell": [
+      "individual jaw taper, cheek planes, chin, nasal bridge and tip, closed smile"
+    ],
+    "orbital_module": [
+      "almond eye opening, upper lids, brow shape, natural iris scale"
+    ],
+    "hair": [
+      "Mira swept curly updo and tendrils",
+      "Pixel short irregular curls",
+      "Nord swept quiff",
+      "Iskra asymmetric chestnut bob with copper streak",
+      "Saga soft ash-blonde wavy bob",
+      "Echo dark loose curls"
+    ],
+    "accessories": [
+      "Nord rectangular spectacles",
+      "Echo round spectacles and short facial hair"
+    ],
+    "attachments": [
+      "existing Head bone and neck overlap; preserve torso, hands, shoes, skin weights, control hierarchy and five clip samples"
+    ]
+  },
+  "proportions": [
+    {
+      "name": "Measurement convention",
+      "target": "For each original 512 × 512 crop, define H as central visible hairline-to-chin length along the face axis, W as cheekbone width excluding ears and hair, and E as mean visible eye-opening width. Compare model projections at the portrait's head tilt and yaw before evaluating neutral orthographic views.",
+      "evidence": "All six focused portraits were visually inspected. They contain mild yaw, head roll, asymmetric smiles and hair occlusion; none supplies an orthographic front or a true profile.",
+      "tolerance": "Approximate planning ranges, not calibrated anthropometry. Record landmarks and refine measurements before construction; do not distort geometry to compensate for camera perspective."
+    },
+    {
+      "name": "Mira facial envelope",
+      "target": "Projected W/H approximately 0.76–0.86; cheek width greater than lower-jaw width; small rounded chin with a continuous taper rather than a pointed cone.",
+      "evidence": "Visible forehead begins around y=100 and chin ends around y=342; exposed cheek width is approximately 185–205 px. Upper cheeks remain full while both jaw contours narrow markedly below the mouth.",
+      "tolerance": "Resolve contour placement against the original crop; target approximately 5% agreement for visible silhouette landmarks after pose matching."
+    },
+    {
+      "name": "Mira orbital and mouth scale",
+      "target": "E/W approximately 0.22–0.26; mouth width/W approximately 0.42–0.49. Preserve almond-shaped openings, upper-lid coverage and a restrained closed smile.",
+      "evidence": "Eye openings span roughly 43–49 px each; mouth spans roughly 82–94 px. The eye on image-right projects slightly smaller and lower because of the portrait pose.",
+      "tolerance": "Compare individual eye landmarks after pose matching; do not bake perspective asymmetry into the neutral skull."
+    },
+    {
+      "name": "Mira hair envelope",
+      "target": "Main visible hair width/W approximately 1.6–1.9, excluding isolated flyaways. High gathered updo, broad swept side masses and long irregular temple tendrils.",
+      "evidence": "Substantial orange hair occupies approximately x=80–430 around a much narrower exposed face. The bun reaches the upper image boundary; several loose locks extend below the jaw toward the neckline.",
+      "tolerance": "The bun's complete height is unknown because the image crops its top. Do not treat the image boundary as a flat termination."
+    },
+    {
+      "name": "Pixel facial envelope",
+      "target": "Projected W/H approximately 0.82–0.93; youthful full cheeks, softly angular lower jaw and rounded chin. E/W approximately 0.21–0.25.",
+      "evidence": "Hairline is partly hidden around y=100; chin lies around y=332. The exposed face is approximately 190–210 px wide, with visible cheek volume and a broader lower face than Mira.",
+      "tolerance": "Use the visible contour as the constraint; hidden hairline uncertainty prevents an exact H."
+    },
+    {
+      "name": "Pixel hair envelope",
+      "target": "Main hair width/W approximately 1.6–1.9; broad, irregular curly crown with forehead ringlets and shaggy side volume.",
+      "evidence": "The original crop shows substantial curls approximately x=75–430, extending down beside the ears. The fringe is composed of distinct descending curls rather than one swept quiff.",
+      "tolerance": "Match large curl clusters and negative spaces before adding individual locks."
+    },
+    {
+      "name": "Nord facial envelope",
+      "target": "Projected W/H approximately 0.70–0.80; elongated face, comparatively straight cheek-to-jaw sides, stronger chin and longer nasal bridge than Pixel.",
+      "evidence": "The visible hairline is around y=85–100 and chin around y=355–360, with approximately 190–210 px of cheek width. The lower face reads substantially longer than Pixel's.",
+      "tolerance": "Confirm with pose-matched landmarks; preserve a distinct lower-face profile rather than scaling Pixel uniformly."
+    },
+    {
+      "name": "Nord hair and glasses",
+      "target": "Main hair width/W approximately 1.35–1.55. Use a high swept forelock with compact sides; spectacle lenses are rounded rectangles with width/height approximately 1.35–1.65.",
+      "evidence": "The hair silhouette occupies roughly x=130–430. The thin dark frame has flatter upper and lower edges and broader lenses than Echo's round spectacles.",
+      "tolerance": "Measure each lens in its own projected orientation; apparent far-lens compression is perspective."
+    },
+    {
+      "name": "Iskra facial envelope",
+      "target": "Projected W/H approximately 0.78–0.88; relatively narrow lower face, high cheek contour and a small tapered rounded chin. E/W approximately 0.22–0.27.",
+      "evidence": "Visible central forehead begins around y=85–100 and chin ends around y=312. Cheek span is approximately 180–200 px; the cheek-to-chin transition is narrower than Saga's.",
+      "tolerance": "Account for the head tilt and the heavy image-left fringe before evaluating bilateral geometry."
+    },
+    {
+      "name": "Iskra bob silhouette",
+      "target": "Main hair width/W approximately 1.75–2.05. Asymmetric short tousled bob; image-left fringe descends toward the jaw while the opposite side exposes the ear.",
+      "evidence": "The original hair envelope extends roughly x=50–440. The copper-highlighted image-left section is longer and heavier, while image-right ends form shorter outward tufts.",
+      "tolerance": "Preserve asymmetry and uneven endpoints; do not substitute Saga's rounded bob."
+    },
+    {
+      "name": "Saga facial envelope",
+      "target": "Projected W/H approximately 0.84–0.95; broad soft cheeks and a short rounded lower face. E/W approximately 0.23–0.27.",
+      "evidence": "Hairline is visible around y=75–90 and chin around y=317. Approximately 195–215 px of cheek width and large open eyes produce a rounder facial read than Iskra.",
+      "tolerance": "Use cheek fullness and chin curvature as independent controls; do not achieve the difference only by widening Iskra."
+    },
+    {
+      "name": "Saga bob silhouette",
+      "target": "Main hair width/W approximately 1.75–2.05; soft, near-center-parted blonde bob with ends around and slightly below the chin.",
+      "evidence": "The outer bob occupies approximately x=50–450 and descends to roughly y=340–355, below the chin at approximately y=317. Both sides form broad waves and inward-turning tips.",
+      "tolerance": "Match the rounded outer volume and chin-relative endpoints; retain the portrait's mild side-to-side asymmetry."
+    },
+    {
+      "name": "Echo facial envelope",
+      "target": "Projected W/H approximately 0.75–0.86; longer lower face than Pixel, defined rounded-angular chin and substantial smiling cheek volume.",
+      "evidence": "Visible central hairline is around y=80–95 and chin around y=342. The face is approximately 195–215 px wide; beard and moustache accentuate the jaw without replacing its geometry.",
+      "tolerance": "Judge the skin silhouette with facial-hair color hidden as well as in material view."
+    },
+    {
+      "name": "Echo hair and glasses",
+      "target": "Main hair width/W approximately 1.45–1.70; asymmetric lifted wavy forelock with compact sides. Spectacle lenses are near-round, projected width/height approximately 1.0–1.25.",
+      "evidence": "The principal hair mass occupies roughly x=125–455. The glasses are visibly rounder than Nord's, and the crown has a directed wave rather than Pixel's broadly distributed ringlets.",
+      "tolerance": "Do not infer shared curl geometry from the current shared 'curls' style identifier."
+    },
+    {
+      "name": "Unknown profile dimensions",
+      "target": "No fixed portrait-derived numerical target for skull depth, nose projection, ear setback or posterior hair volume. Establish coherent conservative depth and evaluate both profiles and both three-quarter views.",
+      "evidence": "The supplied originals are single near-frontal portraits; a generated frontal derivative cannot supply missing profile evidence.",
+      "tolerance": "Label depth decisions as inferred. Approval means coherent reconstruction compatible with visible evidence, not verified profile likeness."
+    },
+    {
+      "name": "Rig and attachment invariants",
+      "target": "Preserve existing body vertex positions, topology, UVs, weights, bind matrices, root scale, skeleton hierarchy, control names and all five animation tracks. Measure neck seating and rigid-part contacts relative to the approved head size.",
+      "evidence": "Project documentation identifies Idle, Walk, Sit, Stand and Work. rig_recipe.py defines Team3D_<id>_Head, EyeLeft, EyeRight and Skin_<id>_Head; office-skeleton.js consumes the established rig contract.",
+      "tolerance": "Zero unintended changes to protected data. For intentional seated contacts, record signed gaps or overlaps and explicit local bounds; eye globes must not protrude through lids and hair roots must not float."
+    }
+  ],
+  "steps": [
+    {
+      "id": "00_baseline_and_anatomy",
+      "title": "Audit references, existing heads and protected rig data",
+      "objective": "Read-only prerequisite. Verify the active Blender project belongs to this checkout, preserve source snapshots and record the current geometry before any later modeling. No geometry is authorized in this planning step.",
+      "reference_features": [
+        "Mira anatomy: tapered cheek/jaw shell, small rounded chin, forehead, subtle nose bridge and rounded tip, closed smiling lips, almond eyes with lids and lashes, arched brows, partly obscured ears, freckles, swept orange scalp hair, high gathered bun and loose temple tendrils; preserve olive sweater and body.",
+        "Pixel anatomy: fuller youthful cheek/jaw shell, rounded chin, short rounded nose, asymmetric closed smile, brown eyes with lids and thick brows, exposed ears, dark curly crown and descending fringe; preserve orange hoodie and neck headphones.",
+        "Nord anatomy: elongated cheek/jaw shell, stronger chin, longer bridge and defined nose tip, restrained closed smile, brown eyes and thick brows, exposed ears, rounded-rectangular spectacles, swept brown forelock and compact side hair; preserve teal overshirt and white undershirt.",
+        "Iskra anatomy: narrow tapered lower face, high cheeks, small rounded nose, asymmetric closed smile, brown almond eyes, pronounced upper lids/lashes and arched brows, visible image-right ear, freckles, asymmetric dark bob with copper-highlighted image-left fringe; preserve black hoodie.",
+        "Saga anatomy: broad soft cheeks, rounded chin, small short nose, closed smile, large blue-gray eyes, lids/lashes and soft arched brows, partly exposed ears, freckles, rounded blonde bob and off-center part; preserve navy hoodie.",
+        "Echo anatomy: elongated lower face, defined rounded-angular chin, smiling cheeks, rounded nasal tip, closed smile, brown eyes and thick brows, exposed ears, round spectacles, moustache and short jaw stubble, asymmetric wavy quiff; preserve cream sweater.",
+        "View analysis: originals provide near-frontal portrait projections with tilt and mild yaw; side, back and top anatomy are incompletely observed.",
+        "Source diagnosis: face_recipe.py currently shares skull_profile and face_front across characters with mostly a male/female jaw switch, and Pixel/Echo share the curls branch. These are reuse risks, not proof of the live scene's exact current appearance."
+      ],
+      "anchors": [
+        "art/characters/team-rigged-v3.blend and the six existing assets/models/<id>.glb files are the documented baseline; verify actual loaded source and hashes.",
+        "Record DR_SkinnedTeam membership, character roots, Head controls, deform bones, eye controls, body meshes and current attachment transforms.",
+        "Store immutable baseline manifests and later inspection receipts under .codex/blender-runs/portrait-heads-v4; preserve existing portrait-v4 preparation files."
+      ],
+      "forbidden": [
+        "Do not run blender_orchestrator.py from a worker.",
+        "Do not execute build_team.py as an inspection command: its collection reset can delete existing character objects.",
+        "Do not edit geometry, overwrite baseline BLEND/GLB files, alter office files, submit generation jobs or interrupt another Blender project.",
+        "Do not use mira-head-front-v1.png as primary likeness evidence."
+      ],
+      "required_inspections": [
+        "Inspect all six existing original focused crops individually.",
+        "Capture Mira's current neutral head in Solid shading: front orthographic, left and right profile, both three-quarter views, back, top and underside.",
+        "Capture close-up neck, eyelid/globe, ear/scalp and hair-root contacts.",
+        "Inspect saved animation names and protected body/rig data numerically."
+      ],
+      "pass_criteria": [
+        "Each crop is mapped to its correct atlas tile and character identifier; verify original provenance before construction.",
+        "An actual baseline comparison identifies Mira's silhouette and facial-volume mismatches; no live-geometry approval is claimed from source code alone.",
+        "Baseline snapshots, hashes, protected-data manifests and inspection paths are recorded.",
+        "Later steps operate on task-owned copies and character-local head geometry only."
+      ]
+    },
+    {
+      "id": "01_mira_shape",
+      "title": "Reconstruct and inspect Mira head geometry",
+      "objective": "Inspect distinct skull, eyes, nose, smile and curly updo as one generated head module; reduce raw mesh without changing its silhouette.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "02_mira_surface_attachment",
+      "title": "Texture Mira and attach to existing Head bone",
+      "objective": "Generate head-only multiview albedo, compare face to original portrait, attach a review copy without altering body and animation samples.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "03_mira_acceptance_gate",
+      "title": "Review Mira before other character geometry",
+      "objective": "Front, profiles, rear and three-quarter geometry and material review; preserve the original portrait as final identity authority. Repair major mismatches before proceeding.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "head_pixel",
+      "title": "Reconstruct, texture and inspect pixel",
+      "objective": "Use the original pixel portrait, independent Hunyuan head geometry and its own paint pass; verify face, hair, spectacles where present and neck connection before acceptance.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "head_nord",
+      "title": "Reconstruct, texture and inspect nord",
+      "objective": "Use the original nord portrait, independent Hunyuan head geometry and its own paint pass; verify face, hair, spectacles where present and neck connection before acceptance.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "head_iskra",
+      "title": "Reconstruct, texture and inspect iskra",
+      "objective": "Use the original iskra portrait, independent Hunyuan head geometry and its own paint pass; verify face, hair, spectacles where present and neck connection before acceptance.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "head_saga",
+      "title": "Reconstruct, texture and inspect saga",
+      "objective": "Use the original saga portrait, independent Hunyuan head geometry and its own paint pass; verify face, hair, spectacles where present and neck connection before acceptance.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "head_echo",
+      "title": "Reconstruct, texture and inspect echo",
+      "objective": "Use the original echo portrait, independent Hunyuan head geometry and its own paint pass; verify face, hair, spectacles where present and neck connection before acceptance.",
+      "reference_features": [
+        "Use mira-portrait.png: full upper cheeks, narrowing lower jaw, small rounded chin and a relatively broad upper face.",
+        "Keep head tilt in the comparison view separate from neutral anatomy."
+      ],
+      "anchors": [
+        "Mira Head control and existing skull-local coordinate frame.",
+        "Protected neck opening, facial midline, chin, cheek extrema and visible hairline landmarks."
+      ],
+      "forbidden": [
+        "Generic sphere head, unchanged shared female profile, uniform whole-head scaling as the only likeness edit.",
+        "Body or neck-weight changes; materials used to conceal contour errors."
+      ],
+      "required_inspections": [
+        "Front orthographic, both profiles and both three-quarter views in Solid shading.",
+        "Portrait-pose overlay and underside close-up of neck seating.",
+        "Measure shell-to-neck signed gap or intentional overlap."
+      ],
+      "pass_criteria": [
+        "Mira's visible contour follows the facial-envelope target and is recognizably tapered in untextured views.",
+        "Forehead, cheeks, jaw and chin have independent shape control.",
+        "Neck seating is continuous and protected rig/body data are unchanged."
+      ]
+    },
+    {
+      "id": "final_integration",
+      "title": "Verify all six heads in office and saved clips",
+      "objective": "Verify body/rig/animation invariants, all five clips, facial blink where implemented and desktop/mobile office rendering; provide honest before/after identity comparison.",
+      "reference_features": [
+        "Compare all six original crops with their corresponding final heads.",
+        "Distinct identities must remain visible in neutral Solid shading: Mira's taper/updo, Pixel's fuller face/ringlets, Nord's elongated face/sweep, Iskra's narrow face/asymmetric bob, Saga's rounded face/soft bob and Echo's longer lower face/wavy quiff."
+      ],
+      "anchors": [
+        "Step 00 manifests, per-character acceptance receipts, existing GLB export settings and runtime rig contract.",
+        "Original portrait UV/material sources; preserve color details such as freckles, iris colors, Iskra's copper section and Echo's facial hair after geometry approval."
+      ],
+      "forbidden": [
+        "Overwriting accepted sources before verification, rebuilding weighted bodies, rebaking altered animation or changing office control names.",
+        "Linked mesh datablocks causing one character's edits to modify another.",
+        "Claiming browser, mobile or Blender inspection without actual evidence."
+      ],
+      "required_inspections": [
+        "For every character: front, both profiles, both three-quarter views, back, top, underside and attachment close-ups.",
+        "Compare protected body topology, positions, UVs, weights, bind matrices, hierarchy, controls and animation tracks against baseline.",
+        "Reimport task-copy GLBs and verify Idle, Walk, Sit, Stand and Work.",
+        "Inspect existing character-preview and office behavior: blink, head turns, walking, sitting, standing, working and rest-chair transitions.",
+        "Run npm run check and npm test after implementation; use existing browser tooling for desktop and mobile-width integration review."
+      ],
+      "pass_criteria": [
+        "All six heads have recorded geometry acceptance and no unresolved major silhouette or contact defect.",
+        "Materials remain correctly aligned after head edits and do not substitute for missing facial form.",
+        "All five animations, weighted bodies, office controls and attachment behavior remain intact.",
+        "Each character has independently editable mesh data and task-owned outputs.",
+        "Source snapshots, hashes, measurements, screenshots, known inferred features and export receipts are preserved."
+      ]
+    }
+  ],
+  "risks": [
+    "This is a planning result only. No Blender geometry was created or edited, and Mira has not been approved; live baseline inspection and the explicit Mira gate remain mandatory.",
+    "The supplied schema permits only empty objects for view_analysis and anatomy. Their substantive contents are therefore recorded in step 00 reference_features, proportion evidence and these risks.",
+    "Only near-frontal portraits are available. True profile likeness, posterior skull shape and hidden hair construction cannot be established from these sources; evaluate inferred depth conservatively and label it.",
+    "The six existing focused portrait files were visually inspected. Original-crop provenance must still be verified before construction; the generated Mira frontal derivative must not replace the original portrait.",
+    "Mira's bun is cropped at the top, and several hairlines are obscured. Numerical ranges involving those boundaries are provisional rather than complete measurements.",
+    "Current source code uses shared facial formulas and shared hairstyle branches. Reusing topology is acceptable only with independent mesh data and character-specific geometry; reusing final face coordinates is not.",
+    "build_team.py resets DR_SkinnedTeam and regenerates bodies and rigged assets. Running it unchanged would conflict with preserving existing weighted bodies and accepted head work.",
+    "Existing portrait-baked materials may shift after geometry edits. Preserve source textures and inspect UV alignment after form approval; never restore likeness solely with a frontal face texture.",
+    "Eye parts, hair and spectacles depend on existing control/skin attachments. Incorrect local transforms or inverse-bind handling can produce acceptable stills but broken animation exports.",
+    "No Blender MCP tool was exposed during this planning turn. The execution owner must verify a supported Blender connection and the active project before modeling; absence of the bridge does not authorize rebuilding the scene through an unrelated workaround.",
+    "All modeling steps require reopening the applicable original focused crop, completing the stated inspections and repairing failures before advancing. The Mira gate must stop progression to the other five characters until acceptance is recorded."
+  ]
+}

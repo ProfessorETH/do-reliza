@@ -1,0 +1,26 @@
+{
+  "status": "completed",
+  "started_unix": 1792863068.3953483,
+  "method": "installed Hunyuan3D 2.1 Paint package API, offline",
+  "source_package": "E:\\AI\\ComfyUI-Hunyuan21\\custom_nodes\\ComfyUI-Hunyuan3d-2-1\\hy3dpaint",
+  "mesh": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\mira\\head-clean.glb",
+  "reference": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\references\\mira-head-front-v1.png",
+  "script_sha256": "d037ae663d7703ea88c700e13b3f9e554e79f4653a8779214ee1672663d7c72e",
+  "settings": {
+    "views": 6,
+    "view_resolution": 512,
+    "texture_resolution": 2048,
+    "steps": 15,
+    "guidance": 3.0,
+    "seed": 24102026,
+    "torch_memory_cap_gib": 14
+  },
+  "scope": "texture candidate; not rigged or game approved",
+  "preflight_free_bytes": 32496418816,
+  "views_directory": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\mira\\head-painted-views",
+  "export_staging": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-paint-28iaq5oc",
+  "result": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-paint-28iaq5oc\\paint.glb",
+  "peak_torch_bytes": 10433331200,
+  "output_sha256": "398f41a6f519d8e840255b4d17798e245ba263f98e67d2b3ea595e9ff5f315bb",
+  "finished_unix": 1792863153.4724789
+}

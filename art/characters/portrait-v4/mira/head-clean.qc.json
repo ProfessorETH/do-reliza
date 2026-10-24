@@ -1,0 +1,19 @@
+{
+  "source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\\u0445\u0430\u043a\u0430\u0442\u043e\u043d \u0438\u0433\u0440\u0430\\art\\characters\\portrait-v4\\mira\\raw\\86914c60_000.glb",
+  "original_vertices": 5485256,
+  "original_triangles": 2742628,
+  "vertices": 29620,
+  "triangles": 59967,
+  "boundary_edges": 84,
+  "nonmanifold_edges": 449,
+  "dimensions_blender": [
+    1.4957897663116455,
+    1.4866440296173096,
+    1.9638254642486572
+  ],
+  "smoothing": {
+    "factor": 0.16,
+    "iterations": 2
+  },
+  "method": "Weld duplicate vertices, recalculate normals, mild smoothing, collapse decimation; no voxel re-meshing or change of identity geometry"
+}

@@ -58,7 +58,12 @@ test('six portable skins contain weighted bones, five clips and bone-attached ey
       const weights=mesh.geometry.attributes.skinWeight;
       for(let i=0;i<weights.count;i++)assert.ok(Math.abs(weights.getX(i)+weights.getY(i)+weights.getZ(i)+weights.getW(i)-1)<.001,`${id}: normalized weights`);
     });
-    assert.equal(skins,2);
+    if(a.portraitHead){
+      assert.equal(skins,1,`${id}: portrait head uses the existing Head bone`);
+      assert.equal(a.portraitHead.parent.name,`Skin_${id}_Head`);
+      assert.ok(a.portraitHead.parent.isBone);
+      assert.equal(a.portraitHead.userData.portraitHeadVersion,4);
+    }else assert.equal(skins,2);
     for(const side of ['Left','Right']){
       assert.equal(a.footMeshes[side].parent.name,`Skin_${id}_${side}Foot`);
       assert.equal(a.eyeMeshes[side].parent.name,`Skin_${id}_Head`);
@@ -91,6 +96,32 @@ test('posing one cloned skeleton never moves another character instance',async()
   const before=bone.matrixWorld.clone();first.sit=1;poseActor(first,1,true);
   assert.deepEqual(bone.matrixWorld.elements,before.elements);
   assert.notEqual(first.skinBindings[0].bone,second.skinBindings[0].bone);
+});
+
+test('portrait eyelid morph follows the existing blink timing and reduced-motion setting',async()=>{
+  await actor('mira');
+  const model=cloneSkeleton(models.get('mira').scene),existing=model.getObjectByName('DR_mira_PortraitHead');
+  if(existing)existing.parent.remove(existing);
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute([-.02,.01,0,.02,.01,0,0,-.01,0],3));
+  geometry.morphAttributes.position=[new THREE.Float32BufferAttribute([0,-.01,0,0,-.01,0,0,.01,0],3)];
+  geometry.morphTargetsRelative=true;
+  const portraitHead=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial());
+  portraitHead.name='DR_mira_PortraitHead';portraitHead.userData={portraitHeadVersion:4,portraitBlinkMorph:0};
+  model.getObjectByName('Skin_mira_Head').add(portraitHead);
+  const a=new OfficeActor('mira',model,'#7ed9b8',0);
+  const other=new OfficeActor('mira',cloneSkeleton(model),'#7ed9b8',1);
+  assert.equal(a.portraitHead,portraitHead,'actor discovers the portrait mesh');
+  poseActor(a,.075,false);
+  assert.ok(Math.abs(portraitHead.morphTargetInfluences[0]-.97)<1e-8,'eyelids close at the blink peak');
+  assert.equal(other.portraitHead.morphTargetInfluences[0],0,'one character blink does not mutate another clone');
+  assert.ok(Math.abs(a.eyeMeshes.Left.scale.y-.03)<1e-8,'legacy eye hook still works');
+  const closed=portraitHead.getVertexPosition(0,new THREE.Vector3()).y;
+  poseActor(a,1,false);
+  assert.ok(portraitHead.morphTargetInfluences[0]<1e-8,'eyelids reopen');
+  assert.ok(portraitHead.getVertexPosition(0,new THREE.Vector3()).y>closed,'the morph changes the actual surface');
+  poseActor(a,.075,true);
+  assert.equal(portraitHead.morphTargetInfluences[0],0,'reduced motion keeps the quiet open pose');
 });
 
 test('both feet remain on or above floor through a full gait and chair lowering', async () => {

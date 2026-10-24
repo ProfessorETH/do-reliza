@@ -1,0 +1,8 @@
+{
+  "mira":{"hair":["#491f12","#a54b20","#e2a05b"],"skin":["#825235","#d6a77d","#f4d6b8"],"back_z":-0.66,"side_z":-0.50,"top_above_eyes":0.36},
+  "pixel":{"hair":["#100e0d","#3a241b","#825539"],"skin":["#84502b","#ca945b","#efc799"],"back_z":-0.54,"side_z":0.13,"top_above_eyes":0.35},
+  "nord":{"hair":["#17130f","#4a3526","#99724e"],"skin":["#80583a","#d6a47b","#f1cfaa"],"back_z":-0.27,"side_z":0.25,"top_above_eyes":0.40,"ear_bounds":[[0.53,0.02,-0.17],[0.67,0.25,0.10]]},
+  "iskra":{"hair":["#281814","#70412e","#bf7950"],"skin":["#88604b","#d9ad8b","#f4d5b6"],"back_z":-0.85,"side_z":-0.82,"top_above_eyes":0.34},
+  "saga":{"hair":["#65523f","#b69a72","#e8d3ab"],"skin":["#8a6651","#dfb695","#f6ddc1"],"back_z":-0.87,"side_z":-0.81,"top_above_eyes":0.38},
+  "echo":{"hair":["#0e0d0c","#29221c","#64503b"],"skin":["#694128","#b57e4d","#e0b282"],"back_z":-0.34,"side_z":0.15,"top_above_eyes":0.36,"ear_bounds":[[0.53,-0.03,-0.18],[0.67,0.25,0.11]]}
+}

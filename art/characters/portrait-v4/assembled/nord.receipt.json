@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "id": "nord",
+  "baseSha256": "cc7c2dc855f7b96a0020f5bd4fcd55a90fa2aa83e759452ecfe7679a97f2d5c7",
+  "headSha256": "180d127499cd08955c1702761c48bfcf92b5a21f6405889a7a2f24577e567d5c",
+  "outputSha256": "7406a9f968e6f1a30f64b69982a5097d23804f24fc5a0b7b1620de59db7fa92d",
+  "sourceBounds": {
+    "min": [
+      -0.7203750014305115,
+      -0.9847710132598877,
+      -0.7868120074272156
+    ],
+    "max": [
+      0.7540209889411926,
+      0.974943995475769,
+      0.7950360178947449
+    ]
+  },
+  "alignment": {
+    "scale": 0.275288003762171,
+    "eyeRatio": 0.4218623140622677,
+    "chinRatio": 0.8,
+    "targetEyeY": 1.599,
+    "targetChinY": 1.395,
+    "neckCutY": 1.4,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0
+  },
+  "headWorldMatrix": [
+    -0.275288003762171,
+    0,
+    -3.3713057265100723e-17,
+    0,
+    0,
+    0.275288003762171,
+    0,
+    0,
+    3.3713057265100723e-17,
+    0,
+    -0.275288003762171,
+    0,
+    0.004631168368211176,
+    1.5581984398636441,
+    0.00113198571226267,
+    1
+  ],
+  "headBoneWorldMatrix": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1.3849999904632568,
+    0,
+    1
+  ],
+  "removedOldHeadTriangles": [
+    15082
+  ],
+  "originalBinaryBytesPreserved": 2453464,
+  "originalAnimationsPreserved": true,
+  "portraitNode": 60,
+  "originalHeadJoint": 6,
+  "headMeshes": 1,
+  "blink": {
+    "affected": [
+      235,
+      225
+    ],
+    "maxDisplacement": 0.012860189264059503,
+    "settings": {
+      "eyeX": 0.061,
+      "eyeY": 1.599,
+      "radiusX": 0.038,
+      "radiusY": 0.023,
+      "depth": 0.035,
+      "strength": 0.97,
+      "frontLimits": [
+        -0.11859115497921602,
+        -0.11358587409521095
+      ]
+    }
+  },
+  "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained.",
+  "base": "work/portrait-baseline/models/nord.glb",
+  "head": "art/characters/portrait-v4/nord/head-detailed.glb",
+  "output": "art/characters/portrait-v4/assembled/nord.glb"
+}

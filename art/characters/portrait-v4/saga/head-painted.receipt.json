@@ -1,0 +1,26 @@
+{
+  "status": "completed",
+  "started_unix": 1792867005.954876,
+  "method": "installed Hunyuan3D 2.1 Paint package API, offline",
+  "source_package": "E:\\AI\\ComfyUI-Hunyuan21\\custom_nodes\\ComfyUI-Hunyuan3d-2-1\\hy3dpaint",
+  "mesh": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\saga\\head-clean.glb",
+  "reference": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\references\\saga-head-front-v1.png",
+  "script_sha256": "9dde6910d628f30d91e23423a7c54a5d88087ad49ba2979d85dd71a53dc3b8d7",
+  "settings": {
+    "views": 6,
+    "view_resolution": 512,
+    "texture_resolution": 2048,
+    "steps": 15,
+    "guidance": 3.0,
+    "seed": 24102026,
+    "torch_memory_cap_gib": 14
+  },
+  "scope": "texture candidate; not rigged or game approved",
+  "preflight_free_bytes": 32496418816,
+  "views_directory": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\saga\\head-painted-views",
+  "export_staging": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-paint-hx4o898u",
+  "result": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-paint-hx4o898u\\paint.glb",
+  "peak_torch_bytes": 10435428352,
+  "output_sha256": "d6cd96a0b88893e2eee7cf7c399e8b4852de47ca21cc957501d3f60d7e9edd03",
+  "finished_unix": 1792867107.4570985
+}

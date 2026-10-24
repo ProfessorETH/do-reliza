@@ -54,6 +54,9 @@ export function poseActor(actor, elapsed, reduced) {
   j.Head.rotation.set(lerp(0, -.035, actor.workBlend)+rest*.035, reduced ? 0 : lerp(Math.sin(t * .75) * .065 * (1 - stride), .27, event*(1-rest)) + Math.sin(t * 2.1) * .018 * think, rest*(reduced?0:Math.sin(t*.55)*.025));
   const blinkTime = (t + actor.order * .77) % 4.3;
   const blink = reduced ? 1 : 1 - Math.sin(clamp(blinkTime / .15, 0, 1) * Math.PI) * .97;
+  const portraitHead=actor.portraitHead, portraitBlink=portraitHead?.userData?.portraitBlinkMorph;
+  if(Number.isInteger(portraitBlink)&&portraitBlink>=0&&portraitHead.morphTargetInfluences?.[portraitBlink]!==undefined)
+    portraitHead.morphTargetInfluences[portraitBlink]=1-blink;
   for (const side of ['Left', 'Right']) {
     if (j['Eye' + side]) j['Eye' + side].scale.y = blink;
     if (actor.eyeMeshes?.[side]) actor.eyeMeshes[side].scale.y=blink;

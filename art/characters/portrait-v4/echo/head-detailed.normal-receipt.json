@@ -1,0 +1,20 @@
+{
+  "input": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\head-normal-sample.glb",
+  "output": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\head-detailed.glb",
+  "sourceSha256": "9081d7b8616e29dcc2235035cfe82c4c79642ad558ef8744368278c497cf0217",
+  "outputSha256": "6751ce928695e98feaa24d07e2fdb03f07ed7d58ff059b40d1a16ddd1bd76dcc",
+  "albedoSource": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\head-final.glb",
+  "albedoSha256": "0e1ac9c61d2c08129a384e318f0523c765383360ef090068ad9870c3e72cbc9b",
+  "albedoSurfaceValidation": {
+    "triangles": 59196,
+    "epsilon": 0.00001,
+    "comparison": "One-to-one world POSITION+TEXCOORD_0 triangle multiset; vertex/triangle order and winding independent"
+  },
+  "normalResolution": 1024,
+  "normalChannels": 3,
+  "normalStrength": 0.35,
+  "normalBytes": 2345256,
+  "outputBytes": 5377980,
+  "geometry": "All geometry buffer views preserved byte for byte",
+  "method": "Stock FFmpeg Lanczos data-texture resize; RGB lossless PNG; GLB buffer-view compaction; optional verified albedo replacement"
+}

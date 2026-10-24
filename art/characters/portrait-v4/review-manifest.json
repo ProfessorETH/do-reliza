@@ -1,0 +1,36 @@
+{
+  "models": {
+    "mira": {
+      "file": "mira.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.49518947906877797
+    },
+    "pixel": {
+      "file": "pixel.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.4688896959675659
+    },
+    "nord": {
+      "file": "nord.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.4218623140622677
+    },
+    "iskra": {
+      "file": "iskra.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.4262410612006639
+    },
+    "saga": {
+      "file": "saga.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.40803986288657274
+    },
+    "echo": {
+      "file": "echo.glb",
+      "stage": "textured-normal-bone-attached",
+      "eyeRatio": 0.4116947196680592
+    }
+  },
+  "updated": "echo-1792869389",
+  "acceptance": "Reviewed against original portraits in front and quarter; native six-side geometry inspection; minor inferred rear-hair and side texture differences remain"
+}

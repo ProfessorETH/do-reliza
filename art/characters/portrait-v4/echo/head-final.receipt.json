@@ -1,0 +1,95 @@
+{
+  "source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\head-painted.glb",
+  "reference": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\references\\echo-head-front-v1.png",
+  "output": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\head-final.glb",
+  "method": "Blender CPU EMIT bake; occlusion-aware visible front identity projection over Hunyuan multiview albedo; welded UV seam normals and smooth shading",
+  "removed_floating_vertices": 457,
+  "front_vertices": 7141,
+  "vertices": 29297,
+  "triangles": 59196,
+  "head_bounds_blender": [
+    [
+      -0.7209830284118652,
+      -0.833761990070343,
+      -0.9735659956932068
+    ],
+    [
+      0.7330629825592041,
+      0.8156319856643677,
+      0.96772700548172
+    ]
+  ],
+  "reference_alpha_bounds_uv": [
+    0.16188197767145135,
+    0.015151515151515152,
+    0.8763955342902712,
+    0.9992025518341308
+  ],
+  "texture": 2048,
+  "jpeg_quality": 94,
+  "render_center": [
+    0.011633992195129395,
+    -0.009065002202987671,
+    0.006775498390197754
+  ],
+  "render_normalize": 0.4782233755832371,
+  "ortho_scale": 1.1,
+  "identity_affine": [
+    [
+      1.17118071384656,
+      0.023970209715379238
+    ],
+    [
+      -0.06879103566816425,
+      1.1659813913832688
+    ],
+    [
+      -0.043441214066791925,
+      -0.10303027178437454
+    ]
+  ],
+  "landmarks": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\хакатон игра\\art\\characters\\portrait-v4\\echo\\landmarks.json",
+  "component_threshold": 292.97,
+  "inferred_clay_colour_repair": {
+    "hair": [
+      "#0e0d0c",
+      "#29221c",
+      "#64503b"
+    ],
+    "skin": [
+      "#694128",
+      "#b57e4d",
+      "#e0b282"
+    ],
+    "back_z": -0.34,
+    "side_z": 0.15,
+    "top_above_eyes": 0.36,
+    "ear_bounds": [
+      [
+        0.53,
+        -0.03,
+        -0.18
+      ],
+      [
+        0.67,
+        0.25,
+        0.11
+      ]
+    ]
+  },
+  "hair_mask_vertices": 19420,
+  "identity_projection_front_dot": {
+    "zero_below": 0.08,
+    "full_above": 0.65,
+    "forced_side_override": false
+  },
+  "reason": "Peripheral skin rejects reference hair silhouette; calibrated central face retains full identity, cheek projection has a soft angular falloff",
+  "output_sha256": "e5c64a231cb3814eb2aee674de4c82d69faa6bb09a2c32326ea1e91ec214cbe8",
+  "script_sha256": "2ce2181a4dd965a08f5113fe49b2fd52c3e920e46310d5e3738293895ff9f3ee",
+  "central_face_override": {
+    "half_width": 0.24,
+    "min_z_relative_eye": -0.55,
+    "max_z_relative_eye": 0.45
+  },
+  "inferred_colour_note": "Paint luminance and geometry remain; portrait-specific hair/skin palettes repair unconditioned clay. Skin rejects opaque reference hair borders; measured ears are excluded from scalp masks."
+}

@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "id": "mira",
+  "baseSha256": "31cffb209ea72433f1fbc8d622160e80521f3c0a487f6295de243fd83df20c4b",
+  "headSha256": "531e74af79d6b962eb5804c905bfc7062fd5b6c59bec7e8fe5f33fa01a63e50e",
+  "outputSha256": "f1af17d4f6ea1a250ae8478fd09980364b916a55b66098bb47a044fd4acc4ad0",
+  "sourceBounds": {
+    "min": [
+      -0.7385879755020142,
+      -0.9792550206184387,
+      -0.764644980430603
+    ],
+    "max": [
+      0.705348014831543,
+      0.948065996170044,
+      0.7217770218849182
+    ]
+  },
+  "alignment": {
+    "scale": 0.3472531204156178,
+    "eyeRatio": 0.49518947906877797,
+    "chinRatio": 0.8,
+    "targetEyeY": 1.599,
+    "targetChinY": 1.395,
+    "neckCutY": 1.4,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0
+  },
+  "headWorldMatrix": [
+    -0.3472531204156178,
+    0,
+    -4.2526242241091675e-17,
+    0,
+    0,
+    0.3472531204156178,
+    0,
+    0,
+    4.2526242241091675e-17,
+    0,
+    -0.3472531204156178,
+    0,
+    -0.005771340032656765,
+    1.6011957141679327,
+    -0.007443016185418201,
+    1
+  ],
+  "headBoneWorldMatrix": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1.3849999904632568,
+    0,
+    1
+  ],
+  "removedOldHeadTriangles": [
+    22234
+  ],
+  "originalBinaryBytesPreserved": 2704360,
+  "originalAnimationsPreserved": true,
+  "portraitNode": 60,
+  "originalHeadJoint": 6,
+  "headMeshes": 1,
+  "blink": {
+    "affected": [
+      129,
+      123
+    ],
+    "maxDisplacement": 0.01253639672014329,
+    "settings": {
+      "eyeX": 0.061,
+      "eyeY": 1.599,
+      "radiusX": 0.038,
+      "radiusY": 0.023,
+      "depth": 0.035,
+      "strength": 0.97,
+      "frontLimits": [
+        -0.16944770830364642,
+        -0.1704182741783737
+      ]
+    }
+  },
+  "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained.",
+  "base": "work/portrait-baseline/models/mira.glb",
+  "head": "art/characters/portrait-v4/mira/head-detailed.glb",
+  "output": "art/characters/portrait-v4/assembled/mira.glb"
+}

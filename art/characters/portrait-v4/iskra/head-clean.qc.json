@@ -1,0 +1,19 @@
+{
+  "source": "C:\\Users\\popka\\.codex\\worktrees\\character-rigs\\\u0445\u0430\u043a\u0430\u0442\u043e\u043d \u0438\u0433\u0440\u0430\\art\\characters\\portrait-v4\\iskra\\raw\\592341e6_000.glb",
+  "original_vertices": 7255872,
+  "original_triangles": 3627936,
+  "vertices": 29318,
+  "triangles": 59967,
+  "boundary_edges": 95,
+  "nonmanifold_edges": 533,
+  "dimensions_blender": [
+    1.9311728477478027,
+    1.7888004779815674,
+    1.8883063793182373
+  ],
+  "smoothing": {
+    "factor": 0.16,
+    "iterations": 2
+  },
+  "method": "Weld duplicate vertices, recalculate normals, mild smoothing, collapse decimation; no voxel re-meshing or change of identity geometry"
+}
