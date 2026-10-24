@@ -4,7 +4,7 @@ import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, actOrbit, orbitFeatu
 import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=team-hud-20261024';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
-import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
+import { renderStartScreen } from './assets/start-screen.js?v=studio-theme-20261024';
 import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
@@ -190,7 +190,13 @@ function render() {
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task, oldSeat=focused?.dataset?.seat, oldGuide=focused?.dataset?.guide;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
-  if (!game) { syncEventDialog();detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
+  if (!game) {
+    const openSections=[...root.querySelectorAll('.start-screen details[open]')].map(section=>section.id);
+    syncEventDialog();detachOfficeWorld();root.innerHTML=intro();
+    for(const id of openSections){const section=document.getElementById(id);if(section)section.open=true;}
+    if(oldAction)root.querySelector(`[data-action="${oldAction}"]`)?.focus({preventScroll:true});
+    if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);}return;
+  }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { workspaceView = 'project'; officeExpanded = false; }
   root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${shiftBanner()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
