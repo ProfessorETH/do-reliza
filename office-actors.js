@@ -1,3 +1,4 @@
+import { REACTION_SECONDS } from './assets/character-reactions.js';
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
 import { ALL_DESKS as DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
@@ -44,14 +45,19 @@ export class OfficeActor {
     return -min;
   }
   get moving() { return !['idle', 'seated', 'resting'].includes(this.state); }
-  get motionLabel() { return ({ walk: this.restPhase === 'outbound' ? 'Идёт в зону отдыха' : this.restPhase === 'returning' ? 'Возвращается за компьютер' : 'Идёт к компьютеру', 'rest-align':'Подходит к креслу', 'rest-lower':'Устраивается в кресле', 'rest-rise':'Встаёт после отдыха', 'rest-exit':'Возвращается к работе', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
+  get motionLabel() { if(this.visit&&this.visit.phase!=='pending')return this.state==='inspect'?'Осматривает: '+this.visit.label:this.visit.phase==='returning'?'Возвращается на своё место':'Идёт посмотреть: '+this.visit.label; return ({ walk: this.restPhase === 'outbound' ? 'Идёт в зону отдыха' : this.restPhase === 'returning' ? 'Возвращается за компьютер' : 'Идёт к компьютеру', 'rest-align':'Подходит к креслу', 'rest-lower':'Устраивается в кресле', 'rest-rise':'Встаёт после отдыха', 'rest-exit':'Возвращается к работе', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
   transition(state) { this.state = state; this.stateTime = 0; this.stateStart = this.point; }
+  react(kind){this.reaction={kind,time:0};}
+  inspect(visit,game){if(this.visit||game.life.members[this.id]?.restTrip)return;this.visit={...visit,phase:'pending',time:0,seat:game.seats.indexOf(this.id)};this.game=game;}
   destination(game, instant = false) {
+    this.game=game;
+    if(this.visit&&(game.life.members[this.id]?.restTrip||!['hire','plan','result'].includes(game.stage)||this.visit.seat!==game.seats.indexOf(this.id)))this.visit=null;
     this.capacity = game.seats.length;
     const m = game.life?.members[this.id], trip = m?.restTrip, resting = ['outbound','resting'].includes(trip?.phase);
     this.restPhase = trip?.phase || null; this.loungeTarget = resting;
-    const seat = resting ? -1 : game.seats.indexOf(this.id), point = resting ? LOUNGE_SEAT.point : seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
-    const signature = `${seat}:${point.join(',')}:${resting ? m.restSerial : 'desk'}`;
+    const visiting=['outbound','looking'].includes(this.visit?.phase);
+    const seat = resting||visiting ? -1 : game.seats.indexOf(this.id), point = visiting?this.visit.point:resting ? LOUNGE_SEAT.point : seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
+    const signature = `${seat}:${point.join(',')}:${resting ? m.restSerial : visiting?'visit:'+this.visit.key:'desk'}`;
     if (signature === this.signature) return;
     this.signature = signature; this.seat = seat; this.goal = [...point]; this.failed = false;
     if (instant) {
@@ -68,14 +74,15 @@ export class OfficeActor {
     const target = this.loungeTarget ? LOUNGE_SEAT.approach : this.seat >= 0 ? approach(this.seat) : this.goal;
     this.path = findOfficePath(this.point, target, true, this.capacity) || [];
     this.failed = !this.path.length && distance(this.point, target) > .05;
-    this.transition(this.failed ? 'idle' : this.path.length ? 'walk' : this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : 'idle');
+    if(this.failed&&this.visit){this.visit=null;this.signature='';this.destination(this.game);return;}
+    this.transition(this.failed ? 'idle' : this.path.length ? 'walk' : this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : this.visit?.phase==='outbound'?'inspect':'idle');
     if (this.state === 'align') this.chairSeat = this.seat;
   }
   canReach(point) { return findOfficePath(this.chairSeat >= 0 ? approach(this.chairSeat) : this.point, point, true, this.capacity) !== null; }
   place(a, b, amount) { const t = smooth(amount); this.group.position.x = lerp(a[0], b[0], t); this.group.position.z = lerp(a[1], b[1], t); }
   walk(dt, others) {
     const next = this.path[0];
-    if (!next) { this.speed = 0; this.chairSeat = this.seat; this.transition(this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : 'idle'); return; }
+    if (!next) { this.speed = 0; this.chairSeat = this.seat; this.transition(this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : this.visit?.phase==='outbound'?'inspect':'idle'); return; }
     const p = this.point, remaining = distance(p, next), final = this.path.length === 1;
     const heading = Math.atan2(p[0] - next[0], p[1] - next[1]), turn = angle(this.group.rotation.y, heading);
     this.group.rotation.y += clamp(turn, -dt * 4.8, dt * 4.8);
@@ -94,6 +101,19 @@ export class OfficeActor {
   }
   update(dt, elapsed, others, activity, reducedMotion, selected) {
     if (this.activity.stage !== activity.stage) this.reactionTime = 0;
+    if(this.reaction){this.reaction.time+=dt;if(this.reaction.time>=REACTION_SECONDS)this.reaction=null;}
+    if(this.visit){
+      this.visit.time+=dt;
+      if(this.visit.phase==='pending'&&this.visit.time>=this.visit.delay&&['seated','idle'].includes(this.state)){
+        this.visit.phase='outbound';this.signature='';this.destination(this.game);
+      }else if(this.visit.phase==='outbound'&&this.state==='inspect'){
+        this.visit.phase='looking';this.visit.time=0;this.react('curious');
+      }else if(this.visit.phase==='looking'){
+        const look=this.visit.look,heading=Math.atan2(this.point[0]-look[0],this.point[1]-look[1]);
+        this.group.rotation.y+=clamp(angle(this.group.rotation.y,heading),-dt*3,dt*3);
+        if(this.visit.time>=3.2){this.visit.phase='returning';this.signature='';this.destination(this.game);}
+      }else if(this.visit.phase==='returning'&&['seated','idle'].includes(this.state))this.visit=null;
+    }
     this.activity = activity; this.reactionTime += dt; this.selected = selected; this.stateTime += dt;
     const before = this.point;
     if (this.state === 'walk') this.walk(dt, others);

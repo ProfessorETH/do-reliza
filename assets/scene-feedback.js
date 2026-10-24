@@ -36,12 +36,14 @@ function enqueue(s,items) {
 }
 export function queueMemberFeedback(s,before,include=[]) { enqueue(s,memberChanges(s,before,include).map(change=>({...change,type:'person'}))); }
 export function queuePurchaseFeedback(s,id,cost) { enqueue(s,[{type:'purchase',id,cost,cash:s.life.cash}]); }
+export const sceneActions=s=>(pending.get(s)||[]).filter(item=>item.expires+(item.type==='purchase'?45000:0)>performance.now());
+export function queueActorReaction(s,id,reaction){enqueue(s,[{type:'reaction',id,reaction}]);}
 export function clearSceneFeedback(s) { pending.delete(s); }
 const signed=n=>n>0?'+'+n:String(n).replace('-','−');
 const money=n=>new Intl.NumberFormat('ru-RU').format(n)+' ₽';
 export function renderSceneFeedback(s) {
   const now=performance.now();
-  return (pending.get(s)||[]).filter(item=>item.expires>now).map(item=>{
+  return (pending.get(s)||[]).filter(item=>item.expires>now&&item.type!=='reaction').map(item=>{
     const attr=`data-scene-feedback="${item.key}" style="--feedback-age:-${now-item.created}ms"`;
     if(item.type==='purchase')return `<div class="scene-feedback purchase-feedback" ${attr} data-feedback-upgrade="${item.id}" role="status"><span class="feedback-installed">✓ Установлено</span><b>${UPGRADE_COPY[item.id][0]}</b><strong>−${money(item.cost)}</strong><small>В кассе ${money(item.cash)}</small></div>`;
     const a=AGENTS.find(a=>a.id===item.id),seat=s.seats.indexOf(item.id);
