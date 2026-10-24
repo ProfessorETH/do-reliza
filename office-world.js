@@ -161,6 +161,7 @@ class OfficeWorld {
       this.loungeSeat?.update(Math.max(0,...actors.map(a=>(a.loungeBlend||0)*a.sit)));
       this.container.dataset.upgrades = (this.game.life?.upgrades || []).join(',');
       for (const [index, chair] of this.chairs) chair.node.position.z = chair.z + Math.max(0, ...actors.filter(a => a.chairSeat === index).map(a => a.chairPull));
+      if(this.cameraGoal?.autoReturnAt && time>=this.cameraGoal.autoReturnAt)this.cameraAction('reset');
       if (this.cameraGoal) {
         const a = 1 - Math.exp(-dt * (this.reduced.matches ? 100 : 5)), goal = this.cameraGoal;
         const subject = this.actors.get(goal.actorId); if (subject) goal.target.copy(subject.group.position).y = .95;
@@ -207,7 +208,7 @@ class OfficeWorld {
               const helper=new THREE.Box3Helper(box,0xe9c78f);helper.material.transparent=true;helper.material.opacity=.65;helper.userData.feedbackDecoration=true;this.scene.add(helper);
               const center=box.getCenter(new THREE.Vector3());
               entry={helper,point:center.clone().setY(box.max.y+.3)};this.feedbackHighlights.set(key,entry);
-              if(!this.flying)this.cameraGoal={target:center,offset:new THREE.Vector3(7,5,8),zoom:['quiet','computers'].includes(id)?1.4:1.8};
+              if(!this.flying)this.cameraGoal={target:center,offset:new THREE.Vector3(7,5,8),zoom:['quiet','computers'].includes(id)?1.4:1.8,autoReturnAt:performance.now()+7000};
             }
           }
         }
