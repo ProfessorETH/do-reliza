@@ -56,7 +56,7 @@ def build_workstation(i, x, y, details=False):
         box(f'Monitor{i}_Rim{pz}',(0,-.014,pz),(.82,.04,.04),'steel',monitor)
     box(f'Monitor{i}_Glass',(0,-.022,.43),(.82,.008,.47),'screen',monitor)
     box(f'Keyboard{i}',(0,-.29,.815),(.65,.22,.03),'ivory',root,chamfer=.008)
-    box(f'Mouse{i}',(.53,-.26,.824),(.11,.16,.048),'ivory',root,chamfer=.012)
+    box(f'Mouse{i}',(.43,-.42,.824),(.11,.16,.048),'ivory',root,chamfer=.012)
     chair=empty(f'Chair{i}',(0,-.94,0),root)
     cylinder(f'Chair{i}_Column',(0,0,.255),.035,.39,'steel',chair)
     for n in range(5):
@@ -215,6 +215,13 @@ def room_details(root):
 
 def finish_room():
     prepare();palette();root=build_room();room_details(root)
+    # Walls and their attached details hide together when the camera looks inside.
+    back=empty('CutawayBack',parent=root);back['wallSide']='back'
+    left=empty('CutawayLeft',parent=root);left['wallSide']='left'
+    for obj in list(root.children):
+        name=obj.name[len(PREFIX):]
+        if name.startswith(('BackWall','BackCoping','PlanningBoard','Note','BoardMarker','WallLamp')): obj.parent=back
+        elif name.startswith(('Window','LeftCoping','City')): obj.parent=left
     for i,(x,y) in enumerate(DESKS): build_workstation(i,x,y,True)
     frame_view()
     bpy.context.scene['release_stage']='room: furniture module replicated after six-side contact inspection'

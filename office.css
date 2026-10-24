@@ -1,4 +1,4 @@
-/* The office is a playable, code-drawn diorama. The original landing art stays. */
+/* Playable Blender diorama with an accessible SVG fallback. */
 .playable-office{--office-edge:#78968f38;display:flex;flex-direction:column;align-items:stretch;padding:28px 28px 20px;background:radial-gradient(ellipse at 52% 44%,#314348 0%,#182c36 55%,#12232e 100%);min-height:660px}
 .office-heading{display:flex;justify-content:space-between;gap:16px;position:relative;z-index:2}
 .office-heading .eyebrow{font-size:9px;letter-spacing:1.7px;color:#b0c4c6}.office-heading h2{font-size:25px;line-height:1.2;letter-spacing:-.5px;font-weight:500;margin-top:12px;color:#eee8d8}
@@ -51,6 +51,15 @@
 .office-movement{position:absolute;left:0;right:0;bottom:0;z-index:2;text-align:center;font-size:11px;color:#f3cb8e;pointer-events:none}
 .office-walk-button{min-height:44px;padding:6px 10px;border:1px solid var(--office-edge);border-radius:5px;background:#1e3841;color:#edc88d;font-size:11px}
 .desk-counter{display:none}
+.office-room.is-3d .desk-interactions{inset:auto 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;height:44px}
+.office-room.is-3d .office-desk{position:relative;left:auto;top:auto;transform:none;width:100%;height:44px;min-width:0}
+.office-room.is-3d .office-desk:not(:disabled):active{transform:translateY(1px)}
+.office-room.is-3d .desk-counter{display:block;position:absolute;left:8px;top:6px;font-size:9px;color:var(--amber);z-index:1}
+.office-room.is-3d .desk-tag{padding:4px 12px 4px 24px;box-shadow:none}
+.office-camera-controls button{width:44px;height:44px}
+.office-camera-controls button:disabled{opacity:.35}
+.office-render-status{max-width:48%}
+.office-movement{bottom:50px}
 @media(max-width:760px){.office-room.is-3d .office-desk{width:89px;height:44px}.office-room.is-3d .desk-tag{padding:4px 5px}.office-render-status{font-size:8px;max-width:60%;top:1px}.office-camera-controls{top:0}.office-camera-controls button{width:30px;height:36px;font-size:17px}.office-movement{font-size:10px;bottom:-4px}}
 @media(max-width:380px){.office-room.is-3d .office-desk{width:78px;height:44px}.office-render-status{font-size:7px;max-width:58%}.office-camera-controls button{width:28px}.office-room.is-3d .desk-tag small{font-size:7px}}
 @media(max-width:760px){
@@ -62,4 +71,7 @@
   .office-camera-controls button{width:44px;height:44px;font-size:19px}
   .office-render-status{max-width:47%;font-size:8px;line-height:1.4;top:3px}
   .office-movement{bottom:49px}
+  .office-room.is-3d{aspect-ratio:1.15}
+  .office-render-status{top:50px;max-width:100%;font-size:8px}
+  .control-panel{scroll-margin-top:77px}
 }

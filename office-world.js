@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js';
-import { DESKS } from './office-layout.js';
+import { OfficeActor } from './office-actors.js?v=0.5.0';
+import { DESKS } from './office-layout.js?v=0.5.0';
 import { agentById, activeTasks } from './engine.js';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 
@@ -10,13 +10,13 @@ let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(`assets/models/${name}.glb`).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(`assets/models/${name}.glb?v=0.5.0`).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 
 class OfficeWorld {
   constructor(callbacks) {
-    this.callbacks = callbacks; this.actors = new Map(); this.loadingActors = new Set(); this.screens = new Map(); this.selected = null; this.busy = false;
+    this.callbacks = callbacks; this.actors = new Map(); this.loadingActors = new Set(); this.screens = new Map(); this.chairs = new Map(); this.selected = null; this.busy = false;
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
@@ -28,8 +28,8 @@ class OfficeWorld {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.target.set(0, .7, 0); this.controls.enablePan = false; this.controls.enableDamping = true;
     this.controls.minPolarAngle = .45; this.controls.maxPolarAngle = 1.28;
-    this.controls.minAzimuthAngle = -.30; this.controls.maxAzimuthAngle = 1.30;
-    this.controls.minZoom = .7; this.controls.maxZoom = 1.7; this.controls.update();
+    this.controls.minZoom = .7; this.controls.maxZoom = 3.4; this.controls.update();
+    this.controls.addEventListener('start', () => { this.cameraGoal = null; });
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
     this.scene.add(new THREE.HemisphereLight(0xb9daec, 0x5a4330, 3));
     const key = new THREE.DirectionalLight(0xffd29b, 3.5); key.position.set(-3, 8, 4); key.castShadow = true;
@@ -49,6 +49,8 @@ class OfficeWorld {
     try {
       this.room = (await loadModel('office')).scene; this.scene.add(this.room);
       this.room.traverse(node => {
+        if (node.userData.wallSide) { if (!this.walls) this.walls = []; this.walls.push(node); }
+        if (Number.isInteger(node.userData.chairIndex)) this.chairs.set(node.userData.chairIndex, { node, z: node.position.z });
         if (node.isMesh) {
           node.castShadow = !/_Static_Room_(floor|rug)$/.test(node.name); node.receiveShadow = true;
           if (Number.isInteger(node.userData.screenIndex)) this.screens.set(node.userData.screenIndex, makeScreen(node));
@@ -60,7 +62,7 @@ class OfficeWorld {
     } catch (error) { this.fail('Не удалось загрузить 3D-модели. Показан облегчённый офис.'); console.error('Office assets:', error); }
   }
   attach(container, game, selected, callbacks) {
-    if (!this.initialTeam) this.initialTeam = new Set(game.team);
+    if (!this.initialTeam) this.initialTeam = new Set(callbacks.arriveOnLoad ? [] : game.team);
     this.container = container; this.game = game; this.selected = selected; this.callbacks = callbacks;
     container.append(this.renderer.domElement); this.resizeObserver.disconnect(); this.resizeObserver.observe(container);
     this.refreshContainer(); this.resize(); this.syncActors();
@@ -78,7 +80,7 @@ class OfficeWorld {
     if (!this.container?.isConnected) return;
     const w = this.container.clientWidth, h = this.container.clientHeight; if (!w || !h) return;
     this.renderer.setSize(w, h, false);
-    const halfH = 5.9, ratio = w / h;
+    const ratio = w / h, halfH = Math.max(5.9,8/ratio);
     this.camera.left = -halfH * ratio; this.camera.right = halfH * ratio; this.camera.top = halfH; this.camera.bottom = -halfH;
     this.camera.updateProjectionMatrix();
     if (this.ready) this.renderer.render(this.scene, this.camera);
@@ -108,11 +110,19 @@ class OfficeWorld {
     if (!document.hidden) {
       this.controls.update();
       const active = activeTasks(this.game), actors = [...this.actors.values()];
-      for (const actor of actors) actor.update(dt, time / 1000, actors, this.game.stage === 'work' && active.some(t => this.game.assignments[t.id] === actor.id), this.reduced.matches, this.selected === actor.id);
+      for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
+      for (const [index, chair] of this.chairs) chair.node.position.z = chair.z + Math.max(0, ...actors.filter(a => a.chairSeat === index).map(a => a.chairPull));
+      if (this.cameraGoal) {
+        const a = 1 - Math.exp(-dt * (this.reduced.matches ? 100 : 5)), goal = this.cameraGoal;
+        const subject = this.actors.get(goal.actorId); if (subject) goal.target.copy(subject.group.position).y = .95;
+        this.controls.target.lerp(goal.target, a); this.camera.position.lerp(goal.target.clone().add(goal.offset), a);
+        this.camera.zoom = THREE.MathUtils.lerp(this.camera.zoom, goal.zoom, a); this.camera.updateProjectionMatrix(); this.controls.update();
+      }
+      for (const wall of this.walls || []) wall.visible = wall.userData.wallSide === 'back' ? this.camera.position.z > this.controls.target.z : this.camera.position.x > this.controls.target.x;
       for (const [index, screen] of this.screens) { const id = this.game.seats[index], task = active.find(t => this.game.assignments[t.id] === id); paintScreen(screen, task, task ? this.game.progress[task.id] : 0, this.game.stage); }
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
       this.labels(); this.renderer.render(this.scene, this.camera);
-      const busy = !!this.loadingActors.size || actors.some(a => a.moving);
+      const busy = !this.ready || !!this.loadingActors.size || actors.some(a => a.moving);
       this.container.dataset.moving = String(busy);
       if (busy !== this.busy) { this.busy = busy; queueMicrotask(() => { if (this.busy === busy) this.callbacks.onBusy(busy); }); }
     }
@@ -126,13 +136,13 @@ class OfficeWorld {
       button.style.setProperty('--desk-x', `${(this.projected.x * .5 + .5) * 100}%`);
       button.style.setProperty('--desk-y', `${(-this.projected.y * .5 + .5) * 100}%`);
       const actor = this.actors.get(this.game.seats[i]);
-      button.dataset.motion = actor?.moving ? 'walking' : actor?.sit > .98 ? 'seated' : 'empty';
+      button.dataset.motion = actor?.moving ? actor.state : actor?.sit > .98 ? 'seated' : 'empty';
       const text = button.querySelector('small');
       if (text) {
         if (!button.dataset.restStatus) { button.dataset.restStatus = text.textContent; button.dataset.restLabel = button.getAttribute('aria-label'); }
-        const status = actor?.moving ? 'Идёт к компьютеру' : button.dataset.restStatus;
+        const status = actor?.moving ? actor.motionLabel : button.dataset.restStatus;
         if (text.textContent !== status) text.textContent = status;
-        const label = actor?.moving ? `Компьютер ${i + 1}: ${agentById(actor.id).name}, идёт к компьютеру` : button.dataset.restLabel;
+        const label = actor?.moving ? `Компьютер ${i + 1}: ${agentById(actor.id).name}, ${actor.motionLabel.toLowerCase()}` : button.dataset.restLabel;
         if (button.getAttribute('aria-label') !== label) button.setAttribute('aria-label', label);
       }
     }
@@ -156,10 +166,16 @@ class OfficeWorld {
     if (hit.point.y < .08 && this.selected) this.callbacks.onFloor([hit.point.x, hit.point.z]);
   }
   cameraAction(action) {
-    if (action === 'reset') { this.camera.position.set(11, 10, 13); this.camera.zoom = 1.12; }
+    if (action === 'focus') {
+      const actor = this.actors.get(this.selected) || this.actors.values().next().value;
+      if (!actor) return;
+      this.cameraGoal = { target: actor.group.position.clone().add(new THREE.Vector3(0, .95, 0)), offset: new THREE.Vector3(6,4,-3), zoom: 2.7, actorId: actor.id }; return;
+    }
+    this.cameraGoal = null;
+    if (action === 'reset') { this.controls.target.set(0,.7,0); this.camera.position.set(11, 10, 13); this.camera.zoom = 1.12; }
     else {
       const offset = this.camera.position.clone().sub(this.controls.target), spherical = new THREE.Spherical().setFromVector3(offset);
-      spherical.theta = THREE.MathUtils.clamp(spherical.theta + (action === 'left' ? -.22 : .22), -.3, 1.3);
+      spherical.theta += action === 'left' ? -.3 : .3;
       this.camera.position.copy(this.controls.target).add(new THREE.Vector3().setFromSpherical(spherical));
     }
     this.camera.updateProjectionMatrix(); this.controls.update();

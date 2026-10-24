@@ -14,6 +14,10 @@ def prepare():
         for obj in list(old.all_objects):
             bpy.data.objects.remove(obj, do_unlink=True)
         bpy.data.collections.remove(old)
+    # Repeated recipe runs leave no owned orphan geometry or obsolete pose actions.
+    for blocks in [bpy.data.meshes,bpy.data.curves,bpy.data.actions]:
+        for block in list(blocks):
+            if block.name.startswith(PREFIX) and block.users==0: blocks.remove(block)
     COLLECTION = bpy.data.collections.new(PREFIX + 'Office')
     bpy.context.scene.collection.children.link(COLLECTION)
     for obj in bpy.context.scene.objects:
