@@ -47,7 +47,7 @@ function persist() {
 let toastTimeout;
 function toast(message) { const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('visible'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => el.classList.remove('visible'), 3400); }
 function stopAuto() { clearInterval(automatic); automatic = null; }
-function showDialog(html) { if (automatic) { stopAuto(); render(); } document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`; if (!dialog.open) dialog.showModal(); }
+function showDialog(html) { sound.stopVoice(); if (automatic) { stopAuto(); render(); } document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`; if (!dialog.open) dialog.showModal(); }
 function radar(a) {
   const point = (i, value) => { const ang = -Math.PI / 2 + i * Math.PI * 2 / 5; return [150 + Math.cos(ang) * 77 * value, 112 + Math.sin(ang) * 77 * value]; };
   const ring = r => SKILLS.map((_, i) => point(i, r).join(',')).join(' ');

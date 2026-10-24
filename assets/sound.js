@@ -69,5 +69,5 @@ export function createSound() {
     return `<button class="icon-btn sound-toggle" data-action="sound" aria-pressed="${enabled}" aria-label="${enabled?'Выключить':'Включить'} звук" title="${enabled?'Выключить':'Включить'} музыку и голос">${icon('sound',18)}<span aria-hidden="true">${enabled?'ВКЛ':'ВЫКЛ'}</span></button>`;
   }
   document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();clearTimeout(timer);context?.suspend();}else if(unlocked&&enabled)unlock();});
-  return {unlock,effect,speak,stopVoice,toggle,button,get enabled(){return enabled;},get speaking(){return voiceOn;}};
+  return {unlock,effect,speak,stopVoice,toggle,button,hasVoice:key=>Boolean(VOICE_ASSETS[key]),get enabled(){return enabled;},get speaking(){return voiceOn;}};
 }

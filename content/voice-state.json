@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-24",
+  "owner": "story-onboarding chat 01a16dc1-5c06-7212-8cbe-da70fa7aaa63",
+  "provider": "ElevenLabs, existing human subscription",
+  "voice": "Nataly - Youthful, Gentle and Soft",
+  "voice_id": "NhY0kyTmsKuEpHvDMngm",
+  "model": "Eleven v4",
+  "ui_settings": {"stability":0.5,"similarity":0.75,"clone_strength":0},
+  "starting_credits":130786,
+  "last_observed_credits":130338,
+  "scope": "One audition plus story-0 and story-1 submitted through the normal ElevenLabs UI. No API keys created or read. Each request returned two candidates automatically; selected Generation 1.",
+  "runtime_clips": [{"key":"story-0","file":"assets/onboarding/audio/story-0.mp3","bytes":110231,"duration_seconds":10.44898,"source":"output/eleven-raw/story-0.mp3","processing":"ffmpeg loudnorm I=-18 TP=-2 LRA=7, mono 44100 Hz, MP3 q4"}],
+  "pending_download": {"key":"story-1","text":"Ты арендовал небольшую студию на вечер. Здесь ещё тихо, но скоро за этими столами будут работать твои люди. Твоя роль — тимлид: собирать команду, помогать ей и отвечать за результат.","submitted":true,"generation_ready":true,"download_requested":true,"local_download_verified":false,"action":"Recover the existing Generation 1 from ElevenLabs history. Do not regenerate this line merely because its download is missing."},
+  "not_submitted": ["story-2","guide-hire","guide-seat","guide-wait","guide-plan","guide-assign","guide-ready","guide-time","guide-support","guide-event","guide-result"],
+  "script": "output/nika-lines.json contains texts derived from STORY and guideFor; regenerate this local script from current data if absent, keeping already submitted texts unchanged",
+  "browser": {"profile":"Рабочий профиль","extension_instance_id":"57387ec7-5261-48df-8372-09f7c9b6442b","handoff_tab_id":"1088891857","url":"https://elevenlabs.io/app/speech-synthesis/text-to-speech?voice_id=NhY0kyTmsKuEpHvDMngm","note":"Opaque browser numeric IDs changed after a kernel reset. Re-discover by extension_instance_id, not the old numeric ID. Normal browser download events timed out although the first download completed in the user's Downloads folder."},
+  "blocker":"Windows Computer Use explicitly stopped this turn because it could not determine the current browser URL confidently enough to enforce policy. No further browser actions after that stop.",
+  "zonos":{"status":"rejected by human as robotic; not shipped","own_runtime":"Own process group 699 terminated after audition; primary reservation released","temporary_idle_lm":"Dedicated idle model worker was stopped with explicit human permission after slot/queue checks; exact original launch arguments were protected with Windows DPAPI, and original worker launch was restored as PID 21308","private_receipts":"output/nika-zonos-launch-v3.json, output/nika-worker-receipt.json, output/nika-worker-restored.json; ignored local files only"}
+}
