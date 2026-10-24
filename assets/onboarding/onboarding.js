@@ -25,7 +25,8 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
 
   function animateCharacters(key, text, voiceKey = key) {
     if (document.hidden || (!storyDialog.open && (!preferences.enabled || preferences.collapsed))) { stopAnimation(); sound?.stopVoice(); return; }
-    if (lastLine !== key) { lastLine = key; sound?.speak(voiceKey); }
+    const lineKey = `${key}:${voiceKey}`;
+    if (lastLine !== lineKey) { lastLine = lineKey; sound?.speak(voiceKey); }
   }
 
   function finishStory(enabled = true) {

@@ -1,4 +1,5 @@
 import { DIFFICULTIES } from '../data.js';
+import { graphicsSettingsHTML } from './office-runtime.js?v=hosting-20261024';
 
 export const CONTRACTS = [
   { id: 'calm', title: 'С запасом', note: 'Для первого знакомства', description: 'Есть время освоиться и исправить ошибки.' },
@@ -24,6 +25,7 @@ export function renderStartScreen({ difficulty, saved, demo, logo, icon, money, 
       }).join('')}</div><p id="contract-description" class="contract-description"><b>${mode.title}.</b> ${mode.description} <span>Часы — игровое время.</span></p></fieldset>
       <div class="start-actions">${saved ? `<button class="primary large" data-action="continue">Вернуться в студию ${icon('play',17)}</button><button class="text-button" data-action="new-game">Начать новую историю</button>` : `<button class="primary large" data-action="new-game">Открыть студию ${icon('arrow')}</button>`}</div>
       <p class="start-reassurance">${saved ? 'Новая история заменит текущую партию после подтверждения.' : 'Ника встретит внутри и поможет с первыми шагами.'}</p>
+      ${graphicsSettingsHTML()}
       ${!demo ? '<a class="start-demo" href="?demo=1">Быстрый показ с готовой командой <span aria-hidden="true">↗</span></a>' : ''}
     </section>
     <aside class="first-order" aria-label="Первый заказ от школьного клуба"><div class="order-clip" aria-hidden="true"></div><div class="order-meta"><span>ВХОДЯЩЕЕ / 001</span><span>ШКОЛЬНЫЙ КЛУБ</span></div><p class="order-sender">Привет, новая студия!</p><h2>Нам нужна игра.<br>К завтрашнему<br>фестивалю.</h2><p>Пусть игрок летает на корабле,<br>собирает батареи и спасает станцию.</p><ul><li>Открывается в браузере</li><li>Управление понятно с первого раза</li><li>Можно пройти до конца</li></ul><div class="order-signature"><span>Ждём вашу «Орбиту»!</span><span class="order-stamp">ПЕРВЫЙ<br>РЕЛИЗ</span></div></aside></div>

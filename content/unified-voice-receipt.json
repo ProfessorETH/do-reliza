@@ -5,13 +5,16 @@
   "provider": "ElevenLabs, existing user subscription",
   "voice": "Nataly - Youthful, Gentle and Soft",
   "model": "Eleven v4",
-  "clips": [{
-    "key": "story-0",
-    "path": "assets/onboarding/audio/story-0.mp3",
-    "sha256": "66de7a701c13ccc87456ba89ee9589f61e5f7be18018c967c201c6f4a09360d3",
-    "bytes": 110231,
-    "durationSeconds": 10.44898,
-    "processing": "ffmpeg loudnorm I=-18 TP=-2 LRA=7, mono 44100 Hz, MP3 q4"
-  }],
-  "coverage": "Only the first story page is voiced. Other pages and guidance remain readable text; replay controls are shown only for available clips. Further voice production stays with its original chat."
+  "clips": [
+    {
+      "key": "story-0",
+      "path": "assets/onboarding/audio/story-0.mp3",
+      "sha256": "66de7a701c13ccc87456ba89ee9589f61e5f7be18018c967c201c6f4a09360d3",
+      "bytes": 110231,
+      "durationSeconds": 10.44898,
+      "processing": "ffmpeg loudnorm I=-18 TP=-2 LRA=7, mono 44100 Hz, MP3 q4"
+    }
+  ],
+  "coverage": "Only the first story page is voiced. Other pages and guidance remain readable text; replay controls are shown only for available clips. Further voice production stays with its original chat.",
+  "status": "Superseded: user rejected Nataly; see nika-voice-receipt.json. The old runtime MP3 is removed."
 }
