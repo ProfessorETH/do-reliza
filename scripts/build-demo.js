@@ -7,7 +7,7 @@ const target = resolve(root, 'dist/demo-v05');
 if (!target.startsWith(resolve(root, 'dist') + sep)) throw new Error('Build must stay inside dist');
 await mkdir(target, {recursive:true});
 // Explicit allowlist: never copy .git, Blender sources, local logs or credentials.
-const files = ['index.html','app.js','demo.js','engine.js','data.js','style.css','office.css','office.js','office-world.js','office-actors.js','office-pose.js','office-layout.js','office-screens.js'];
+const files = ['index.html','app.js','demo.js','engine.js','data.js','style.css','office.css','office.js','office-world.js','office-camera-fit.js','office-actors.js','office-pose.js','office-layout.js','office-screens.js'];
 for (const file of files) await cp(join(root,file), join(target,file));
 for (const folder of ['assets','vendor']) await cp(join(root,folder),join(target,folder),{recursive:true});
 const pkg = JSON.parse(await readFile(join(root,'package.json'),'utf8'));

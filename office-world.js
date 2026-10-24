@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { OfficeActor } from './office-actors.js?v=0.5.0';
-import { DESKS } from './office-layout.js?v=0.5.0';
+import { OfficeActor } from './office-actors.js?v=0.5.3-workspace';
+import { DESKS } from './office-layout.js?v=0.5.3-workspace';
 import { agentById, activeTasks } from './engine.js';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
-import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=2-cozy';
+import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
+import { officeFrame, officeWallVisible } from './office-camera-fit.js';
 
 let world;
 const modelCache = new Map();
@@ -25,11 +26,12 @@ class OfficeWorld {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.25;
     this.renderer.domElement.setAttribute('aria-hidden', 'true');
     this.camera = new THREE.OrthographicCamera(-8, 8, 5.6, -5.6, .1, 90);
-    this.camera.position.set(11, 10, 13); this.camera.zoom = 1.12;
+    this.camera.position.set(11, 10.5, 13); this.camera.zoom = 1;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.target.set(0, .7, 0); this.controls.enablePan = false; this.controls.enableDamping = true;
+    this.controls.target.set(0, 1.3, 0); this.controls.enablePan = true; this.controls.screenSpacePanning = true;
+    this.controls.zoomToCursor = true; this.controls.enableDamping = true;
     this.controls.minPolarAngle = .45; this.controls.maxPolarAngle = 1.28;
-    this.controls.minZoom = .7; this.controls.maxZoom = 3.4; this.controls.update();
+    this.controls.minZoom = .8; this.controls.maxZoom = 3; this.controls.update();
     this.controls.addEventListener('start', () => { this.cameraGoal = null; });
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
     this.art = createOfficeAtmosphere(this.scene, this.renderer);
@@ -54,6 +56,8 @@ class OfficeWorld {
         }
       });
       await this.art.dress(this.room);
+      this.walls = [];
+      this.room.traverse(node => { if (node.userData.wallSide) this.walls.push(node); });
       this.ready = true; this.refreshContainer(); this.syncActors();
     } catch (error) { this.fail('Не удалось загрузить 3D-модели. Показан облегчённый офис.'); console.error('Office assets:', error); }
   }
@@ -69,14 +73,14 @@ class OfficeWorld {
     const parent = this.container.closest('.office-room'); parent.classList.toggle('is-3d', !!this.ready && !this.failed);
     parent.dataset.officeState = this.failed ? 'fallback' : this.ready ? 'ready' : 'loading';
     const status = parent.querySelector('.office-render-status');
-    if (status) status.textContent = this.failed || (this.ready ? '3D · Потяни, чтобы повернуть · колёсико — масштаб' : 'Загружаем 3D-студию…');
+    if (status) status.textContent = this.failed || (this.ready ? window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
   }
   fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); }
   resize() {
     if (!this.container?.isConnected) return;
     const w = this.container.clientWidth, h = this.container.clientHeight; if (!w || !h) return;
     this.renderer.setSize(w, h, false);
-    const ratio = w / h, halfH = Math.max(5.9,8/ratio);
+    const ratio = w / h, halfH = officeFrame(ratio, this.camera.position.clone().sub(this.controls.target).toArray());
     this.camera.left = -halfH * ratio; this.camera.right = halfH * ratio; this.camera.top = halfH; this.camera.bottom = -halfH;
     this.camera.updateProjectionMatrix();
     if (this.ready) this.renderer.render(this.scene, this.camera);
@@ -114,10 +118,12 @@ class OfficeWorld {
         this.controls.target.lerp(goal.target, a); this.camera.position.lerp(goal.target.clone().add(goal.offset), a);
         this.camera.zoom = THREE.MathUtils.lerp(this.camera.zoom, goal.zoom, a); this.camera.updateProjectionMatrix(); this.controls.update();
       }
-      for (const wall of this.walls || []) wall.visible = wall.userData.wallSide === 'back' ? this.camera.position.z > this.controls.target.z : this.camera.position.x > this.controls.target.x;
+      const viewDirection = this.camera.position.clone().sub(this.controls.target).toArray();
+      for (const wall of this.walls || []) wall.visible = officeWallVisible(wall.userData.wallSide, viewDirection);
       for (const [index, screen] of this.screens) { const id = this.game.seats[index], task = active.find(t => this.game.assignments[t.id] === id); paintScreen(screen, task, task ? this.game.progress[task.id] : 0, this.game.stage); }
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
-      this.labels(); this.renderer.render(this.scene, this.camera);
+      this.labels();
+      if (this.container.clientWidth && this.container.clientHeight) this.renderer.render(this.scene, this.camera);
       const busy = !this.ready || !!this.loadingActors.size || actors.some(a => a.moving);
       this.container.dataset.moving = String(busy);
       if (busy !== this.busy) { this.busy = busy; queueMicrotask(() => { if (this.busy === busy) this.callbacks.onBusy(busy); }); }
@@ -162,19 +168,24 @@ class OfficeWorld {
     if (hit.point.y < .08 && this.selected) this.callbacks.onFloor([hit.point.x, hit.point.z]);
   }
   cameraAction(action) {
+    if (action === 'in' || action === 'out') {
+      this.cameraGoal = null;
+      this.camera.zoom = THREE.MathUtils.clamp(this.camera.zoom * (action === 'in' ? 1.2 : 1/1.2), this.controls.minZoom, this.controls.maxZoom);
+      this.camera.updateProjectionMatrix(); return;
+    }
     if (action === 'focus') {
       const actor = this.actors.get(this.selected) || this.actors.values().next().value;
       if (!actor) return;
       this.cameraGoal = { target: actor.group.position.clone().add(new THREE.Vector3(0, .95, 0)), offset: new THREE.Vector3(6,4,-3), zoom: 2.7, actorId: actor.id }; return;
     }
     this.cameraGoal = null;
-    if (action === 'reset') { this.controls.target.set(0,.7,0); this.camera.position.set(11, 10, 13); this.camera.zoom = 1.12; }
+    if (action === 'reset') { this.controls.target.set(0,1.3,0); this.camera.position.set(11, 10.5, 13); this.camera.zoom = 1; }
     else {
       const offset = this.camera.position.clone().sub(this.controls.target), spherical = new THREE.Spherical().setFromVector3(offset);
       spherical.theta += action === 'left' ? -.3 : .3;
       this.camera.position.copy(this.controls.target).add(new THREE.Vector3().setFromSpherical(spherical));
     }
-    this.camera.updateProjectionMatrix(); this.controls.update();
+    this.camera.updateProjectionMatrix(); this.controls.update(); this.resize();
   }
   reset() { for (const a of this.actors.values()) this.scene.remove(a.group); this.actors.clear(); this.initialTeam = null; this.busy = false; }
   detach() { this.container = null; this.resizeObserver.disconnect(); if (this.frameId) cancelAnimationFrame(this.frameId); this.frameId = 0; }
