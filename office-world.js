@@ -22,7 +22,7 @@ let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=portrait-team-v4-20261024`)).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=body-team-v5-20261025`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 

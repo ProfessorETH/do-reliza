@@ -1,0 +1,4723 @@
+{
+  "schema": "body-v5-public-summary-v1",
+  "version": "six-staff-final-20261025",
+  "policy": "Local originals unchanged; owner/token omitted; local paths redacted or project-relative",
+  "documents": [
+    {
+      "source": "art/characters/body-v5/mira/shape-a.receipt.json",
+      "source_sha256": "33a501a4d022c1d6df8a899961fde0e5f28f402efe01dcb8480f0cae463731e7",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "78058a3efa82ec1a3a39e7f39a8672498c469ed91af1f6f69eb1853b8fc619a3",
+        "reference": "art/characters/body-v5/references/mira-full-front-v1.png",
+        "reference_sha256": "da8d81b3573b4f07ff1dd41467b26b85388c237f9f86b77c51e4d464193c2075",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265010,
+        "output_prefix": "do-reliza/body-v5/mira-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "submitted_at": "2026-10-24T20:28:37.445646+00:00",
+        "prompt_id": "4a47f5c9-dcc5-4a6b-b411-660e5fde9efc",
+        "client_id": "d2ccf6f2-3d54-4066-bd1e-37368760dd2f",
+        "raw_file": "raw/4a47f5c9_000.glb",
+        "raw_bytes": 31811364
+      }
+    },
+    {
+      "source": "art/characters/body-v5/mira/body-rigged-quality.receipt.json",
+      "source_sha256": "aaff8207337219f5c6bff2a3b3c7ea18d881705a77814450a0d7450e168861d8",
+      "redacted_fields": [],
+      "content": {
+        "id": "mira",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "f1af17d4f6ea1a250ae8478fd09980364b916a55b66098bb47a044fd4acc4ad0",
+        "body_sha256": "af5e9c001d55c6fc8f6ac6ab76d114c2182edf4c60ed15757e10c47011d457ca",
+        "fit": {
+          "source_sole_y": -0.98831296,
+          "source_ankle_y": -0.91,
+          "source_knee_y": -0.45,
+          "source_hip_y": 0.1,
+          "source_shoulder_y": 0.54,
+          "source_neck_y": 0.63,
+          "source_center_x": 0.0,
+          "source_center_z": 0.0,
+          "source_shoulder_half_width": 0.28,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.28,
+                0.54,
+                -0.02
+              ],
+              "elbow": [
+                0.446,
+                0.279,
+                -0.021
+              ],
+              "wrist": [
+                0.63,
+                0.034,
+                -0.006
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.28,
+                0.54,
+                -0.02
+              ],
+              "elbow": [
+                -0.454,
+                0.278,
+                -0.021
+              ],
+              "wrist": [
+                -0.626,
+                0.034,
+                -0.006
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.91,
+              0.28,
+              -0.023
+            ],
+            [
+              -0.45,
+              0.22,
+              -0.025
+            ],
+            [
+              0.1,
+              0.15,
+              0.0
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "target_sole_y": 0.001,
+          "measurement": {
+            "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+          }
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 5.587935447692871e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 9252,
+          "fitted_leg_vertices": 28168,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.91,
+              0.28,
+              -0.023
+            ],
+            [
+              -0.45,
+              0.22,
+              -0.025
+            ],
+            [
+              0.1,
+              0.15,
+              0.0
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 5136,
+            "torso_seed_vertices": 17874,
+            "unseeded_island_vertices": 76,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 1,
+            "worst": [
+              {
+                "vertices": [
+                  11632,
+                  14182
+                ],
+                "before": 0.03132108471077003,
+                "after": 0.041554615375545896,
+                "growth": 0.010233530664775864,
+                "before_points": [
+                  [
+                    -0.20511050522327423,
+                    -0.02691776491701603,
+                    1.340836524963379
+                  ],
+                  [
+                    -0.22679737210273743,
+                    -0.004422279540449381,
+                    1.338681697845459
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.20605744421482086,
+                    -0.025774676352739334,
+                    1.3416550159454346
+                  ],
+                  [
+                    -0.23414716124534607,
+                    0.004833333194255829,
+                    1.3426055908203125
+                  ]
+                ],
+                "arm_membership": [
+                  0.07084958255290985,
+                  0.5235826373100281
+                ]
+              }
+            ]
+          }
+        },
+        "source_bounds_blender": [
+          [
+            -0.7142490148544312,
+            -0.2653200030326843,
+            -0.9875689744949341
+          ],
+          [
+            0.7139620184898376,
+            0.25810500979423523,
+            0.9868170022964478
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.98831296,
+            0.001
+          ],
+          [
+            -0.91,
+            0.09
+          ],
+          [
+            -0.45,
+            0.48
+          ],
+          [
+            0.1,
+            0.88
+          ],
+          [
+            0.54,
+            1.258
+          ],
+          [
+            0.63,
+            1.385
+          ],
+          [
+            0.9868170022964478,
+            1.690154035952529
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.8552115902229444,
+        "width_scale": 0.8749999999999999,
+        "ankle_contact_proof": {
+          "matching_ring_points": 543,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 22204,
+          "anatomical_arm_vertices": 9253,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 90
+        },
+        "status": "staged_review_required",
+        "seconds": 16.011,
+        "stage_bytes": 6892800,
+        "stage_sha256": "52a010d11ed0784d1f7216447f90025e22f602fa84f85b0923f3c43b080aab05",
+        "body_vertices": 37675,
+        "body_triangles": 74632,
+        "shoe_triangles": {
+          "LeftFoot": 4066,
+          "RightFoot": 3975
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/mira-quality.receipt.json",
+      "source_sha256": "ca8ad5e41aa59345b78ca2c181331e65b91d422279a4ecac6cc97cf6dc825c00",
+      "redacted_fields": [],
+      "content": {
+        "id": "mira",
+        "version": 5,
+        "baseSha256": "f1af17d4f6ea1a250ae8478fd09980364b916a55b66098bb47a044fd4acc4ad0",
+        "stageSha256": "52a010d11ed0784d1f7216447f90025e22f602fa84f85b0923f3c43b080aab05",
+        "baseBinaryPrefixBytes": 8909312,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 54132,
+            "triangles": 74632,
+            "bounds": {
+              "minX": -0.5106786489486694,
+              "maxX": 0.5170378684997559,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 3158,
+            "triangles": 4066,
+            "bounds": {
+              "minX": -0.222303887459172,
+              "maxX": -0.03389622470634688,
+              "minY": 0.001845491549576408,
+              "maxY": 0.12999999107146187
+            }
+          },
+          "RightFoot": {
+            "vertices": 3193,
+            "triangles": 3975,
+            "bounds": {
+              "minX": 0.029935855815505393,
+              "maxX": 0.2153554942386257,
+              "minY": 0.0021159726216595084,
+              "maxY": 0.12999999084299538
+            }
+          }
+        },
+        "outputBytes": 18663184,
+        "outputSha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/mira/body-painted-quality.receipt.json",
+      "source_sha256": "beb3a3b36eca1f3ac476dd32485b5fa4c30eaec4db1bece93a53e55179d2e4b4",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-pilot.paint-20261024T213219Z-820dc04e.receipt.json",
+        "started_unix": 1792877557.1568341,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/mira/body-uv-paint.glb",
+        "reference": "art/characters/body-v5/references/mira-full-front-v1.png",
+        "mesh_sha256": "ace65b37ede4984697f8b39ef78ec6a7b03708eda035580947614911e996ba12",
+        "reference_sha256": "da8d81b3573b4f07ff1dd41467b26b85388c237f9f86b77c51e4d464193c2075",
+        "output": "art/characters/body-v5/mira/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "script_sha256": "745d8ae2982985d7d94e0fa0dc51fdc1e2909204ddf0ccb6baf3b4218deadd88",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 32496418816,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 0,
+          "required_free_bytes": 19327352832
+        },
+        "views_directory": "art/characters/body-v5/mira/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/mira/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "9dbf46e3bd572e9b74d5ac1b0d05c386418c3105e3c0ca6f25bffbc5b07c09b2",
+        "views_sha256": {
+          "albedo-0.png": "de94a68c5389bdd1fe646a720701ca89870c9a4c345137626e80784b70333e3d",
+          "albedo-1.png": "5d58456153cc4054c2e55c7a50f4f06358867374dd204dbe16602ef03a7f7e46",
+          "albedo-2.png": "e3316b4232a76eba21afecdc4d96597772c1f86441bbb16ae7acdb3d6bfd87b3",
+          "albedo-3.png": "02c435a290cb904f652ae069861be66c1460d12019c6add9f22c2f64973b7c4a",
+          "albedo-4.png": "99df45715bd7b91d42f8b5d851336e9ad00c271f890424d4a2d636c23477eaf7",
+          "albedo-5.png": "32750fda2f80c577d4b3bb3bc5ff23521e2da09d75e185a09aa38dc33e208157",
+          "mr-0.png": "127ea1e4b5984cbee4b561ce29811a1d3f3c51c53cf3758f89e0af0ee0133855",
+          "mr-1.png": "e9b5c4f6754028fdfeea7e789a8038fe6f593d7feef1ece700809f0b263304b3",
+          "mr-2.png": "a47e57470a91510dda8369e17756c917796cf463ba8b2db3a9857454a6a0dd90",
+          "mr-3.png": "6c6e865dd5c4f1a5df0f5a57457dde4fe598ed88d0f37c7f5034168eb72a1166",
+          "mr-4.png": "6585b3d7d335fadec2b3c597f2451536bf57c72397e6bd22802f26eaa91e8dcb",
+          "mr-5.png": "14e744dac5950c150bfbf98d3219e666a6ff824ec623b0a046268be0a414c255"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28583133184,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3779067904,
+          "required_free_bytes": 15548284928
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "5f67de6fbe754687f09bacf0143c9cd239819231e1c86cc866a910d7a319a2f8"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "53300638215325edfb6d57820c0233bb6e3b803f82885b31a7bdd8533bd20063"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "8cd9e176fe079c9e102cb3218ce9777adf7cd52785aff80ec63c8880c1d39dc5"
+          },
+          "source_sha256": "d64868b0380b067baf734fe1134441ff7094b30b4fba1769bff41f0a78e99764",
+          "output_sha256": "af5e9c001d55c6fc8f6ac6ab76d114c2182edf4c60ed15757e10c47011d457ca",
+          "original_bin_prefix_sha256": "e326547a53ef510fba04e5d42eec564a821950a2248776024638982ba313d6ee",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3366407,
+              "sha256": "7f97d63d57d01f2c97ef6e086f1e317fb7a9976e7bcf7a900454a86958b9fa4e"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 1709876,
+              "sha256": "3019e316d0b291b3007e662394713abdaeb1cad7f6976528c598d163a803c2bf"
+            }
+          ],
+          "source_bytes": 13003784,
+          "output_bytes": 11311816
+        },
+        "post_export_free_bytes": 28583133184,
+        "output_sha256": "af5e9c001d55c6fc8f6ac6ab76d114c2182edf4c60ed15757e10c47011d457ca",
+        "output_bytes": 11311816,
+        "peak_torch_bytes": 15021899776,
+        "finished_unix": 1792877991.7471988,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/pixel/shape-a.receipt.json",
+      "source_sha256": "d41a2e4a6cc73dce31e90e77e897505c963aaac58d41fb685621dfdc8cd93446",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "0602a3976f91a12f4001c5bde98e7b9eb2a022f9b4e7592b7239439eb7ac8ade",
+        "reference": "art/characters/body-v5/references/pixel-full-front-v1.png",
+        "reference_sha256": "470755304d4960b5e58b42cbbc1b156022045f0a77737f570325c3221d1f4df7",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265011,
+        "output_prefix": "do-reliza/body-v5/pixel-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "c0216399-1aa8-445d-8604-ae8e95cc1dc1",
+        "raw_file": "raw/c0216399_000.glb",
+        "raw_bytes": 45093208
+      }
+    },
+    {
+      "source": "art/characters/body-v5/pixel/body-rigged-quality.receipt.json",
+      "source_sha256": "e2b3325d132642fb3f8b912fc7c202601edcaff94fde036604f8c2ab3986b61c",
+      "redacted_fields": [],
+      "content": {
+        "id": "pixel",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "755b81a2fe1c2809e2ed269d809340ec6376cc1c01925b788a0697061e76acb9",
+        "body_sha256": "d8334887eb50b234a109bf8f7083db5def009eef1751c280191983e8f46cbe90",
+        "fit": {
+          "source_sole_y": -0.9883291721343994,
+          "source_ankle_y": -0.91,
+          "source_knee_y": -0.5,
+          "source_hip_y": -0.11,
+          "source_shoulder_y": 0.26,
+          "source_neck_y": 0.36,
+          "source_center_x": 0.0,
+          "source_center_z": 0.018525,
+          "source_shoulder_half_width": 0.2,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.2,
+                0.26,
+                0.0195
+              ],
+              "elbow": [
+                0.3157,
+                0.055,
+                0.02036
+              ],
+              "wrist": [
+                0.38402,
+                -0.155,
+                0.07017
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.2,
+                0.26,
+                0.01755
+              ],
+              "elbow": [
+                -0.31943,
+                0.055,
+                0.03112
+              ],
+              "wrist": [
+                -0.39374,
+                -0.155,
+                0.07733
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.91,
+              0.22467,
+              0.04281
+            ],
+            [
+              -0.5,
+              0.1598,
+              0.02925
+            ],
+            [
+              -0.11,
+              0.16666,
+              0.04099
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "measurement": {
+            "source_sha256": "2b932a65c3f8aff512f864085d91465f6e62456bc3a5788ccdc3c69809ed2a92",
+            "method": "Manual front/side geometry layer Y positions; per-side actual mesh cross-section X/Z centers. No bbox normalization. Review pose required.",
+            "raw_y_percentiles": [
+              -0.9883291721343994,
+              -0.9845145543813706,
+              -0.9765767180919647,
+              0.5476688539981842,
+              0.5673314515352251,
+              0.9843860864639282
+            ],
+            "raw_body_top_hint": 0.5673314332962036,
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 462,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.16769,
+                    0.24364,
+                    -0.05651
+                  ],
+                  [
+                    0.29042,
+                    0.27482,
+                    0.09552
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 332,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.23967,
+                    0.03732,
+                    -0.05377
+                  ],
+                  [
+                    0.39173,
+                    0.07203,
+                    0.09449
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 350,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.32937,
+                    -0.16955,
+                    0.00968
+                  ],
+                  [
+                    0.43866,
+                    -0.1384,
+                    0.13066
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 560,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.30604,
+                    0.24366,
+                    -0.06842
+                  ],
+                  [
+                    -0.16951,
+                    0.27482,
+                    0.10353
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 438,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.40256,
+                    0.03807,
+                    -0.04494
+                  ],
+                  [
+                    -0.2363,
+                    0.07131,
+                    0.10717
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 382,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.45026,
+                    -0.16913,
+                    0.02013
+                  ],
+                  [
+                    -0.33722,
+                    -0.13828,
+                    0.13453
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox (distant source artifacts bias bbox). Review pose required.",
+            "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+          },
+          "target_sole_y": 0.001
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 3.725290298461914e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 15104,
+          "fitted_leg_vertices": 32249,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.91,
+              0.22467,
+              0.04281
+            ],
+            [
+              -0.5,
+              0.1598,
+              0.02925
+            ],
+            [
+              -0.11,
+              0.16666,
+              0.04099
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 6735,
+            "torso_seed_vertices": 17044,
+            "unseeded_island_vertices": 181,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 134,
+            "worst": [
+              {
+                "vertices": [
+                  34491,
+                  34867
+                ],
+                "before": 0.017755381824158048,
+                "after": 0.04322630981526184,
+                "growth": 0.025470927991103794,
+                "before_points": [
+                  [
+                    0.27557599544525146,
+                    -0.026613960042595863,
+                    0.9241330623626709
+                  ],
+                  [
+                    0.27427995204925537,
+                    -0.009518343023955822,
+                    0.9287497401237488
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.22295556962490082,
+                    -0.04051223024725914,
+                    0.9232267141342163
+                  ],
+                  [
+                    0.25850164890289307,
+                    -0.016728650778532028,
+                    0.9169552326202393
+                  ]
+                ],
+                "arm_membership": [
+                  0.015748348087072372,
+                  0.1945861577987671
+                ]
+              },
+              {
+                "vertices": [
+                  51148,
+                  58431
+                ],
+                "before": 0.03543152087171262,
+                "after": 0.05988765587088106,
+                "growth": 0.02445613499916844,
+                "before_points": [
+                  [
+                    0.1740063726902008,
+                    0.1918034702539444,
+                    0.9577270150184631
+                  ],
+                  [
+                    0.16929379105567932,
+                    0.19393746554851532,
+                    0.9226751923561096
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.16270756721496582,
+                    0.18888123333454132,
+                    0.9577270150184631
+                  ],
+                  [
+                    0.11498858779668808,
+                    0.17989234626293182,
+                    0.9226751923561096
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  39042,
+                  39345
+                ],
+                "before": 0.009549544956948573,
+                "after": 0.03300082442393836,
+                "growth": 0.02345127946698979,
+                "before_points": [
+                  [
+                    0.2890571355819702,
+                    0.01814771257340908,
+                    0.9194192886352539
+                  ],
+                  [
+                    0.28729066252708435,
+                    0.027280086651444435,
+                    0.9215810298919678
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.23405952751636505,
+                    0.0030554593540728092,
+                    0.9161431193351746
+                  ],
+                  [
+                    0.26280122995376587,
+                    0.018341148272156715,
+                    0.9107286334037781
+                  ]
+                ],
+                "arm_membership": [
+                  0.04885829612612724,
+                  0.15790048241615295
+                ]
+              },
+              {
+                "vertices": [
+                  34492,
+                  34867
+                ],
+                "before": 0.02498547631024295,
+                "after": 0.04837000076568707,
+                "growth": 0.023384524455444124,
+                "before_points": [
+                  [
+                    0.2712995111942291,
+                    -0.034236419945955276,
+                    0.9266502857208252
+                  ],
+                  [
+                    0.27427995204925537,
+                    -0.009518343023955822,
+                    0.9287497401237488
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.22203923761844635,
+                    -0.04731938987970352,
+                    0.925578236579895
+                  ],
+                  [
+                    0.25850164890289307,
+                    -0.016728650778532028,
+                    0.9169552326202393
+                  ]
+                ],
+                "arm_membership": [
+                  0.019251350313425064,
+                  0.1945861577987671
+                ]
+              },
+              {
+                "vertices": [
+                  27490,
+                  27492
+                ],
+                "before": 0.029433717791699333,
+                "after": 0.05032467103330498,
+                "growth": 0.020890953241605646,
+                "before_points": [
+                  [
+                    0.2231006622314453,
+                    -0.11567745357751846,
+                    0.9059123992919922
+                  ],
+                  [
+                    0.22597695887088776,
+                    -0.11436256766319275,
+                    0.9351757168769836
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.1487993448972702,
+                    -0.1348942220211029,
+                    0.9059123992919922
+                  ],
+                  [
+                    0.18829487264156342,
+                    -0.12410839647054672,
+                    0.9351757168769836
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  51194,
+                  58433
+                ],
+                "before": 0.0280395355717792,
+                "after": 0.048209209753039654,
+                "growth": 0.020169674181260453,
+                "before_points": [
+                  [
+                    0.16224145889282227,
+                    0.19588671624660492,
+                    0.9219038486480713
+                  ],
+                  [
+                    0.16484948992729187,
+                    0.1948694884777069,
+                    0.9498032927513123
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.1069292277097702,
+                    0.18158115446567535,
+                    0.9219038486480713
+                  ],
+                  [
+                    0.14536985754966736,
+                    0.1898314207792282,
+                    0.9498032927513123
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  51147,
+                  51148
+                ],
+                "before": 0.03417523450867757,
+                "after": 0.054245178474513406,
+                "growth": 0.020069943965835835,
+                "before_points": [
+                  [
+                    0.17518113553524017,
+                    0.1915150284767151,
+                    0.9235731959342957
+                  ],
+                  [
+                    0.1740063726902008,
+                    0.1918034702539444,
+                    0.9577270150184631
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.12205415964126587,
+                    0.17777463793754578,
+                    0.9235731959342957
+                  ],
+                  [
+                    0.16270756721496582,
+                    0.18888123333454132,
+                    0.9577270150184631
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  35569,
+                  39345
+                ],
+                "before": 0.023279158197800746,
+                "after": 0.04319717588221107,
+                "growth": 0.019918017684410327,
+                "before_points": [
+                  [
+                    0.28643807768821716,
+                    0.004098615609109402,
+                    0.9196286797523499
+                  ],
+                  [
+                    0.28729066252708435,
+                    0.027280086651444435,
+                    0.9215810298919678
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.2316083014011383,
+                    -0.010980685241520405,
+                    0.9164929389953613
+                  ],
+                  [
+                    0.26280122995376587,
+                    0.018341148272156715,
+                    0.9107286334037781
+                  ]
+                ],
+                "arm_membership": [
+                  0.04885829612612724,
+                  0.15790048241615295
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.11345552438265444
+        },
+        "source_bounds_blender": [
+          [
+            -0.4561249911785126,
+            -0.17236700654029846,
+            -0.9876000285148621
+          ],
+          [
+            0.4606949985027313,
+            0.23093700408935547,
+            0.5756000280380249
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.9883291721343994,
+            0.001
+          ],
+          [
+            -0.91,
+            0.09
+          ],
+          [
+            -0.5,
+            0.48
+          ],
+          [
+            -0.11,
+            0.88
+          ],
+          [
+            0.26,
+            1.258
+          ],
+          [
+            0.36,
+            1.385
+          ],
+          [
+            0.5756000280380249,
+            1.6063038514417631
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 1.0264555782095361,
+        "width_scale": 1.2249999999999999,
+        "ankle_contact_proof": {
+          "matching_ring_points": 344,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 25529,
+          "anatomical_arm_vertices": 15084,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 90
+        },
+        "status": "staged_review_required",
+        "seconds": 19.917,
+        "stage_bytes": 7745744,
+        "stage_sha256": "3c319c3b69e56aacdd2954aa2f05a28c29458c57cdcdbbf7c8f25625fbc001cd",
+        "body_vertices": 45362,
+        "body_triangles": 89795,
+        "shoe_triangles": {
+          "LeftFoot": 4621,
+          "RightFoot": 4517
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/pixel-quality.receipt.json",
+      "source_sha256": "e6e1a002aecf89ce2632f8045284ef783516dad5a53de7c31fc03305d1fd2ca8",
+      "redacted_fields": [],
+      "content": {
+        "id": "pixel",
+        "version": 5,
+        "baseSha256": "755b81a2fe1c2809e2ed269d809340ec6376cc1c01925b788a0697061e76acb9",
+        "stageSha256": "3c319c3b69e56aacdd2954aa2f05a28c29458c57cdcdbbf7c8f25625fbc001cd",
+        "baseBinaryPrefixBytes": 9026804,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 63503,
+            "triangles": 89795,
+            "bounds": {
+              "minX": -0.5570138692855835,
+              "maxX": 0.551882266998291,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 3310,
+            "triangles": 4621,
+            "bounds": {
+              "minX": -0.28018147150830996,
+              "maxX": -0.021324061634205995,
+              "minY": 0.0018284636519681988,
+              "maxY": 0.12999999188976832
+            }
+          },
+          "RightFoot": {
+            "vertices": 3240,
+            "triangles": 4517,
+            "bounds": {
+              "minX": 0.024157858778890373,
+              "maxX": 0.27064972676876287,
+              "minY": 0.0020329896980097054,
+              "maxY": 0.1299999925669897
+            }
+          }
+        },
+        "outputBytes": 20088332,
+        "outputSha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/pixel/body-painted-quality.receipt.json",
+      "source_sha256": "25e760ca35784b98d6bec01c5e1dfd449bceb716ed10c59e69d0049878073309",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-four.paint-20261024T214823Z-442dd634.receipt.json",
+        "started_unix": 1792878516.0809848,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/pixel/body-uv.glb",
+        "reference": "art/characters/body-v5/references/pixel-full-front-v1.png",
+        "mesh_sha256": "275586849c3d1ce1a36dc2d7b6079fce941529eeac2983d5586a04fbd4c45013",
+        "reference_sha256": "470755304d4960b5e58b42cbbc1b156022045f0a77737f570325c3221d1f4df7",
+        "output": "art/characters/body-v5/pixel/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "script_sha256": "745d8ae2982985d7d94e0fa0dc51fdc1e2909204ddf0ccb6baf3b4218deadd88",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 32496418816,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 0,
+          "required_free_bytes": 19327352832
+        },
+        "views_directory": "art/characters/body-v5/pixel/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/pixel/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "2f5e8ea10dbcbf59de0f189f581399245e56c7826f3143778c5c8fdce4181ce8",
+        "views_sha256": {
+          "albedo-0.png": "960db65e7db1fae1bec7e5dab3320a0219b136231312c93ed995a0b776b628f6",
+          "albedo-1.png": "773615531c24af299231b144da830c796774b34ad3385c9d5cdb419143efdf1c",
+          "albedo-2.png": "49b36b8f434a104f6102b8cdda83e8da5d7b98cc95cbb3de035e57c7c60fdd18",
+          "albedo-3.png": "4f12ff05c0ea761af341222b32e2c57919200acf14594a094e8b2e1ff798f5e2",
+          "albedo-4.png": "d97051013228714495a5d4e7359e9b67bd2269ae857677c588967368fff0da30",
+          "albedo-5.png": "787bf8b9ba5cb26e3e03bebdbb482eadb746584f9f3a3acca3f69dded60d4371",
+          "mr-0.png": "92b05cedad206e256657c69f0f4677d9f7fe23a63b10a54af85c68172d1e6223",
+          "mr-1.png": "29fb8c0e59a1990f5d1d9f0e0ae5e46d27cf7c162b33f5690ceead02d1bd7981",
+          "mr-2.png": "2fce214355c35283ffbdf9e7fa9b1c28e72512ad431dbbfd03508e089e003db4",
+          "mr-3.png": "ba380890f2a2dc9973b4bf3d3d7c1cfd9b65e39c127c75a46648257548fe9422",
+          "mr-4.png": "33361d4e8c865f1d8ceb9336b10032e97583d156b7208c93f38e45703f378be4",
+          "mr-5.png": "d58fc71c1d99e5185b1b143e70e00f0faa5ef4cf903076a0edbfc5b3604acf8f"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28599910400,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3762290688,
+          "required_free_bytes": 15565062144
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "1b353da455ebb2af57c164a6ddeb1d5c2a68b0d57897e40ede88fb357fb21dc2"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "88398fadd1927df5295f2fb3dc7bfe22b10297887ee42fb958bca61119c13015"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "b7fe09fac6a0ed4f1180570adf3fe3652810770f7685dc9822a97d0f29ae07b8"
+          },
+          "source_sha256": "1e8682bd4bf9de036da6226ee71ab51242cdd41080228827ce2b1da342b5cdc5",
+          "output_sha256": "d8334887eb50b234a109bf8f7083db5def009eef1751c280191983e8f46cbe90",
+          "original_bin_prefix_sha256": "c0aafbbb75365b0e4ac564ff28f1216b971ea62a97b8d305dc74655e17a04e49",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3626849,
+              "sha256": "135c984907dbf24f1fe53125f4f0ec7218990f8e90246ddd55f0bb74ad02dc05"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 1782910,
+              "sha256": "b75d468c7e595bb766d096c642f71581961f05af987f99af3214373b0fb8c4ff"
+            }
+          ],
+          "source_bytes": 13432168,
+          "output_bytes": 11629040
+        },
+        "post_export_free_bytes": 28599910400,
+        "output_sha256": "d8334887eb50b234a109bf8f7083db5def009eef1751c280191983e8f46cbe90",
+        "output_bytes": 11629040,
+        "peak_torch_bytes": 15028191232,
+        "finished_unix": 1792878658.5883574,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nord/shape-a.receipt.json",
+      "source_sha256": "97216841f605a888d819fb82a4685fbf085c79e8b7fea08819851d5b3daeda9c",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "1e8f2257dc3f36b01e3072645b429a34690d9adb41175dbf9ce10f7110acfd7c",
+        "reference": "art/characters/body-v5/references/nord-full-front-v1.png",
+        "reference_sha256": "479e9676618ba2c170e0fda79ca1c13056682291112e3fbc5934270bd23e2609",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265012,
+        "output_prefix": "do-reliza/body-v5/nord-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "cae63d4b-79f9-4e03-af05-c55e962e047e",
+        "raw_file": "raw/cae63d4b_000.glb",
+        "raw_bytes": 31370148
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nord/body-rigged-quality.receipt.json",
+      "source_sha256": "b00fd2d4f5fb72ece2585aebd1aa7311c9c61d13f01203152084b42d613bea45",
+      "redacted_fields": [],
+      "content": {
+        "id": "nord",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "7406a9f968e6f1a30f64b69982a5097d23804f24fc5a0b7b1620de59db7fa92d",
+        "body_sha256": "55091b2adf2a77dc01146e42fdb7f642ecfc248e535eb80766bd61c9ce3f9d03",
+        "fit": {
+          "source_sole_y": -0.9883178472518921,
+          "source_ankle_y": -0.92,
+          "source_knee_y": -0.45,
+          "source_hip_y": 0.02,
+          "source_shoulder_y": 0.58,
+          "source_neck_y": 0.7,
+          "source_center_x": 0.0,
+          "source_center_z": -0.365915,
+          "source_shoulder_half_width": 0.28,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.28,
+                0.58,
+                -0.3698
+              ],
+              "elbow": [
+                0.436,
+                0.28,
+                -0.35461
+              ],
+              "wrist": [
+                0.50678,
+                0.01,
+                -0.23673
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.28,
+                0.58,
+                -0.36203
+              ],
+              "elbow": [
+                -0.44047,
+                0.28,
+                -0.35481
+              ],
+              "wrist": [
+                -0.52636,
+                0.01,
+                -0.2374
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.92,
+              0.27511,
+              -0.25756
+            ],
+            [
+              -0.45,
+              0.21061,
+              -0.37041
+            ],
+            [
+              0.02,
+              0.2046,
+              -0.27518
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "measurement": {
+            "source_sha256": "47529cbeead06664ea2f97ddfe16273b18f1b11cc42764c337538cc700f234bd",
+            "method": "Manual front/side geometry layer Y positions; per-side actual mesh cross-section X/Z centers. No bbox normalization. Review pose required.",
+            "raw_y_percentiles": [
+              -0.9883178472518921,
+              -0.9882708100676536,
+              -0.9780683773756027,
+              0.9671521717309952,
+              0.9804548169374466,
+              0.9882574081420898
+            ],
+            "raw_body_top_hint": 0.9804548025131226,
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 396,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.23558,
+                    0.56435,
+                    -0.48809
+                  ],
+                  [
+                    0.43866,
+                    0.59604,
+                    -0.2515
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 481,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.32567,
+                    0.2632,
+                    -0.44094
+                  ],
+                  [
+                    0.54633,
+                    0.29606,
+                    -0.26827
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 214,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.46192,
+                    -0.00518,
+                    -0.29453
+                  ],
+                  [
+                    0.55165,
+                    0.02607,
+                    -0.17892
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 436,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.44217,
+                    0.56402,
+                    -0.48469
+                  ],
+                  [
+                    -0.24703,
+                    0.59636,
+                    -0.23936
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 436,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.54698,
+                    0.26369,
+                    -0.43857
+                  ],
+                  [
+                    -0.33396,
+                    0.29585,
+                    -0.27106
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 216,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.57123,
+                    -0.00644,
+                    -0.29406
+                  ],
+                  [
+                    -0.48149,
+                    0.02583,
+                    -0.18074
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox (distant source artifacts bias bbox). Review pose required.",
+            "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+          },
+          "target_sole_y": 0.001
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 5.3726900748371916e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 16246,
+          "fitted_leg_vertices": 32421,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.92,
+              0.27511,
+              -0.25756
+            ],
+            [
+              -0.45,
+              0.21061,
+              -0.37041
+            ],
+            [
+              0.02,
+              0.2046,
+              -0.27518
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 6540,
+            "torso_seed_vertices": 18977,
+            "unseeded_island_vertices": 24,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 208,
+            "worst": [
+              {
+                "vertices": [
+                  49711,
+                  49725
+                ],
+                "before": 0.04529583176085092,
+                "after": 0.07237542918526638,
+                "growth": 0.027079597424415458,
+                "before_points": [
+                  [
+                    -0.11871825903654099,
+                    0.1705426126718521,
+                    0.9005976319313049
+                  ],
+                  [
+                    -0.1155061423778534,
+                    0.1701163500547409,
+                    0.945777416229248
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.06383968144655228,
+                    0.10678824037313461,
+                    0.9005976319313049
+                  ],
+                  [
+                    -0.0990653708577156,
+                    0.15101651847362518,
+                    0.945777416229248
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  49707,
+                  49724
+                ],
+                "before": 0.04442938588598727,
+                "after": 0.07101849100364388,
+                "growth": 0.02658910511765661,
+                "before_points": [
+                  [
+                    -0.11993013322353363,
+                    0.16788579523563385,
+                    0.9156906008720398
+                  ],
+                  [
+                    -0.11672938615083694,
+                    0.16776858270168304,
+                    0.9600043892860413
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.07599245756864548,
+                    0.11684184521436691,
+                    0.9156906008720398
+                  ],
+                  [
+                    -0.11038453876972198,
+                    0.16039754450321198,
+                    0.9600043892860413
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  24589,
+                  24590
+                ],
+                "before": 0.03858678313441685,
+                "after": 0.06354341379565458,
+                "growth": 0.024956630661237725,
+                "before_points": [
+                  [
+                    -0.12020663917064667,
+                    0.17936722934246063,
+                    0.9205094575881958
+                  ],
+                  [
+                    -0.12012527137994766,
+                    0.17979268729686737,
+                    0.9590938091278076
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.08044459670782089,
+                    0.13317427039146423,
+                    0.9205094575881958
+                  ],
+                  [
+                    -0.11312393844127655,
+                    0.17165899276733398,
+                    0.9590938091278076
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  49471,
+                  49475
+                ],
+                "before": 0.03646212147679501,
+                "after": 0.060816916823150484,
+                "growth": 0.02435479534635547,
+                "before_points": [
+                  [
+                    -0.12294188886880875,
+                    0.16640205681324005,
+                    0.9123034477233887
+                  ],
+                  [
+                    -0.12043413519859314,
+                    0.16636352241039276,
+                    0.9486792087554932
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.07561687380075455,
+                    0.11142291873693466,
+                    0.9123034477233887
+                  ],
+                  [
+                    -0.10596832633018494,
+                    0.14955808222293854,
+                    0.9486792087554932
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  49278,
+                  49470
+                ],
+                "before": 0.041573346589862115,
+                "after": 0.06574449760794761,
+                "growth": 0.024171151018085493,
+                "before_points": [
+                  [
+                    -0.12179039418697357,
+                    0.163710817694664,
+                    0.9631012678146362
+                  ],
+                  [
+                    -0.12399100512266159,
+                    0.16452564299106598,
+                    0.9215942025184631
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.11704159528017044,
+                    0.15819397568702698,
+                    0.9631012678146362
+                  ],
+                  [
+                    -0.0846492350101471,
+                    0.118820920586586,
+                    0.9215942025184631
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  57924,
+                  57925
+                ],
+                "before": 0.034926687343129655,
+                "after": 0.059031933241533226,
+                "growth": 0.02410524589840357,
+                "before_points": [
+                  [
+                    -0.11441238969564438,
+                    0.17995499074459076,
+                    0.9159538745880127
+                  ],
+                  [
+                    -0.11595676094293594,
+                    0.18081408739089966,
+                    0.9508358240127563
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.071935273706913,
+                    0.13060782849788666,
+                    0.9159538745880127
+                  ],
+                  [
+                    -0.1034637913107872,
+                    0.16630056500434875,
+                    0.9508358240127563
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  49475,
+                  49707
+                ],
+                "before": 0.0330275574189626,
+                "after": 0.055291528108653946,
+                "growth": 0.022263970689691347,
+                "before_points": [
+                  [
+                    -0.12043413519859314,
+                    0.16636352241039276,
+                    0.9486792087554932
+                  ],
+                  [
+                    -0.11993013322353363,
+                    0.16788579523563385,
+                    0.9156906008720398
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.10596832633018494,
+                    0.14955808222293854,
+                    0.9486792087554932
+                  ],
+                  [
+                    -0.07599245756864548,
+                    0.11684184521436691,
+                    0.9156906008720398
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  49026,
+                  49253
+                ],
+                "before": 0.033426664198658765,
+                "after": 0.055138913745848915,
+                "growth": 0.02171224954719015,
+                "before_points": [
+                  [
+                    -0.12953414022922516,
+                    0.1595776379108429,
+                    0.937553882598877
+                  ],
+                  [
+                    -0.13018426299095154,
+                    0.16125811636447906,
+                    0.9041758179664612
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.10481139272451401,
+                    0.13085635006427765,
+                    0.937553882598877
+                  ],
+                  [
+                    -0.07572465389966965,
+                    0.09799046814441681,
+                    0.9041758179664612
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.0
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.11337332094963881
+        },
+        "source_bounds_blender": [
+          [
+            -0.5695250034332275,
+            -0.5856029987335205,
+            -0.9875069856643677
+          ],
+          [
+            0.5932769775390625,
+            0.5767940282821655,
+            0.985493004322052
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.9883178472518921,
+            0.001
+          ],
+          [
+            -0.92,
+            0.09
+          ],
+          [
+            -0.45,
+            0.48
+          ],
+          [
+            0.02,
+            0.88
+          ],
+          [
+            0.58,
+            1.258
+          ],
+          [
+            0.7,
+            1.385
+          ],
+          [
+            0.985493004322052,
+            1.619033134593032
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.819750855712841,
+        "width_scale": 0.8749999999999999,
+        "ankle_contact_proof": {
+          "matching_ring_points": 400,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 25658,
+          "anatomical_arm_vertices": 16240,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 90
+        },
+        "status": "staged_review_required",
+        "seconds": 22.445,
+        "stage_bytes": 7341084,
+        "stage_sha256": "22081ed9a43c0aaf2eacd10089ec18cc0f7d4c93ecd1a5780cb71bb82f495ecd",
+        "body_vertices": 47848,
+        "body_triangles": 95023,
+        "shoe_triangles": {
+          "LeftFoot": 4091,
+          "RightFoot": 4395
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/nord-quality.receipt.json",
+      "source_sha256": "84079727ea92701c4c68fae60630c313382e7e72315acb76717b627aaf5c9ed1",
+      "redacted_fields": [],
+      "content": {
+        "id": "nord",
+        "version": 5,
+        "baseSha256": "7406a9f968e6f1a30f64b69982a5097d23804f24fc5a0b7b1620de59db7fa92d",
+        "stageSha256": "22081ed9a43c0aaf2eacd10089ec18cc0f7d4c93ecd1a5780cb71bb82f495ecd",
+        "baseBinaryPrefixBytes": 8682612,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 62536,
+            "triangles": 95023,
+            "bounds": {
+              "minX": -0.524563729763031,
+              "maxX": 0.5278424024581909,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 2683,
+            "triangles": 4091,
+            "bounds": {
+              "minX": -0.22650914106874384,
+              "maxX": -0.02891704404292269,
+              "minY": 0.002056335348373022,
+              "maxY": 0.1299999957379342
+            }
+          },
+          "RightFoot": {
+            "vertices": 2903,
+            "triangles": 4395,
+            "bounds": {
+              "minX": 0.029380008994558178,
+              "maxX": 0.243428095074207,
+              "minY": 0.0020680531175864265,
+              "maxY": 0.12999999886572888
+            }
+          }
+        },
+        "outputBytes": 19269788,
+        "outputSha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nord/body-painted-quality-b.receipt.json",
+      "source_sha256": "8091bc408e7fdb406ae178172ea52b9252fea83092cc86be218ab1323690ae27",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-five.paint-20261024T220148Z-bb81ca27.receipt.json",
+        "started_unix": 1792879320.2391324,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/nord/body-uv.glb",
+        "reference": "art/characters/body-v5/references/nord-full-front-v1.png",
+        "mesh_sha256": "4ce045a8ad73f5f06572729d49e32387c983bff64d83e92c4edc223e2d2dffe0",
+        "reference_sha256": "479e9676618ba2c170e0fda79ca1c13056682291112e3fbc5934270bd23e2609",
+        "output": "art/characters/body-v5/nord/body-painted-quality-b.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "installed_diffusion_pipeline_sha256": "3accd73ca91a1b67a5f7546b8f518fe9603f4251b1a10ab8122b69985888965e",
+        "installed_multiview_loader_sha256": "92707f7e77d89997bfc51684534b75961c2745ec8095385f84322fb5529b2f34",
+        "script_sha256": "b3a1259f414b89f109634421e85b9003e3fe692ec764344ac19af9caaca8bf8e",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 32496418816,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 0,
+          "required_free_bytes": 19327352832
+        },
+        "owned_vae_reuse": {
+          "applied": false,
+          "reason": "First item; native API loads a fresh model on its execution device"
+        },
+        "owned_vae_after_generation": {
+          "vae_device": "cpu",
+          "execution_device": "cuda:0",
+          "offload_hook_type": "CpuOffload"
+        },
+        "views_directory": "art/characters/body-v5/nord/body-painted-quality-b-views",
+        "renderer_uv_mesh": "art/characters/body-v5/nord/body-painted-quality-b-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "a83884c74b4bf2cfcf077df0098aeaca2c33a8c0e3ecffb138f077a7d2da8375",
+        "views_sha256": {
+          "albedo-0.png": "647bdaf90ecbf3a6842a7e79488d3e7a40c79fa6440788787bcd2a8bad19c4f9",
+          "albedo-1.png": "a29dd0e2f9c2e9695f0b94afea141176b7d143d3aa8699486a6d0acfd38ee3a8",
+          "albedo-2.png": "80547870ff68f4925204d6c2ed046dd86a15daf674b895e58e6c184f598c933e",
+          "albedo-3.png": "2a68620d416a18860f1dc82091ec5923d3fe07e55631b2528f446fa08cb4e77c",
+          "albedo-4.png": "3d33c773a067dc9fa719c547bdc5bcd6aad94a65bd1f0b39d2eeb2f945b77e42",
+          "albedo-5.png": "dc0d5df0bf011fa298c0326237fae771e903a875474c9e7659e36417899ccc0f",
+          "mr-0.png": "f797a199de0790f8c05f9b2cba4022b79e48195c6b3ad81171ead33c700e02ff",
+          "mr-1.png": "30edb44b075fdbe40ce4d17c8dadceea9264cc86623bd7c55aa2cf26433a8603",
+          "mr-2.png": "e2442e80d703bfd07c8fd695dea359e8693119f499025965107be212c02830f4",
+          "mr-3.png": "c85ed5e4428b07a0b55b8f6565cb4a5c949d130f1fa1bcac79690294f770c6b6",
+          "mr-4.png": "d48d0684d0cda301149aa393927333d5223a19ff3a513e6e52f199e158292d30",
+          "mr-5.png": "f3afa59eed3cde11a495a9ed2250389a2adb6211f70fafd05f12acbfca7cea61"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28643950592,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3718250496,
+          "required_free_bytes": 15609102336
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "13a223e2b5333ed63e9cb1b71faa2700e1667290059b7f8365592f756adab898"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "921520ffe8065bebcb6b5074dd80e12a01a77f7719e02816f07b3fe84dbf6fa0"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "3b4c69519309b61a6a7bcd46243e99ba8f8c8beefd1ed3b946a6ee0945066120"
+          },
+          "source_sha256": "3440c42913a2beeed12670465d5a49d29f52856be0197ba1ec015550d1062e4a",
+          "output_sha256": "55091b2adf2a77dc01146e42fdb7f642ecfc248e535eb80766bd61c9ce3f9d03",
+          "original_bin_prefix_sha256": "4635ad6183ca8aaee576b8f07826501b9ac0ac42a12d734c9a4245011c1e8e7a",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3275883,
+              "sha256": "7f9e5b686855ec659dd0ead7e0884db4bd2765a6556b6dd20b52e9850eb77e9e"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 1854802,
+              "sha256": "3ad27e4cc22c8c265a625938d40ca1282f5ab27bc99e371e0ddfbbb6ca71be6a"
+            }
+          ],
+          "source_bytes": 12618272,
+          "output_bytes": 10908168
+        },
+        "post_export_free_bytes": 28643950592,
+        "output_sha256": "55091b2adf2a77dc01146e42fdb7f642ecfc248e535eb80766bd61c9ce3f9d03",
+        "output_bytes": 10908168,
+        "peak_torch_bytes": 15032385536,
+        "finished_unix": 1792879473.9189422,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/echo/shape-a.receipt.json",
+      "source_sha256": "f1692294e83c647f871d1e4a68e953d93da85d7deb1d3fa985a3f0de98a36215",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "c0d05652ea2b3c031650bbeffac5abc964b74c834e25eea4e93e8149db0ad527",
+        "reference": "art/characters/body-v5/references/echo-full-front-v1.png",
+        "reference_sha256": "7ecf5fe9d63cf1f7ec28b49cdc0a847cf65bad0aa20b1cca43b7fc901195cae0",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265015,
+        "output_prefix": "do-reliza/body-v5/echo-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "68e8a895-6753-42a0-b403-9e264370e66d",
+        "raw_file": "raw/68e8a895_000.glb",
+        "raw_bytes": 31013604
+      }
+    },
+    {
+      "source": "art/characters/body-v5/echo/body-rigged-quality.receipt.json",
+      "source_sha256": "296b012ab86b3daa56cf78dab2a27982436288ef23c58bf2be341e8250c37a7d",
+      "redacted_fields": [],
+      "content": {
+        "id": "echo",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "488c19df89f056858928c5cc05b0ecf1f0f41adc72cd1b80fc7828c6138b70ac",
+        "body_sha256": "22b4fd976f784405fbc0f24187721ca13a7d52fb072899deab6a5d6ea39b3ae8",
+        "fit": {
+          "source_sole_y": -0.988277018070221,
+          "source_ankle_y": -0.915,
+          "source_knee_y": -0.45,
+          "source_hip_y": 0.09,
+          "source_shoulder_y": 0.625,
+          "source_neck_y": 0.735,
+          "source_center_x": 0.0,
+          "source_center_z": -0.237415,
+          "source_shoulder_half_width": 0.27,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.27,
+                0.625,
+                -0.23355
+              ],
+              "elbow": [
+                0.3938,
+                0.31,
+                -0.22018
+              ],
+              "wrist": [
+                0.44058,
+                0.04,
+                -0.12099
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.27,
+                0.625,
+                -0.24128
+              ],
+              "elbow": [
+                -0.41134,
+                0.31,
+                -0.25319
+              ],
+              "wrist": [
+                -0.49702,
+                0.04,
+                -0.17496
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.915,
+              0.27945,
+              -0.11116
+            ],
+            [
+              -0.45,
+              0.20481,
+              -0.20352
+            ],
+            [
+              0.09,
+              0.19688,
+              -0.2001
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "measurement": {
+            "source_sha256": "127f98a52d396ae582d5e1be8b211923d4d8a8f3613a0637bc25835aa618779c",
+            "method": "Manual front/side geometry layer Y positions; per-side actual mesh cross-section X/Z centers. No bbox normalization. Review pose required.",
+            "raw_y_percentiles": [
+              -0.988277018070221,
+              -0.9843823509216308,
+              -0.9726728129386902,
+              0.9589097452163696,
+              0.9765875616073608,
+              0.9882715344429016
+            ],
+            "raw_body_top_hint": 0.9765875339508057,
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 318,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.22787,
+                    0.60915,
+                    -0.31558
+                  ],
+                  [
+                    0.34528,
+                    0.64131,
+                    -0.15152
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 263,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.31391,
+                    0.29398,
+                    -0.32543
+                  ],
+                  [
+                    0.4737,
+                    0.32552,
+                    -0.11493
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 213,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.38797,
+                    0.02532,
+                    -0.17771
+                  ],
+                  [
+                    0.49318,
+                    0.05642,
+                    -0.06427
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 386,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.37847,
+                    0.60911,
+                    -0.32934
+                  ],
+                  [
+                    -0.22733,
+                    0.64136,
+                    -0.15322
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 355,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.51237,
+                    0.29358,
+                    -0.35232
+                  ],
+                  [
+                    -0.31031,
+                    0.32553,
+                    -0.15406
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 233,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.5516,
+                    0.02461,
+                    -0.23496
+                  ],
+                  [
+                    -0.44243,
+                    0.05654,
+                    -0.11496
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox (distant source artifacts bias bbox). Review pose required.",
+            "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+          },
+          "target_sole_y": 0.001
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 5.960464477539063e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 15506,
+          "fitted_leg_vertices": 33385,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.915,
+              0.27945,
+              -0.11116
+            ],
+            [
+              -0.45,
+              0.20481,
+              -0.20352
+            ],
+            [
+              0.09,
+              0.19688,
+              -0.2001
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 6248,
+            "torso_seed_vertices": 17917,
+            "unseeded_island_vertices": 16,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 17,
+            "worst": [
+              {
+                "vertices": [
+                  35595,
+                  36820
+                ],
+                "before": 0.02456923513872001,
+                "after": 0.03862475236284228,
+                "growth": 0.014055517224122273,
+                "before_points": [
+                  [
+                    0.2746241092681885,
+                    0.009756295941770077,
+                    0.9710930585861206
+                  ],
+                  [
+                    0.2758518159389496,
+                    0.03427397087216377,
+                    0.9721048474311829
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.26850610971450806,
+                    0.01123900432139635,
+                    0.9622305035591125
+                  ],
+                  [
+                    0.2591528296470642,
+                    0.04155135154724121,
+                    0.9401953220367432
+                  ]
+                ],
+                "arm_membership": [
+                  0.1609363853931427,
+                  0.5140626430511475
+                ]
+              },
+              {
+                "vertices": [
+                  41440,
+                  42124
+                ],
+                "before": 0.015647559261160553,
+                "after": 0.028751810006194124,
+                "growth": 0.013104250745033571,
+                "before_points": [
+                  [
+                    -0.2532583177089691,
+                    0.07834447920322418,
+                    1.0406386852264404
+                  ],
+                  [
+                    -0.25227105617523193,
+                    0.081488698720932,
+                    1.055935263633728
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.24004539847373962,
+                    0.07758522033691406,
+                    1.0028563737869263
+                  ],
+                  [
+                    -0.242263525724411,
+                    0.08065396547317505,
+                    1.031357765197754
+                  ]
+                ],
+                "arm_membership": [
+                  0.9484465718269348,
+                  0.7571604251861572
+                ]
+              },
+              {
+                "vertices": [
+                  18554,
+                  18563
+                ],
+                "before": 0.019725695201713085,
+                "after": 0.03257452694377718,
+                "growth": 0.012848831742064096,
+                "before_points": [
+                  [
+                    -0.349634051322937,
+                    0.10106638073921204,
+                    1.057206392288208
+                  ],
+                  [
+                    -0.3466731905937195,
+                    0.10015323013067245,
+                    1.076687216758728
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.35519641637802124,
+                    0.10517443716526031,
+                    1.002652645111084
+                  ],
+                  [
+                    -0.3493714928627014,
+                    0.10312053561210632,
+                    1.0346362590789795
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  35594,
+                  36820
+                ],
+                "before": 0.014636512749511896,
+                "after": 0.027323006101316594,
+                "growth": 0.012686493351804698,
+                "before_points": [
+                  [
+                    0.27754414081573486,
+                    0.01994468830525875,
+                    0.9696481823921204
+                  ],
+                  [
+                    0.2758518159389496,
+                    0.03427397087216377,
+                    0.9721048474311829
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.2699558138847351,
+                    0.02236776612699032,
+                    0.9563765525817871
+                  ],
+                  [
+                    0.2591528296470642,
+                    0.04155135154724121,
+                    0.9401953220367432
+                  ]
+                ],
+                "arm_membership": [
+                  0.22314031422138214,
+                  0.5140626430511475
+                ]
+              },
+              {
+                "vertices": [
+                  39794,
+                  40128
+                ],
+                "before": 0.01095066537952551,
+                "after": 0.023491697872695734,
+                "growth": 0.012541032493170224,
+                "before_points": [
+                  [
+                    -0.2565758228302002,
+                    0.0635196641087532,
+                    1.0122116804122925
+                  ],
+                  [
+                    -0.25294798612594604,
+                    0.06257841736078262,
+                    1.022500991821289
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.24403569102287292,
+                    0.059422947466373444,
+                    0.951897382736206
+                  ],
+                  [
+                    -0.23905090987682343,
+                    0.05961264669895172,
+                    0.9748533368110657
+                  ]
+                ],
+                "arm_membership": [
+                  0.9989201426506042,
+                  0.9528518915176392
+                ]
+              },
+              {
+                "vertices": [
+                  18262,
+                  56651
+                ],
+                "before": 0.03326272430439292,
+                "after": 0.045470455362936084,
+                "growth": 0.012207731058543163,
+                "before_points": [
+                  [
+                    -0.3474998474121094,
+                    0.09788521379232407,
+                    1.0292202234268188
+                  ],
+                  [
+                    -0.3148023188114166,
+                    0.09874295443296432,
+                    1.0352654457092285
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.36004960536956787,
+                    0.095731221139431,
+                    0.9579824209213257
+                  ],
+                  [
+                    -0.3166229724884033,
+                    0.10119788348674774,
+                    0.9703033566474915
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  42122,
+                  42124
+                ],
+                "before": 0.011428548810387105,
+                "after": 0.022755990660499117,
+                "growth": 0.011327441850112013,
+                "before_points": [
+                  [
+                    -0.25604677200317383,
+                    0.0824371874332428,
+                    1.0451902151107788
+                  ],
+                  [
+                    -0.25227105617523193,
+                    0.081488698720932,
+                    1.055935263633728
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.24344119429588318,
+                    0.0821148231625557,
+                    1.0086792707443237
+                  ],
+                  [
+                    -0.242263525724411,
+                    0.08065396547317505,
+                    1.031357765197754
+                  ]
+                ],
+                "arm_membership": [
+                  0.9534059166908264,
+                  0.7571604251861572
+                ]
+              },
+              {
+                "vertices": [
+                  34915,
+                  36822
+                ],
+                "before": 0.0208356259898268,
+                "after": 0.0321316565605354,
+                "growth": 0.011296030570708597,
+                "before_points": [
+                  [
+                    0.26388585567474365,
+                    0.002337060170248151,
+                    0.9777826070785522
+                  ],
+                  [
+                    0.263833224773407,
+                    0.023000560700893402,
+                    0.9804547429084778
+                  ]
+                ],
+                "after_points": [
+                  [
+                    0.25556638836860657,
+                    0.005106248427182436,
+                    0.9673870801925659
+                  ],
+                  [
+                    0.244334876537323,
+                    0.03167117387056351,
+                    0.953223705291748
+                  ]
+                ],
+                "arm_membership": [
+                  0.22125349938869476,
+                  0.5433720946311951
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.11948713285433742
+        },
+        "source_bounds_blender": [
+          [
+            -0.5110809803009033,
+            -0.44177600741386414,
+            -0.9874079823493958
+          ],
+          [
+            0.5622069835662842,
+            0.43507102131843567,
+            0.9853029847145081
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.988277018070221,
+            0.001
+          ],
+          [
+            -0.915,
+            0.09
+          ],
+          [
+            -0.45,
+            0.48
+          ],
+          [
+            0.09,
+            0.88
+          ],
+          [
+            0.625,
+            1.258
+          ],
+          [
+            0.735,
+            1.385
+          ],
+          [
+            0.9853029847145081,
+            1.5860235889020387
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.8031210220338494,
+        "width_scale": 0.9074074074074073,
+        "ankle_contact_proof": {
+          "matching_ring_points": 401,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 26171,
+          "anatomical_arm_vertices": 15506,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 90
+        },
+        "status": "staged_review_required",
+        "seconds": 22.167,
+        "stage_bytes": 8603484,
+        "stage_sha256": "ccd5c7814d4376aac5d8990f657d77f977272501d16bb10d30c258beb1bca6ab",
+        "body_vertices": 46411,
+        "body_triangles": 92225,
+        "shoe_triangles": {
+          "LeftFoot": 4026,
+          "RightFoot": 4054
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/echo-quality.receipt.json",
+      "source_sha256": "721df7344a38a34a0f715628d9cdbd8271dabe1760018a63ba83b12468c18638",
+      "redacted_fields": [],
+      "content": {
+        "id": "echo",
+        "version": 5,
+        "baseSha256": "488c19df89f056858928c5cc05b0ecf1f0f41adc72cd1b80fc7828c6138b70ac",
+        "stageSha256": "ccd5c7814d4376aac5d8990f657d77f977272501d16bb10d30c258beb1bca6ab",
+        "baseBinaryPrefixBytes": 8741428,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 66957,
+            "triangles": 92225,
+            "bounds": {
+              "minX": -0.5376393795013428,
+              "maxX": 0.5293688774108887,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 3207,
+            "triangles": 4026,
+            "bounds": {
+              "minX": -0.21941171906514625,
+              "maxX": -0.024084185330963986,
+              "minY": 0.006389072206888379,
+              "maxY": 0.1299999943971994
+            }
+          },
+          "RightFoot": {
+            "vertices": 3234,
+            "triangles": 4054,
+            "bounds": {
+              "minX": 0.03203053459306558,
+              "maxX": 0.2762562908252987,
+              "minY": 0.0020554898799162763,
+              "maxY": 0.12999999610992427
+            }
+          }
+        },
+        "outputBytes": 20823748,
+        "outputSha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/echo/body-painted-quality.receipt.json",
+      "source_sha256": "fafc3d3fe56b442cd4cfc434ef6ba043f9a6141b682b7c398d63e92479c0de77",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-five.paint-20261024T220148Z-bb81ca27.receipt.json",
+        "started_unix": 1792879474.2973719,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/echo/body-uv.glb",
+        "reference": "art/characters/body-v5/references/echo-full-front-v1.png",
+        "mesh_sha256": "f796c1bbbfa00215e0ee8df8d56c2354608683b14e1e50c5daeff3d497b803a3",
+        "reference_sha256": "7ecf5fe9d63cf1f7ec28b49cdc0a847cf65bad0aa20b1cca43b7fc901195cae0",
+        "output": "art/characters/body-v5/echo/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "installed_diffusion_pipeline_sha256": "3accd73ca91a1b67a5f7546b8f518fe9603f4251b1a10ab8122b69985888965e",
+        "installed_multiview_loader_sha256": "92707f7e77d89997bfc51684534b75961c2745ec8095385f84322fb5529b2f34",
+        "script_sha256": "b3a1259f414b89f109634421e85b9003e3fe692ec764344ac19af9caaca8bf8e",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 28643950592,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3718250496,
+          "required_free_bytes": 15609102336
+        },
+        "resource_before_owned_vae_restore": {
+          "free_bytes": 28643950592,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3718250496,
+          "required_free_bytes": 15609102336
+        },
+        "owned_vae_reuse": {
+          "applied": true,
+          "scope": "Only this process's shared multiview pipeline VAE",
+          "public_api": "shared_model.pipeline.vae.to(shared_model.pipeline._execution_device)",
+          "execution_device": "cuda:0",
+          "vae_device_before": "cpu",
+          "vae_device_after": "cuda:0",
+          "offload_hook_type": "CpuOffload",
+          "offload_hook_identity_preserved": true,
+          "global_or_foreign_model_unload": false
+        },
+        "owned_vae_after_generation": {
+          "vae_device": "cpu",
+          "execution_device": "cuda:0",
+          "offload_hook_type": "CpuOffload"
+        },
+        "views_directory": "art/characters/body-v5/echo/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/echo/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "f2de4b9993743455eac2fd209b092ff00eaedb08736ee543a0d1dd29ac3dcea9",
+        "views_sha256": {
+          "albedo-0.png": "ddff8bf28a611898b73a03679d5688bcf0de06a7aba338b35b38bed8d731818a",
+          "albedo-1.png": "5d0de1ba4256b69b1877dbf10a0b58ed578354da36a0d18317f597b1dc836a90",
+          "albedo-2.png": "5f811d65157dc6ae62462259d17aa8f2a6e73b672e32d01e39122e32d8617883",
+          "albedo-3.png": "72d809a98806a37bb4ec7a65b0893c10434d1b44593bee0b23b2a9555580ee55",
+          "albedo-4.png": "b5870317230c0cf64f23a905f1b2b0353dbcb01a29a0566f205eba855a666631",
+          "albedo-5.png": "34e8baef5f81cfb41d7ff654b7e0288ab833fe359a3d9e872e55c8f73cf594d6",
+          "mr-0.png": "e68f9159741e31e505d20930db3b671b1ee79c9f01b82da607839ab52dcdda0c",
+          "mr-1.png": "8b771d5b2a2d41a8a9e45fdb04e7c0db62207d9f0aaf3da4b6521b3eb049d475",
+          "mr-2.png": "857bc550e3ed2ccba49352871f7898e638ec62933dc9341eb50c8f17074160b7",
+          "mr-3.png": "d5d6968a55c1666ee7c4a50cff4993488cfcd087c9103d8730c7653678fa8caf",
+          "mr-4.png": "e9dc1ff941de3b133f30148e46b5e2d53d278364b1e20ad2d53405ae63493e52",
+          "mr-5.png": "94f15a1d66e5e9435eefe841c9be28c12fde1f899dd14d4c75ab50728afd2b78"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28679602176,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3682598912,
+          "required_free_bytes": 15644753920
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "6342b534e8c70fdc597a6c3d752f442a5b0a2b5f5491ceb15f3a9a0367635d3d"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "72cb7dce6dea45db9323375b6cc7b2135596e096afaa55b4107c4d0931bbd05d"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "3e6a6b10091124acf96b69616ef55c34153dda7baad7b555d724d955a5f261fa"
+          },
+          "source_sha256": "2bc30fd31044b905a4dc4a209024b5ceda76fa1b3bcce1885494c494867a56fb",
+          "output_sha256": "22b4fd976f784405fbc0f24187721ca13a7d52fb072899deab6a5d6ea39b3ae8",
+          "original_bin_prefix_sha256": "0c7b0582a3f18f02f9999eedb6046248f2e3e50edfcba959c8bd2249870ddd91",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3746901,
+              "sha256": "f5a4cdd7f882ac10b4603f7691c1d26cf7122555a84f9b142df50d85dd9d2e12"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 2072524,
+              "sha256": "648e691324f23d82efa54e0f55069076a70fd2a04ae5354a8abc0fd960d1e36c"
+            }
+          ],
+          "source_bytes": 14027704,
+          "output_bytes": 12088020
+        },
+        "post_export_free_bytes": 28679602176,
+        "output_sha256": "22b4fd976f784405fbc0f24187721ca13a7d52fb072899deab6a5d6ea39b3ae8",
+        "output_bytes": 12088020,
+        "peak_torch_bytes": 14950596608,
+        "finished_unix": 1792879605.0198748,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/iskra/shape-a.receipt.json",
+      "source_sha256": "3e8e52c743aa883f3f665c187641f49930d0ca5883e8df5704cf41ab7ad2a5fb",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "dd8f5647da1300b42e79446486650d4c2dd8c1969e69ab1b9ccb06e8f210dda7",
+        "reference": "art/characters/body-v5/references/iskra-full-front-v1.png",
+        "reference_sha256": "9eac792a1bcae90a9d255da1b7251e7ded1f62e7e2d1c84bfda781fddf289302",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265013,
+        "output_prefix": "do-reliza/body-v5/iskra-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "9caa60ba-1723-4452-858e-c875aa6e2d60",
+        "raw_file": "raw/9caa60ba_000.glb",
+        "raw_bytes": 36944532
+      }
+    },
+    {
+      "source": "art/characters/body-v5/iskra/body-rigged-quality.receipt.json",
+      "source_sha256": "4e87c128e0e9a256d54e7564d403e2326a79e6aa86d9c6eb690a2e3fc1b5236a",
+      "redacted_fields": [],
+      "content": {
+        "id": "iskra",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "34758c48fbc425cc2461d7138ae32def7a384918113269651b08aee2517cf9b5",
+        "body_sha256": "90d6f37df027d7822d4221a74211ae9b70169cfe0f1f1979aaa1406bf0d747d0",
+        "fit": {
+          "weight_smooth_iterations": 90,
+          "source_sole_y": -0.9883151054382324,
+          "source_ankle_y": -0.91,
+          "source_knee_y": -0.43,
+          "source_hip_y": 0.12,
+          "source_shoulder_y": 0.625,
+          "source_neck_y": 0.73,
+          "source_center_x": 0.0,
+          "source_center_z": -0.024505,
+          "source_shoulder_half_width": 0.24,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.24,
+                0.625,
+                -0.02231
+              ],
+              "elbow": [
+                0.37074,
+                0.325,
+                -0.015
+              ],
+              "wrist": [
+                0.47812,
+                0.055,
+                0.05089
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.24,
+                0.625,
+                -0.0267
+              ],
+              "elbow": [
+                -0.36574,
+                0.325,
+                -0.00747
+              ],
+              "wrist": [
+                -0.47779,
+                0.055,
+                0.05063
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.91,
+              0.28927,
+              0.05037
+            ],
+            [
+              -0.43,
+              0.21161,
+              0.04915
+            ],
+            [
+              0.12,
+              0.17854,
+              0.01639
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "target_sole_y": 0.001,
+          "surface_smooth_iterations": 0,
+          "measurement": {
+            "source_sha256": "d34ea42b11138a29bc56eb3d15561c7425a38da97fdf209fe0facf388dbb6c4b",
+            "method": "Manual front/side 3D geometry layer Y positions; actual independent per-side X/Z cross-section centers. No bbox normalization. Native pose review required.",
+            "manual_anatomical_y_uncertainty_source_units": 0.02,
+            "raw_y_percentiles": [
+              -0.9883151054382324,
+              -0.9845260688662529,
+              -0.9713471782207489,
+              0.9620422184467315,
+              0.9774581679105759,
+              0.9844328761100769
+            ],
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 326,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.20079,
+                    0.60899,
+                    -0.14134
+                  ],
+                  [
+                    0.33559,
+                    0.64132,
+                    0.09672
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 292,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.28413,
+                    0.30895,
+                    -0.11353
+                  ],
+                  [
+                    0.45735,
+                    0.34107,
+                    0.08353
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 133,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.43935,
+                    0.0387,
+                    0.00198
+                  ],
+                  [
+                    0.5169,
+                    0.0701,
+                    0.09981
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 316,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.33254,
+                    0.60923,
+                    -0.1458
+                  ],
+                  [
+                    -0.2008,
+                    0.64137,
+                    0.09239
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 245,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.44701,
+                    0.30921,
+                    -0.09708
+                  ],
+                  [
+                    -0.28446,
+                    0.33984,
+                    0.08215
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 138,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.51696,
+                    0.03827,
+                    0.00257
+                  ],
+                  [
+                    -0.43861,
+                    0.07172,
+                    0.09869
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox",
+            "sole_calibration": "Final1mm target for preservedclipfloor<=12mm",
+            "hood_note": "Generatedhood/collar may crossheadcutplane; inspectpreservedhoodrimwithacceptedheadbeforepromotion"
+          }
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 4.470348358154297e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 12430,
+          "fitted_leg_vertices": 27865,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.91,
+              0.28927,
+              0.05037
+            ],
+            [
+              -0.43,
+              0.21161,
+              0.04915
+            ],
+            [
+              0.12,
+              0.17854,
+              0.01639
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 5319,
+            "torso_seed_vertices": 15347,
+            "unseeded_island_vertices": 317,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 200,
+            "worst": [
+              {
+                "vertices": [
+                  7949,
+                  9005
+                ],
+                "before": 0.010937337331661166,
+                "after": 0.059735116726611824,
+                "growth": 0.048797779394950655,
+                "before_points": [
+                  [
+                    -0.2789978086948395,
+                    -0.020301906391978264,
+                    0.8372188806533813
+                  ],
+                  [
+                    -0.28190311789512634,
+                    -0.012221729382872581,
+                    0.8439934849739075
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.215990349650383,
+                    -0.05300706997513771,
+                    0.8345877528190613
+                  ],
+                  [
+                    -0.2673961818218231,
+                    -0.022585203871130943,
+                    0.8341033458709717
+                  ]
+                ],
+                "arm_membership": [
+                  0.06463546305894852,
+                  0.23399844765663147
+                ]
+              },
+              {
+                "vertices": [
+                  7953,
+                  54736
+                ],
+                "before": 0.011985332699742566,
+                "after": 0.05955264928769313,
+                "growth": 0.04756731658795057,
+                "before_points": [
+                  [
+                    -0.2631922662258148,
+                    -0.023729056119918823,
+                    0.8917315006256104
+                  ],
+                  [
+                    -0.2560862600803375,
+                    -0.03337017446756363,
+                    0.8912823796272278
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.2493412047624588,
+                    -0.03130056709051132,
+                    0.8835921287536621
+                  ],
+                  [
+                    -0.1984831690788269,
+                    -0.061751000583171844,
+                    0.8893148303031921
+                  ]
+                ],
+                "arm_membership": [
+                  0.24702540040016174,
+                  0.06563566625118256
+                ]
+              },
+              {
+                "vertices": [
+                  10360,
+                  10820
+                ],
+                "before": 0.013652635638883293,
+                "after": 0.05859076077797893,
+                "growth": 0.04493812513909563,
+                "before_points": [
+                  [
+                    -0.3047463297843933,
+                    0.008764821104705334,
+                    0.7340821623802185
+                  ],
+                  [
+                    -0.3076740503311157,
+                    0.013701364398002625,
+                    0.7464697957038879
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.22490820288658142,
+                    -0.0341288186609745,
+                    0.7337300181388855
+                  ],
+                  [
+                    -0.27714473009109497,
+                    -0.007711825892329216,
+                    0.7362529039382935
+                  ]
+                ],
+                "arm_membership": [
+                  0.005831528455018997,
+                  0.16847580671310425
+                ]
+              },
+              {
+                "vertices": [
+                  8757,
+                  9466
+                ],
+                "before": 0.014005757670099503,
+                "after": 0.05816903084320423,
+                "growth": 0.04416327317310473,
+                "before_points": [
+                  [
+                    -0.2864335775375366,
+                    -0.012098495848476887,
+                    0.8275163769721985
+                  ],
+                  [
+                    -0.2881404161453247,
+                    -0.004139942582696676,
+                    0.838914155960083
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.22208426892757416,
+                    -0.04578891769051552,
+                    0.8247634768486023
+                  ],
+                  [
+                    -0.272156298160553,
+                    -0.016226468607783318,
+                    0.8263413310050964
+                  ]
+                ],
+                "arm_membership": [
+                  0.06204766407608986,
+                  0.27740395069122314
+                ]
+              },
+              {
+                "vertices": [
+                  8757,
+                  9698
+                ],
+                "before": 0.008925304489287696,
+                "after": 0.05140182092017952,
+                "growth": 0.04247651643089182,
+                "before_points": [
+                  [
+                    -0.2864335775375366,
+                    -0.012098495848476887,
+                    0.8275163769721985
+                  ],
+                  [
+                    -0.29026782512664795,
+                    -0.004798793699592352,
+                    0.8309330940246582
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.22208426892757416,
+                    -0.04578891769051552,
+                    0.8247634768486023
+                  ],
+                  [
+                    -0.2663879692554474,
+                    -0.01981681026518345,
+                    0.8225774168968201
+                  ]
+                ],
+                "arm_membership": [
+                  0.06204766407608986,
+                  0.18100835382938385
+                ]
+              },
+              {
+                "vertices": [
+                  10144,
+                  10362
+                ],
+                "before": 0.030909792447022685,
+                "after": 0.07317340342909942,
+                "growth": 0.04226361098207673,
+                "before_points": [
+                  [
+                    -0.30181753635406494,
+                    0.0034843552857637405,
+                    0.7306065559387207
+                  ],
+                  [
+                    -0.30324772000312805,
+                    0.006569190416485071,
+                    0.7613287568092346
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.2219495326280594,
+                    -0.03930894285440445,
+                    0.7306065559387207
+                  ],
+                  [
+                    -0.2867536246776581,
+                    -0.009367385879158974,
+                    0.7466776371002197
+                  ]
+                ],
+                "arm_membership": [
+                  0.0,
+                  0.25690051913261414
+                ]
+              },
+              {
+                "vertices": [
+                  19612,
+                  19613
+                ],
+                "before": 0.008229844144893682,
+                "after": 0.050457063000243246,
+                "growth": 0.042227218855349566,
+                "before_points": [
+                  [
+                    -0.2734547257423401,
+                    0.1143040582537651,
+                    0.8847575783729553
+                  ],
+                  [
+                    -0.275789350271225,
+                    0.111668661236763,
+                    0.8921962976455688
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.21358218789100647,
+                    0.08508249372243881,
+                    0.8807314038276672
+                  ],
+                  [
+                    -0.2601315975189209,
+                    0.10447600483894348,
+                    0.8790110945701599
+                  ]
+                ],
+                "arm_membership": [
+                  0.05941126495599747,
+                  0.1978728473186493
+                ]
+              },
+              {
+                "vertices": [
+                  7949,
+                  8758
+                ],
+                "before": 0.010840797366218735,
+                "after": 0.05271244988546546,
+                "growth": 0.041871652519246724,
+                "before_points": [
+                  [
+                    -0.2789978086948395,
+                    -0.020301906391978264,
+                    0.8372188806533813
+                  ],
+                  [
+                    -0.2800319194793701,
+                    -0.0155812231823802,
+                    0.8469229340553284
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.215990349650383,
+                    -0.05300706997513771,
+                    0.8345877528190613
+                  ],
+                  [
+                    -0.2618231177330017,
+                    -0.027274684980511665,
+                    0.8385632038116455
+                  ]
+                ],
+                "arm_membership": [
+                  0.06463546305894852,
+                  0.20396487414836884
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.12683541980453514
+        },
+        "source_bounds_blender": [
+          [
+            -0.5454350113868713,
+            -0.25885099172592163,
+            -0.9875829815864563
+          ],
+          [
+            0.5449939966201782,
+            0.27593401074409485,
+            0.982778012752533
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.9883151054382324,
+            0.001
+          ],
+          [
+            -0.91,
+            0.09
+          ],
+          [
+            -0.43,
+            0.48
+          ],
+          [
+            0.12,
+            0.88
+          ],
+          [
+            0.625,
+            1.258
+          ],
+          [
+            0.73,
+            1.385
+          ],
+          [
+            0.982778012752533,
+            1.5885975639987653
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.8054401638092044,
+        "width_scale": 1.0208333333333333,
+        "ankle_contact_proof": {
+          "matching_ring_points": 377,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 21987,
+          "anatomical_arm_vertices": 12504,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 90
+        },
+        "status": "staged_review_required",
+        "seconds": 18.359,
+        "stage_bytes": 8556588,
+        "stage_sha256": "dc36b131cfe9b205dd422e3ce3cc7157b54d55e7988a2b943e100dd3e6cb79c0",
+        "body_vertices": 40344,
+        "body_triangles": 79910,
+        "shoe_triangles": {
+          "LeftFoot": 3742,
+          "RightFoot": 3617
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/iskra-quality.receipt.json",
+      "source_sha256": "49585d077b14ee95da36a4227be44376ef1fe0dba1f07d988f9df7dc62367d61",
+      "redacted_fields": [],
+      "content": {
+        "id": "iskra",
+        "version": 5,
+        "baseSha256": "34758c48fbc425cc2461d7138ae32def7a384918113269651b08aee2517cf9b5",
+        "stageSha256": "dc36b131cfe9b205dd422e3ce3cc7157b54d55e7988a2b943e100dd3e6cb79c0",
+        "baseBinaryPrefixBytes": 9163616,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 68354,
+            "triangles": 79910,
+            "bounds": {
+              "minX": -0.5308128595352173,
+              "maxX": 0.5287477970123291,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 3204,
+            "triangles": 3742,
+            "bounds": {
+              "minX": -0.2579758801859585,
+              "maxX": -0.015602905212233991,
+              "minY": 0.0019569681252017343,
+              "maxY": 0.12999999435701906
+            }
+          },
+          "RightFoot": {
+            "vertices": 3161,
+            "triangles": 3617,
+            "bounds": {
+              "minX": 0.01561927732892291,
+              "maxX": 0.2544662613892926,
+              "minY": 0.0018319929073801484,
+              "maxY": 0.1299999937962083
+            }
+          }
+        },
+        "outputBytes": 21264372,
+        "outputSha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/iskra/body-painted-quality.receipt.json",
+      "source_sha256": "540c279b1f465fcb1b803bde89362e69679097471bd1f2dfc969cae3a7f4ee35",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-five.paint-20261024T220148Z-bb81ca27.receipt.json",
+        "started_unix": 1792879733.5839055,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/iskra/body-uv-b45.glb",
+        "reference": "art/characters/body-v5/references/iskra-full-front-v1.png",
+        "mesh_sha256": "6425597f70b2d41303c3b02c1491cddc0380906b22d7d73dc5de1f28a519026c",
+        "reference_sha256": "9eac792a1bcae90a9d255da1b7251e7ded1f62e7e2d1c84bfda781fddf289302",
+        "output": "art/characters/body-v5/iskra/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "installed_diffusion_pipeline_sha256": "3accd73ca91a1b67a5f7546b8f518fe9603f4251b1a10ab8122b69985888965e",
+        "installed_multiview_loader_sha256": "92707f7e77d89997bfc51684534b75961c2745ec8095385f84322fb5529b2f34",
+        "script_sha256": "b3a1259f414b89f109634421e85b9003e3fe692ec764344ac19af9caaca8bf8e",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 28568453120,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3793747968,
+          "required_free_bytes": 15533604864
+        },
+        "resource_before_owned_vae_restore": {
+          "free_bytes": 28568453120,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3793747968,
+          "required_free_bytes": 15533604864
+        },
+        "owned_vae_reuse": {
+          "applied": true,
+          "scope": "Only this process's shared multiview pipeline VAE",
+          "public_api": "shared_model.pipeline.vae.to(shared_model.pipeline._execution_device)",
+          "execution_device": "cuda:0",
+          "vae_device_before": "cpu",
+          "vae_device_after": "cuda:0",
+          "offload_hook_type": "CpuOffload",
+          "offload_hook_identity_preserved": true,
+          "global_or_foreign_model_unload": false
+        },
+        "owned_vae_after_generation": {
+          "vae_device": "cpu",
+          "execution_device": "cuda:0",
+          "offload_hook_type": "CpuOffload"
+        },
+        "views_directory": "art/characters/body-v5/iskra/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/iskra/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "c45b92fa5ce8b016fb2abf5626cdf6dbf8866f4d3e30c007c5447208836c9515",
+        "views_sha256": {
+          "albedo-0.png": "733b0027f7bbcf950c9f6014a8e5322d92a6fa67c7980bfcf0e14e8209da1c91",
+          "albedo-1.png": "46ec6c2e1512e0760ec4ac8bef32c2dc74a9238f2fb8cbf6970c28eaf015b349",
+          "albedo-2.png": "f899c3b1b4864066ea343a15c8d01bc72d1a21da3024c95c5c0857c21836ec26",
+          "albedo-3.png": "764d6ea068d0fdd1d70cec67cba53123954f590a407a648036c2297d33cdfbf8",
+          "albedo-4.png": "70fa8a2538545ff1441568593b88a47e1ccbf2bf1f479069618ed768eec70d4b",
+          "albedo-5.png": "042d24672644d8aac34d73b1674472db8ca3cc85ae4fc9d4b98fb3c2318710a3",
+          "mr-0.png": "6bcfb13b799c077943e6e396ba06e9814b0fdd38503df847125925e3353ddf32",
+          "mr-1.png": "1afca7b191e05078006dbe30c6c1100afe9666140d16a044400de16cae1f2506",
+          "mr-2.png": "6a0ceb55941529ed0863ff287e587f10a438f222a8aa8555126acaca37b4f3a0",
+          "mr-3.png": "17b6d548b59b5ec49470bff89a6b13d7a626c426e620e3d44555ce6ca0e424fa",
+          "mr-4.png": "b6664bce4534fea6e1d95ba6971d4d866dda3a0055b00e6ef00f980700ea52f0",
+          "mr-5.png": "531d1c81f749e7fa5259b9911ce1e4b0e679f9a1bf64b86380d688d6b0f8e119"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28455206912,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3906994176,
+          "required_free_bytes": 15420358656
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "55b34dd94c95800ca2ddc6b5835aff09b2b3ad476a020ad99954bb769ef02215"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "f8dec4f1ca6a4a8517385576989d0111f08cf21c35ef7ea48d4e5379beea4c28"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "c08bd7cfefd92db1ad03f3168d6562c129bce410008f3fde79f4d9b7617e82f6"
+          },
+          "source_sha256": "78cd4db716efc220e14c0bbfbe004d7cef8df7b5c4fd67953105084ced999259",
+          "output_sha256": "90d6f37df027d7822d4221a74211ae9b70169cfe0f1f1979aaa1406bf0d747d0",
+          "original_bin_prefix_sha256": "4532cfb5b5def5ad749fccf7f2986985b01aeecd9abf3cb3eda4ab48b1d5abb3",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3781818,
+              "sha256": "65517778f62c5f8d9f0a6a168999f48540627e1b8da54dfcffc41bdcfd6978d3"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 2089389,
+              "sha256": "afac2bf7be39570e16945dbcbbacfbcab51cb17811840ef5dc4b468af8074817"
+            }
+          ],
+          "source_bytes": 14724588,
+          "output_bytes": 12767652
+        },
+        "post_export_free_bytes": 28455206912,
+        "output_sha256": "90d6f37df027d7822d4221a74211ae9b70169cfe0f1f1979aaa1406bf0d747d0",
+        "output_bytes": 12767652,
+        "peak_torch_bytes": 15003025408,
+        "finished_unix": 1792879856.1026723,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/saga/shape-a.receipt.json",
+      "source_sha256": "e9930dd7f5efaacd6179eb2601bd6fc6d4e88419dad437d98d2978e937bb9ce1",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "660a0a4ad3071a313be950526262ba48c51064a479c9671b9b5a036fbc933710",
+        "reference": "art/characters/body-v5/references/saga-full-front-v1.png",
+        "reference_sha256": "5e6d4c4535a74a02faf2d46b41cbb28c8f5db86d97409b6dd3d17da23864310f",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265014,
+        "output_prefix": "do-reliza/body-v5/saga-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "cb53cfbf-2df6-414e-b51e-d43168929a33",
+        "raw_file": "raw/cb53cfbf_000.glb",
+        "raw_bytes": 36696272
+      }
+    },
+    {
+      "source": "art/characters/body-v5/saga/body-rigged-quality.receipt.json",
+      "source_sha256": "a2c13949e5c228173d87d853c2936de4af6f8b0e18bca204e920f09012d8b4d0",
+      "redacted_fields": [],
+      "content": {
+        "id": "saga",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "906c9010fd9acb0cc426a4b4fcc71f30b11a60669f94927e5cd84e9c49d9096b",
+        "body_sha256": "3266e3110214e88cfb523fb228b6adde99961cf3b7e029d8163627b5a2ad543b",
+        "fit": {
+          "weight_smooth_iterations": 260,
+          "source_sole_y": -0.9883211255073547,
+          "source_ankle_y": -0.91,
+          "source_knee_y": -0.43,
+          "source_hip_y": 0.1,
+          "source_shoulder_y": 0.62,
+          "source_neck_y": 0.72,
+          "source_center_x": 0.0,
+          "source_center_z": -0.017195,
+          "source_shoulder_half_width": 0.25,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.25,
+                0.62,
+                -0.01658
+              ],
+              "elbow": [
+                0.39587,
+                0.31,
+                -0.02717
+              ],
+              "wrist": [
+                0.44658,
+                0.055,
+                0.02583
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.25,
+                0.62,
+                -0.01781
+              ],
+              "elbow": [
+                -0.3593,
+                0.31,
+                -0.02752
+              ],
+              "wrist": [
+                -0.4141,
+                0.055,
+                0.03519
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.91,
+              0.24464,
+              0.14594
+            ],
+            [
+              -0.43,
+              0.20039,
+              0.03656
+            ],
+            [
+              0.1,
+              0.19464,
+              -0.00756
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "target_sole_y": 0.001,
+          "surface_smooth_iterations": 0,
+          "measurement": {
+            "source_sha256": "ef9f196fc74337123488da2b1d0e343bff3247e8a8c560b70cd038eb56e14fff",
+            "method": "Manual front/side 3D geometry layer Y positions; actual independent per-side X/Z cross-section centers. No bbox normalization. Native pose review required.",
+            "manual_anatomical_y_uncertainty_source_units": 0.02,
+            "raw_y_percentiles": [
+              -0.9883211255073547,
+              -0.9843975540995598,
+              -0.9693304538726807,
+              0.9609408289194107,
+              0.9804927605390549,
+              0.9843986630439758
+            ],
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 348,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.21454,
+                    0.60421,
+                    -0.15794
+                  ],
+                  [
+                    0.39562,
+                    0.63638,
+                    0.12478
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 339,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.29589,
+                    0.29385,
+                    -0.11891
+                  ],
+                  [
+                    0.49586,
+                    0.32568,
+                    0.06457
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 273,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.33778,
+                    0.03835,
+                    -0.05611
+                  ],
+                  [
+                    0.55539,
+                    0.07019,
+                    0.10777
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 237,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.31352,
+                    0.60484,
+                    -0.12875
+                  ],
+                  [
+                    -0.20857,
+                    0.63594,
+                    0.09314
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 164,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.41526,
+                    0.29344,
+                    -0.11896
+                  ],
+                  [
+                    -0.30334,
+                    0.32553,
+                    0.06392
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 163,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.46206,
+                    0.03759,
+                    -0.02131
+                  ],
+                  [
+                    -0.36614,
+                    0.07192,
+                    0.09169
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox",
+            "sole_calibration": "Final1mm target for preservedclipfloor<=12mm",
+            "hood_note": "Generatedhood/collar may crossheadcutplane; inspectpreservedhoodrimwithacceptedheadbeforepromotion"
+          }
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 4.936009645462036e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 20234,
+          "fitted_leg_vertices": 27820,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.91,
+              0.24464,
+              0.14594
+            ],
+            [
+              -0.43,
+              0.20039,
+              0.03656
+            ],
+            [
+              0.1,
+              0.19464,
+              -0.00756
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 4378,
+            "torso_seed_vertices": 14824,
+            "unseeded_island_vertices": 697,
+            "shoulder_transition_m": 0.12
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 1114,
+            "worst": [
+              {
+                "vertices": [
+                  15399,
+                  16323
+                ],
+                "before": 0.03062474345152431,
+                "after": 0.12420068179004323,
+                "growth": 0.09357593833851892,
+                "before_points": [
+                  [
+                    -0.33080488443374634,
+                    0.07232149690389633,
+                    0.5802135467529297
+                  ],
+                  [
+                    -0.3304765820503235,
+                    0.07032284885644913,
+                    0.5496558547019958
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.34987372159957886,
+                    0.028242766857147217,
+                    0.4758754372596741
+                  ],
+                  [
+                    -0.25007566809654236,
+                    0.032997556030750275,
+                    0.5496558547019958
+                  ]
+                ],
+                "arm_membership": [
+                  0.509681224822998,
+                  0.0
+                ]
+              },
+              {
+                "vertices": [
+                  18976,
+                  18978
+                ],
+                "before": 0.013095733201485433,
+                "after": 0.09678151732639526,
+                "growth": 0.08368578412490982,
+                "before_points": [
+                  [
+                    -0.31468093395233154,
+                    0.10762306302785873,
+                    0.5633992552757263
+                  ],
+                  [
+                    -0.31847551465034485,
+                    0.10717828571796417,
+                    0.5759252905845642
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.23956263065338135,
+                    0.07064475864171982,
+                    0.5561109781265259
+                  ],
+                  [
+                    -0.3281933069229126,
+                    0.08818136900663376,
+                    0.5214161276817322
+                  ]
+                ],
+                "arm_membership": [
+                  0.03282272443175316,
+                  0.2506791949272156
+                ]
+              },
+              {
+                "vertices": [
+                  17493,
+                  17744
+                ],
+                "before": 0.014825392195820603,
+                "after": 0.09674099657398999,
+                "growth": 0.08191560437816939,
+                "before_points": [
+                  [
+                    -0.327015221118927,
+                    0.08785292506217957,
+                    0.5553448796272278
+                  ],
+                  [
+                    -0.32700541615486145,
+                    0.09097524732351303,
+                    0.569837749004364
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.24961978197097778,
+                    0.049882497638463974,
+                    0.5503193140029907
+                  ],
+                  [
+                    -0.3374325931072235,
+                    0.06949809193611145,
+                    0.5147811770439148
+                  ]
+                ],
+                "arm_membership": [
+                  0.023165898397564888,
+                  0.2579890489578247
+                ]
+              },
+              {
+                "vertices": [
+                  17744,
+                  18009
+                ],
+                "before": 0.01233593889387898,
+                "after": 0.09180095148673378,
+                "growth": 0.07946501259285481,
+                "before_points": [
+                  [
+                    -0.32700541615486145,
+                    0.09097524732351303,
+                    0.569837749004364
+                  ],
+                  [
+                    -0.3248445391654968,
+                    0.09334899485111237,
+                    0.5579267740249634
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.3374325931072235,
+                    0.06949809193611145,
+                    0.5147811770439148
+                  ],
+                  [
+                    -0.25304290652275085,
+                    0.05600356683135033,
+                    0.5483027100563049
+                  ]
+                ],
+                "arm_membership": [
+                  0.2579890489578247,
+                  0.044144660234451294
+                ]
+              },
+              {
+                "vertices": [
+                  18735,
+                  18978
+                ],
+                "before": 0.012207042155782477,
+                "after": 0.0871911395708437,
+                "growth": 0.07498409741506123,
+                "before_points": [
+                  [
+                    -0.31760624051094055,
+                    0.10485558211803436,
+                    0.5639728307723999
+                  ],
+                  [
+                    -0.31847551465034485,
+                    0.10717828571796417,
+                    0.5759252905845642
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.24895745515823364,
+                    0.06878241896629333,
+                    0.5522001385688782
+                  ],
+                  [
+                    -0.3281933069229126,
+                    0.08818136900663376,
+                    0.5214161276817322
+                  ]
+                ],
+                "arm_membership": [
+                  0.05336872860789299,
+                  0.2506791949272156
+                ]
+              },
+              {
+                "vertices": [
+                  19206,
+                  19408
+                ],
+                "before": 0.013168028849023891,
+                "after": 0.08713586087461246,
+                "growth": 0.07396783202558857,
+                "before_points": [
+                  [
+                    -0.31187519431114197,
+                    0.11045211553573608,
+                    0.5627109408378601
+                  ],
+                  [
+                    -0.31444084644317627,
+                    0.11129224300384521,
+                    0.5755992531776428
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.23282785713672638,
+                    0.07355749607086182,
+                    0.5597548484802246
+                  ],
+                  [
+                    -0.31319355964660645,
+                    0.09271161258220673,
+                    0.5320577025413513
+                  ]
+                ],
+                "arm_membership": [
+                  0.013224310241639614,
+                  0.1984625607728958
+                ]
+              },
+              {
+                "vertices": [
+                  21770,
+                  21773
+                ],
+                "before": 0.018938874110111276,
+                "after": 0.09208250075283769,
+                "growth": 0.07314362664272642,
+                "before_points": [
+                  [
+                    -0.29361093044281006,
+                    0.1505708545446396,
+                    0.7360550761222839
+                  ],
+                  [
+                    -0.29715657234191895,
+                    0.14892785251140594,
+                    0.754586398601532
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.2216448187828064,
+                    0.13070282340049744,
+                    0.7285571098327637
+                  ],
+                  [
+                    -0.29996174573898315,
+                    0.14418725669384003,
+                    0.682040274143219
+                  ]
+                ],
+                "arm_membership": [
+                  0.04040893167257309,
+                  0.405547559261322
+                ]
+              },
+              {
+                "vertices": [
+                  15399,
+                  15691
+                ],
+                "before": 0.022131333658975832,
+                "after": 0.09451498257895535,
+                "growth": 0.07238364891997952,
+                "before_points": [
+                  [
+                    -0.33080488443374634,
+                    0.07232149690389633,
+                    0.5802135467529297
+                  ],
+                  [
+                    -0.3294064402580261,
+                    0.08364985138177872,
+                    0.5612528324127197
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.34987372159957886,
+                    0.028242766857147217,
+                    0.4758754372596741
+                  ],
+                  [
+                    -0.283625990152359,
+                    0.05181843414902687,
+                    0.5390300750732422
+                  ]
+                ],
+                "arm_membership": [
+                  0.509681224822998,
+                  0.10403407365083694
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.1261509241734128
+        },
+        "source_bounds_blender": [
+          [
+            -0.5768790245056152,
+            -0.31002599000930786,
+            -0.9875329732894897
+          ],
+          [
+            0.5796809792518616,
+            0.30434301495552063,
+            0.9835410118103027
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.9883211255073547,
+            0.001
+          ],
+          [
+            -0.91,
+            0.09
+          ],
+          [
+            -0.43,
+            0.48
+          ],
+          [
+            0.1,
+            0.88
+          ],
+          [
+            0.62,
+            1.258
+          ],
+          [
+            0.72,
+            1.385
+          ],
+          [
+            0.9835410118103027,
+            1.5985083122835788
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.8101521308465734,
+        "width_scale": 0.98,
+        "ankle_contact_proof": {
+          "matching_ring_points": 421,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 22437,
+          "anatomical_arm_vertices": 13810,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 260
+        },
+        "status": "staged_review_required",
+        "seconds": 31.417,
+        "stage_bytes": 6890648,
+        "stage_sha256": "24ab576e1936fece57e403a5e9b289bda7041db2143bef9f89e73acc7537e3dc",
+        "body_vertices": 40052,
+        "body_triangles": 79091,
+        "shoe_triangles": {
+          "LeftFoot": 3337,
+          "RightFoot": 3394
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/saga-quality.receipt.json",
+      "source_sha256": "0cdc515be4b17ec4645fed2fe2ee8c89e3cda4ecb8929487948e8f0e4ad3f04c",
+      "redacted_fields": [],
+      "content": {
+        "id": "saga",
+        "version": 5,
+        "baseSha256": "906c9010fd9acb0cc426a4b4fcc71f30b11a60669f94927e5cd84e9c49d9096b",
+        "stageSha256": "24ab576e1936fece57e403a5e9b289bda7041db2143bef9f89e73acc7537e3dc",
+        "baseBinaryPrefixBytes": 9174340,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 52746,
+            "triangles": 79091,
+            "bounds": {
+              "minX": -0.6403896808624268,
+              "maxX": 0.5596703886985779,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 2648,
+            "triangles": 3337,
+            "bounds": {
+              "minX": -0.25791144360688734,
+              "maxX": -0.05784442129504125,
+              "minY": 0.002342157356724101,
+              "maxY": 0.12999999824554787
+            }
+          },
+          "RightFoot": {
+            "vertices": 2533,
+            "triangles": 3394,
+            "bounds": {
+              "minX": 0.02733116907959862,
+              "maxX": 0.18188990672700542,
+              "minY": 0.001895602061077604,
+              "maxY": 0.1299999980101621
+            }
+          }
+        },
+        "outputBytes": 18831444,
+        "outputSha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/saga/body-painted-quality.receipt.json",
+      "source_sha256": "ccd460ebb7f81b2326b5d5617b94e8acc496ef0c2101eb5e8ba01856f6c4192c",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-five.paint-20261024T220148Z-bb81ca27.receipt.json",
+        "started_unix": 1792879856.3411517,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/saga/body-uv.glb",
+        "reference": "art/characters/body-v5/references/saga-full-front-v1.png",
+        "mesh_sha256": "089741b67983547e77d386e9bda577ec71b874ef5a8566aafda9ec1b0d79c915",
+        "reference_sha256": "5e6d4c4535a74a02faf2d46b41cbb28c8f5db86d97409b6dd3d17da23864310f",
+        "output": "art/characters/body-v5/saga/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "installed_diffusion_pipeline_sha256": "3accd73ca91a1b67a5f7546b8f518fe9603f4251b1a10ab8122b69985888965e",
+        "installed_multiview_loader_sha256": "92707f7e77d89997bfc51684534b75961c2745ec8095385f84322fb5529b2f34",
+        "script_sha256": "b3a1259f414b89f109634421e85b9003e3fe692ec764344ac19af9caaca8bf8e",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 28455206912,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3906994176,
+          "required_free_bytes": 15420358656
+        },
+        "resource_before_owned_vae_restore": {
+          "free_bytes": 28455206912,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3906994176,
+          "required_free_bytes": 15420358656
+        },
+        "owned_vae_reuse": {
+          "applied": true,
+          "scope": "Only this process's shared multiview pipeline VAE",
+          "public_api": "shared_model.pipeline.vae.to(shared_model.pipeline._execution_device)",
+          "execution_device": "cuda:0",
+          "vae_device_before": "cpu",
+          "vae_device_after": "cuda:0",
+          "offload_hook_type": "CpuOffload",
+          "offload_hook_identity_preserved": true,
+          "global_or_foreign_model_unload": false
+        },
+        "owned_vae_after_generation": {
+          "vae_device": "cpu",
+          "execution_device": "cuda:0",
+          "offload_hook_type": "CpuOffload"
+        },
+        "views_directory": "art/characters/body-v5/saga/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/saga/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "dae92cb1a914e23df82eaab382e318d1cc00cd9f549d8e14df42e9bdf414e2f8",
+        "views_sha256": {
+          "albedo-0.png": "1801ea998238eb2339bbe0805ce4558f0a7ec8a4220fda45adba93e9ff288e23",
+          "albedo-1.png": "3d19f3159e3a37c4e1be1540e8596f874fb9c362deb98916418cb6cafd535597",
+          "albedo-2.png": "960ca51dd3019585fcb2bc0ca4e365a45f63ce6a92ede0606502ea0e527392f9",
+          "albedo-3.png": "ec1612af012f8cc5d252c2b4f9f49a5945dd411ca963942d6df62a7892bf3618",
+          "albedo-4.png": "f42fb5b8f6f008453b037b08babd318d6a2c6584bad9e3bd6ff27673166be47f",
+          "albedo-5.png": "7e93a45e1d627bf0a9505fce0090570260c1a2512c662d5dd2245f1448fd0a94",
+          "mr-0.png": "a4929656acb70c06d78669a9dbe43b7b1a47d7b0d380459290f75cf29737a92c",
+          "mr-1.png": "ad4e2206bd84e027c1eee11f9b92a24807b370a7159e4fd4ce7a8677b2a32228",
+          "mr-2.png": "8a34915b1fd6d618f51d181842b953ee6156dfcbcc6934cd49d355a69cf29b2b",
+          "mr-3.png": "8132a35c322456148b07e5f0998ca987e91682f4f64ab7f1f52ed035ee5b6207",
+          "mr-4.png": "eca0acddec088fe2f1556556e46a2ab53a259f0564a262dd1bc48edb4020b809",
+          "mr-5.png": "bd5f87e69716deaa69677b93e4d59d7103a1a0eda6318f6e09228729258c7efd"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28780265472,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3581935616,
+          "required_free_bytes": 15745417216
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "dc55f111d91d8e61a3af5659549a799f12b05cd69b69c8a846bf790f910560ea"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "001b9ca62ea52c9992c2c76ec432fc9e13127e24dd027f7ff858b97206abfd86"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "0bf74a0dacd05e3f358fcdec89ce6b7e0524266ad295225e51ca72bac5e5ca84"
+          },
+          "source_sha256": "9cc794dcd6f50933f96af91a7b3a723b4af799cfd556dd7cda63149858e3f8a0",
+          "output_sha256": "3266e3110214e88cfb523fb228b6adde99961cf3b7e029d8163627b5a2ad543b",
+          "original_bin_prefix_sha256": "1991e6389c63055ef679f2f4b290481cc2538aeab1319f51eb505a87e264375c",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3453551,
+              "sha256": "d76985c124e3a0e1745a099f77fd5ba4ab8f8a2a4d6c433bc842457b4ef9e0db"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 1900668,
+              "sha256": "e0cda5ee258da0a5aad50b8721e3af62bed3d48bb03bf1e53abfb918ec0ea00e"
+            }
+          ],
+          "source_bytes": 13352868,
+          "output_bytes": 11568252
+        },
+        "post_export_free_bytes": 28780265472,
+        "output_sha256": "3266e3110214e88cfb523fb228b6adde99961cf3b7e029d8163627b5a2ad543b",
+        "output_bytes": 11568252,
+        "peak_torch_bytes": 14946402304,
+        "finished_unix": 1792879985.6434937,
+        "diffusion_retries": 0
+      }
+    }
+  ]
+}
