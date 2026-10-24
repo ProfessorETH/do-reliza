@@ -1,0 +1,42 @@
+{
+  "status": "completed",
+  "endpoint": "http://192.168.3.38:8000",
+  "parent_prompt_id": "b3f4481a-66af-4e99-9f30-df3f8594fe80",
+  "workflow_sha256": "b1d734d3d6d95627e1de7f7bc0bf4705f2222df7a2eea20c7f77cd0d6e514518",
+  "output_prefix": "do-reliza/mira/hunyuan21-mira-v1-marching-20261024",
+  "reason": "Surface-net output has 22590 non-manifold edges. Try basic marching-cubes extraction with identical sampler inputs so Comfy can reuse cached shape.",
+  "prompt_id": "1ad44072-a723-4e19-9124-1f082e1e0b7c",
+  "output_url": "http://192.168.3.38:8000/view?filename=hunyuan21-mira-v1-marching-20261024_00001_.glb&subfolder=do-reliza%5Cmira&type=output",
+  "workflow_sha256_normalized_lf": "f21f6fc0575b54434b59717a502d1be8ab35ef2c9c01d29fc034c0e01f9b630b",
+  "workflow_hash_note": "workflow_sha256 records exact submitted bytes; normalized_lf is stable after Git newline conversion",
+  "source_template_snapshot": "hunyuan21-official-source.json",
+  "source_template_sha256_normalized_lf": "b240b34e2524255a4f202de5ebb80e37e36af6ea8ddba3761dd20be11b1c5929",
+  "execution_status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "1ad44072-a723-4e19-9124-1f082e1e0b7c",
+          "timestamp": 1792848890664
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [],
+          "prompt_id": "1ad44072-a723-4e19-9124-1f082e1e0b7c",
+          "timestamp": 1792848890664
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "1ad44072-a723-4e19-9124-1f082e1e0b7c",
+          "timestamp": 1792848923026
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "stage": "resume-bake-only",
+  "diffusion_resubmitted": false,
+  "source_obj": "E:\\хакатон игра\\art\\hunyuan\\mira\\shape-v2.clean.glb",
+  "views": "E:\\хакатон игра\\art\\hunyuan\\mira\\mira-paint-v2-views",
+  "script_sha256": "621da8a9af9f07469fcaa518685c5f84c5278df6e14718a3a6cdbf9054d197e6",
+  "scratch": "C:\\Users\\popka\\AppData\\Local\\Temp\\do-reliza-mira-bake-0s77csey",
+  "output_sha256": "ddb8e94c96eb8c186116e671d21267f32b1cf907b6e562044853cde0b291f62e",
+  "peak_torch_bytes": 1256194048,
+  "script_snapshot": "bake-v2-source.py",
+  "script_hash_normalization": "LF"
+}

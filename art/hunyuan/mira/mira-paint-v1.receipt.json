@@ -1,0 +1,25 @@
+{
+  "status": "failed",
+  "started_unix": 1792849122.4279742,
+  "method": "installed Hunyuan3D 2.1 Paint package API, offline",
+  "source_package": "E:\\AI\\ComfyUI-Hunyuan21\\custom_nodes\\ComfyUI-Hunyuan3d-2-1\\hy3dpaint",
+  "mesh": "E:\\хакатон игра\\art\\hunyuan\\mira\\shape-v1.clean.glb",
+  "reference": "E:\\хакатон игра\\art\\hunyuan\\mira\\reference-front-v1.png",
+  "script_sha256": "e1654dadcff6cb7b537911a9d19dd08c769d217ec80527c9e06656c85a7d4d82",
+  "settings": {
+    "views": 6,
+    "view_resolution": 512,
+    "texture_resolution": 2048,
+    "steps": 15,
+    "guidance": 3.0,
+    "seed": 24102026,
+    "torch_memory_cap_gib": 14
+  },
+  "scope": "texture candidate; not rigged or game approved",
+  "preflight_free_bytes": 32496418816,
+  "views_directory": "E:\\хакатон игра\\art\\hunyuan\\mira\\mira-paint-v1-views",
+  "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\хакатон игра\\\\art\\\\hunyuan\\\\mira\\\\mira-paint-v1_metallic.png'",
+  "finished_unix": 1792849213.4706128,
+  "script_snapshot": "paint-v1-source.py",
+  "script_hash_normalization": "LF"
+}

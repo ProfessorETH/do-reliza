@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-24",
+  "tool": "imagegen",
+  "identity_source": "top-left Mira portrait, fictional adult",
+  "authorization": "User approved existing portraits and a full-body reference",
+  "files": {
+    "assets/agents.png": {
+      "bytes": 2601975,
+      "sha256": "6ec6228bb3a5c7e23ea4b07a2eba1627bc7a3c6a4454378935406a50130b9e23"
+    },
+    "art/hunyuan/mira/reference-front-v1.png": {
+      "bytes": 1709846,
+      "sha256": "da8d81b3573b4f07ff1dd41467b26b85388c237f9f86b77c51e4d464193c2075"
+    },
+    "art/hunyuan/mira/reference-back-repair-v1.png": {
+      "bytes": 1484607,
+      "sha256": "4546e5c6cc252167d9f792b08c6a59c226eeab9b22b7da208707bd89793c7344"
+    }
+  }
+}

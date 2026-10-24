@@ -1,0 +1,10 @@
+{
+  "vertices": 23922,
+  "triangles": 48000,
+  "boundary_edges": 0,
+  "nonmanifold_edges": 0,
+  "removed_floating_vertices": 1674,
+  "source": "shape-v1.raw.glb",
+  "voxel_size": 0.0045,
+  "smoothing_iterations": 5
+}
