@@ -1,6 +1,7 @@
 import { GLTFLoader } from '../vendor/three/loaders/GLTFLoader.js';
+import { assetURL } from '../asset-url.js';
 
-const url = new URL('./models/office-upgrades.glb?v=office-life-1',import.meta.url);
+const url = new URL(assetURL('models/office-upgrades.glb?v=office-life-1'));
 let loaded;
 export function applyUpgradeVisibility(groups,purchases=[]) {
   for(const [id,group] of groups)group.visible=purchases.includes(id);

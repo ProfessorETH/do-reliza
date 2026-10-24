@@ -84,3 +84,5 @@ dialog{border:1px solid #4b657480;background:#14242e;color:var(--text);border-ra
 .demo-link{display:inline-flex;align-items:center;gap:16px;color:var(--mint);font-size:14px;min-height:44px;margin-top:12px;text-decoration:none;border-bottom:1px solid #7ed9b84a}
 .demo-link:hover{color:var(--text)}.demo-link:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
 .demo-note{font-size:11px!important;line-height:1.5!important;color:#adc0c3!important;margin-top:8px!important;max-width:360px}
+
+@media(max-width:760px){.office-backdrop{background-image:url('assets/office-mobile.webp')}}

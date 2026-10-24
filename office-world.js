@@ -9,12 +9,13 @@ import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-worksp
 import { mountOfficeUpgrades } from './assets/office-upgrades.js?v=office-life-1';
 import { prepareLoungeSeat } from './assets/lounge-seat.js?v=seated-breaks-1';
 import { officeFrame, officeWallVisible } from './office-camera-fit.js';
+import { assetURL } from './asset-url.js';
 
 let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(`assets/models/${name}.glb?v=0.5.0`).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=0.5.0`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 

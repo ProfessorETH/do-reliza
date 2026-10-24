@@ -1,5 +1,5 @@
 import { DIFFICULTIES } from '../data.js';
-import { graphicsSettingsHTML } from './office-runtime.js?v=hosting-20261024';
+import { graphicsSettingsHTML } from './office-runtime.js?v=seated-breaks-20261024-v2';
 
 export const CONTRACTS = [
   { id: 'calm', title: 'С запасом', note: 'Для первого знакомства', description: 'Есть время освоиться и исправить ошибки.' },

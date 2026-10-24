@@ -1,4 +1,5 @@
 import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=nika-alina-20261024-v3';
+import { assetURL } from '../asset-url.js';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
 const CHORDS = [[48,55,59,62],[45,52,55,59],[41,48,52,57],[43,50,53,57]];
@@ -48,7 +49,7 @@ export function createSound() {
     if(!enabled || !unlocked || document.hidden || (!force && lastVoice === key)) return;
     lastVoice = key; stopVoice();
     if(!VOICE_ASSETS[key]) return;
-    const audio = new Audio(new URL(`./onboarding/${VOICE_ASSETS[key]}`,import.meta.url).href);
+    const audio = new Audio(assetURL(`onboarding/${VOICE_ASSETS[key]}`));
     audio.hidden = true; audio.dataset.nikaVoice = key; audio.setAttribute('aria-label','Речь Ники');
     document.body.append(audio);
     voice = audio; audio.volume = .78;
