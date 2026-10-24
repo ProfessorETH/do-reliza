@@ -1,6 +1,6 @@
 import { WAITING } from './office-layout.js?v=0.5.0';
 import { createDemoGame } from './demo.js?v=0.5.0';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.1-art';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.2-cozy';
 import { renderOffice } from './office.js?v=0.5.0';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js';

@@ -5,7 +5,7 @@ import { OfficeActor } from './office-actors.js?v=0.5.0';
 import { DESKS } from './office-layout.js?v=0.5.0';
 import { agentById, activeTasks } from './engine.js';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
-import { createOfficeAtmosphere } from './assets/office-atmosphere.js';
+import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=2-cozy';
 
 let world;
 const modelCache = new Map();
