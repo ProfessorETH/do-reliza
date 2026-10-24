@@ -2,23 +2,23 @@ import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseF
 import { renderDecisionPanel } from './assets/decision-view.js';
 import { purchasePanel, contractPreview } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
+import { sceneHeader, sceneDock, managementBar } from './assets/play-shell.js';
 import { studioCapacity, fundTeam } from './assets/studio-progression.js';
 import { ensureEventClock, advanceEventClock, eventKey } from './assets/event-clock.js';
 import { missionFor } from './assets/orbit-missions.js';
 import { canSaveOrbit, freshOrbit, restoreOrbit, stepOrbit, actOrbit, orbitFeatures, recordOrbitResult } from './assets/orbit.js?v=orbit-3';
 import { renderOrbit } from './assets/orbit-view.js?v=orbit-3';
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=mobile-ui-20261024';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=scene-first-20261025';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=start-clarity-20261024';
 import { createSound } from './assets/sound.js?v=original-cast-20261024';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo, graphicsSettingsHTML } from './assets/office-runtime.js?v=team-hud-20261024';
-import { renderOffice } from './office.js?v=shift-ux-20261024-v2';
+import { renderOffice } from './office.js?v=scene-first-20261025';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
 import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-voices-20261024';
-import { assetURL } from './asset-url.js';
 import { characterLine, characterMoment } from './assets/character-dialogue.js';
 import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
@@ -35,14 +35,15 @@ const DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
 const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
 const MINI = DEMO ? 'before-release-demo-orbit-v1' : 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
-let workspaceView = 'project';
+let workspaceView = 'office';
 let hudSelection = null;
 let soundPreviewed = false;
 let officeExpanded = false;
+let managementExpanded = false;
 let game = null, candidate = 'mira', difficulty = 'calm', saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
 const sound = createSound();
-const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: () => {}, refresh: render, sound });
+const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: () => {}, refresh: render, sound, onOpen:()=>{workspaceView='office';officeSelection=null;officeExpanded=false;} });
 try { const raw = JSON.parse(localStorage.getItem(SAVE)); if (validSave(raw)) saved = restoreOffice(raw); } catch { /* No usable saved session. */ }
 const money = n => new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 const esc = x => String(x).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -87,7 +88,10 @@ function clockStatus() {
 function updateClock() {
   if(!game)return;
   const time=shiftTime(game);
-  for(const [key,value] of Object.entries({...time,status:clockStatus()})){const el=root.querySelector(`[data-clock="${key}"]`);if(el&&el.textContent!==String(value))el.textContent=value;}
+  for(const [key,value] of Object.entries({...time,now:time.now.split(' · ')[0],day:time.now.split(' · ')[1]||'В студии',status:clockStatus()}))for(const el of root.querySelectorAll(`[data-clock="${key}"]`)){
+    const label=key==='now'&&el.closest('.scene-time')?time.now:value;
+    if(el.textContent!==String(label))el.textContent=label;
+  }
 }
 let lastClockFrame=performance.now();
 setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();updateEventClock(delta);}},100);
@@ -121,7 +125,7 @@ function intro() {
   return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundEnabled:sound.enabled, soundPreviewed });
 }
 function topbar() {
-  return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('menu')}</button></div></header>`;
+  return sceneHeader(game,{logo,icon,money,time:shiftTime(game),soundEnabled:sound.enabled,status:clockStatus()});
 }
 function scene() { return renderOffice(game, officeSelection, officeMoving, `<div class="studio-wallet-row"><span>Твоя студия</span><button data-action="life-office">Касса <b>${money(game.life.cash)}</b> · улучшения ↗</button></div>`, officeExpanded); }
 function seatingPanel() {
@@ -190,15 +194,9 @@ function resultPanel() {
     <div class="career-result"><span class="eyebrow">ЧТО ДЕЛАЛ ТИМЛИД</span><h2>Помог команде выпустить игру</h2><ul class="lead-recap"><li>${game.support?'Разобрал сложную задачу вместе с разработчиком':'Распределил задачи по навыкам'}</li><li>${game.choices.review==='review-skip'?'Пропустил ошибку при проверке кода':'Нашёл ошибку при проверке кода'}</li><li>Решил, что исправлять перед показом</li></ul><button class="text-button" data-action="debrief">Почему такой результат? ${icon('arrow',15)}</button></div>
     <section class="life-result" aria-label="Развитие студии"><h2>Студия живёт дальше</h2><p>За этот заказ: +${money(game.life.history.at(-1)?.reward||0)} в кассу. Всего: ${money(game.life.cash)}. Команда и улучшения сохраняются в следующей смене.</p>${game.life.departures.length?'<p class="life-notice">Есть риск ухода сотрудников. Проверь состояние команды до следующего заказа.</p>':''}<button class="primary" data-action="life-contracts">Следующий заказ →</button><button class="secondary" data-action="life-office">Обустройство и касса</button></section><div class="panel-bottom"><button class="secondary full" data-action="restart">${icon('reset',17)} Начать новую студию</button></div>`;
 }
-function timeline() {
-  const stages=['hire','plan','work','result'], titles=['Команда','План','Работа','Релиз'];
-  const step=stages.indexOf(game.stage==='event'?'work':game.stage);
-  return `<footer class="game-footer"><div class="timeline">${stages.map((s,i)=>`<div class="timeline-step ${i===step?'current':''} ${i<step?'completed':''}"><span>${i<step?icon('check',12):i+1}</span><b>${titles[i]}</b></div>`).join('')}</div><span class="save-status">${icon(savingAvailable?'check':'info',13)} ${savingAvailable?'Прогресс сохранён в браузере':'Сохранение недоступно'}</span></footer>`;
-}
 let renderedStage = null;
 function workspaceTabs() {
-  const label=({hire:'Найм',plan:'План',work:'Задачи',event:'Решение',result:'Релиз'})[game.stage];
-  return `<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',18)}<span class="nav-label">${label}</span></button><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('home',18)}<span class="nav-label">Студия</span><span class="nav-count">${game.team.length}/${studioCapacity(game)}</span></button><button class="mobile-help" data-action="guide-open" aria-expanded="false" aria-label="Ника: подсказки и голос"><img src="${assetURL('onboarding/nika-avatar.webp')}" alt="" width="22" height="22"><span class="nav-label">Ника</span></button></nav>`;
+  return sceneDock(game,{icon,money,busy:officeMoving,panelOpen:workspaceView==='project'});
 }
 function render() {
   const panelScroll=root.querySelector('.control-panel')?.scrollTop||0;
@@ -215,13 +213,14 @@ function render() {
     if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);}return;
   }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>${employeeEvent(game)?employeeEvent(game).name+' ждёт тебя в офисе. Нажми на красный сигнал над сотрудником. Таймер решения начнётся после открытия.':'Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.'}</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
-  if (stageChanged) { const officeStage=game.stage==='work'||!!employeeEvent(game);workspaceView = officeStage?'office':'project'; officeExpanded = officeStage;if(employeeEvent(game))officeSelection=null; }
-  root.innerHTML=`<main class="game-shell team-hud-layout ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${timeline()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
+  if (stageChanged) { workspaceView = game.stage==='plan'||game.stage==='hire'&&game.team.length<3?'project':'office'; managementExpanded=workspaceView==='project';officeExpanded = false;if(employeeEvent(game))officeSelection=null; }
+  if(onboarding.isOpen())workspaceView='office';
+  root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section id="project-panel" class="control-panel" aria-label="Управление проектом" ${workspaceView==='project'?'':'hidden inert'}>${managementBar(managementExpanded,{icon})}${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
-    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}hudSelection=null;officeSelection=officeSelection===id?null:id;render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
+    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}hudSelection=null;workspaceView='office';officeSelection=officeSelection===id?null:id;onboarding.collapseGuide();render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
     onObject:id=>officeObject(id),
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -232,7 +231,7 @@ function render() {
   if(manageOpen&&!stageChanged&&root.querySelector('.crew-manage'))root.querySelector('.crew-manage').open=true;
   syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
-  if (officeExpanded) root.querySelectorAll('.game-topbar,.game-footer,.workspace-tabs,.control-panel,.team-hud').forEach(el => { el.inert = true; });
+  if (officeExpanded) root.querySelectorAll('.game-topbar,.scene-footer,.control-panel,.team-hud').forEach(el => { el.inert = true; });
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
   else if(oldSeat!==undefined) root.querySelector(`[data-seat="${oldSeat}"]`)?.focus({preventScroll:true});
   else if(oldGuide) document.querySelector(`[data-guide="${oldGuide}"]`)?.focus({preventScroll:true});
@@ -242,6 +241,11 @@ function render() {
     if(nextStage==='result')sound.speakCharacter(game.assignments.release,characterMoment(game,game.assignments.release));
     if(nextStage==='work' && game.time===0)sound.speakCharacter(game.assignments.brief,'work');
     window.scrollTo(0,0);
+    if(!document.querySelector('dialog[open]')){
+      const destination=workspaceView==='project'?root.querySelector('.control-panel h1'):root.querySelector('.scene-next .primary');
+      if(destination?.tagName==='H1')destination.tabIndex=-1;
+      destination?.focus({preventScroll:true});
+    }
   }
 }
 function syncEventDialog(requestOpen=false) {
@@ -367,8 +371,13 @@ function moveMini(dx,dy) {
   (next&&!next.disabled?next:dialog.querySelector('.tile.ship'))?.focus({preventScroll:true});
 }
 document.addEventListener('keydown',e=>{
-  if (e.key==='Escape' && (officeExpanded||officeSelection||hudSelection) && !document.querySelector('dialog[open]')) {
-    if(officeSelection){officeSelection=null;render();}else if(hudSelection){hudSelection=null;render();}else{officeExpanded=false; render(); root.querySelector('[data-action="office-expand"]')?.focus();}
+  if(e.key==='Escape'&&!officeExpanded&&!document.querySelector('dialog[open]')) {
+    if(officeSelection){officeSelection=null;render();}
+    else if(hudSelection){hudSelection=null;render();}
+    else if(workspaceView==='project'){workspaceView='office';render();root.querySelector('.scene-dock [data-id="project"]')?.focus({preventScroll:true});}
+  }
+  if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
+    if(officeSelection){officeSelection=null;render();}else{officeExpanded=false; render(); root.querySelector('[data-action="office-expand"]')?.focus();}
   }
   const keyboardDialog=document.querySelector('dialog[open]');
   if(keyboardDialog&&e.key==='Tab'){
@@ -402,10 +411,12 @@ document.addEventListener('click',e=>{
   if(action==='confirm-new'){dialog.close();newGame();return;}
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
-  if(action==='workspace'){workspaceView=id;officeExpanded=id==='office';if(dialog.open){sound.stopVoice('character');dialog.close();}if(mobileUI.matches)onboarding.collapseGuide();render();}
-  if(action==='team-focus'){officeSelection=null;const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=hudSelection===id?null:id;if(mobileUI.matches)onboarding.collapseGuide();render();if(mobileUI.matches)showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if((hudSelection||mobileUI.matches)&&kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
-  if(action==='guide-open'){onboarding.toggleGuide();render();return;}
-  if(action==='studio-project'){officeExpanded=false;workspaceView='project';render();return;}
+  if(action==='workspace'){workspaceView=id==='project'&&workspaceView==='project'?'office':id;officeExpanded=false;officeSelection=null;if(dialog.open){sound.stopVoice('character');dialog.close();}onboarding.collapseGuide();render();}
+  if(action==='team-focus'){officeSelection=null;const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=id;onboarding.collapseGuide();render();showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
+  if(action==='guide-open'){if(dialog.open)dialog.close();onboarding.openGuide();render();return;}
+  if(action==='panel-size'){managementExpanded=!managementExpanded;render();return;}
+  if(action==='studio-project'){officeExpanded=false;workspaceView='project';onboarding.collapseGuide();render();root.querySelector('.management-topbar [data-id="office"]')?.focus({preventScroll:true});return;}
+  if(action==='guide-reset'){dialog.close();onboarding.resetBubble();onboarding.toggleGuide();render();return;}
   if(action==='studio-team'){showStudioTeam();return;}
   if(action==='office-object'){officeObject(id);return;}
   if(action==='fund-team'){const error=fundTeam(game);if(error)toast(error);else{persist();render();}return;}
@@ -417,7 +428,7 @@ document.addEventListener('click',e=>{
   if(action==='event-pause'){const clock=ensureEventClock(game);if(clock)clock.paused=!clock.paused;persist();updateEventClock(0);return;}
   if(action==='event-untimed'){game.timedEvents=false;delete game.eventClock;shownEvent=null;persist();syncEventDialog();return;}
   if(action==='orbit-scan'||action==='orbit-wait'){const outcome=actOrbit(game,mini,action==='orbit-scan'?'scan':'wait');miniEffect=outcome;miniMessage=outcome.message;saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
-  if(action==='office-expand'){officeExpanded=!officeExpanded;if(officeExpanded)workspaceView='office';if(mobileUI.matches&&officeExpanded)onboarding.collapseGuide();render();}
+  if(action==='office-expand'){officeExpanded=!officeExpanded;workspaceView='office';onboarding.collapseGuide();render();}
   if(action==='task-info'){const t=TASKS.find(t=>t.id===id);showDialog(`<div class="eyebrow">ЗАДАЧА КОМАНДЫ</div><h2 id="dialog-title">${t.name}</h2><p>${t.description}</p><button class="primary full" data-action="close-dialog">К плану</button>`);}
   if(action==='activity')showDialog(`<div class="eyebrow">ИЗ СТУДИИ</div><h2 id="dialog-title">Журнал смены</h2><div class="activity-history">${game.log.slice().reverse().map(m=>`<p>${esc(m)}</p>`).join('')}</div><button class="primary full" data-action="close-dialog">К команде</button>`);
   if(action==='event-info'){const ev=EVENTS[game.currentEvent];showDialog(`<div class="eyebrow">КОНТЕКСТ РЕШЕНИЯ</div><h2 id="dialog-title">${ev.title}</h2><p>${ev.text}</p>${ev.options.map(o=>`<p><b>${o.title}.</b> ${o.text}<br><small>${o.effect}</small></p>`).join('')}<p>${ev.lesson}</p><button class="primary full" data-action="close-dialog">Вернуться к решению</button>`);}
@@ -446,7 +457,7 @@ document.addEventListener('click',e=>{
   }
   if(action==='life-buy'){
     const cost=UPGRADES.find(u=>u.id===id)?.price;
-    const error=buyUpgrade(game,id);if(error)toast(error);else{queuePurchaseFeedback(game,id,cost);dialog.close();officeSelection=null;workspaceView='office';officeExpanded=true;persist();render();}return;
+    const error=buyUpgrade(game,id);if(error)toast(error);else{queuePurchaseFeedback(game,id,cost);dialog.close();officeSelection=null;workspaceView='office';officeExpanded=false;persist();render();}return;
   }
   if(action==='life-contract-preview'){
     const c=CONTRACTS.find(c=>c.id===id);if(!c||game.stage!=='result')return;
@@ -481,13 +492,13 @@ document.addEventListener('click',e=>{
   if(action==='fresh-mini'){mini=freshOrbit(game);miniEffect={};miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
   if(action==='reload-mini'){openMini(true);dialog.querySelector('.tile.ship')?.focus({preventScroll:true});}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
-  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
+  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="guide-open">Ника · подсказки и голос</button><button class="secondary full" data-action="brief">Задание заказчика</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();persist();game=null;render();}
 });
 let demoArrival = false;
 if (DEMO) {
   demoArrival = !saved; game = saved ? structuredClone(saved) : createDemoGame();
-  difficulty = game.difficulty; officeSelection = game.stage === 'hire' ? game.team[0] : null; persist();
+  difficulty = game.difficulty; officeSelection = null; persist();
 }
 render();
 
