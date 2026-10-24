@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-23",
+  "selectedConcept": "02-release-night.png",
+  "selection": "User selected second visual concept; authorized beginning development.",
+  "mediaTool": "built-in image_gen",
+  "localGPUUsed": false,
+  "assets": [
+    {
+      "file": "assets/office.png",
+      "source": "C:/Users/popka/.codex/generated_images/01a167d5-dfff-7601-88e8-f5cfedc7fa2b/exec-55abdcf4-5147-40c1-922c-978ab53e9bc7.png",
+      "prompt": "Use case: precise-object-edit. Edit the provided game concept to produce a clean in-game background asset. Preserve the approved original art direction: beautifully rendered stylized isometric miniature IT game studio at dusk, deep petrol blues, warm amber lamps, orange sunset window, tactile materials, attractive high-quality indie game look. Preserve the original room geometry, wall planning board, desktop stations, arcade cabinet, plants and lighting. REMOVE ALL screen-space UI, including title, top clock, progress meters, lower timeline, the large dialogue card on the right, warning labels and floating panels. Reconstruct the entire office naturally behind removed interface areas, particularly the lower-right desks and floor. REMOVE ALL HUMAN CHARACTERS so that the empty office is ready for separately composited agent avatars. Keep chairs, keyboards and screens in their places. No people, no faces, no floating overlays, no text labels except subtle abstract marks on physical notice boards. The arcade should show an original simple space exploration game with a small rocket and planets, not a recognizable commercial platformer. Show cozy working studio, not abandoned, include small mugs and plants. Frame wide 16:9 edge-to-edge background, orthographic isometric camera, room detailed but clean, strong foreground-to-background depth. Image will be used as a background in a real browser game, keep a coherent readable playfield."
+    },
+    {
+      "file": "assets/agents.png",
+      "source": "C:/Users/popka/.codex/generated_images/01a167d5-dfff-7601-88e8-f5cfedc7fa2b/exec-2fd4c831-7881-4e3e-9f27-59f4fa89468c.png",
+      "prompt": "Use case: stylized-concept. Create a single precise game portrait sprite atlas: SIX equal-sized square portrait cells in exactly THREE columns and TWO rows, edge-to-edge grid, no margins, no gutters, no text, no frames. Landscape 3:2 canvas. Every character is framed identically from shoulders up in their own cell, face entirely within the central 70 percent of the cell. All are original young-adult digital teammates for an indie IT-office management browser game. Art direction: sophisticated stylized 3D animated-film characters, tactile hair and clothing, expressive intelligent faces, warm amber lighting from left, dark petrol-blue seamless plain background in EVERY cell. Cohesive rendering quality, charming and human, not photoreal, not anime, not robots. Strongly differentiated silhouettes and accent colors. Top-left: female designer MIRA, copper-orange wavy hair tied in loose bun, sage-green crewneck, confident friendly face. Top-middle: male rapid prototyper PIXEL, dark curly hair, round orange headphones around neck, orange hoodie, playful smile. Top-right: male developer NORD, neat dark hair, thin rectangular glasses, teal overshirt, calm thoughtful face. Bottom-left: female developer ISKRA, short deep brown hair with one small coral streak, black hoodie, energetic confident smile. Bottom-middle: female QA specialist SAGA, shoulder-length ash-blonde bob, navy hoodie, observant kindly expression. Bottom-right: male QA generalist ECHO, tan skin, dark wavy hair, round glasses, cream sweatshirt, warm communicative smile. Perfectly consistent 3x2 layout. Each head centered in its own square, no overlap between cells, no hands, no extra people, no lettering. Output is ONE atlas artwork intended for CSS sprite portraits."
+    }
+  ]
+}
