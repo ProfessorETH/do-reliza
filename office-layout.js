@@ -6,7 +6,8 @@ export const DESKS = [
 ];
 export const ENTRANCE = [4.1, 3.25];
 export const WAITING = [[3.9, 2.8], [3.1, 3.2], [2.3, 3.25]];
-export const WALK_BOUNDS = { minX: -4.65, maxX: 4.65, minZ: -3.65, maxZ: 3.65 };
+// All four inner wall faces are x=±4.91 / z=±3.91. Keep a body-width margin.
+export const WALK_BOUNDS = { minX: -4.55, maxX: 4.55, minZ: -3.55, maxZ: 3.55 };
 export const BODY_RADIUS = .34;
 const furniture = [
   ...DESKS.map(d => ({ x: d.x, z: d.z, w: 2.3, d: 1 })),

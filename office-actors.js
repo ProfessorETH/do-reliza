@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three/three.module.js';
-import { DESKS, ENTRANCE, WAITING, findOfficePath, isWalkable, distance } from './office-layout.js?v=0.5.0';
+import { DESKS, ENTRANCE, WAITING, findOfficePath, isWalkable, distance } from './office-layout.js?v=0.5.3-workspace';
 import { poseActor } from './office-pose.js?v=0.5.0';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
