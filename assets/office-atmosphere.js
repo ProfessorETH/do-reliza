@@ -60,6 +60,7 @@ function woodTexture() {
 }
 
 export function createOfficeAtmosphere(scene, renderer) {
+  const compact = window.matchMedia('(max-width:760px)').matches;
   renderer.toneMappingExposure = 1.12;
   const ambient = new THREE.HemisphereLight(0x9ebbdc, 0x49313b, .92); scene.add(ambient);
   const key = new THREE.DirectionalLight(0xffd6a0, 2.7); key.position.set(-4, 7, 2);
@@ -72,10 +73,10 @@ export function createOfficeAtmosphere(scene, renderer) {
   for (const x of [-2.65, 1.4, 3.8]) {
     const lamp = new THREE.PointLight(0xffbd72, 11, 4.5, 2); lamp.position.set(x, 2.38, -3.57); scene.add(lamp);
   }
-  for (const [x,z] of DESKS) {
+  for (const [x,z] of compact ? [] : DESKS) {
     const lamp = new THREE.PointLight(0xffd8a1, 1.6, 2.0, 2); lamp.position.set(x-.5, 1.13, -z+.10); scene.add(lamp);
   }
-  const neon = new THREE.PointLight(0x7fe5d1, 1.4, 3.6, 2); neon.position.set(1.85, 2.18, -3.55); scene.add(neon);
+  if (!compact) { const neon = new THREE.PointLight(0x7fe5d1, 1.4, 3.6, 2); neon.position.set(1.85, 2.18, -3.55); scene.add(neon); }
 
   const radial = radialTexture();
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 12), new THREE.MeshBasicMaterial({map:radial, color:0x020913, transparent:true, opacity:.65, depthWrite:false}));

@@ -5,7 +5,7 @@
   --bg: #111820; --panel: #1c252e; --surface: #26343c;
   --text: #f2ecde; --muted: #a8b7b8; --line: #c8d5cb24;
   --amber: #efb86b; --mint: #8ed8bf; --coral: #f49d88;
-  --paper: #eee5d2; --paper-ink: #293940; --paper-muted: #5d6d6b;
+  --paper: #eee5d2; --paper-ink: #293940; --paper-muted: #4e5d53;
   font-family: 'Segoe UI', system-ui, sans-serif;
   background: var(--bg); color: var(--text);
 }
@@ -138,33 +138,33 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
 .dossier-portrait { width: 82px; height: 82px; flex: none; overflow: hidden; border: 3px solid #fff9e8; border-radius: 5px; box-shadow: 0 2px 7px #384b3d2b; background: #8fa99a; }
 .dossier-portrait .dossier-face { display: block; width: 100%; height: 100%; border: 0; border-radius: 0; }
 .dossier-identity { flex: 1; min-width: 0; }
-.dossier-role { font-size: 11px; font-weight: 650; color: #536a61; }
+.dossier-role { font-size: 11px; font-weight: 650; color: #43594f; }
 .dossier-identity h2 { font-size: 30px; line-height: 1.05; margin: 6px 0 8px; letter-spacing: -.5px; }
-.dossier-identity p { color: #56675f; font-size: 12px; line-height: 1.5; font-style: italic; }
+.dossier-identity p { color: var(--paper-muted); font-size: 12px; line-height: 1.5; font-style: italic; }
 .dossier-serial { position: absolute; right: -5px; top: -8px; color: #62756230; font: 700 30px Bahnschrift,sans-serif; }
 .dossier-skills { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px; align-items: center; padding: 12px 0; }
 .dossier-skills .radar-wrap { min-width: 0; }
 .dossier-skills .radar { width: 100%; height: auto; min-height: 0; max-height: none; display: block; }
-.dossier-skills .radar text { fill: #52635c; font-size: 11px; }
+.dossier-skills .radar text { fill: var(--paper-muted); font-size: 11px; }
 .dossier-skills .radar text[font-weight="700"] { fill: #233b34; font-size: 14px; }
 .dossier-skills .radar polygon[fill="none"], .dossier-skills .radar line { stroke: #647a6040; }
 .dossier-skills .radar polygon:not([fill="none"]) { fill: #507c652b; stroke: #3e705b; }
 .dossier-skills .radar circle { fill: #3e705b; }
 .skill-list { display: grid; gap: 10px; margin: 0; padding: 4px 0 4px 10px; border-left: 1px solid #5b6c5c2b; }
 .skill-list > div { display: grid; grid-template-columns: 60px minmax(0,1fr); align-items: center; gap: 8px; }
-.skill-list dt { color: #56665f; font-size: 11px; }
+.skill-list dt { color: var(--paper-muted); font-size: 11px; }
 .skill-list dd { display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; margin: 0; }
 .skill-list b { width: 22px; color: #274535; font-size: 13px; font-variant-numeric: tabular-nums; }
 .skill-track { flex: 1; height: 5px; min-width: 10px; border-radius: 1px; overflow: hidden; background: #78907b26; }
 .skill-track i { display: block; height: 100%; background: #618d72; }
 .dossier-note { padding: 10px 0 12px; border-top: 1px solid #5b6c5c2b; }
 .dossier-note h3 { margin: 0 0 5px; color: #35483c; font: 700 13px 'Segoe UI',sans-serif; }
-.dossier-note p { margin: 0; color: #5a685e; font-size: 12px; line-height: 1.6; }
+.dossier-note p { margin: 0; color: var(--paper-muted); font-size: 12px; line-height: 1.6; }
 .agent-dossier .agent-caution { display: flex; align-items: flex-start; gap: 7px; color: #705332; font-size: 11px; line-height: 1.5; margin: 0 0 12px; padding: 9px 10px; background: #b98b3933; border-radius: 4px; }
 .agent-caution svg { flex: none; margin-top: 1px; }
 .dossier-offer { display: flex; align-items: center; gap: 16px; margin: 0 -18px; padding: 14px 18px; border-top: 1px solid #536b4f33; border-radius: 0 0 8px 8px; background: #e6d7b7; }
 .dossier-offer > strong { flex: none; color: #3f513e; font-size: 23px; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.dossier-offer small { display: block; color: #65705d; font-size: 10px; margin-top: 5px; font-weight: 500; }
+.dossier-offer small { display: block; color: #4e5d4d; font-size: 10px; margin-top: 5px; font-weight: 500; }
 .dossier-offer button { flex: 1; min-width: 0; font-size: 13px; padding: 10px 12px; }
 .dossier-offer .secondary { color: #3d6350; border-color: #57795c66; background: #f8f0da; }
 .dossier-offer .primary:disabled { color: #4a5344; background: #c2c5ab; border-color: #91a082; box-shadow: none; }

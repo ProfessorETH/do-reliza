@@ -52,5 +52,44 @@
   ],
   "objects": 56,
   "meshSingleUser": true,
-  "sourceSceneUnchanged": "E:\\хакатон игра\\art\\blender\\do-reliza-office.blend"
+  "sourceSceneUnchanged": "E:\\хакатон игра\\art\\blender\\do-reliza-office.blend",
+  "observedContacts": [
+    {
+      "interface": "sign acoustic bed / existing wall",
+      "measuredGapMeters": 0.0
+    },
+    {
+      "interface": "sign bed / acoustic slat",
+      "measuredGapMeters": 0.0
+    },
+    {
+      "interface": "poster backing / existing wall",
+      "measuredGapMeters": 0.0
+    },
+    {
+      "interface": "desk lamp 0 / existing tabletop",
+      "measuredGapMeters": 0.0
+    },
+    {
+      "interface": "desk lamp 1 / existing tabletop",
+      "measuredGapMeters": 0.0
+    },
+    {
+      "interface": "desk lamp 2 / existing tabletop",
+      "measuredGapMeters": 0.0
+    }
+  ],
+  "inspection": "sign, lamp and poster inspected from six viewport angles; measured evaluated world bounding boxes",
+  "files": [
+    {
+      "path": "assets/models/office-dressing.glb",
+      "bytes": 375332,
+      "sha256": "a10d8da430bf4ab3b24ab23377963ff742d18b0b99e5c74f78f9ea73c8051491"
+    },
+    {
+      "path": "art/blender/studio-dressing/studio-dressing.blend",
+      "bytes": 225285,
+      "sha256": "0ccce4cccd9ecfe18122cca865f9d71afc5f27aa0c70fb96ab9da2487d983366"
+    }
+  ]
 }
