@@ -1,4 +1,4 @@
-import { captureMembers, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
+import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 import { renderDecisionPanel } from './assets/decision-view.js';
 import { purchasePanel, contractPreview } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
@@ -273,6 +273,7 @@ function completeDecision(id,expired=false){
   const error=resolveEvent(game,id);
   if(error){toast(error);return;}
   queueMemberFeedback(game,before,affected);
+  if(kind==='scope')queueActorReaction(game,game.assignments.brief,id==='focus'?'calm':'joy');
   delete game.eventClock;
   if(expired)game.log.push('Время решения вышло: проблема отложена до релиза.');
   persist();render();

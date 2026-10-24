@@ -1,3 +1,5 @@
+import { reactionForChanges, planInspection } from './assets/character-reactions.js';
+import { sceneActions } from './assets/scene-feedback.js';
 import { placeFeedback } from './assets/scene-feedback.js';
 import { mountSceneClock } from './assets/scene-clock.js';
 import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
@@ -153,8 +155,24 @@ class OfficeWorld {
       this.fly(dt);
       this.controls.update();
       const active = activeTasks(this.game), actors = [...this.actors.values()];
+      this.consumedActions ||= new Set();
+      const actions=sceneActions(this.game),actionKeys=new Set(actions.map(a=>a.key));
+      for(const key of this.consumedActions)if(!actionKeys.has(key))this.consumedActions.delete(key);
+      for(const action of actions){
+        if(this.consumedActions.has(action.key))continue;
+        if(['person','reaction'].includes(action.type)){
+          const actor=this.actors.get(action.id);if(!actor)continue;
+          actor.react(action.type==='reaction'?action.reaction:reactionForChanges(action.changes));this.consumedActions.add(action.key);
+        }else if(action.type==='purchase'&&['hire','plan','result'].includes(this.game.stage)){
+          const visits=planInspection(this.game,action.id,actors);
+          if(visits.length){for(const visit of visits)this.actors.get(visit.id).inspect({...visit,key:action.key},this.game);this.consumedActions.add(action.key);}
+        }else if(action.type==='purchase')this.consumedActions.add(action.key);
+      }
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
       this.reportRest();
+      this.container.dataset.reactions=actors.filter(a=>a.reaction).map(a=>a.id+':'+a.reaction.kind).join(',');
+      this.container.dataset.visiting=actors.filter(a=>a.visit).map(a=>a.id+':'+a.visit.phase).join(',');
+      this.container.dataset.inspecting=actors.filter(a=>a.state==='inspect').map(a=>a.id).join(',');
       this.container.dataset.resting = actors.filter(a => a.state === 'resting').map(a=>a.id).join(',');
       this.loungeSeat?.update(Math.max(0,...actors.map(a=>(a.loungeBlend||0)*a.sit)));
       this.container.dataset.upgrades = (this.game.life?.upgrades || []).join(',');
@@ -172,7 +190,7 @@ class OfficeWorld {
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
       this.labels();
       if (this.container.clientWidth && this.container.clientHeight) this.renderer.render(this.scene, this.camera);
-      const busy = !this.ready || !!this.loadingActors.size || actors.some(a => a.moving);
+      const busy = !this.ready || !!this.loadingActors.size || actors.some(a => a.moving&&!a.visit);
       this.container.dataset.moving = String(busy);
       if (busy !== this.busy) { this.busy = busy; queueMicrotask(() => { if (this.busy === busy) this.callbacks.onBusy(busy); }); }
     }
