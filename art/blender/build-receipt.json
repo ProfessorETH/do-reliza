@@ -96,7 +96,7 @@
   "version": "0.5.0",
   "updatedAt": "2026-10-24T12:15:06.829409+00:00",
   "sourceHashes": {
-    "office-actors.js": "edd196d0b48df9d9ce249ed17d8e1553bf49e649672de2ae941aac5968c1abbd",
+    "office-actors.js": "8026e95dc07d6364788c286b3ee1115e70cd394eea361f3fac529ebe48d035e8",
     "office-pose.js": "462b2d7acf1126bab46b91b24512f953fe32a3770e7309a750c5d842c29ac86d",
     "office-layout.js": "af9710b813f9778ce6cdbaf3b21e669ed767702793566d13a4b0e1079682487f",
     "art/blender/runner.py": "b4c6d817b2030c2e3ef14824aa2027b52801a632f3341e4fb44151651376e497",
@@ -104,5 +104,6 @@
     "art/blender/office_recipe.py": "61e0246ad7486944c617acb3f5b302eaefdcd553dc22db5c72fa17585b1b8460",
     "art/blender/export_assets.py": "e5ba0f7f26461b03f90732466af3d325d09183eeab92bcc7fea834ca95d67836",
     "art/blender/motion_preview.py": "b05e9de8baf207b497d1e8eab47b4ce687b3f908ad3855675659084fd5b986d8"
-  }
+  },
+  "sourceHashNormalization": "SHA-256 of UTF-8 text with LF line endings, matching Git attributes"
 }
