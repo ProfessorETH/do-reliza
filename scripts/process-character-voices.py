@@ -86,10 +86,12 @@ def main():
     for relative, name, mapping in [("assets/onboarding/voice-manifest.js", "VOICE_ASSETS", nika),
                                      ("assets/character-voice-manifest.js", "CHARACTER_VOICES", cast)]:
         (ROOT / relative).write_text("// Original synthetic voices; validated local MP3 recordings.\nexport const " + name + " = " + json.dumps(mapping, ensure_ascii=False, indent=2) + ";\n", encoding="utf-8")
+    with (ROOT / "assets/character-voice-manifest.js").open("a", encoding="utf-8") as manifest:
+        manifest.write("\nexport const CHARACTER_VOICE_TEXT = " + json.dumps({key:row["text"] for key,row in ready.items() if row["id"] != "nika"}, ensure_ascii=False, indent=2) + ";\n")
     write(ROOT / "content/character-voice-receipt.json", {"provider": "ElevenLabs", "model": "eleven_v4",
           "origin": "Original Voice Design; no person or reference audio", "processing": FILTER,
           "format": "MP3 mono 44100 Hz, libmp3lame q3", "lines": list(ready.values())})
-    print("Published 17 Nika lines and 36 developer lines.")
+    print(f"Published {len(nika)} Nika lines and {len(cast)} developer lines.")
 
 
 if __name__ == "__main__":

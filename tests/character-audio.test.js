@@ -1,11 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSound } from '../assets/sound.js';
-import { CHARACTER_VOICES } from '../assets/character-voice-manifest.js';
+import { CHARACTER_VOICES, CHARACTER_VOICE_TEXT } from '../assets/character-voice-manifest.js';
+import { characterLine } from '../assets/character-dialogue.js';
 
 async function player(t) {
   // Exercise playback independently of the generated media pack.
   const previousVoices={...CHARACTER_VOICES};
+  const previousText={...CHARACTER_VOICE_TEXT};
+  for(const id of ['mira','nord','pixel','echo','saga','iskra'])for(const kind of ['intro','concern','conflict'])CHARACTER_VOICE_TEXT[`${id}-${kind}`]=characterLine(id,kind);
+  t.after(()=>{for(const key of Object.keys(CHARACTER_VOICE_TEXT))delete CHARACTER_VOICE_TEXT[key];Object.assign(CHARACTER_VOICE_TEXT,previousText);});
   for(const id of ['mira','nord','pixel','echo','saga','iskra'])for(const kind of ['intro','concern','conflict'])CHARACTER_VOICES[`${id}-${kind}`]=`characters/audio/${id}-${kind}-original.mp3`;
   const keys=['document','window','Audio','localStorage','CustomEvent'];
   const previous=new Map(keys.map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)]));
@@ -28,6 +32,11 @@ test('a collapsed Nika does not stop a developer, while automatic chatter yields
   sound.speak('story-0',true);assert.equal(developer.paused,true);assert.equal(doc.children.length,1);
   assert.equal(sound.speakCharacter('nord','intro'),false);assert.equal(made.at(-1).dataset.voiceOwner,'nika');
   assert.equal(sound.speakCharacter('nord','intro',true),true);assert.equal(doc.children.length,1);
+});
+
+test('a rewritten caption cannot play the recording of an older line',async t=>{
+  const {sound,made}=await player(t);CHARACTER_VOICE_TEXT['mira-concern']='A previous script';
+  const count=made.length;assert.equal(sound.speakCharacter('mira','concern',true),false);assert.equal(made.length,count);
 });
 
 test('a two-person argument plays in order and stops completely when muted',async t=>{

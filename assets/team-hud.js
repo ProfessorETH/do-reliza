@@ -3,7 +3,7 @@ import { AGENTS } from '../data.js';
 import { activeTasks } from '../engine.js?v=shift-ux-20261024-v2';
 import { condition } from './studio-life.js?v=shift-ux-20261024-v2';
 import { characterLine, characterMoment } from './character-dialogue.js';
-import { CHARACTER_VOICES } from './character-voice-manifest.js';
+import { characterVoicePath } from './character-voice.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const workLines = {
@@ -53,7 +53,7 @@ export function renderTeamMemberPreview(game,id,activity) {
   return `<section class="mobile-team-card" data-tone="${s.tone}">
     <header class="mobile-team-person"><span class="mobile-team-portrait" style="--px:${a.index%3*50}%;--py:${Math.floor(a.index/3)*100}%" aria-hidden="true"></span><div><span class="eyebrow">${esc(a.role)}</span><h2 id="dialog-title">${esc(a.name)}</h2><p>${esc(s.mood)}</p></div></header>
     <p class="mobile-team-activity">${esc(activity||s.activity)}</p><blockquote>«${esc(s.line)}»</blockquote>
-    ${CHARACTER_VOICES[`${a.id}-${s.voice}`]?`<button class="secondary full" data-action="character-voice" data-id="${a.id}" data-kind="${s.voice}" aria-label="Прослушать реплику: ${a.name}">Послушать реплику</button>`:''}
+    ${characterVoicePath(a.id,s.voice)?`<button class="secondary full" data-action="character-voice" data-id="${a.id}" data-kind="${s.voice}" aria-label="Прослушать реплику: ${a.name}">Послушать реплику</button>`:''}
     <dl class="mobile-team-vitals">${[['Энергия',s.energy],['Настроение',s.morale],['Напряжение',s.stress]].map(([label,value])=>`<div><dt>${label}</dt><dd>${value}<small>/100</small></dd></div>`).join('')}</dl>
     <button class="primary full" data-action="life-member" data-id="${a.id}">Отдых и забота ↗</button>
     <button class="secondary full" data-action="watch-agent" data-id="${a.id}">Найти в офисе ↗</button>
@@ -75,7 +75,7 @@ export function renderTeamHUD(game, selected) {
       </button>`;
     }).join('')}</div>
     ${focused?`<section class="team-thought" data-tone="${focused.tone}" aria-label="Реплика: ${focused.agent.name}">
-      <div class="team-thought-who"><span>${focused.agent.name}</span>${CHARACTER_VOICES[`${focused.agent.id}-${focused.voice}`]?`<button class="team-voice" data-action="character-voice" data-id="${focused.agent.id}" data-kind="${focused.voice}" aria-label="Прослушать реплику: ${focused.agent.name}">Слушать</button>`:'<span aria-hidden="true">···</span>'}<button class="team-thought-close" data-action="team-dismiss" aria-label="Закрыть реплику">×</button></div><p>«${esc(focused.line)}»</p>
+      <div class="team-thought-who"><span>${focused.agent.name}</span>${characterVoicePath(focused.agent.id,focused.voice)?`<button class="team-voice" data-action="character-voice" data-id="${focused.agent.id}" data-kind="${focused.voice}" aria-label="Прослушать реплику: ${focused.agent.name}">Слушать</button>`:'<span aria-hidden="true">···</span>'}<button class="team-thought-close" data-action="team-dismiss" aria-label="Закрыть реплику">×</button></div><p>«${esc(focused.line)}»</p>
       <div class="team-vitals"><span>Энергия <b>${focused.energy}</b><i style="--value:${focused.energy}%"></i></span><span>Настроение <b>${focused.morale}</b><i style="--value:${focused.morale}%"></i></span></div>
       <button data-action="life-member" data-id="${focused.agent.id}" class="team-care">Состояние и забота ↗</button>
     </section>`:`<p class="team-hud-invite">${states.length?'Нажми на коллегу, чтобы открыть карточку.':'Здесь появятся твои коллеги.'}</p>`}

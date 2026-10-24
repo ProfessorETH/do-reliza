@@ -1,5 +1,5 @@
 import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=original-cast-20261024';
-import { CHARACTER_VOICES } from './character-voice-manifest.js';
+import { characterVoicePath } from './character-voice.js';
 import { assetURL } from '../asset-url.js';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
@@ -75,7 +75,7 @@ export function createSound() {
   }
   function speakExchange(lines, force = false) {
     if(!enabled || !unlocked || document.hidden || (!force && voiceOwner === 'nika')) return false;
-    const clips = lines.slice(0,2).filter(line => CHARACTER_VOICES[`${line.id}-${line.kind}`]);
+    const clips = lines.slice(0,2).filter(line => characterVoicePath(line.id,line.kind));
     if(!clips.length) return false;
     const signature = clips.map(line=>`${line.id}-${line.kind}`).join(':');
     if(!force && signature === lastCastVoice) return false;
@@ -83,7 +83,7 @@ export function createSound() {
     const next = index => {
       const line = clips[index]; if(!line) return;
       const key = `${line.id}-${line.kind}`;
-      playRecord(CHARACTER_VOICES[key],'character',key,line.id,()=>next(index+1));
+      playRecord(characterVoicePath(line.id,line.kind),'character',key,line.id,()=>next(index+1));
     };
     next(0); return true;
   }
@@ -104,7 +104,7 @@ export function createSound() {
   document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();clearTimeout(timer);context?.suspend();}else if(unlocked&&enabled)unlock();});
   return {unlock,effect,speak,stopVoice,toggle,button,speakExchange,
     speakCharacter:(id,kind='intro',force=false)=>speakExchange([{id,kind}],force),
-    hasCharacterVoice:(id,kind='intro')=>Boolean(CHARACTER_VOICES[`${id}-${kind}`]),
+    hasCharacterVoice:(id,kind='intro')=>Boolean(characterVoicePath(id,kind)),
     get speakingCharacter(){return voiceOwner === 'character' && voiceOn ? voice?.dataset.characterId : null;},
     hasVoice:key=>Boolean(VOICE_ASSETS[key]),get enabled(){return enabled;},get speaking(){return voiceOn;}};
 }
