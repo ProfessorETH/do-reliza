@@ -1,4 +1,4 @@
-import { createGame, hire, seatAgent, beginPlan, recommend } from './engine.js?v=office-life-20261024-v3';
+import { createGame, hire, seatAgent, beginPlan, recommend } from './engine.js?v=seated-breaks-20261024-v2';
 
 // A real playable setup. Separate browser storage keeps the player's own run intact.
 export function createDemoGame() {

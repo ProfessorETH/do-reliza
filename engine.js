@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
-import { isWalkable } from './office-layout.js?v=office-life-20261024-v3';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, CONTRACTS, contractFor } from './assets/studio-life.js?v=office-life-20261024-v3';
+import { isWalkable } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -70,6 +70,7 @@ export function assign(state, taskId, agentId) {
 export const fit = (agentId, task, state) => clamp((agentById(agentId)?.stats[task.skill] || 0) + (state?.support && state.support.agentId === agentId && state.support.taskId === task.id ? 15 : 0));
 export function supportTask(state, taskId) {
   if (state.stage !== 'work') return 'Сначала вернитесь к работе.';
+  if (restInTransit(state)) return 'Дождись, пока сотрудник сядет отдыхать или вернётся за компьютер.';
   if (state.support) return 'На этой смене вы уже провели совместный разбор.';
   const task = activeTasks(state).find(t => t.id === taskId);
   if (!task) return 'Помочь можно с задачей, которая сейчас в работе.';
@@ -96,7 +97,7 @@ export function activeTasks(state) {
   const busy = new Set();
   return TASKS.filter(task => {
     const id = state.assignments[task.id];
-    if (!id || state.life?.members[id]?.breaks || state.life?.members[id]?.restTrip || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
+    if (!id || awayForRest(state.life?.members[id]) || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
     busy.add(id); return true;
   });
 }

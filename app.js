@@ -1,16 +1,16 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=office-life-20261024-v3';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=seated-breaks-20261024-v2';
 import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
 import { createSound } from './assets/sound.js?v=unified-20261024';
-import { WAITING } from './office-layout.js?v=office-life-20261024-v3';
-import { createDemoGame } from './demo.js?v=office-life-20261024-v3';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=office-life-20261024-v3';
-import { renderOffice } from './office.js?v=office-life-20261024-v3';
+import { WAITING } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { createDemoGame } from './demo.js?v=seated-breaks-20261024-v2';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=seated-breaks-20261024-v2';
+import { renderOffice } from './office.js?v=seated-breaks-20261024-v2';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=3-workspace';
-import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=office-life-20261024-v3';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=office-life-20261024-v3';
-import { nextProject } from './engine.js?v=office-life-20261024-v3';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=office-life-20261024-v3';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=seated-breaks-20261024-v2';
+import { nextProject } from './engine.js?v=seated-breaks-20261024-v2';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=seated-breaks-20261024-v2';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
@@ -260,7 +260,7 @@ document.addEventListener('click',e=>{
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-praise'||action==='life-raise'||action==='life-release'){
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{if(action==='life-break')dialog.close();persist();render();if(action!=='life-break')showDialog(memberPanel(game,id));else toast(`${agentById(id).name} идёт в зону отдыха.`);}return;
+    if(error)toast(error);else{if(action==='life-break')dialog.close();persist();render();if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;

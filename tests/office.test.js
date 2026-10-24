@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DESKS, ENTRANCE, WAITING, REST_SPOTS, isWalkable, clearSegment, findOfficePath } from '../office-layout.js';
+import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, isWalkable, clearSegment, findOfficePath } from '../office-layout.js';
 
 test('all seats and entrance waiting spots are accessible without crossing furniture', () => {
   const points = [ENTRANCE, ...WAITING, ...DESKS.map(d => d.seat)];
@@ -22,7 +22,7 @@ test('desk interiors, lounge, wall and invalid destinations reject movement', ()
 });
 
 test('walking routes approach chairs from the side without crossing another chair', () => {
-  const points=[ENTRANCE,...WAITING,...REST_SPOTS.map(r=>r.point),...DESKS.map(d=>[d.seat[0]+.72,d.seat[1]+.4])];
+  const points=[ENTRANCE,...WAITING,LOUNGE_SEAT.approach,...DESKS.map(d=>[d.seat[0]+.72,d.seat[1]+.4])];
   for(const a of points)for(const b of points){
     const path=findOfficePath(a,b,true);assert.ok(path,`${a} -> ${b}`);let p=a;
     for(const q of path){assert.ok(clearSegment(p,q,true));p=q;}
