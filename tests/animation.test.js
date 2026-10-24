@@ -10,15 +10,18 @@ import { poseActor } from '../office-pose.js';
 // Node has no browser import map; resolve the unmodified vendored addons locally.
 registerHooks({ resolve(specifier, context, nextResolve) { return nextResolve(specifier === 'three' ? new URL('../vendor/three/three.module.js', import.meta.url).href : specifier, context); } });
 const { GLTFLoader } = await import('../vendor/three/loaders/GLTFLoader.js');
+const { clone: cloneSkeleton } = await import('../vendor/three/utils/SkeletonUtils.js');
 
 const ids = ['mira','pixel','nord','iskra','saga','echo'];
 const models = new Map();
 async function actor(id = 'mira', order = 0) {
   if (!models.has(id)) {
     const bytes = await readFile(new URL(`../assets/models/${id}.glb`, import.meta.url));
-    models.set(id, await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), ''));
+    const loader=new GLTFLoader();
+    loader.register(()=>({name:'TEST_GEOMETRY_ONLY_TEXTURES',loadTexture:()=>Promise.resolve(new THREE.Texture())}));
+    models.set(id, await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), ''));
   }
-  return new OfficeActor(id, models.get(id).scene.clone(true), '#7ed9b8', order);
+  return new OfficeActor(id, cloneSkeleton(models.get(id).scene), '#7ed9b8', order);
 }
 const activity = { stage:'plan', task:null };
 function update(a, frames, dt = 1 / 60, mode = activity) {
@@ -35,13 +38,48 @@ test('all six exported Blender rigs have wrists, fingers and blink pivots', asyn
   }
 });
 
+test('six portable skins contain weighted bones, five clips and bone-attached eyes/shoes', async () => {
+  for (const id of ids) {
+    const a=await actor(id),gltf=models.get(id);let skins=0;
+    assert.equal(a.skinBindings.length,25);
+    assert.deepEqual(gltf.animations.map(c=>c.name).sort(),['Idle','Sit','Stand','Walk','Work']);
+    a.group.traverse(mesh=>{
+      if(!mesh.isSkinnedMesh)return;skins++;
+      assert.equal(mesh.skeleton.bones.length,25);
+      const weights=mesh.geometry.attributes.skinWeight;
+      for(let i=0;i<weights.count;i++)assert.ok(Math.abs(weights.getX(i)+weights.getY(i)+weights.getZ(i)+weights.getW(i)-1)<.001,`${id}: normalized weights`);
+    });
+    assert.equal(skins,2);
+    for(const side of ['Left','Right']){
+      assert.equal(a.footMeshes[side].parent.name,`Skin_${id}_${side}Foot`);
+      assert.equal(a.eyeMeshes[side].parent.name,`Skin_${id}_Head`);
+    }
+    const copy=cloneSkeleton(gltf.scene),mixer=new THREE.AnimationMixer(copy);
+    const hip=copy.getObjectByName(`Skin_${id}_Hips`),start=hip.getWorldPosition(new THREE.Vector3());
+    const sit=mixer.clipAction(gltf.animations.find(c=>c.name==='Sit'));sit.setLoop(THREE.LoopOnce,1);sit.clampWhenFinished=true;sit.play();mixer.update(1.2);copy.updateMatrixWorld(true);
+    const lowered=hip.getWorldPosition(new THREE.Vector3());assert.ok(start.y-lowered.y>.25,`${id}: saved Sit lowers pelvis`);
+    for(const side of ['Left','Right']){
+      const foot=copy.getObjectByName(`DR_${id}_${side}Foot_Rigid`),box=new THREE.Box3().setFromObject(foot,true);
+      assert.ok(Math.abs(box.min.y)<.012,`${id}: portable Sit sole ${box.min.y}`);
+    }
+  }
+});
+
+test('posing one cloned skeleton never moves another character instance',async()=>{
+  const first=await actor(),second=await actor();
+  const bone=second.skinBindings.find(b=>b.bone.name.endsWith('_LeftThigh')).bone;
+  const before=bone.matrixWorld.clone();first.sit=1;poseActor(first,1,true);
+  assert.deepEqual(bone.matrixWorld.elements,before.elements);
+  assert.notEqual(first.skinBindings[0].bone,second.skinBindings[0].bone);
+});
+
 test('both feet remain on or above floor through a full gait and chair lowering', async () => {
   const a = await actor(); a.group.position.set(0,0,0);
   for (let i = 0; i < 120; i++) {
     a.sit = i < 60 ? 0 : (i - 60) / 59; a.gait = i < 60 ? 1 : 0; a.phase = i / 60;
     poseActor(a, i / 60, false); a.group.updateMatrixWorld(true);
     for (const side of ['Left','Right']) {
-      const box = new THREE.Box3().setFromObject(a.joints[side + 'Foot'],true);
+      const box = new THREE.Box3().setFromObject(a.footMeshes[side],true);
       assert.ok(box.min.y > -.006, `${side} foot penetrated floor at ${i}: ${box.min.y}`);
       const phase=((a.phase+(side==='Right'?.5:0))%1+1)%1;
       if (a.sit > 0 || phase < .6) assert.ok(Math.abs(box.min.y) < .006, `support foot floated at ${i}: ${box.min.y}`);

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
+import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import { OfficeActor } from './office-actors.js?v=0.5.3-workspace';
 import { DESKS } from './office-layout.js?v=0.5.3-workspace';
 import { agentById, activeTasks } from './engine.js?v=unified-20261024';
@@ -94,7 +95,7 @@ class OfficeWorld {
       if (this.loadingActors.has(id)) continue;
       this.loadingActors.add(id);
       try {
-        const model = (await loadModel(id)).scene.clone(true);
+        const model = cloneSkeleton((await loadModel(id)).scene);
         if (!this.game.team.includes(id)) continue;
         actor = new OfficeActor(id, model, agentById(id).color, order);
         actor.destination(this.game, this.initialTeam.has(id)); actor.pose(false, false, 0, this.reduced.matches);

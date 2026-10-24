@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three/three.module.js';
+import { updateOfficeSkin } from './office-skeleton.js?v=0.6.0';
 
 const { lerp, clamp, smoothstep } = THREE.MathUtils;
 const DOWN = new THREE.Vector3(0, -1, 0);
@@ -52,6 +53,7 @@ export function poseActor(actor, elapsed, reduced) {
   const blink = reduced ? 1 : 1 - Math.sin(clamp(blinkTime / .15, 0, 1) * Math.PI) * .97;
   for (const side of ['Left', 'Right']) {
     if (j['Eye' + side]) j['Eye' + side].scale.y = blink;
+    if (actor.eyeMeshes?.[side]) actor.eyeMeshes[side].scale.y=blink;
     const sign = side === 'Left' ? -1 : 1;
     const foot = footstep(actor.phase + (sign > 0 ? .5 : 0), stride);
     const forward = lerp(foot.y, SEATED_ANKLE, s), lift = foot.lift * (1 - s);
@@ -79,4 +81,5 @@ export function poseActor(actor, elapsed, reduced) {
     }
   }
   if (actor.marker) { actor.marker.visible = actor.selected; actor.marker.rotation.y = reduced ? 0 : elapsed * .6; }
+  updateOfficeSkin(actor);
 }
