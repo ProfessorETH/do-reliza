@@ -1,5 +1,5 @@
 import { TASKS } from './data.js';
-import { activeTasks, agentById, totalProgress } from './engine.js?v=office-life-20261024-v2';
+import { activeTasks, agentById, totalProgress } from './engine.js?v=office-life-20261024-v3';
 
 const stations = [{ x: 300, y: 356 }, { x: 666, y: 356 }, { x: 482, y: 478 }];
 const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

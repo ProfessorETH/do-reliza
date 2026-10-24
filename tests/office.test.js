@@ -29,3 +29,9 @@ test('walking routes approach chairs from the side without crossing another chai
   }
   assert.equal(findOfficePath(ENTRANCE,DESKS[0].seat,true),null);
 });
+test('short diagonal corner crossings are rejected instead of stranding returning employees',()=>{
+  assert.equal(clearSegment([-2.85,2.8],[-2.35,.45],true),false);
+  const path=findOfficePath([-2.85,2.8],[-1.93,-.61],true);assert.ok(path);
+  let p=[-2.85,2.8];
+  for(const q of path){for(let i=0;i<=1000;i++)assert.ok(isWalkable([p[0]+(q[0]-p[0])*i/1000,p[1]+(q[1]-p[1])*i/1000]));p=q;}
+});

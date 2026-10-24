@@ -1,5 +1,5 @@
 import { AGENTS, DIFFICULTIES } from '../data.js';
-import { ensureLife, condition, UPGRADES, CONTRACTS, contractFor } from './studio-life.js?v=office-life-20261024';
+import { ensureLife, condition, UPGRADES, CONTRACTS, contractFor } from './studio-life.js?v=office-life-20261024-v3';
 
 const money = n => new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 const esc = x => String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

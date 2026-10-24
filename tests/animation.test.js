@@ -111,7 +111,7 @@ test('employees leave each desk, rest at a separate lounge spot and return witho
     for(let frame=0;frame<45/dt&&a.moving;frame++){
       a.update(dt,frame*dt,[a],activity,false,false);assert.ok(distance(previous,a.point)<.11);previous=a.point;
     }
-    assert.equal(a.failed,false);assert.equal(a.state,'seated');assert.equal(a.sit,1);
+    assert.equal(a.failed,false);assert.equal(a.state,'seated',JSON.stringify({dt,slot,point:a.point,path:a.path,state:a.state,speed:a.speed}));assert.equal(a.sit,1);
     assert.ok(distance(a.point,DESKS[slot].seat)<.001);assert.deepEqual(game.seats,seats);
   }
 });

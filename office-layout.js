@@ -33,13 +33,23 @@ export function isWalkable(point, radius = BODY_RADIUS) {
   return !furniture.some(o => Math.abs(x - o.x) < o.w / 2 + radius && Math.abs(z - o.z) < o.d / 2 + radius);
 }
 export const isChairClear = point => !DESKS.some(d => Math.abs(point[0] - d.seat[0]) < .68 && point[1] > d.seat[1] - .59 && point[1] < d.seat[1] + .95);
-export function clearSegment(a, b, avoidChairs = false) {
-  const steps = Math.max(1, Math.ceil(distance(a, b) / .05));
-  for (let i = 0; i <= steps; i++) {
-    const p = [a[0] + (b[0] - a[0]) * i / steps, a[1] + (b[1] - a[1]) * i / steps];
-    if (!isWalkable(p) || avoidChairs && !isChairClear(p)) return false;
+function crossesInterior(a,b,minX,maxX,minZ,maxZ) {
+  let enter=0,leave=1;
+  for (const [axis,min,max] of [[0,minX,maxX],[1,minZ,maxZ]]) {
+    const delta=b[axis]-a[axis];
+    if (Math.abs(delta)<1e-12) { if(a[axis]<=min||a[axis]>=max)return false; continue; }
+    const near=(min-a[axis])/delta,far=(max-a[axis])/delta;
+    enter=Math.max(enter,Math.min(near,far));leave=Math.min(leave,Math.max(near,far));
+    if(enter>=leave-1e-10)return false;
   }
-  return true;
+  return leave>0&&enter<1;
+}
+export function clearSegment(a, b, avoidChairs = false) {
+  if(!isWalkable(a)||!isWalkable(b)||avoidChairs&&(!isChairClear(a)||!isChairClear(b)))return false;
+  // Exact slab intersections prevent a short corner crossing being missed by
+  // 5 cm samples, which otherwise leaves an actor stuck midway through a path.
+  if(furniture.some(o=>crossesInterior(a,b,o.x-o.w/2-BODY_RADIUS,o.x+o.w/2+BODY_RADIUS,o.z-o.d/2-BODY_RADIUS,o.z+o.d/2+BODY_RADIUS)))return false;
+  return !avoidChairs||!DESKS.some(d=>crossesInterior(a,b,d.seat[0]-.68,d.seat[0]+.68,d.seat[1]-.59,d.seat[1]+.95));
 }
 
 // A* on a 20 cm grid. Diagonal moves may not cut furniture corners.

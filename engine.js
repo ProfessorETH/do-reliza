@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
-import { isWalkable } from './office-layout.js?v=office-life-20261024';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, CONTRACTS, contractFor } from './assets/studio-life.js?v=office-life-20261024';
+import { isWalkable } from './office-layout.js?v=office-life-20261024-v3';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, CONTRACTS, contractFor } from './assets/studio-life.js?v=office-life-20261024-v3';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));

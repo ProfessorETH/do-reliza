@@ -1,16 +1,16 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=office-life-20261024-v2';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=office-life-20261024-v3';
 import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
 import { createSound } from './assets/sound.js?v=unified-20261024';
-import { WAITING } from './office-layout.js?v=office-life-20261024-v2';
-import { createDemoGame } from './demo.js?v=office-life-20261024-v2';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=office-life-20261024-v2';
-import { renderOffice } from './office.js?v=office-life-20261024-v2';
+import { WAITING } from './office-layout.js?v=office-life-20261024-v3';
+import { createDemoGame } from './demo.js?v=office-life-20261024-v3';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=office-life-20261024-v3';
+import { renderOffice } from './office.js?v=office-life-20261024-v3';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=3-workspace';
-import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=office-life-20261024-v2';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=office-life-20261024-v2';
-import { nextProject } from './engine.js?v=office-life-20261024-v2';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=office-life-20261024-v2';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=office-life-20261024-v3';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=office-life-20261024-v3';
+import { nextProject } from './engine.js?v=office-life-20261024-v3';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=office-life-20261024-v3';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
