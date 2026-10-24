@@ -1,4 +1,6 @@
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=1';
+import { renderStartScreen } from './assets/start-screen.js';
+import { createSound } from './assets/sound.js';
 import { WAITING } from './office-layout.js?v=0.5.0';
 import { createDemoGame } from './demo.js?v=0.5.0';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.0';
@@ -15,7 +17,8 @@ const MINI = DEMO ? 'before-release-demo-orbit-v1' : 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
 let game = null, candidate = 'mira', difficulty = 'calm', automatic = null, saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
-const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: stopAuto, refresh: render });
+const sound = createSound();
+const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: stopAuto, refresh: render, sound });
 try { const raw = JSON.parse(localStorage.getItem(SAVE)); if (validSave(raw)) saved = restoreOffice(raw); } catch { /* No usable saved session. */ }
 const money = n => new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 const esc = x => String(x).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -57,24 +60,10 @@ function radar(a) {
   </svg>`;
 }
 function intro() {
-  return `<main class="landing">
-    <div class="office-backdrop"></div><div class="landing-shade"></div>
-    <header class="topbar">${logo()}<button class="icon-btn" data-action="about" aria-label="Как играть">${icon('info')}</button></header>
-    <section class="intro-copy"><div class="chapter-label"><span>01</span> Первая смена</div>
-      <h1>Завтра фестиваль.<br>Игры пока нет.</h1>
-      <p>Школьники ждут космическую игру.<br>Твоя команда может её сделать.</p>
-      <div class="intro-letter"><span class="letter-avatar">Ш</span><div><b>Школьный клуб <span>новое сообщение</span></b><p>«Хотим летать на корабле и собирать батареи. Сможете подготовить игру к фестивалю?»</p></div></div>
-      <p class="intro-role"><b>Ты — тимлид.</b> Собери трёх агентов, раздай задачи и помоги команде справиться с ошибками.</p>
-      <fieldset class="difficulty"><legend>Сложность</legend>${Object.entries(DIFFICULTIES).map(([id,d]) => `<label class="difficulty-option ${difficulty===id?'chosen':''}"><input type="radio" name="difficulty" value="${id}" ${difficulty===id?'checked':''}><span>${d.name}</span></label>`).join('')}</fieldset>
-      <div class="intro-cta">${saved?`<button class="primary large" data-action="continue">Продолжить смену ${icon('play',17)}</button><button class="text-button" data-action="new-game">Новая игра</button>`:`<button class="primary large" data-action="new-game">Собрать команду ${icon('arrow')}</button>`}</div>
-      ${!DEMO?'<a class="demo-link" href="?demo=1">Попробовать с готовой командой <span>↗</span></a><p class="demo-note">Отдельная демо-партия. Твоё сохранение останется на месте.</p>':''}
-    </section>
-    <div class="office-caption"><span class="live-dot"></span> Студия ждёт команду</div>
-    <footer class="landing-footer"><span>Сохранение на этом устройстве</span><span>3D-студия · v0.5</span></footer>
-  </main>`;
+  return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundButton: sound.button(icon) });
 }
 function topbar() {
-  return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ПРОЕКТ 01</span>ОРБИТА ${badge(DEMO?'ДЕМО':'ФЕСТИВАЛЬ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div><div class="hud-stat ${game.time>game.deadline?'late':''}">${icon('clock')}<span><small>${game.time>game.deadline?'Задержка':'До показа'}</small><strong>${game.time>game.deadline?'+':''}${Math.abs(game.deadline-game.time)} ч</strong></span></div><button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
+  return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ПРОЕКТ 01</span>ОРБИТА ${badge(DEMO?'ДЕМО':'ФЕСТИВАЛЬ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div><div class="hud-stat ${game.time>game.deadline?'late':''}">${icon('clock')}<span><small>${game.time>game.deadline?'Задержка':'До показа'}</small><strong>${game.time>game.deadline?'+':''}${Math.abs(game.deadline-game.time)} ч</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
 }
 function scene() { return renderOffice(game, officeSelection, officeMoving); }
 function hirePanel() {
@@ -153,6 +142,7 @@ function render() {
   if(oldTask) root.querySelector(`[data-task="${oldTask}"]`)?.focus({preventScroll:true});
   else if(oldAction) root.querySelector(`[data-action="${oldAction}"]${oldId?`[data-id="${oldId}"]`:''}`)?.focus({preventScroll:true});
   if(stageChanged){
+    if(nextStage==='result')sound.effect('result');
     if(window.innerWidth<=1000&&['plan','work','event','result'].includes(nextStage))requestAnimationFrame(()=>root.querySelector('.control-panel')?.scrollIntoView({block:'start'}));
     else window.scrollTo(0,0);
   }
@@ -213,12 +203,15 @@ document.addEventListener('keydown',e=>{
   if(dialog.open&&document.querySelector('.mini-board')){const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();moveMini(...d);}}
 });
 document.addEventListener('change',e=>{
-  if(e.target.name==='difficulty'){difficulty=e.target.value;render();}
+  if(e.target.name==='difficulty'){difficulty=e.target.value;render();root.querySelector(`[name="difficulty"][value="${difficulty}"]`)?.focus({preventScroll:true});}
   if(e.target.dataset.task&&game){assign(game,e.target.dataset.task,e.target.value);persist();render();}
 });
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');if(!el||el.disabled)return;
   const action=el.dataset.action,id=el.dataset.id;
+  if(action==='sound'){sound.toggle();render();return;}
+  sound.unlock();
+  sound.effect(({hire:'hire',plan:'plan',work:'plan',decision:'decision'})[action]||'click');
   if(action==='close-dialog'){dialog.close();return;}
   if(action==='about'){about();return;}
   if(action==='new-game'){if(saved)resetDialog();else newGame();return;}
