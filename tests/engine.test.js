@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AGENTS, TASKS, DIFFICULTIES } from '../data.js';
-import { createGame, hire, beginPlan, assign, recommend, beginWork, tick, activeTasks, resolveEvent, getResult, validSave, supportTask, fit, seatAgent, teamSeated, restoreOffice } from '../engine.js';
+import { createGame, hire, beginPlan, assign, recommend, beginWork, tick, activeTasks, resolveEvent, getResult, validSave, supportTask, fit, seatAgent, teamSeated, restoreOffice, walkInOffice } from '../engine.js';
 
 function prepared(ids=['mira','iskra','echo'],difficulty='normal') {
   const s=createGame(difficulty);for(const id of ids)assert.equal(hire(s,id),null);
@@ -116,4 +116,18 @@ test('seating an arrival at an occupied computer sends its previous occupant to 
   const s=createGame('calm');hire(s,'mira');hire(s,'iskra');seatAgent(s,'mira',0);
   seatAgent(s,'iskra',0);assert.deepEqual(s.seats,['iskra',null,null]);
   assert.equal(s.team.length,2);assert.ok(validSave(s));
+});
+
+test('free walking releases the seat, survives saving and cannot bypass work preparation',()=>{
+  const s=createGame('calm');['mira','iskra','echo'].forEach((id,i)=>{hire(s,id);seatAgent(s,id,i);});
+  beginPlan(s);recommend(s);
+  assert.equal(walkInOffice(s,'mira',[2.4,1]),null);
+  assert.equal(s.seats.includes('mira'),false);assert.equal(beginWork(s),false);
+  assert.ok(validSave(JSON.parse(JSON.stringify(s))));
+  const before=structuredClone(s.officeTargets);
+  assert.equal(typeof walkInOffice(s,'mira',[-2.65,-1.95]),'string');
+  assert.equal(typeof walkInOffice(s,'nord',[2.4,1]),'string');assert.deepEqual(s.officeTargets,before);
+  seatAgent(s,'mira',0);assert.equal(s.officeTargets.mira,undefined);assert.equal(beginWork(s),true);
+  assert.equal(typeof walkInOffice(s,'mira',[2.4,1]),'string');assert.ok(teamSeated(s));
+  const corrupt=structuredClone(s);corrupt.officeTargets={mira:[2.4,1]};assert.equal(!!validSave(corrupt),false);
 });

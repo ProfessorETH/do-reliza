@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-24",
+  "blender": "5.2.0 LTS",
+  "mcpServer": "mcp-for-blender==2.2.4",
+  "addonProtocol": 15,
+  "runtime": "Three.js 0.186.1, local modules",
+  "method": "Blender-native bpy geometry through MCP; GLB export; browser procedural joint animation",
+  "externalModelGeneratorsUsed": false,
+  "gpuRenderJobsSubmitted": false,
+  "units": "metres; Blender Z-up exported as glTF Y-up",
+  "checks": {
+    "sixSideWorkstationInspection": true,
+    "castVisualInspection": true,
+    "pelvisSeatGapMeters": 0,
+    "shoeFloorGapMeters": 0,
+    "contactToleranceMeters": 0.004,
+    "meshDatablocksSingleUser": true,
+    "deskLegGapMeters": 0,
+    "baseTopMeters": -0.025,
+    "floorTopMeters": 0
+  },
+  "files": [
+    {
+      "file": "assets/models/echo.glb",
+      "bytes": 300032,
+      "sha256": "7023d27a2f3b36d4c4a99a8284a7f28e807c0d0168f23ffefae4957ef042011c",
+      "meshes": 50,
+      "triangles": 8888
+    },
+    {
+      "file": "assets/models/iskra.glb",
+      "bytes": 188172,
+      "sha256": "6a90af5d201d23c718ca4dcfb4d0ae0bf672eaad2c3a0c8d96dab538986fe7ba",
+      "meshes": 34,
+      "triangles": 5996
+    },
+    {
+      "file": "assets/models/mira.glb",
+      "bytes": 231520,
+      "sha256": "e641057e2ea5d6355e4ffee295417621aa3829096e8bdbde184ba96a63eb961b",
+      "meshes": 41,
+      "triangles": 7460
+    },
+    {
+      "file": "assets/models/nord.glb",
+      "bytes": 229384,
+      "sha256": "78d64b341401dc2bb794a839b769424d8ee5c61c8f1da46f4555cec4335ee32e",
+      "meshes": 36,
+      "triangles": 6656
+    },
+    {
+      "file": "assets/models/office.glb",
+      "bytes": 922740,
+      "sha256": "38daa01953d24508448757c41dac6337ea0383670476c53704b99b45aeea9353",
+      "meshes": 66,
+      "triangles": 16650
+    },
+    {
+      "file": "assets/models/pixel.glb",
+      "bytes": 260168,
+      "sha256": "e9010ed98df73d68f1ec1a67b367f3d54f97518941690d0a59553a066eff3886",
+      "meshes": 49,
+      "triangles": 8396
+    },
+    {
+      "file": "assets/models/saga.glb",
+      "bytes": 203128,
+      "sha256": "e9378c37c039ab482c836d79403a7acfae130e90ee2387011231aaa0764122e8",
+      "meshes": 35,
+      "triangles": 6332
+    },
+    {
+      "file": "art/blender/do-reliza-office.blend",
+      "bytes": 687763,
+      "sha256": "fff4d82fd2189d0b9005e151e95b6ec4a0f1aac67e30ae679ee59b7efa2b967a"
+    }
+  ]
+}
