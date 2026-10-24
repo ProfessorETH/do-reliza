@@ -193,7 +193,7 @@ export function nextProject(state, contractId) {
   l.cash -= payroll + subsidy; l.away = away; l.departures = [];
   next.team = team; next.budget -= fees; next.seats = state.seats.map(id => team.includes(id) ? id : null);
   for (const { id } of AGENTS) {
-    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0; m.coffee = false;
+    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0; m.coffee = false; m.coffeeTrip = null;
     if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.conflictDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;

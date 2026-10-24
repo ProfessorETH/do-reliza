@@ -1,3 +1,4 @@
+import { coffeeMotion } from './assets/coffee-trip.js';
 import { reactionMotion } from './assets/character-reactions.js';
 import { updateOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
@@ -43,8 +44,9 @@ function arm(j, side, target, palmAngle, spread, blend) {
 export function poseActor(actor, elapsed, reduced) {
   const j = actor.joints, s = actor.sit, t = reduced ? 0 : elapsed + actor.order * 1.73;
   const lounge=actor.loungeBlend||0, rest=actor.restBlend||0;
+  const coffee=coffeeMotion(actor.state,actor.stateTime,reduced);
   const reaction=actor.reaction?reactionMotion(actor.reaction.kind,actor.reaction.time,reduced):{strength:0,wave:0};
-  const expression=reaction.strength*(1-(actor.gait||0))*(1-rest),kind=actor.reaction?.kind;
+  const expression=reaction.strength*(1-(actor.gait||0))*(1-rest)*(coffee.active?0:1),kind=actor.reaction?.kind;
   const anchored=['rest-lower','rest-rise'].includes(actor.state);
   const stride = reduced ? 0 : actor.gait, wave = Math.sin(actor.phase * Math.PI * 2);
   const breath = reduced ? 0 : Math.sin(t * 1.7) * .004, lowerLean = Math.sin(s * Math.PI) * .17;
@@ -59,6 +61,7 @@ export function poseActor(actor, elapsed, reduced) {
   j.Head.rotation.set(lerp(0, -.035, actor.workBlend)+rest*.035, reduced ? 0 : lerp(Math.sin(t * .75) * .065 * (1 - stride), .27, event*(1-rest)) + Math.sin(t * 2.1) * .018 * think, rest*(reduced?0:Math.sin(t*.55)*.025));
   j.Head.rotation.x+=expression*(kind==='sad'?-.22:kind==='joy'?.07:kind==='calm'?-.06-reaction.wave*.025:reaction.wave*.08);
   j.Head.rotation.z+=expression*(kind==='curious'?.12:kind==='sad'?.04:0);
+  if(coffee.active){j.Torso.rotation.x-=.09*coffee.reach*(1-coffee.sip);j.Head.rotation.x+=coffee.sip*.045;}
   const blinkTime = (t + actor.order * .77) % 4.3;
   const blink = reduced ? 1 : 1 - Math.sin(clamp(blinkTime / .15, 0, 1) * Math.PI) * .97;
   const portraitHead=actor.portraitHead, portraitBlink=portraitHead?.userData?.portraitBlinkMorph;
@@ -107,10 +110,16 @@ export function poseActor(actor, elapsed, reduced) {
         :new THREE.Vector3(sign*.31,1.12-j.Hips.position.y,-.29);
       target.lerp(gesture,expression);palmAngle=lerp(palmAngle,kind==='joy'?2.7:2.1,expression);
     }
-    arm(j, side, target, palmAngle, lerp(sign * .06,-.06,mouse), Math.max(smooth(s),expression));
+    if(coffee.active){
+      if(side==='Right'){
+        const pickup=new THREE.Vector3(.13,.86-j.Hips.position.y,-.43),mouth=new THREE.Vector3(.10,1.43-j.Hips.position.y,-.16);
+        target.lerp(pickup.lerp(mouth,coffee.sip),coffee.reach);palmAngle=lerp(palmAngle,1.8,coffee.reach);
+      }else target.lerp(new THREE.Vector3(-.18,.8-j.Hips.position.y,-.13),coffee.reach);
+    }
+    arm(j, side, target, palmAngle, lerp(sign * .06,-.06,mouse), Math.max(smooth(s),expression,coffee.active?1:0));
     for (let finger = 0; finger < 4; finger++) {
       const digit = j[side + 'Finger' + finger];
-      if (digit) digit.rotation.x = reduced ? -.08 : -.08 - (1 - Math.cos(t * (12 + finger) + finger * 1.3 + sign)) * .14 * typing * (1 - mouse + (finger === 1 ? mouse * .3 : 0));
+      if (digit) digit.rotation.x = coffee.holding&&side==='Right'?-.35: reduced ? -.08 : -.08 - (1 - Math.cos(t * (12 + finger) + finger * 1.3 + sign)) * .14 * typing * (1 - mouse + (finger === 1 ? mouse * .3 : 0));
     }
   }
   if (actor.marker) { actor.marker.visible = actor.selected; actor.marker.rotation.y = reduced ? 0 : elapsed * .6; }

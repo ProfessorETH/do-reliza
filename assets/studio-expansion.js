@@ -21,7 +21,7 @@ export function mountStudioExpansion(room) {
   const face = new THREE.Mesh(new THREE.BoxGeometry(.30,.16,.02),new THREE.MeshStandardMaterial({color:'#93d6b8',emissive:'#285044'}));
   face.position.set(-1,1.08,-3.37); coffee.add(face);
   const cup = new THREE.Mesh(new THREE.CylinderGeometry(.08,.06,.13,16),new THREE.MeshStandardMaterial({color:'#f5d7a9'}));
-  cup.position.set(-1,.78,-3.29); coffee.add(cup); room.add(coffee);
+  cup.name='CoffeeStationCup';cup.position.set(-1,.78,-3.29); coffee.add(cup); room.add(coffee);
   // Match the original cutaway walls; the east side is an open passage.
   const back = new THREE.Mesh(new THREE.BoxGeometry(4,3,.18),new THREE.MeshStandardMaterial({color:'#20313c'}));
   back.position.set(7,1.5,-4); back.userData.wallSide='back'; annex.add(back);

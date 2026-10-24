@@ -101,3 +101,5 @@ export function findOfficePath(start, end, avoidChairs = false, capacity = 3) {
   }
   return null;
 }
+
+export const COFFEE_STATION = {point:[-.75,-2.7],look:[-1,-3.55]};

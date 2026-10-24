@@ -1,3 +1,4 @@
+import { coffeeArrival } from './assets/coffee-trip.js';
 import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 
 import { renderDecisionPanel, renderDecisionReceipt } from './assets/decision-view.js';
@@ -223,6 +224,7 @@ function render() {
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
+    onCoffee:(id,arrival,source)=>{if(game===source){const before=captureMembers(game);if(coffeeArrival(game,id,arrival)){if(arrival==='drank')queueMemberFeedback(game,before,[id]);persist();render();}}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
     onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}hudSelection=null;workspaceView='office';officeSelection=officeSelection===id?null:id;onboarding.collapseGuide();render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
     onObject:id=>officeObject(id),
@@ -448,7 +450,7 @@ document.addEventListener('click',e=>{
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
     const before=captureMembers(game);
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee')toast('Напиток доставлен: энергия +15, настроение +5.');else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
+    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee'){officeSelection=null;workspaceView='office';officeExpanded=false;render();toast(game.life.members[id].coffeeTrip.phase==='queued'?'Напиток заказан. Сотрудник ждёт свободную станцию.':'Сотрудник идёт за напитком. Энергия восстановится после питья.');}else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;

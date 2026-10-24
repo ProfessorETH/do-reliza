@@ -1,3 +1,4 @@
+import { settleCoffeeFallback } from './assets/coffee-trip.js';
 import { reactionForChanges, planInspection } from './assets/character-reactions.js';
 import { sceneActions } from './assets/scene-feedback.js';
 import { placeFeedback } from './assets/scene-feedback.js';
@@ -107,7 +108,7 @@ class OfficeWorld {
     const flyButton=parent.querySelector('[data-action="office-camera"][data-id="flight"]');if(flyButton){flyButton.setAttribute('aria-pressed',String(!!this.flying));flyButton.textContent=this.flying?'Стоп':'WASD';}
     if (status) status.textContent = this.failed || (this.ready ? this.flying ? 'Полёт: W A S D · Q / E — высота · тяни — осмотр · Esc — выход' : window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
   }
-  fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); this.reportRest(true); }
+  fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); this.reportRest(true);settleCoffeeFallback(this.game,this.callbacks.onCoffee); }
   resize() {
     if (!this.container?.isConnected) return;
     const w = this.container.clientWidth, h = this.container.clientHeight; if (!w || !h) return;
@@ -118,7 +119,7 @@ class OfficeWorld {
     if (this.ready) this.renderer.render(this.scene, this.camera);
   }
   async syncActors() {
-    if (this.failed) { this.reportRest(true); return; }
+    if (this.failed) { this.reportRest(true);settleCoffeeFallback(this.game,this.callbacks.onCoffee); return; }
     if (!this.ready || !this.game) return;
     for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { this.scene.remove(actor.group); this.actors.delete(id); }
     for (const [order, id] of this.game.team.entries()) {
@@ -149,6 +150,14 @@ class OfficeWorld {
       queueMicrotask(() => { this.restSignals.delete(key); this.callbacks.onRest?.(id,arrived); });
     }
   }
+  reportCoffee(){
+    for(const id of this.game.team){
+      const trip=this.game.life.members[id].coffeeTrip,actor=this.actors.get(id);if(!trip||!actor)continue;
+      const arrival=trip.phase==='outbound'&&['coffee-pick','coffee-drink'].includes(actor.state)?'station':trip.phase==='drinking'&&actor.state==='coffee-put'?'drank':trip.phase==='returning'&&actor.state==='seated'?'back':null;
+      if(!arrival)continue;
+      const source=this.game;queueMicrotask(()=>this.callbacks.onCoffee?.(id,arrival,source));
+    }
+  }
   frame(time) {
     this.frameId = 0;
     if (!this.container?.isConnected || !this.game || this.failed) return;
@@ -171,7 +180,9 @@ class OfficeWorld {
         }else if(action.type==='purchase')this.consumedActions.add(action.key);
       }
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
-      this.reportRest();
+      this.reportRest();this.reportCoffee();
+      this.container.dataset.coffee=actors.filter(a=>a.coffeePhase&&a.coffeePhase!=='queued').map(a=>a.id+':'+a.state).join(',');
+      const stationCup=this.room?.getObjectByName('CoffeeStationCup');if(stationCup)stationCup.visible=!actors.some(a=>a.cup.visible);
       this.container.dataset.reactions=actors.filter(a=>a.reaction).map(a=>a.id+':'+a.reaction.kind).join(',');
       this.container.dataset.visiting=actors.filter(a=>a.visit).map(a=>a.id+':'+a.visit.phase).join(',');
       this.container.dataset.inspecting=actors.filter(a=>a.state==='inspect').map(a=>a.id).join(',');
@@ -352,7 +363,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
   catch (error) {
     container.parentElement.dataset.officeState = 'fallback';
     const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.';
-    callbacks.onBusy(false);
+    callbacks.onBusy(false);settleCoffeeFallback(game,callbacks.onCoffee);
     console.warn('Office WebGL:', error.message);
     for (const id of game.team) {
       const phase = game.life?.members[id]?.restTrip?.phase;

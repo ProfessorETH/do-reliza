@@ -1,3 +1,5 @@
+import { coffeeArrival } from '../assets/coffee-trip.js';
+import { careFor } from '../assets/studio-life.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
@@ -57,4 +59,21 @@ test('work and scheduled breaks cancel a cosmetic inspection and retain their re
     a.destination(s);assert.equal(a.visit,null);
     assert.equal(a.loungeTarget,next==='break');assert.equal(a.seat,next==='break'?-1:0);
   }
+});
+
+test('coffee animation picks up the cup, drinks before recovery, puts it down and returns to the assigned desk',()=>{
+  const s=createDemoGame();s.stage='work';s.life.upgrades=['coffee'];
+  const id=s.team[0],m=s.life.members[id];m.energy=30;m.morale=40;
+  const a=actor(id);a.destination(s,true);assert.equal(careFor(s,id,'coffee'),null);a.destination(s);
+  const states=new Set();let held=false,drank=false;
+  for(let i=0;i<1800&&m.coffeeTrip;i++){
+    a.update(1/30,i/30,[a],{stage:s.stage,task:null},false,false);states.add(a.state);held ||= a.cup.visible;
+    if(m.coffeeTrip.phase==='outbound'&&a.state==='coffee-pick'){coffeeArrival(s,id,'station');a.destination(s);}
+    if(m.coffeeTrip.phase==='drinking'&&a.state==='coffee-put'){assert.equal(m.energy,30);assert.ok(held);drank=coffeeArrival(s,id,'drank');a.destination(s);}
+    if(m.coffeeTrip?.phase==='returning'&&a.state==='seated'){coffeeArrival(s,id,'back');a.destination(s);}
+    if(!drank)assert.equal(m.energy,30);
+  }
+  for(const state of ['rise','walk','coffee-pick','coffee-drink','coffee-put','seated'])assert.ok(states.has(state),state);
+  assert.equal(m.coffeeTrip,null);assert.equal(m.energy,45);assert.equal(m.morale,45);assert.equal(a.cup.visible,false);
+  assert.ok(distance(a.point,ALL_DESKS[0].seat)<.01);assert.equal(s.seats[0],id);
 });

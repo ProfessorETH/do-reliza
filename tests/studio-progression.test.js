@@ -1,3 +1,4 @@
+import { coffeeArrival } from '../assets/coffee-trip.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDemoGame } from '../demo.js';
@@ -77,7 +78,7 @@ test('new seats have clear routes from entrance, other desks and the lounge; unb
 test('coffee is a once-per-shift benefit with an owned station, survives reload and resets next order',()=>{
   const s=expanded();nextProject(s,'club');beginPlan(s);recommend(s);beginWork(s);
   const id=s.team[0],m=s.life.members[id];m.energy=30;m.morale=40;
-  assert.equal(careFor(s,id,'coffee'),null);assert.equal(m.energy,45);assert.equal(m.morale,45);
+  assert.equal(careFor(s,id,'coffee'),null);assert.equal(m.energy,30);coffeeArrival(s,id,'station');coffeeArrival(s,id,'drank');coffeeArrival(s,id,'back');assert.equal(m.energy,45);assert.equal(m.morale,45);
   const saved=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(saved));assert.ok(careFor(saved,id,'coffee'));
   finish(saved);nextProject(saved,'club');beginPlan(saved);recommend(saved);beginWork(saved);assert.equal(careFor(saved,id,'coffee'),null);
 });

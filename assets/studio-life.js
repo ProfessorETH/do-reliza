@@ -1,3 +1,4 @@
+import { requestCoffee, callNextCoffee, coffeeInTransit, validCoffeeTrips } from './coffee-trip.js';
 import { AGENTS } from '../data.js';
 import { studioCapacity, upgradeLock, MISSION_REWARDS } from './studio-progression.js';
 
@@ -9,7 +10,7 @@ export const CONTRACTS = [
   { id: 'cup', name: 'Орбита · кубок пилотов', client: 'Организаторы турнира', text: 'Гонка: одна батарея, три последовательных ворот, движущийся патруль и медаль за число ходов. За перехват без щита — штраф.', budget: 45000, deadline: 15, reward: 7000, factors: { code: 1.3, qa: 1.3 } },
 ];
 export const UPGRADES = [
-  { id: 'coffee', name: 'Кофейная станция', price: 2000, text: 'Чай, какао и кофе для команды. Один напиток за смену: энергия +15, настроение +5. Действие доступно через сотрудника; отдых по-прежнему нужен.' },
+  { id: 'coffee', name: 'Кофейная станция', price: 2000, text: 'Чай, какао и кофе для команды. Один напиток за смену: сотрудник подходит к станции и пьёт. После напитка энергия +15, настроение +5. Действие доступно через сотрудника; отдых по-прежнему нужен.' },
   { id: 'desk4', name: 'Открыть крыло студии', price: 6000, text: 'Дополнительное помещение с четвёртым компьютером. Можно нанять четвёртого коллегу перед следующим заказом и разделить задачи.' },
   { id: 'desk5', name: 'Пятое рабочее место', price: 8000, text: 'Ещё один компьютер в новом крыле. Команда до пяти человек: каждому можно поручить свой этап. Найм и оплата требуют отдельного бюджета.' },
   { id: 'lounge', name: 'Обустроить зону отдыха', price: 2500, text: 'В зоне отдыха появятся мягкая накидка и чайный набор. Перерыв восстанавливает 45 энергии вместо 30.' },
@@ -40,11 +41,11 @@ export function ensureLife(s) {
     if (owner) m.restTrip.phase = 'queued';
     else owner = true;
   }
-  callNextBreak(s);
+  callNextBreak(s);callNextCoffee(s);
   return s.life;
 }
-export const restInTransit = s => s.team.some(id => ['outbound','returning'].includes(s.life?.members[id]?.restTrip?.phase));
-export const awayForRest = m => !!(m?.breaks || m?.restTrip) && m?.restTrip?.phase !== 'queued';
+export const restInTransit = s => coffeeInTransit(s)||s.team.some(id => ['outbound','returning'].includes(s.life?.members[id]?.restTrip?.phase));
+export const awayForRest = m => (!!m?.coffeeTrip&&m.coffeeTrip.phase!=='queued') || !!(m?.breaks || m?.restTrip) && m?.restTrip?.phase !== 'queued';
 function callNextBreak(s) {
   if (s.team.some(id => { const t=s.life.members[id].restTrip;return t && t.phase!=='queued'; })) return;
   const id=s.team.filter(id=>s.life.members[id].restTrip?.phase==='queued').sort((a,b)=>(s.life.members[a].restTrip.request||0)-(s.life.members[b].restTrip.request||0))[0];
@@ -60,6 +61,7 @@ export function restArrival(s, id, arrival) {
 export const contractFor = s => CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0];
 export function condition(s, id) {
   const m = ensureLife(s).members[id];
+  if(m.coffeeTrip){const phase=m.coffeeTrip.phase;return {label:({queued:'Ждёт напиток',outbound:'Идёт за напитком',drinking:'Пьёт напиток',returning:'Возвращается за компьютер'})[phase],reason:phase==='queued'?'Станция занята. Сотрудник ждёт своей очереди за компьютером.':'Энергия +15 и настроение +5 после напитка. Затем сотрудник вернётся на своё место.',factor:phase==='queued'?(m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1):1};}
   if (m.restTrip?.phase === 'queued') return { label: 'Ждёт свободное кресло', reason: 'Перерыв запланирован. Пока кресло занято, сотрудник продолжает работу; затем пойдёт отдыхать сам.', factor: m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1 };
   if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Игровой час начнётся после прибытия.', factor: 1 };
   if (m.restTrip?.phase === 'returning') return { label: 'Возвращается за компьютер', reason: 'Перерыв завершён. Работа продолжится после возвращения на своё место.', factor: 1 };
@@ -133,12 +135,9 @@ export function careFor(s, id, action) {
   const l = ensureLife(s), m = l.members[id];
   if (!s.team.includes(id)) return 'Выбери сотрудника команды.';
   if (action === 'coffee') {
-    if (s.stage !== 'work' || !l.upgrades.includes('coffee')) return 'Напиток доступен во время смены после покупки кофейной станции.';
-    if (m.coffee || m.restTrip) return 'Напиток уже получен на этой смене или сотрудник отдыхает.';
-    m.coffee = true; m.energy = clamp(m.energy + 15); m.morale = clamp(m.morale + 5);
-    s.log.push(`Напиток для ${AGENTS.find(a => a.id === id).name}: энергия +15, настроение +5.`);
+    return requestCoffee(s,id);
   } else if (action === 'break') {
-    if (s.stage !== 'work' || m.breaks || m.restTrip) return 'Перерыв доступен во время работы, один за раз. Сначала вернись к компьютеру.';
+    if (s.stage !== 'work' || m.breaks || m.restTrip || m.coffeeTrip) return 'Перерыв доступен во время работы, один за раз. Сначала вернись к компьютеру.';
     const occupied=s.team.some(a=>l.members[a].restTrip);
     const request=1+Math.max(0,...s.team.map(a=>l.members[a].restTrip?.request||0));
     m.breaks = 1; m.restSerial = (m.restSerial || 0) + 1; m.restTrip = { phase: occupied?'queued':'outbound', slot: s.team.indexOf(id), request };
@@ -192,7 +191,7 @@ export function validLife(s) {
   const l = s.life;
   if (l === undefined) return true; // Safe migration of 0.5 saves.
   const integer = (n, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
-  return l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
+  return validCoffeeTrips(s) && l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
     && (l.missionsWon === undefined || Array.isArray(l.missionsWon) && new Set(l.missionsWon).size === l.missionsWon.length && l.missionsWon.every(id=>Object.hasOwn(MISSION_REWARDS,id)))
     && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===MISSION_REWARDS[l.missionReward.contract].cash)
     && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
