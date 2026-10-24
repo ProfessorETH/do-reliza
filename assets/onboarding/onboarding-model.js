@@ -12,8 +12,8 @@ export function guideFor(game, moving = false) {
   if (!game) return null;
   if (game.stage === 'hire') {
     const unseated = game.team.filter(id => !game.seats.includes(id));
-    if (game.team.length < 3) return { id: 'hire', number: 1, title: 'Начнём с команды', text: 'Выбери кандидата и посмотри на пять навыков. Нужны трое: кто напишет код, кто сделает экран, кто найдёт ошибки. Оставь немного денег в резерве.', hint: `${game.team.length} из 3 агентов в команде`, target: '.candidate-grid' };
-    if (unseated.length) return { id: 'seat', number: 2, title: 'У каждого — своё место', text: 'Нанятый агент ждёт у входа. Выбери его в офисе, затем нажми на свободный компьютер. Повтори для каждого.', hint: `${game.seats.filter(Boolean).length} из 3 мест занято`, target: '[data-action="office-desk"]' };
+    if (game.team.length < 3) return { id: 'hire', number: 1, title: 'Начнём с команды', text: 'Выбери кандидата и посмотри на пять навыков. Нужны трое: кто напишет код, кто сделает экран, кто найдёт ошибки. Оставь немного денег в резерве.', hint: `${game.team.length} из 3 разработчиков в команде`, target: '.candidate-grid' };
+    if (unseated.length) return { id: 'seat', number: 2, title: 'У каждого — своё место', text: 'Нанятый разработчик ждёт у входа. Выбери его в офисе, затем нажми на свободный компьютер. Повтори для каждого.', hint: `${game.seats.filter(Boolean).length} из 3 мест занято`, target: '[data-action="office-desk"]' };
     return { id: 'plan', voice: moving ? 'guide-wait' : 'guide-plan', number: 3, title: moving ? 'Команда занимает места' : 'Все в сборе!', text: moving ? 'Подождём, пока все дойдут до компьютеров. Затем можно раздать задачи.' : 'Теперь нажми «Раздать задачи». Выберем исполнителей и поймём, что нужно сделать сначала.', target: '[data-action="plan"]' };
   }
   if (game.stage === 'plan') {
@@ -27,7 +27,7 @@ export function guideFor(game, moving = false) {
     const needsCare = game.team.find(id => { const m = game.life?.members[id]; return m && !m.breaks && !m.restTrip && (m.energy < 35 || m.stress >= 65 || m.morale < 35); });
     if (needsCare) return { id: 'care', voice: 'guide-team-care', number: 4, title: 'Заметь, как чувствует себя команда', text: 'В карточках под офисом видны энергия и настроение. Открой состояние сотрудника: перерыв занимает час только у него, остальные продолжают работу. За готовый результат можно поблагодарить.', target: `[data-action="life-member"][data-id="${needsCare}"]` };
     const canSupport = TASKS.some(t => game.assignments[t.id] && !game.life?.members[game.assignments[t.id]]?.breaks && !game.life?.members[game.assignments[t.id]]?.restTrip && game.progress[t.id] < 100 && t.depends.every(id => game.progress[id] >= 100));
-    if (!game.support && game.time >= 2 && canSupport) return { id: 'support', number: 5, title: 'Тимлид помогает, когда трудно', text: 'Один раз за смену можно разобрать активную задачу вместе с агентом. Его навык для неё вырастет на 15, но пройдёт один час. Решай, нужна ли помощь сейчас.', target: '[data-action="support"]' };
+    if (!game.support && game.time >= 2 && canSupport) return { id: 'support', number: 5, title: 'Тимлид помогает, когда трудно', text: 'Один раз за смену можно разобрать активную задачу вместе с разработчиком. Его навык для неё вырастет на 15, но пройдёт один час. Решай, нужна ли помощь сейчас.', target: '[data-action="support"]' };
     return { id: 'time', number: 4, title: 'Пора дать команде поработать', text: 'Нажми «Следующий час» и посмотри, как продвигаются задачи. Часы вверху — игровое время. «Авто» двигает его само; обсуждения и окна ставят его на паузу.', target: '[data-action="tick"]' };
   }
   return null;

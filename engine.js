@@ -41,7 +41,7 @@ export function restoreOffice(state) {
 export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
 export function seatAgent(state, agentId, index) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Пересадить команду можно до начала смены.';
-  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери агента из команды и рабочее место.';
+  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери разработчика из команды и рабочее место.';
   const previous = state.seats.indexOf(agentId), occupant = state.seats[index];
   if (previous === index) return null;
   if (previous >= 0) state.seats[previous] = occupant;
@@ -51,7 +51,7 @@ export function seatAgent(state, agentId, index) {
 }
 export function walkInOffice(state, agentId, point) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Во время смены команда занята задачами.';
-  if (!state.team.includes(agentId)) return 'Сначала выбери агента из команды.';
+  if (!state.team.includes(agentId)) return 'Сначала выбери разработчика из команды.';
   if (!isWalkable(point)) return 'Там мебель или край комнаты. Выбери свободный участок пола.';
   const target = point.map(n => Math.round(n * 10000) / 10000);
   if (!isWalkable(target)) return 'Слишком близко к мебели. Выбери точку чуть дальше.';
