@@ -1,5 +1,14 @@
 {
   "date": "2026-10-24",
+  "runtime_revision": {
+    "status": "Human rejected rapid full-frame sprite switching as flashing; removed from runtime",
+    "portrait": "assets/onboarding/nika-portrait.webp",
+    "portrait_bytes": 104944,
+    "portrait_sha256": "C4B4B203180344B63AABD018806F332B8993EFDDBE0BCDD91D35C7E4FFF23BF1",
+    "method": "Approved original imagegen portrait resized to 600x720 WebP quality 87 with alpha; stable rendering, at most 1.5px breathing, no animated mouth or frame swaps",
+    "retired_atlas": "art/references/nika-expressions-v1-rejected.webp",
+    "voice_receipt": "content/voice-state.json"
+  },
   "tool": "built-in image_gen",
   "type": "still-image character atlas, not video generation",
   "localGPUUsed": false,
@@ -19,7 +28,7 @@
   ],
   "exports": [
     {
-      "file": "assets/onboarding/nika-expressions.webp",
+      "file": "art/references/nika-expressions-v1-rejected.webp",
       "size": [
         960,
         960
