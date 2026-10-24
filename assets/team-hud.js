@@ -42,10 +42,22 @@ function face(tone) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 8h.01M16 8h.01" stroke-width="3" stroke-linecap="round"/><path d="${mouth}"/></svg>`;
 }
 
+export function renderTeamMemberPreview(game,id,activity) {
+  const s=teamMemberState(game,id);if(!s)return '';
+  const a=s.agent;
+  return `<section class="mobile-team-card" data-tone="${s.tone}">
+    <header class="mobile-team-person"><span class="mobile-team-portrait" style="--px:${a.index%3*50}%;--py:${Math.floor(a.index/3)*100}%" aria-hidden="true"></span><div><span class="eyebrow">${esc(a.role)}</span><h2 id="dialog-title">${esc(a.name)}</h2><p>${esc(s.mood)}</p></div></header>
+    <p class="mobile-team-activity">${esc(activity||s.activity)}</p><blockquote>«${esc(s.line)}»</blockquote>
+    <dl class="mobile-team-vitals">${[['Энергия',s.energy],['Настроение',s.morale],['Напряжение',s.stress]].map(([label,value])=>`<div><dt>${label}</dt><dd>${value}<small>/100</small></dd></div>`).join('')}</dl>
+    <button class="primary full" data-action="life-member" data-id="${a.id}">Отдых и забота ↗</button>
+    <button class="secondary full" data-action="watch-agent" data-id="${a.id}">Найти в офисе ↗</button>
+  </section>`;
+}
+
 export function renderTeamHUD(game, selected) {
   const states = game.team.map(id => teamMemberState(game,id));
   const focused = states.find(s => s.agent.id===selected) || states[0];
-  return `<aside class="team-hud" data-open="${!!selected}" aria-label="Команда студии">
+  return `<aside class="team-hud" data-count="${states.length}" data-open="${!!selected}" aria-label="Команда студии">
     <header class="team-hud-heading"><span>Команда</span><b>${states.length}<span>/3</span></b></header>
     <div class="team-hud-members">${Array.from({length:3},(_,i)=>{
       const s=states[i];

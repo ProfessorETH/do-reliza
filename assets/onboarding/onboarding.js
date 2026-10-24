@@ -41,7 +41,8 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
   function finishStory(enabled = true) {
     preferences.story = null; preferences.enabled = enabled; preferences.collapsed = true; save();
     storyDialog.close(); stopAnimation(); sound?.stopVoice(); refresh();
-    const focus = returnFocus?.isConnected ? returnFocus : document.querySelector('[data-guide="toggle"]');
+    const fallback=[document.querySelector('[data-action="guide-open"]'),document.querySelector('[data-guide="toggle"]')].find(el=>el?.getClientRects().length);
+    const focus = returnFocus?.isConnected ? returnFocus : fallback;
     focus?.focus({ preventScroll: true });
   }
 
@@ -69,6 +70,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
     const step = guideFor(game, busy);
     if (!step) return;
     const collapsed = !preferences.enabled || preferences.collapsed;
+    document.querySelector('[data-action="guide-open"]')?.setAttribute('aria-expanded',String(!collapsed));
     const guide = document.createElement('aside');
     guide.className = `nika-guide${collapsed ? ' nika-collapsed' : ''}`;
     guide.setAttribute('aria-label', 'Подсказка Ники');
@@ -109,6 +111,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
       if(target?.dataset.action==='team-focus' && (target.getAttribute('aria-pressed')!=='true' || target.closest('.team-hud')?.dataset.open!=='true')) {
         target.click(); target=document.querySelector(selector);
       }
+      if(document.querySelector('#info-dialog[open] .mobile-team-card'))return;
       if (target) {
         document.querySelectorAll('.nika-target').forEach(el => el.classList.remove('nika-target'));
         target.classList.add('nika-target');
@@ -119,7 +122,7 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
       if (action === 'disable') preferences.enabled = false;
       if (action === 'toggle') { if (!preferences.enabled) { preferences.enabled = true; preferences.collapsed = false; } else preferences.collapsed = !preferences.collapsed; }
       save(); sync(currentGame, moving);
-      document.querySelector('[data-guide="toggle"]')?.focus({ preventScroll: true });
+      [document.querySelector('[data-action="guide-open"]'),document.querySelector('[data-guide="toggle"]')].find(el=>el?.getClientRects().length)?.focus({ preventScroll: true });
     }
   });
   storyDialog.addEventListener('cancel', event => { event.preventDefault(); finishStory(); });
@@ -128,6 +131,8 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
   reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) stopAnimation(); });
   return {
     sync,
+    toggleGuide() { if(!preferences.enabled){preferences.enabled=true;preferences.collapsed=false;}else preferences.collapsed=!preferences.collapsed;save(); },
+    collapseGuide() { preferences.collapsed=true;save(); },
     start(game) { currentGame = game; preferences = { enabled: true, collapsed: true, story: 0 }; save(); sync(game); },
   };
 }
