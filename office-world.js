@@ -219,6 +219,7 @@ export function mountOfficeWorld(game, selected, callbacks) {
   catch (error) {
     container.parentElement.dataset.officeState = 'fallback';
     const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.';
+    callbacks.onBusy(false);
     console.warn('Office WebGL:', error.message);
     for (const id of game.team) {
       const phase = game.life?.members[id]?.restTrip?.phase;

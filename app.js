@@ -3,7 +3,7 @@ import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
 import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
 import { WAITING } from './office-layout.js?v=office-life-20261024-v3';
 import { createDemoGame } from './demo.js?v=office-life-20261024-v3';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=office-life-20261024-v3';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './assets/office-runtime.js?v=hosting-20261024';
 import { renderOffice } from './office.js?v=nika-alina-20261024-v3';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=3-workspace';
