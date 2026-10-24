@@ -8,8 +8,8 @@ import { resolveEvent, validSave } from '../engine.js';
 import { ensureEventClock, advanceEventClock } from '../assets/event-clock.js';
 
 test('a persisted incident signals exactly its owner, including after reload; resolution clears it',()=>{
-  for(const type of ['noise','computer','idea']){
-    const s=createDemoGame();s.stage='event';s.currentEvent='life';s.life.incident={type,id:s.team[1]};
+  for(const type of ['noise','computer','idea','tension']){
+    const s=createDemoGame();s.stage='event';s.currentEvent='life';s.life.incident={type,id:s.team[1],...(type==='tension'?{otherId:s.team[0]}:{})};
     const event=employeeEvent(s),before=JSON.stringify(s);
     assert.equal(event.id,s.team[1]);assert.equal(event.type,type);assert.equal(JSON.stringify(s),before);
     const copy=JSON.parse(before);assert.deepEqual(employeeEvent(copy),event);assert.ok(validSave(copy));

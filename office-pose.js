@@ -82,9 +82,12 @@ export function poseActor(actor, elapsed, reduced) {
       // Only the affected seated colleague gestures; feet and pelvis stay anchored.
       const phase = reduced ? 0 : Math.sin(t * 2.6) * .045;
       const gesture = actor.activity.incident === 'noise' ? new THREE.Vector3(.23+phase*.25,1.32+phase*.15-j.Hips.position.y,-.04)
-        : actor.activity.incident === 'computer' ? new THREE.Vector3(.38,1.08+phase-j.Hips.position.y,-.28)
+        : ['computer','tension'].includes(actor.activity.incident) ? new THREE.Vector3(.38,1.08+phase-j.Hips.position.y,-.28)
         : new THREE.Vector3(.35+phase,1.45-j.Hips.position.y,-.12);
       target.lerp(gesture,event); palmAngle=lerp(palmAngle,2.6,event);
+    }
+    if(actor.activity.incident==='tension'&&side==='Left'&&!rest){
+      target.lerp(new THREE.Vector3(-.30,1.08+(reduced?0:Math.sin(t*2.6)*.035)-j.Hips.position.y,-.28),event);palmAngle=lerp(palmAngle,2.6,event);
     }
     if (result && actor.reactionTime < 2.8 && side === 'Right' && !reduced) {
       const wave = smoothstep(actor.reactionTime,0,.4) * (1 - smoothstep(actor.reactionTime,2,2.8));

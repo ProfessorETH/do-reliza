@@ -34,7 +34,7 @@ function update(a, frames, dt = 1 / 60, mode = activity) {
 test('incident gestures belong to one colleague, differ by situation and preserve the seated anchor',async()=>{
   const a=await actor('mira'), hands=[];
   a.destination({seats:['mira',null,null],officeTargets:{}},true);
-  for(const incident of ['noise','computer','idea']){
+  for(const incident of ['noise','computer','idea','tension']){
     update(a,120,1/60,{stage:'event',task:null,eventParticipant:true,incident});
     assert.ok(a.eventBlend>.99);poseActor(a,2,true);a.group.updateMatrixWorld(true);
     hands.push(a.joints.RightWrist.getWorldPosition(new THREE.Vector3()));
