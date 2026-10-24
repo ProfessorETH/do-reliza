@@ -1,0 +1,14 @@
+{
+  "triangles": 47994,
+  "vertices": 23913,
+  "boundary_edges": 0,
+  "nonmanifold_edges": 0,
+  "repaired_tiny_triangles": 3,
+  "floor_min_z_m": 0.0,
+  "height_m": 1.7200000286102295,
+  "rigged": false,
+  "game_integrated": false,
+  "visual_status": "review prototype; face and finger detail need further art review",
+  "file_bytes": 1631784,
+  "sha256": "93c2cb0e35293b77309efbc7897cff29d2b3c9085e7004cfd3241b34dbeb1698"
+}

@@ -1,0 +1,23 @@
+{
+  "triangles": 47994,
+  "watertight_after_welding_material_seams": true,
+  "finite_positions": true,
+  "bounds_y_up": [
+    [
+      -0.42367085814476013,
+      0.0,
+      -0.16133615374565125
+    ],
+    [
+      0.4236708879470825,
+      1.7200000286102295,
+      0.16133613884449005
+    ]
+  ],
+  "materials": 2,
+  "images": 1,
+  "all_images_embedded": true,
+  "animation_count": 0,
+  "skin_count": 0,
+  "sha256": "93c2cb0e35293b77309efbc7897cff29d2b3c9085e7004cfd3241b34dbeb1698"
+}

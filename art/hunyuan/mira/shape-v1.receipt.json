@@ -1,0 +1,75 @@
+{
+  "status": "completed",
+  "created_utc": "2026-10-24T13:27:13.804804+00:00",
+  "endpoint": "http://192.168.3.38:8000",
+  "model": "Hunyuan3D 2.1 local native ComfyUI",
+  "workflow_sha256": "ecc7f78090fec72d98cab89218cc9eff3b30f7689038066ad9deeedc9cf529b4",
+  "reference_sha256": "da8d81b3573b4f07ff1dd41467b26b85388c237f9f86b77c51e4d464193c2075",
+  "output_prefix": "do-reliza/mira/hunyuan21-mira-v1-20261024",
+  "source_template": "https://github.com/Comfy-Org/workflow_templates/blob/main/templates/3d_hunyuan3d-v2.1.json",
+  "changes_from_template": [
+    "Use installed separate UNET, CLIP vision and VAE instead of combined checkpoint",
+    "Composite reference alpha over white square; keep full body using crop none",
+    "Fixed seed 241020261620",
+    "Octree resolution 384 instead of 256"
+  ],
+  "preflight": {
+    "queue_running": 0,
+    "queue_pending": 0,
+    "secondary_blocked": false,
+    "vram_free_bytes": 31934299304,
+    "reserve_bytes": 2147483648
+  },
+  "scope": "shape candidate only; no generated texture, rig or animation yet",
+  "prompt_id": "b3f4481a-66af-4e99-9f30-df3f8594fe80",
+  "client_id": "158f5f25-b4b8-48b8-ac68-c4a0d5558ea9",
+  "outputs": {
+    "15": {
+      "3d": [
+        {
+          "filename": "hunyuan21-mira-v1-20261024_00001_.glb",
+          "subfolder": "do-reliza\\mira",
+          "type": "output",
+          "id": "78c1a79e-6797-4031-8659-b2378cab267a"
+        }
+      ],
+      "camera_info": [
+        null
+      ],
+      "model_3d_info": []
+    }
+  },
+  "execution_status": {
+    "status_str": "success",
+    "completed": true,
+    "messages": [
+      [
+        "execution_start",
+        {
+          "prompt_id": "b3f4481a-66af-4e99-9f30-df3f8594fe80",
+          "timestamp": 1792848461022
+        }
+      ],
+      [
+        "execution_cached",
+        {
+          "nodes": [],
+          "prompt_id": "b3f4481a-66af-4e99-9f30-df3f8594fe80",
+          "timestamp": 1792848461022
+        }
+      ],
+      [
+        "execution_success",
+        {
+          "prompt_id": "b3f4481a-66af-4e99-9f30-df3f8594fe80",
+          "timestamp": 1792848524262
+        }
+      ]
+    ]
+  },
+  "raw_glb_sha256": "4478e82585e5c376903ff8c40cd3c685d835078c72feedabaebba228dcc9fe6b",
+  "workflow_sha256_normalized_lf": "b9185c9ff0713566e18e7e310a55d6355f2bf7fa81f4487d822ecdf96121cbf8",
+  "workflow_hash_note": "workflow_sha256 records exact submitted bytes; normalized_lf is stable after Git newline conversion",
+  "source_template_snapshot": "hunyuan21-official-source.json",
+  "source_template_sha256_normalized_lf": "b240b34e2524255a4f202de5ebb80e37e36af6ea8ddba3761dd20be11b1c5929"
+}
