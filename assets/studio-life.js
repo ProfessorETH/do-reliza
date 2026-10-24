@@ -1,16 +1,16 @@
 import { AGENTS } from '../data.js';
 
 const clamp = n => Math.max(0, Math.min(100, n));
-const member = () => ({ energy: 85, stress: 15, morale: 70, breaks: 0, raises: 0, praised: 0, warnings: 0 });
+const member = () => ({ energy: 85, stress: 15, morale: 70, breaks: 0, restTrip: null, restSerial: 0, raises: 0, praised: 0, warnings: 0 });
 export const CONTRACTS = [
   { id: 'festival', name: 'Орбита · фестиваль', client: 'Школьный клуб', text: 'Первый показ космической игры. Собрать три батареи и доставить их на станцию.', budget: 36000, deadline: 16, reward: 4500, factors: {} },
   { id: 'club', name: 'Орбита · исследователи', client: 'Кружок астрономии', text: 'Новый маршрут для кружка. Больше работы над картой и проверкой понятности интерфейса.', budget: 43000, deadline: 18, reward: 5500, factors: { design: 1.35, qa: 1.2 } },
   { id: 'cup', name: 'Орбита · кубок пилотов', client: 'Организаторы турнира', text: 'Сложный маршрут для турнира. Механика и тесты займут больше времени; срок короче.', budget: 45000, deadline: 15, reward: 7000, factors: { code: 1.3, qa: 1.3 } },
 ];
 export const UPGRADES = [
-  { id: 'lounge', name: 'Обустроить зону отдыха', price: 2500, text: 'Перерыв восстанавливает 45 энергии вместо 30. Используем существующую зону офиса.' },
-  { id: 'quiet', name: 'Организовать тихий офис', price: 3000, text: 'Договорённости о созвонах: напряжение от работы +1 вместо +2; событие с шумом решается без потери часа.' },
-  { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
+  { id: 'lounge', name: 'Обустроить зону отдыха', price: 2500, text: 'В зоне отдыха появятся мягкая накидка и чайный набор. Перерыв восстанавливает 45 энергии вместо 30.' },
+  { id: 'quiet', name: 'Организовать тихий офис', price: 3000, text: 'На столах появятся акустические экраны: напряжение от работы +1 вместо +2; событие с шумом решается без потери часа.' },
+  { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'У столов появятся новые системные блоки. Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
 ];
 export const INCIDENTS = {
   noise: { title: 'Созвон за соседним столом', text: 'Громкое обсуждение мешает сосредоточиться. Сотрудник уже несколько раз терял мысль.', upgrade: 'quiet', care: 'Договориться о тихом часе', effect: 'Напряжение −12 · +1 ч без тихого офиса' },
@@ -21,12 +21,44 @@ export const INCIDENTS = {
 export function ensureLife(s) {
   if (!s.life) s.life = { version: 1, cash: 5000, completed: 0, contract: 'festival', upgrades: [], members: {}, history: [], seed: Math.floor(Math.random() * 0x100000000), incident: null, incidentDone: false, settled: false, departures: [] };
   for (const a of AGENTS) s.life.members[a.id] ||= member();
+  for (const id of s.team) {
+    const m = s.life.members[id];
+    m.restSerial ??= 0;
+    if (m.breaks && !m.restTrip) m.restTrip = { phase: 'resting', slot: s.team.indexOf(id) }; // Old saved breaks have already started.
+  }
+  // Older builds allowed three simultaneous standing breaks. Preserve every
+  // recovery entitlement, but restore a single occupant of the physical chair.
+  let owner = false;
+  for (const id of s.team) {
+    const m = s.life.members[id];
+    if (!['outbound','resting'].includes(m.restTrip?.phase)) continue;
+    if (owner) m.restTrip.phase = 'queued';
+    else owner = true;
+  }
+  callNextBreak(s);
   return s.life;
+}
+export const restInTransit = s => s.team.some(id => ['outbound','returning'].includes(s.life?.members[id]?.restTrip?.phase));
+export const awayForRest = m => !!(m?.breaks || m?.restTrip) && m?.restTrip?.phase !== 'queued';
+function callNextBreak(s) {
+  if (s.team.some(id => { const t=s.life.members[id].restTrip;return t && t.phase!=='queued'; })) return;
+  const id=s.team.filter(id=>s.life.members[id].restTrip?.phase==='queued').sort((a,b)=>(s.life.members[a].restTrip.request||0)-(s.life.members[b].restTrip.request||0))[0];
+  if(id) { s.life.members[id].restTrip.phase='outbound';s.log.push(`${AGENTS.find(a=>a.id===id).name}: кресло освободилось, пора на перерыв.`); }
+}
+export function restArrival(s, id, arrival) {
+  const m = s.life?.members[id], trip = m?.restTrip;
+  if (!s.team.includes(id) || !trip) return false;
+  if (arrival === 'resting' && trip.phase === 'outbound') { trip.phase = 'resting'; return true; }
+  if (arrival === 'back' && trip.phase === 'returning') { m.restTrip = null; callNextBreak(s); return true; }
+  return false;
 }
 export const contractFor = s => CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0];
 export function condition(s, id) {
   const m = ensureLife(s).members[id];
-  if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час; остальные продолжают работу.', factor: 1 };
+  if (m.restTrip?.phase === 'queued') return { label: 'Ждёт свободное кресло', reason: 'Перерыв запланирован. Пока кресло занято, сотрудник продолжает работу; затем пойдёт отдыхать сам.', factor: m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1 };
+  if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Игровой час начнётся после прибытия.', factor: 1 };
+  if (m.restTrip?.phase === 'returning') return { label: 'Возвращается за компьютер', reason: 'Перерыв завершён. Работа продолжится после возвращения на своё место.', factor: 1 };
+  if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час в зоне отдыха; остальные продолжают работу.', factor: 1 };
   if (m.energy <= 25 && m.stress >= 65) return { label: 'На грани выгорания', reason: 'Мало энергии и много напряжения. Нужны отдых и помощь с причиной затруднений.', factor: .75 };
   if (m.energy < 35) return { label: 'Усталость', reason: 'Долго работает без отдыха. Перерыв вернёт энергию.', factor: .9 };
   if (m.stress >= 65) return { label: 'Нужна поддержка', reason: 'Накопилось напряжение от работы и событий. Помогут разбор и отдых.', factor: .9 };
@@ -37,7 +69,7 @@ export function lifeHour(s, active, completed) {
   const l = ensureLife(s);
   for (const id of s.team) {
     const m = l.members[id], task = active.find(t => s.assignments[t.id] === id);
-    if (m.breaks) { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); }
+    if (m.breaks && m.restTrip?.phase === 'resting') { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); m.restTrip = { phase: 'returning', slot: s.team.indexOf(id) }; }
     else if (task) {
       m.energy = clamp(m.energy - 7);
       const difficult = AGENTS.find(a => a.id === id).stats[task.skill] < 60;
@@ -77,8 +109,11 @@ export function careFor(s, id, action) {
   const l = ensureLife(s), m = l.members[id];
   if (!s.team.includes(id)) return 'Выбери сотрудника команды.';
   if (action === 'break') {
-    if (s.stage !== 'work' || m.breaks) return 'Перерыв доступен во время работы, один за раз.';
-    m.breaks = 1; s.log.push(`${AGENTS.find(a => a.id === id).name} отдыхает следующий час. Остальные продолжают работу.`);
+    if (s.stage !== 'work' || m.breaks || m.restTrip) return 'Перерыв доступен во время работы, один за раз. Сначала вернись к компьютеру.';
+    const occupied=s.team.some(a=>l.members[a].restTrip);
+    const request=1+Math.max(0,...s.team.map(a=>l.members[a].restTrip?.request||0));
+    m.breaks = 1; m.restSerial = (m.restSerial || 0) + 1; m.restTrip = { phase: occupied?'queued':'outbound', slot: s.team.indexOf(id), request };
+    s.log.push(`${AGENTS.find(a => a.id === id).name} ${occupied?'ждёт свободное кресло и пока продолжает работу.':'идёт в зону отдыха на один игровой час. Остальные продолжат работу.'}`);
   } else if (action === 'praise') {
     if (!['work', 'result'].includes(s.stage)) return 'Поблагодарить можно за готовую задачу.';
     const count = Object.keys(s.progress).filter(t => s.assignments[t] === id && s.progress[t] >= 100).length;
@@ -131,6 +166,8 @@ export function validLife(s) {
     && Array.isArray(l.departures) && l.departures.every(id => s.team.includes(id))
     && (l.away === undefined || (Array.isArray(l.away) && l.away.every(id => AGENTS.some(a => a.id === id) && !s.team.includes(id))))
     && Array.isArray(l.history) && l.history.every(h => h && typeof h.name === 'string' && integer(h.score, 0, 100) && integer(h.reward, 0) && Number.isFinite(h.time) && h.time >= 0)
-    && l.members && AGENTS.every(a => { const m = l.members[a.id]; return m && ['energy','stress','morale'].every(k => Number.isFinite(m[k]) && m[k] >= 0 && m[k] <= 100) && integer(m.breaks,0,1) && integer(m.raises,0,3) && integer(m.praised,0,5) && integer(m.warnings,0); })
+    && l.members && AGENTS.every(a => { const m = l.members[a.id]; return m && ['energy','stress','morale'].every(k => Number.isFinite(m[k]) && m[k] >= 0 && m[k] <= 100) && integer(m.breaks,0,1) && integer(m.raises,0,3) && integer(m.praised,0,5) && integer(m.warnings,0)
+      && (m.restSerial === undefined || integer(m.restSerial,0))
+      && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,2) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
     && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && !l.incidentDone);
 }

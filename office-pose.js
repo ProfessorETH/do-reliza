@@ -1,5 +1,6 @@
-import * as THREE from './vendor/three/three.module.js';
 import { updateOfficeSkin } from './office-skeleton.js?v=0.6.0';
+import * as THREE from './vendor/three/three.module.js';
+import { LOUNGE_SEAT } from './office-layout.js?v=seated-breaks-20261024-v2';
 
 const { lerp, clamp, smoothstep } = THREE.MathUtils;
 const DOWN = new THREE.Vector3(0, -1, 0);
@@ -40,15 +41,17 @@ function arm(j, side, target, palmAngle, spread, blend) {
 
 export function poseActor(actor, elapsed, reduced) {
   const j = actor.joints, s = actor.sit, t = reduced ? 0 : elapsed + actor.order * 1.73;
+  const lounge=actor.loungeBlend||0, rest=actor.restBlend||0;
+  const anchored=['rest-lower','rest-rise'].includes(actor.state);
   const stride = reduced ? 0 : actor.gait, wave = Math.sin(actor.phase * Math.PI * 2);
   const breath = reduced ? 0 : Math.sin(t * 1.7) * .004, lowerLean = Math.sin(s * Math.PI) * .17;
-  j.Hips.position.set(0, lerp(.88 - stride * .045 + Math.cos(actor.phase * Math.PI * 4) * stride * .006, .60, s), 0);
+  j.Hips.position.set(0, lerp(.88 - stride * .045 + Math.cos(actor.phase * Math.PI * 4) * stride * .006, lerp(.60,LOUNGE_SEAT.hipHeight,lounge), s), 0);
   j.Hips.rotation.set(0, reduced ? 0 : wave * stride * .025, 0);
-  j.Torso.rotation.set(-lowerLean - s * (.04 + actor.workBlend * .07), reduced ? 0 : wave * stride * -.025, breath * .4);
+  j.Torso.rotation.set(-lowerLean - s * (.04 + actor.workBlend * .07) + rest*(.16+(reduced?0:Math.sin(t*.9)*.012)), reduced ? 0 : wave * stride * -.025, breath * .4);
   j.Torso.scale.y = 1 + breath * (1 - stride);
   const event = actor.eventBlend || 0, result = actor.activity.stage === 'result';
   const think = actor.workBlend * (1 - smoothstep(t % 8, 5.7, 6.4));
-  j.Head.rotation.set(lerp(0, -.035, actor.workBlend), reduced ? 0 : lerp(Math.sin(t * .75) * .065 * (1 - stride), .27, event) + Math.sin(t * 2.1) * .018 * think, 0);
+  j.Head.rotation.set(lerp(0, -.035, actor.workBlend)+rest*.035, reduced ? 0 : lerp(Math.sin(t * .75) * .065 * (1 - stride), .27, event*(1-rest)) + Math.sin(t * 2.1) * .018 * think, rest*(reduced?0:Math.sin(t*.55)*.025));
   const blinkTime = (t + actor.order * .77) % 4.3;
   const blink = reduced ? 1 : 1 - Math.sin(clamp(blinkTime / .15, 0, 1) * Math.PI) * .97;
   for (const side of ['Left', 'Right']) {
@@ -56,19 +59,20 @@ export function poseActor(actor, elapsed, reduced) {
     if (actor.eyeMeshes?.[side]) actor.eyeMeshes[side].scale.y=blink;
     const sign = side === 'Left' ? -1 : 1;
     const foot = footstep(actor.phase + (sign > 0 ? .5 : 0), stride);
-    const forward = lerp(foot.y, SEATED_ANKLE, s), lift = foot.lift * (1 - s);
-    const pitch = foot.pitch * (1 - s), sole = actor.soleHeight(side,pitch);
+    const forward = anchored ? lerp(.06,LOUNGE_SEAT.footForward,s) : lerp(foot.y, lerp(SEATED_ANKLE,LOUNGE_SEAT.footForward,lounge), s), lift = anchored?0:foot.lift * (1 - s);
+    const pitch = anchored?0:foot.pitch * (1 - s), sole = actor.soleHeight(side,pitch);
     const [hip, knee] = legAngles(forward, j.Hips.position.y - sole - lift);
     j[side + 'Thigh'].rotation.set(hip, 0, 0); j[side + 'Shin'].rotation.set(knee, 0, 0); j[side + 'Foot'].rotation.set(-hip - knee + pitch, 0, 0);
     j[side + 'UpperArm'].rotation.set(-wave * sign * stride * .4, 0, -sign * .035);
-    j[side + 'Forearm'].rotation.set(.10 + stride * .16, 0, 0);
+    j[side + 'Forearm'].rotation.set(.10 + stride * .16 + (actor.restBlend || 0) * (side === 'Left' ? .45 : .18), 0, 0);
     if (j[side + 'Wrist']) j[side + 'Wrist'].rotation.set(.04, 0, 0);
     const mouse = side === 'Right' ? actor.mouseBlend || 0 : 0;
     const typing = actor.workBlend * (reduced ? 1 : smoothstep(t % 8, .3, .7) * (1 - smoothstep(t % 8, 5.7, 6.2)));
     const tap = reduced ? 0 : Math.sin(t * (side === 'Left' ? 15 : 13) + sign) * .002 * typing;
     const x = lerp(sign * .14, .43 + (reduced ? 0 : Math.sin(t * 2) * .006), mouse);
     const target = new THREE.Vector3(lerp(sign * .18, x, actor.workBlend), lerp(.73, lerp(.864,.870,mouse) + tap, actor.workBlend) - j.Hips.position.y, -lerp(.24, lerp(.55,.46,mouse), actor.workBlend));
-    target.lerp(new THREE.Vector3(sign * .30, .84 - j.Hips.position.y, -.30), event);
+    target.lerp(new THREE.Vector3(sign * .30, .84 - j.Hips.position.y, -.30), event*(1-rest));
+    target.lerp(new THREE.Vector3(sign*.21, .78-j.Hips.position.y, -.25), lounge*s);
     let palmAngle = lerp(.8, Math.PI / 2, actor.workBlend);
     if (result && actor.reactionTime < 2.8 && side === 'Right' && !reduced) {
       const wave = smoothstep(actor.reactionTime,0,.4) * (1 - smoothstep(actor.reactionTime,2,2.8));

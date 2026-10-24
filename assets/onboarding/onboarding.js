@@ -1,6 +1,7 @@
-import { STORY, guideFor } from './onboarding-model.js?v=unified-20261024';
+import { STORY, guideFor } from './onboarding-model.js?v=seated-breaks-20261024-v2';
 
-const AVATAR = new URL('./nika-avatar.webp', import.meta.url).href;
+import { assetURL } from '../../asset-url.js';
+const AVATAR = assetURL('onboarding/nika-avatar.webp');
 const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 const character = expression => `<span class="nika-character" data-expression="${expression}" role="img" aria-label="Ника, помощница студии"></span>`;
 
@@ -25,7 +26,8 @@ export function createOnboarding({ storageKey, pause, refresh, sound }) {
 
   function animateCharacters(key, text, voiceKey = key) {
     if (document.hidden || (!storyDialog.open && (!preferences.enabled || preferences.collapsed))) { stopAnimation(); sound?.stopVoice(); return; }
-    if (lastLine !== key) { lastLine = key; sound?.speak(voiceKey); }
+    const lineKey = `${key}:${voiceKey}`;
+    if (lastLine !== lineKey) { lastLine = lineKey; sound?.speak(voiceKey); }
   }
 
   function finishStory(enabled = true) {

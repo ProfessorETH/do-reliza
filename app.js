@@ -1,16 +1,16 @@
-import { createOnboarding } from './assets/onboarding/onboarding.js?v=workspace-20261024';
-import { renderStartScreen } from './assets/start-screen.js?v=unified-20261024';
-import { createSound } from './assets/sound.js?v=unified-20261024';
-import { WAITING } from './office-layout.js?v=0.5.3-workspace';
-import { createDemoGame } from './demo.js?v=unified-20261024';
-import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './office-world.js?v=0.5.3-workspace';
-import { renderOffice } from './office.js?v=0.5.3-workspace';
+import { createOnboarding } from './assets/onboarding/onboarding.js?v=seated-breaks-20261024-v2';
+import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
+import { createSound } from './assets/sound.js?v=nika-alina-20261024-v3';
+import { WAITING } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { createDemoGame } from './demo.js?v=seated-breaks-20261024-v2';
+import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo } from './assets/office-runtime.js?v=seated-breaks-20261024-v2';
+import { renderOffice } from './office.js?v=seated-breaks-20261024-v2';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=3-workspace';
-import { ensureLife, condition, careFor, buyUpgrade, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
-import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=unified-20261024';
-import { nextProject } from './engine.js?v=unified-20261024';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=unified-20261024';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, INCIDENTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
+import { lifeSummary, memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=seated-breaks-20261024-v2';
+import { nextProject } from './engine.js?v=seated-breaks-20261024-v2';
+import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=seated-breaks-20261024-v2';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
@@ -20,6 +20,7 @@ const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
 const MINI = DEMO ? 'before-release-demo-orbit-v1' : 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
 let workspaceView = 'project';
+let soundPreviewed = false;
 let officeExpanded = false;
 let game = null, candidate = 'mira', difficulty = 'calm', automatic = null, saved = null, savingAvailable = true, mini = null;
 const fit = (id, task) => baseFit(id, task, game);
@@ -76,7 +77,7 @@ function radar(a) {
   </svg>`;
 }
 function intro() {
-  return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundButton: sound.button(icon) });
+  return renderStartScreen({ difficulty, saved, demo: DEMO, logo, icon, money, soundButton: sound.button(icon), soundEnabled:sound.enabled, soundPreviewed });
 }
 function topbar() {
   return `<header class="topbar game-topbar">${logo()}<div class="project-title"><span class="tiny">ЗАКАЗ ${game.life.completed+(game.stage==='result'?0:1)}</span>${esc(contractFor(game).name)} ${badge(DEMO?'ДЕМО':'СТУДИЯ')}</div><div class="hud-stats"><div class="hud-stat">${icon('wallet')}<span><small>Резерв проекта</small><strong>${money(game.budget)}</strong></span></div><div class="hud-stat ${game.time>game.deadline?'late':''}">${icon('clock')}<span><small>${game.time>game.deadline?'Задержка':'До показа'}</small><strong>${game.time>game.deadline?'+':''}${Math.abs(game.deadline-game.time)} ч</strong></span></div>${sound.button(icon)}<button class="icon-btn" data-action="menu" aria-label="Меню игры">${icon('info')}</button></div></header>`;
@@ -95,20 +96,21 @@ function planPanel() {
   const complete=TASKS.every(t=>game.assignments[t.id]);
   return `<div class="panel-header"><div class="eyebrow">2 / 4 · ЗАДАЧИ</div><h1>Кто за что отвечает?</h1><p>Выбери исполнителя для каждой задачи.</p></div>
     <div class="dependency-map" aria-label="Порядок задач: задание, затем экран и код параллельно, потом тесты и сборка"><span>Задание</span><b>→</b><span class="parallel-tasks"><i>Экран</i><i>Код</i></span><b>→</b><span>Тесты</span><b>→</b><span>Сборка</span></div>
-    <div class="plan-toolbar"><span>Один агент — одна задача за раз</span><button class="text-button" data-action="recommend">Подсказать ${icon('info',14)}</button></div>
-    <div class="task-plan">${TASKS.map((t,i)=>{const id=game.assignments[t.id];const f=fit(id,t);return `<article class="plan-task"><div class="task-number">0${i+1}</div><div class="task-body"><h2><button class="task-info" data-action="task-info" data-id="${t.id}" aria-label="Подробнее: ${t.name}">${t.name}</button></h2><p>${t.description}</p><div class="task-select-row"><select aria-label="Исполнитель: ${t.name}" data-task="${t.id}"><option value="">Выбрать агента</option>${game.team.map(aid=>{const a=agentById(aid);return `<option value="${aid}" ${id===aid?'selected':''}>${a.name} · ${SKILLS.find(s=>s.key===t.skill).label} ${a.stats[t.skill]}</option>`;}).join('')}</select>${id?`<span class="fit ${f>=75?'good':f>=55?'medium':'low'}">${f}/100</span>`:''}</div></div></article>`;}).join('')}</div>
-    ${game.assignments.design&&game.assignments.design===game.assignments.code?'<div class="warning-note">Один агент назначен на код и дизайн. Эти задачи будут выполняться по очереди.</div>':''}
+    <div class="plan-toolbar"><span>Один разработчик — одна задача за раз</span><button class="text-button" data-action="recommend">Подсказать ${icon('info',14)}</button></div>
+    <div class="task-plan">${TASKS.map((t,i)=>{const id=game.assignments[t.id];const f=fit(id,t);return `<article class="plan-task"><div class="task-number">0${i+1}</div><div class="task-body"><h2><button class="task-info" data-action="task-info" data-id="${t.id}" aria-label="Подробнее: ${t.name}">${t.name}</button></h2><p>${t.description}</p><div class="task-select-row"><select aria-label="Исполнитель: ${t.name}" data-task="${t.id}"><option value="">Выбрать разработчика</option>${game.team.map(aid=>{const a=agentById(aid);return `<option value="${aid}" ${id===aid?'selected':''}>${a.name} · ${SKILLS.find(s=>s.key===t.skill).label} ${a.stats[t.skill]}</option>`;}).join('')}</select>${id?`<span class="fit ${f>=75?'good':f>=55?'medium':'low'}">${f}/100</span>`:''}</div></div></article>`;}).join('')}</div>
+    ${game.assignments.design&&game.assignments.design===game.assignments.code?'<div class="warning-note">Один разработчик назначен на код и дизайн. Эти задачи будут выполняться по очереди.</div>':''}
     <div class="panel-bottom"><button class="primary full" data-action="work" ${complete&&teamSeated(game)&&!officeMoving?'':'disabled'}>${officeMoving?'Команда занимает места…':!teamSeated(game)?'Сначала рассади команду':'Начать смену'} ${icon('play',17)}</button><button class="text-button centered" data-action="back-hire">Изменить команду</button></div>`;
 }
 function workPanel() {
   const active=activeTasks(game);
+  const travelling=restInTransit(game);
   const support=active.reduce((low,t)=>!low||fit(game.assignments[t.id],t)<fit(game.assignments[low.id],low)?t:low,null);
-  return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги агенту с его задачей.</p></div>
-    <div class="work-controls"><button class="primary" data-action="tick">${icon('clock',18)} Следующий час</button><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!automatic}">${icon(automatic?'pause':'play',16)} ${automatic?'Пауза':'Авто'}</button></div>
-    <div class="time-strip">Прошло <strong>${game.time} ч</strong><span>План: ${game.deadline} ч</span></div>
-    <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':'Агент занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
+  return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги разработчику с его задачей.</p></div>
+    <div class="work-controls"><button class="primary" data-action="tick" ${travelling?'disabled':''}>${icon('clock',18)} ${travelling?'В пути…':'Следующий час'}</button><button class="secondary auto-toggle" data-action="auto" aria-pressed="${!!automatic}">${icon(automatic?'pause':'play',16)} ${automatic?'Пауза':'Авто'}</button></div>
+    <div class="time-strip" role="status">Прошло <strong>${game.time} ч</strong><span>${travelling?'Дорога не расходует часы':`План: ${game.deadline} ч`}</span></div>
+    <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':'Разработчик занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
     <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div><button class="text-button" data-action="activity">Журнал ↗</button>${game.log.slice(-1).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
-    ${game.support?`<div class="support-done">${icon('check',18)}<span>Разбор проведён: ${agentById(game.support.agentId).name}<small>Навык для задачи «${TASKS.find(t=>t.id===game.support.taskId).name}» повышен на 15, максимум до 100.</small></span></div>`:support?`<div class="support-card"><div class="eyebrow">ПОМОЩЬ ТИМЛИДА</div><h2>${agentById(game.assignments[support.id]).name}: «${support.name}»</h2><p>Разберите задачу вместе. Агент лучше справится с ней, но ты потратишь час.</p><button class="secondary full" data-action="support" data-id="${support.id}">Помочь с задачей <span>+1 ч</span></button></div>`:''}`;
+    ${game.support?`<div class="support-done">${icon('check',18)}<span>Разбор проведён: ${agentById(game.support.agentId).name}<small>Навык для задачи «${TASKS.find(t=>t.id===game.support.taskId).name}» повышен на 15, максимум до 100.</small></span></div>`:support?`<div class="support-card"><div class="eyebrow">ПОМОЩЬ ТИМЛИДА</div><h2>${agentById(game.assignments[support.id]).name}: «${support.name}»</h2><p>Разберите задачу вместе. Разработчик лучше справится с ней, но ты потратишь час.</p><button class="secondary full" data-action="support" data-id="${support.id}">Помочь с задачей <span>+1 ч</span></button></div>`:''}`;
 }
 function eventPanel() {
   if (game.currentEvent === 'life') {
@@ -131,7 +133,7 @@ function resultPanel() {
     <div class="result-metrics"><div><small>Качество работы</small><b>${r.quality}%</b></div><div><small>Срок</small><b class="${r.late?'coral':'mint'}">${r.late?`+${r.late} ч`:'Вовремя'}</b></div><div><small>Резерв</small><b>${money(game.budget)}</b></div><div><small>Доверие к команде</small><b>${game.trust}%</b></div></div>
     <button class="game-preview" data-action="play-mini"><span class="preview-space"><i>✦</i>${icon('rocket',48)}<i>✧</i></span><span><small>СДЕЛАНО ВАШЕЙ КОМАНДОЙ</small><b>ОРБИТА</b><span>Сыграть в получившуюся игру ${icon('arrow',16)}</span></span>${icon('play',24)}</button>
     <div class="release-features">${game.wallBug?'<span class="coral">Ошибка: астероиды не останавливают корабль</span>':''}<span>${icon(game.shield?'check':'cross',14)} ${game.shield?'Защитный щит':'Без щита'}</span><span>${icon(game.checkpoint&&!game.criticalBug?'check':'cross',14)} ${game.criticalBug?'Баг сохранения':game.checkpoint?'Сохранение работает':'Сессия без сохранения'}</span></div>
-    <div class="career-result"><span class="eyebrow">ЧТО ДЕЛАЛ ТИМЛИД</span><h2>Помог команде выпустить игру</h2><ul class="lead-recap"><li>${game.support?'Разобрал сложную задачу вместе с агентом':'Распределил задачи по навыкам'}</li><li>${game.choices.review==='review-skip'?'Пропустил ошибку при проверке кода':'Нашёл ошибку при проверке кода'}</li><li>Решил, что исправлять перед показом</li></ul><button class="text-button" data-action="debrief">Почему такой результат? ${icon('arrow',15)}</button></div>
+    <div class="career-result"><span class="eyebrow">ЧТО ДЕЛАЛ ТИМЛИД</span><h2>Помог команде выпустить игру</h2><ul class="lead-recap"><li>${game.support?'Разобрал сложную задачу вместе с разработчиком':'Распределил задачи по навыкам'}</li><li>${game.choices.review==='review-skip'?'Пропустил ошибку при проверке кода':'Нашёл ошибку при проверке кода'}</li><li>Решил, что исправлять перед показом</li></ul><button class="text-button" data-action="debrief">Почему такой результат? ${icon('arrow',15)}</button></div>
     <section class="life-result" aria-label="Развитие студии"><h2>Студия живёт дальше</h2><p>За этот заказ: +${money(game.life.history.at(-1)?.reward||0)} в кассу. Всего: ${money(game.life.cash)}. Команда и улучшения сохраняются в следующей смене.</p>${game.life.departures.length?'<p class="life-notice">Есть риск ухода сотрудников. Проверь состояние команды до следующего заказа.</p>':''}<button class="primary" data-action="life-contracts">Следующий заказ →</button><button class="secondary" data-action="life-office">Обустройство и касса</button></section><div class="panel-bottom"><button class="secondary full" data-action="restart">${icon('reset',17)} Начать новую студию</button></div>`;
 }
 function timeline() {
@@ -145,13 +147,14 @@ function render() {
   const oldAction=focused?.dataset?.action, oldId=focused?.dataset?.id, oldTask=focused?.dataset?.task;
   const nextStage=game?.stage||'intro', stageChanged=nextStage!==renderedStage;
   renderedStage=nextStage;
-  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); onboarding.sync(null); if(stageChanged)window.scrollTo(0,0); return; }
+  if (!game) { detachOfficeWorld(); root.innerHTML=intro(); if(stageChanged){onboarding.sync(null);window.scrollTo(0,0);} return; }
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:eventPanel,result:resultPanel};
   if (stageChanged) { workspaceView = 'project'; officeExpanded = false; }
   root.innerHTML=`<main class="game-shell ${game.stage==='event'?'event-state':''}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${timeline()}<nav class="workspace-tabs" aria-label="Игровые экраны"><button data-action="workspace" data-id="office" aria-pressed="${workspaceView==='office'}">${icon('people',16)} Студия <span>${game.team.length}/3</span></button><button data-action="workspace" data-id="project" aria-pressed="${workspaceView==='project'}">${icon('brief',16)} ${({hire:'Команда',plan:'План',work:'Смена',event:'Решение',result:'Результат'})[game.stage]}</button></nav><div class="game-layout">${scene()}<section class="control-panel" aria-label="Управление проектом">${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
+    onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
     onActor:id=>{if(!game)return;if(['hire','plan'].includes(game.stage)){officeSelection=officeSelection===id?null:id;render();}else inspect(id);},
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -177,13 +180,13 @@ function officeDeskAction(index) {
   if(['hire','plan'].includes(game.stage)){
     if(officeSelection){const name=agentById(officeSelection).name;const error=seatAgent(game,officeSelection,index);if(error)toast(error);else{officeSelection=null;persist();render();toast(`${name} направляется к компьютеру ${index+1}.`);}}
     else if(occupant){officeSelection=occupant;render();}
-    else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми агента.');
+    else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми разработчика.');
   }else if(occupant)inspect(occupant);
 }
 function advance() { if(tick(game)){if(game.stage!=='work')stopAuto(); persist();render();} }
 function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ СТУДИЯ</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Команда, касса, улучшения и история заказов будут заменены. Для продолжения текущей студии выбери следующий заказ после релиза.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
-function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих агентов и посади каждого за компьютер: выбери персонажа, затем рабочее место. Он дойдёт до него и сядет. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро агент работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с агентом.</p><p class="small-muted">Это игровая модель профессии. Агенты — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
+function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков и посади каждого за компьютер: выбери персонажа, затем рабочее место. Он дойдёт до него и сядет. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час». Во время обсуждения оно стоит. Сложную задачу можно разобрать вместе с разработчиком.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
   const a=agentById(id); if(!a)return;
   if(game.stage==='hire'){candidate=id;render();return;}
@@ -194,7 +197,7 @@ function inspect(id) {
 }
 function debrief() {
   const r=getResult(game), weakest=TASKS.reduce((a,b)=>fit(game.assignments[a.id],a)<fit(game.assignments[b.id],b)?a:b);
-  showDialog(`<div class="eyebrow">РАЗБОР ПРОЕКТА</div><h2 id="dialog-title">Что изменили ваши решения</h2><ul class="debrief-list"><li><b>Подбор и распределение.</b> Среднее соответствие навыков задачам — ${r.quality}%. Самое слабое место: «${weakest.name}» (${fit(game.assignments[weakest.id],weakest)}/100).</li><li><b>Объём.</b> ${game.choices.scope==='focus'?'Вы договорились перенести новую функцию. Это сохранило время и резерв.':game.choices.scope==='shield'?'Добавили щит за 2 000 ₽ и увеличили объём кода. Щит работает в вашей мини-игре.':'Обменяли часть оформления на щит. Дополнительная механика появилась, интерфейс стал проще.'}</li><li><b>Качество.</b> ${game.choices.bug==='fix'?'Вы потратили 2 часа и 1 500 ₽, чтобы исправить сохранение. Теперь мини-игра восстанавливает прогресс.':game.choices.bug==='cut'?'Вы честно сократили функциональность. Мини-игру нужно проходить за одну сессию.':'Вы выпустили известную ошибку. При перезапуске мини-игры прогресс теряется.'}</li><li><b>Проверка кода.</b> ${game.wallBug ? 'Проверка пропущена. В мини-игре корабль проходит сквозь астероиды.' : 'Вы исправили порядок действий: проверка препятствия выполняется до движения.'}</li><li><b>Помощь.</b> ${game.support ? 'Вы провели совместный разбор: агент лучше справился с конкретной задачей, но понадобился дополнительный час.' : 'В этой смене команда справлялась без совместного разбора.'}</li><li><b>Срок.</b> ${r.late?`Задержка ${r.late} ч. Резерв времени и параллельная работа помогут в следующей попытке.`:'Команда уложилась в согласованный срок.'}</li></ul><p class="small-muted">Оценка: качество — до 45 баллов; срок — до 25; бюджет — 10; доверие — до 10; отсутствие критического бага — 10. Упрощение визуала снижает оценку на 2,4 балла.</p><button class="primary full" data-action="close-dialog">Вернуться к результату</button>`);
+  showDialog(`<div class="eyebrow">РАЗБОР ПРОЕКТА</div><h2 id="dialog-title">Что изменили ваши решения</h2><ul class="debrief-list"><li><b>Подбор и распределение.</b> Среднее соответствие навыков задачам — ${r.quality}%. Самое слабое место: «${weakest.name}» (${fit(game.assignments[weakest.id],weakest)}/100).</li><li><b>Объём.</b> ${game.choices.scope==='focus'?'Вы договорились перенести новую функцию. Это сохранило время и резерв.':game.choices.scope==='shield'?'Добавили щит за 2 000 ₽ и увеличили объём кода. Щит работает в вашей мини-игре.':'Обменяли часть оформления на щит. Дополнительная механика появилась, интерфейс стал проще.'}</li><li><b>Качество.</b> ${game.choices.bug==='fix'?'Вы потратили 2 часа и 1 500 ₽, чтобы исправить сохранение. Теперь мини-игра восстанавливает прогресс.':game.choices.bug==='cut'?'Вы честно сократили функциональность. Мини-игру нужно проходить за одну сессию.':'Вы выпустили известную ошибку. При перезапуске мини-игры прогресс теряется.'}</li><li><b>Проверка кода.</b> ${game.wallBug ? 'Проверка пропущена. В мини-игре корабль проходит сквозь астероиды.' : 'Вы исправили порядок действий: проверка препятствия выполняется до движения.'}</li><li><b>Помощь.</b> ${game.support ? 'Вы провели совместный разбор: разработчик лучше справился с конкретной задачей, но понадобился дополнительный час.' : 'В этой смене команда справлялась без совместного разбора.'}</li><li><b>Срок.</b> ${r.late?`Задержка ${r.late} ч. Резерв времени и параллельная работа помогут в следующей попытке.`:'Команда уложилась в согласованный срок.'}</li></ul><p class="small-muted">Оценка: качество — до 45 баллов; срок — до 25; бюджет — 10; доверие — до 10; отсутствие критического бага — 10. Упрощение визуала снижает оценку на 2,4 балла.</p><button class="primary full" data-action="close-dialog">Вернуться к результату</button>`);
 }
 
 const rocks=new Set(['1,1','3,1','5,1','1,3','3,3','5,3']);
@@ -239,6 +242,12 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');if(!el||el.disabled)return;
   const action=el.dataset.action,id=el.dataset.id;
   if(action==='sound'){sound.toggle();render();return;}
+  if(action==='start-sound'){
+    if(!sound.enabled)sound.toggle();
+    soundPreviewed=true; render();
+    root.querySelector('[data-action="start-sound"]')?.focus({preventScroll:true});
+    sound.unlock(); sound.speak('guide-hire',true); return;
+  }
   sound.unlock();
   sound.effect(({hire:'hire',plan:'plan',work:'plan',decision:'decision'})[action]||'click');
   if(action==='close-dialog'){dialog.close();return;}
@@ -258,7 +267,7 @@ document.addEventListener('click',e=>{
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-praise'||action==='life-raise'||action==='life-release'){
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{persist();render();showDialog(memberPanel(game,id));}return;
+    if(error)toast(error);else{if(action==='life-break')dialog.close();persist();render();if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;
@@ -287,7 +296,7 @@ document.addEventListener('click',e=>{
   if(action==='candidate'){candidate=id;render();}
   if(action==='hire'){const error=hire(game,id);if(error)toast(error);else{officeSelection=game.team.includes(id)?id:null;if(officeSelection)workspaceView='office';persist();render();if(officeSelection)toast(`${agentById(id).name} в студии. Выбери компьютер в офисе.`);}}
   if(action==='plan'){if(!officeMoving&&beginPlan(game)){officeSelection=null;persist();render();}}
-  if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один агент не может делать код и экран одновременно.');}
+  if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один разработчик не может делать код и экран одновременно.');}
   if(action==='back-hire'){game.stage='hire';persist();render();}
   if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
   if(action==='tick')advance();
@@ -307,7 +316,7 @@ document.addEventListener('click',e=>{
   if(action==='tile')moveMini(Number(el.dataset.x)-mini.x,Number(el.dataset.y)-mini.y);
   if(action==='move'){const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[el.dataset.dir];moveMini(...d);}
   if(action==='reload-mini'){openMini();toast(game.criticalBug?'Прогресс потерян: известный баг попал в релиз.':game.checkpoint?'Прогресс восстановлен из сохранения.':'Короткая сессия началась заново — как согласовано с заказчиком.');}
-  if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три агента на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
+  if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
   if(action==='menu'){stopAuto();render();showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();stopAuto();persist();game=null;render();}
 });

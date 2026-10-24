@@ -1,0 +1,5 @@
+.graphics-settings{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0;color:var(--muted);font-size:12px}
+.graphics-settings a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;color:var(--text);text-decoration:none}
+.graphics-settings a[aria-current]{border-color:var(--amber);color:var(--amber)}
+.graphics-settings a:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.graphics-settings small{flex-basis:100%;max-width:52ch;line-height:1.5}

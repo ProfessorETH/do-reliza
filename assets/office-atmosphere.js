@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from '../vendor/three/loaders/GLTFLoader.js';
+import { assetURL } from '../asset-url.js';
 
 const DESKS = [[-2.65, 1.95], [1.4, 1.95], [-.9, -1.45]];
-const dressingURL = new URL('./models/office-dressing.glb', import.meta.url);
-const cozyURL = new URL('./models/office-cozy.glb?v=1', import.meta.url);
-const shellURL = new URL('./models/office-shell.glb?v=1', import.meta.url);
+const dressingURL = new URL(assetURL('models/office-dressing.glb'));
+const cozyURL = new URL(assetURL('models/office-cozy.glb?v=1'));
+const shellURL = new URL(assetURL('models/office-shell.glb?v=1'));
 const decorationLoads = new Map();
 
 function eveningWindow(mesh) {

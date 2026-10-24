@@ -1,6 +1,6 @@
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
-import { isWalkable } from './office-layout.js';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, CONTRACTS, contractFor } from './assets/studio-life.js?v=unified-20261024';
+import { isWalkable } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=seated-breaks-20261024-v2';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -41,7 +41,7 @@ export function restoreOffice(state) {
 export const teamSeated = state => state.team.length === 3 && state.team.every(id => state.seats?.includes(id));
 export function seatAgent(state, agentId, index) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Пересадить команду можно до начала смены.';
-  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери агента из команды и рабочее место.';
+  if (!state.team.includes(agentId) || !Number.isInteger(index) || index < 0 || index > 2) return 'Выбери разработчика из команды и рабочее место.';
   const previous = state.seats.indexOf(agentId), occupant = state.seats[index];
   if (previous === index) return null;
   if (previous >= 0) state.seats[previous] = occupant;
@@ -51,7 +51,7 @@ export function seatAgent(state, agentId, index) {
 }
 export function walkInOffice(state, agentId, point) {
   if (!['hire', 'plan'].includes(state.stage)) return 'Во время смены команда занята задачами.';
-  if (!state.team.includes(agentId)) return 'Сначала выбери агента из команды.';
+  if (!state.team.includes(agentId)) return 'Сначала выбери разработчика из команды.';
   if (!isWalkable(point)) return 'Там мебель или край комнаты. Выбери свободный участок пола.';
   const target = point.map(n => Math.round(n * 10000) / 10000);
   if (!isWalkable(target)) return 'Слишком близко к мебели. Выбери точку чуть дальше.';
@@ -70,6 +70,7 @@ export function assign(state, taskId, agentId) {
 export const fit = (agentId, task, state) => clamp((agentById(agentId)?.stats[task.skill] || 0) + (state?.support && state.support.agentId === agentId && state.support.taskId === task.id ? 15 : 0));
 export function supportTask(state, taskId) {
   if (state.stage !== 'work') return 'Сначала вернитесь к работе.';
+  if (restInTransit(state)) return 'Дождись, пока сотрудник сядет отдыхать или вернётся за компьютер.';
   if (state.support) return 'На этой смене вы уже провели совместный разбор.';
   const task = activeTasks(state).find(t => t.id === taskId);
   if (!task) return 'Помочь можно с задачей, которая сейчас в работе.';
@@ -96,12 +97,13 @@ export function activeTasks(state) {
   const busy = new Set();
   return TASKS.filter(task => {
     const id = state.assignments[task.id];
-    if (!id || state.life?.members[id]?.breaks || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
+    if (!id || awayForRest(state.life?.members[id]) || taskStatus(state, task) !== 'ready' || busy.has(id)) return false;
     busy.add(id); return true;
   });
 }
 export function tick(state) {
   if (state.stage !== 'work') return false;
+  if (restInTransit(state)) return false; // Real-time travel never consumes extra game hours or skips the break.
   const active = activeTasks(state);
   if (!active.length && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
   if (!active.length && !state.team.some(id => state.life?.members[id]?.breaks)) return false;
@@ -183,7 +185,7 @@ export function nextProject(state, contractId) {
   l.cash -= payroll; l.away = [...l.departures]; l.departures = [];
   next.team = team; next.budget -= fees; next.seats = state.seats.map(id => team.includes(id) ? id : null);
   for (const { id } of AGENTS) {
-    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.praised = 0;
+    const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0;
     if (l.away.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;

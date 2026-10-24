@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDemoGame } from '../demo.js';
-import { createGame, restoreOffice, beginPlan, beginWork, recommend, tick, resolveEvent, validSave, nextProject, hire, activeTasks, getResult } from '../engine.js';
-import { careFor, buyUpgrade, condition, settleProject, UPGRADES } from '../assets/studio-life.js';
+import { createGame, restoreOffice, beginPlan, beginWork, recommend, tick, resolveEvent, validSave, nextProject, hire, activeTasks, getResult, supportTask } from '../engine.js';
+import { careFor, buyUpgrade, condition, settleProject, restArrival, restInTransit, UPGRADES } from '../assets/studio-life.js';
 
 function working(seed=0) {
   const s=createDemoGame();s.life.seed=seed;beginPlan(s);beginWork(s);return s;
@@ -14,17 +14,23 @@ function finish(s) {
   }
   assert.equal(s.stage,'result');assert.ok(validSave(s));return s;
 }
-test('break pauses only its employee; coworkers advance, including simultaneous breaks',()=>{
+test('break pauses only its employee; queued coworkers continue working and take turns in one chair',()=>{
   const s=working();s.progress.brief=100; // Design and code are genuinely parallel now.
   const id=s.assignments.design, other=s.assignments.code;
   s.life.members[id].energy=20;s.life.members[id].stress=70;
   assert.equal(condition(s,id).label,'На грани выгорания');
   assert.equal(careFor(s,id,'break'),null);assert.ok(!activeTasks(s).some(t=>s.assignments[t.id]===id));
+  assert.equal(tick(s),false);assert.equal(s.time,0);assert.equal(restArrival(s,id,'resting'),true);
   tick(s);assert.equal(s.progress.design,0);assert.ok(s.progress.code>0);
   assert.equal(s.life.members[id].energy,50);assert.equal(s.life.members[id].stress,55);
   assert.equal(s.life.members[id].breaks,0);assert.ok(s.life.members[other].energy<85);
+  assert.equal(tick(s),false);assert.equal(restArrival(s,id,'back'),true);
   for(const aid of s.team)assert.equal(careFor(s,aid,'break'),null);
+  assert.equal(s.team.filter(a=>s.life.members[a].restTrip.phase==='queued').length,2);
+  assert.equal(restArrival(s,s.team[0],'resting'),true);
+  assert.equal(restArrival(s,s.team[1],'resting'),false);
   assert.equal(tick(s),true);assert.ok(validSave(s));
+  assert.equal(restArrival(s,s.team[0],'back'),true);assert.equal(s.life.members[s.team[1]].restTrip.phase,'outbound');
 });
 test('gratitude cannot farm repeated rewards and mood follows actual completed work',()=>{
   const s=working(),id=s.assignments.brief,m=s.life.members[id];
@@ -52,7 +58,7 @@ test('office purchases use studio cash once and have observable simulation effec
   assert.equal(typeof buyUpgrade(s,'lounge'),'string');assert.equal(s.life.cash,2500);
   assert.equal(typeof buyUpgrade(s,'computers'),'string');assert.equal(s.life.cash,2500);
   beginPlan(s);beginWork(s);const id=s.assignments.brief;s.life.members[id].energy=10;
-  careFor(s,id,'break');tick(s);assert.equal(s.life.members[id].energy,55);
+  careFor(s,id,'break');restArrival(s,id,'resting');tick(s);assert.equal(s.life.members[id].energy,55);
   assert.equal(typeof buyUpgrade(s,'quiet'),'string');
   const fast=working(),slow=structuredClone(fast);fast.life.upgrades=['computers'];
   fast.progress.brief=slow.progress.brief=100;tick(fast);tick(slow);assert.ok(fast.progress.code>slow.progress.code);
@@ -85,6 +91,39 @@ test('legacy saves migrate and damaged simulation data cannot enter the game',()
     const bad=structuredClone(s);damage(bad);assert.equal(!!validSave(bad),false);
   }
   const bad=createGame();bad.stage='event';bad.currentEvent='life';delete bad.life;assert.equal(!!validSave(bad),false);
+});
+test('travel and rest survive reload without duplicated recovery or stale work assignments',()=>{
+  const s=working(),id=s.assignments.brief,assignments=structuredClone(s.assignments);
+  s.life.members[id].energy=10;careFor(s,id,'break');
+  let restored=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(restored));
+  assert.equal(restInTransit(restored),true);assert.equal(tick(restored),false);
+  const before=structuredClone(restored);assert.equal(typeof supportTask(restored,'brief'),'string');assert.deepEqual(restored,before);
+  assert.equal(restArrival(restored,id,'back'),false);assert.equal(restArrival(restored,id,'resting'),true);
+  assert.equal(restArrival(restored,id,'resting'),false);tick(restored);
+  assert.equal(restored.life.members[id].energy,40);
+  restored=restoreOffice(JSON.parse(JSON.stringify(restored)));assert.ok(validSave(restored));
+  assert.equal(tick(restored),false);assert.equal(restArrival(restored,id,'back'),true);
+  assert.equal(restArrival(restored,id,'back'),false);assert.deepEqual(restored.assignments,assignments);
+  tick(restored);assert.ok(restored.progress.brief>0);assert.ok(restored.life.members[id].energy<40);
+  const bad=structuredClone(restored);bad.life.members[id].restTrip={phase:'resting',slot:8};assert.equal(!!validSave(bad),false);
+});
+test('one chair serves saved queued breaks in request order without duplicate recovery',()=>{
+  let s=working();s.choices={scope:'focus',review:'review-fix',bug:'fix'};s.life.incidentDone=true;
+  for(const id of ['echo','mira','iskra']){s.life.members[id].energy=10;assert.equal(careFor(s,id,'break'),null);}
+  assert.equal(s.life.members.echo.restTrip.phase,'outbound');
+  for(const id of ['echo','mira','iskra']){
+    s=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(s));
+    assert.equal(s.life.members[id].restTrip.phase,'outbound');assert.equal(restArrival(s,id,'resting'),true);
+    const energy=s.life.members[id].energy,time=s.time;assert.equal(tick(s),true);assert.equal(s.time,time+1);
+    assert.equal(s.life.members[id].energy,Math.min(100,energy+30));
+    assert.equal(restArrival(s,id,'resting'),false);assert.equal(restArrival(s,id,'back'),true);assert.equal(restArrival(s,id,'back'),false);
+  }
+  assert.equal(s.time,3);assert.ok(s.team.every(id=>s.life.members[id].restTrip===null));
+});
+test('old simultaneous standing breaks migrate into one occupant and two queued workers',()=>{
+  const s=working();for(const [slot,id] of s.team.entries())Object.assign(s.life.members[id],{breaks:1,restTrip:{phase:'resting',slot}});
+  restoreOffice(s);assert.equal(s.team.filter(id=>s.life.members[id].restTrip.phase==='resting').length,1);
+  assert.equal(s.team.filter(id=>s.life.members[id].restTrip.phase==='queued').length,2);assert.ok(validSave(s));
 });
 test('payroll shortage does not mutate the next order and can be resolved by changing staff',()=>{
   const s=finish(working());s.life.members.mira.raises=3;s.life.cash=0;

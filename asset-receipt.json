@@ -46,5 +46,35 @@
     "method": "Native Blender meshes via MCP; waist, wrist, finger and eye pivots; runtime two-bone IK and procedural locomotion; editable control poses sampled into Blender",
     "externalGenerationUsed": false,
     "videoGenerationUsed": false
+  },
+  "hostingOptimization": {
+    "date": "2026-10-24",
+    "method": "Stock ffmpeg libwebp, quality 90, compression_level 6; no generation or geometry edits; source PNGs retained",
+    "files": [
+      {
+        "source": "assets/agents.png",
+        "output": "assets/agents.webp",
+        "sourceBytes": 2601975,
+        "outputBytes": 303594,
+        "sourceSha256": "6ec6228bb3a5c7e23ea4b07a2eba1627bc7a3c6a4454378935406a50130b9e23",
+        "outputSha256": "4c8713ae92c0121e3f57055fa161de0d4da5e420006fb4a55bee8fd7b04b2251"
+      },
+      {
+        "source": "assets/office.png",
+        "output": "assets/office.webp",
+        "sourceBytes": 2274226,
+        "outputBytes": 317250,
+        "sourceSha256": "79206ddd0d72c55f860d7b59a2eb32903a206f06d5a060f42aa5d51e09088e13",
+        "outputSha256": "317a3c4adce08bf041b4549fa53e55670801f0af68bd2880c297f1b94acd3b5a"
+      }
+    ]
+  },
+  "mobileBackground": {
+    "source": "assets/office.webp",
+    "output": "assets/office-mobile.webp",
+    "method": "ffmpeg 8.0.1, scale=768:-2, libwebp quality 75",
+    "bytes": 61196,
+    "sha256": "2b187c736a209469f0ba1adf74e3164d8900fc80e23a78e619ee890f78dd7f6b",
+    "note": "Existing still image resized; no generation or paid request"
   }
 }

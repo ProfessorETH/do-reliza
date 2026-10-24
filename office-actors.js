@@ -1,7 +1,7 @@
-import * as THREE from './vendor/three/three.module.js';
-import { DESKS, ENTRANCE, WAITING, findOfficePath, isWalkable, distance } from './office-layout.js?v=0.5.3-workspace';
-import { poseActor } from './office-pose.js?v=0.5.0';
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
+import * as THREE from './vendor/three/three.module.js';
+import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { poseActor } from './office-pose.js?v=skinned-team-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
@@ -42,33 +42,38 @@ export class OfficeActor {
     for(let i=0;i<points.length;i+=2) min=Math.min(min,points[i]*c-points[i+1]*s);
     return -min;
   }
-  get moving() { return !['idle', 'seated'].includes(this.state); }
-  get motionLabel() { return ({ walk: 'Идёт к компьютеру', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
+  get moving() { return !['idle', 'seated', 'resting'].includes(this.state); }
+  get motionLabel() { return ({ walk: this.restPhase === 'outbound' ? 'Идёт в зону отдыха' : this.restPhase === 'returning' ? 'Возвращается за компьютер' : 'Идёт к компьютеру', 'rest-align':'Подходит к креслу', 'rest-lower':'Устраивается в кресле', 'rest-rise':'Встаёт после отдыха', 'rest-exit':'Возвращается к работе', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
   transition(state) { this.state = state; this.stateTime = 0; this.stateStart = this.point; }
   destination(game, instant = false) {
-    const seat = game.seats.indexOf(this.id), point = seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
-    const signature = `${seat}:${point.join(',')}`;
+    const m = game.life?.members[this.id], trip = m?.restTrip, resting = ['outbound','resting'].includes(trip?.phase);
+    this.restPhase = trip?.phase || null; this.loungeTarget = resting;
+    const seat = resting ? -1 : game.seats.indexOf(this.id), point = resting ? LOUNGE_SEAT.point : seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
+    const signature = `${seat}:${point.join(',')}:${resting ? m.restSerial : 'desk'}`;
     if (signature === this.signature) return;
     this.signature = signature; this.seat = seat; this.goal = [...point]; this.failed = false;
     if (instant) {
-      this.group.position.set(point[0], 0, point[1]); this.sit = seat >= 0 ? 1 : 0; this.path = [];
-      this.chairSeat = seat; this.chairPull = 0; this.group.rotation.y = seat >= 0 ? 0 : Math.PI; this.transition(seat >= 0 ? 'seated' : 'idle');
+      this.group.position.set(point[0], 0, point[1]); this.sit = resting || seat >= 0 ? 1 : 0; this.path = []; this.loungeBlend = resting ? 1 : 0;
+      this.restBlend = resting ? 1 : 0;
+      this.chairSeat = seat; this.chairPull = 0; this.group.rotation.y = resting ? LOUNGE_SEAT.yaw : seat >= 0 ? 0 : Math.PI; this.transition(resting ? 'resting' : seat >= 0 ? 'seated' : 'idle');
+    } else if (this.loungeBlend > 0) {
+      this.riseStart = this.sit; this.transition('rest-rise');
     } else if (this.sit > .01 || ['lower', 'slide', 'align'].includes(this.state)) {
       this.speed = 0; this.riseStart = this.sit; this.transition(this.sit > .8 ? 'pullout' : 'rise');
     } else if (!['pullout', 'rise', 'exit'].includes(this.state)) this.route();
   }
   route() {
-    const target = this.seat >= 0 ? approach(this.seat) : this.goal;
+    const target = this.loungeTarget ? LOUNGE_SEAT.approach : this.seat >= 0 ? approach(this.seat) : this.goal;
     this.path = findOfficePath(this.point, target, true) || [];
     this.failed = !this.path.length && distance(this.point, target) > .05;
-    this.transition(this.failed ? 'idle' : this.path.length ? 'walk' : this.seat >= 0 ? 'align' : 'idle');
+    this.transition(this.failed ? 'idle' : this.path.length ? 'walk' : this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : 'idle');
     if (this.state === 'align') this.chairSeat = this.seat;
   }
   canReach(point) { return findOfficePath(this.chairSeat >= 0 ? approach(this.chairSeat) : this.point, point, true) !== null; }
   place(a, b, amount) { const t = smooth(amount); this.group.position.x = lerp(a[0], b[0], t); this.group.position.z = lerp(a[1], b[1], t); }
   walk(dt, others) {
     const next = this.path[0];
-    if (!next) { this.speed = 0; this.chairSeat = this.seat; this.transition(this.seat >= 0 ? 'align' : 'idle'); return; }
+    if (!next) { this.speed = 0; this.chairSeat = this.seat; this.transition(this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : 'idle'); return; }
     const p = this.point, remaining = distance(p, next), final = this.path.length === 1;
     const heading = Math.atan2(p[0] - next[0], p[1] - next[1]), turn = angle(this.group.rotation.y, heading);
     this.group.rotation.y += clamp(turn, -dt * 4.8, dt * 4.8);
@@ -91,7 +96,25 @@ export class OfficeActor {
     const before = this.point;
     if (this.state === 'walk') this.walk(dt, others);
     const t = this.stateTime;
-    if (this.state === 'align') {
+    if (this.state === 'rest-align') {
+      this.loungeBlend = 1;
+      this.group.rotation.y += clamp(angle(this.group.rotation.y, LOUNGE_SEAT.yaw), -dt*4, dt*4);
+      if(t>.6) this.place(this.stateStart,LOUNGE_SEAT.stance,(t-.6)/.85);
+      if(t>=1.45) this.transition('rest-lower');
+    } else if (this.state === 'rest-lower') {
+      // Back into the soft seat as the knees bend; the cushion compresses with
+      // the pelvis, then the upper body settles a little later.
+      this.sit = smooth(t/1.05);
+      this.place(this.stateStart, LOUNGE_SEAT.point, t/1.05);
+      if(t>=1.05) { this.sit=1;this.transition('resting'); }
+    } else if (this.state === 'rest-rise') {
+      this.sit=(this.riseStart??1)*(1-smooth(t/1.05));
+      this.place(this.stateStart, LOUNGE_SEAT.stance, t/1.05);
+      if(t>=1.05) { this.sit=0;this.riseStart=null;this.transition('rest-exit'); }
+    } else if (this.state === 'rest-exit') {
+      this.place(this.stateStart,LOUNGE_SEAT.approach,t/.85);
+      if(t>=.85) { this.loungeBlend=0;this.route(); }
+    } else if (this.state === 'align') {
       this.chairSeat = this.seat; this.chairPull = .28 * smooth(t / .4);
       const d = DESKS[this.chairSeat].seat;
       const heading = t < .9 ? Math.atan2(this.stateStart[0] - d[0], this.stateStart[1] - d[1] - .28) : 0;
@@ -119,8 +142,10 @@ export class OfficeActor {
       if (t >= .95) { this.chairSeat = -1; this.chairPull = 0; this.route(); }
     }
     const travel = distance(before, this.point);
-    if (['align','exit'].includes(this.state)) this.phase += travel / .8;
-    const gait = ['walk','align','exit'].includes(this.state) ? Math.min(1, travel / dt / 1.35) : 0;
+    this.restBlend = damp(this.restBlend || 0, this.state === 'resting' ? 1 : 0, 3, dt);
+    if (['align','exit','rest-exit'].includes(this.state)) this.phase += travel / .8;
+    if(this.state==='rest-align')this.phase-=travel/.8;
+    const gait = ['walk','align','exit','rest-align','rest-exit'].includes(this.state) ? Math.min(1, travel / dt / 1.35) : 0;
     this.gait = damp(this.gait, gait, 12, dt);
     this.workBlend = damp(this.workBlend, this.state === 'seated' && activity.stage === 'work' && activity.task ? 1 : 0, 4, dt);
     this.eventBlend = damp(this.eventBlend, activity.stage === 'event' ? 1 : 0, 5, dt);

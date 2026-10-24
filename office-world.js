@@ -1,25 +1,29 @@
+import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
-import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
-import { OfficeActor } from './office-actors.js?v=0.5.3-workspace';
-import { DESKS } from './office-layout.js?v=0.5.3-workspace';
-import { agentById, activeTasks } from './engine.js?v=unified-20261024';
+import { OfficeActor } from './office-actors.js?v=skinned-team-20261024';
+import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=seated-breaks-20261024-v2';
+import { agentById, activeTasks } from './engine.js?v=seated-breaks-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
+import { mountOfficeUpgrades } from './assets/office-upgrades.js?v=office-life-1';
+import { prepareLoungeSeat } from './assets/lounge-seat.js?v=seated-breaks-1';
 import { officeFrame, officeWallVisible } from './office-camera-fit.js';
+import { assetURL } from './asset-url.js';
 
 let world;
 const modelCache = new Map();
 const loader = new GLTFLoader();
 const loadModel = name => {
-  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(`assets/models/${name}.glb?v=0.5.0`).catch(error => { modelCache.delete(name); throw error; }));
+  if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=skinned-team-20261024`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
 };
 
 class OfficeWorld {
   constructor(callbacks) {
     this.callbacks = callbacks; this.actors = new Map(); this.loadingActors = new Set(); this.screens = new Map(); this.chairs = new Map(); this.selected = null; this.busy = false;
+    this.restSignals = new Set();
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
@@ -57,6 +61,9 @@ class OfficeWorld {
         }
       });
       await this.art.dress(this.room);
+      this.purchases = await mountOfficeUpgrades(this.room);
+      this.purchases.sync(this.game?.life?.upgrades);
+      this.loungeSeat = prepareLoungeSeat(this.room);
       this.walls = [];
       this.room.traverse(node => { if (node.userData.wallSide) this.walls.push(node); });
       this.ready = true; this.refreshContainer(); this.syncActors();
@@ -65,6 +72,7 @@ class OfficeWorld {
   attach(container, game, selected, callbacks) {
     if (!this.initialTeam) this.initialTeam = new Set(callbacks.arriveOnLoad ? [] : game.team);
     this.container = container; this.game = game; this.selected = selected; this.callbacks = callbacks;
+    this.purchases?.sync(game.life?.upgrades);
     container.append(this.renderer.domElement); this.resizeObserver.disconnect(); this.resizeObserver.observe(container);
     this.refreshContainer(); this.resize(); this.syncActors();
     if (!this.frameId) { this.lastFrame = performance.now(); this.frameId = requestAnimationFrame(time => this.frame(time)); }
@@ -76,7 +84,7 @@ class OfficeWorld {
     const status = parent.querySelector('.office-render-status');
     if (status) status.textContent = this.failed || (this.ready ? window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
   }
-  fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); }
+  fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); this.reportRest(true); }
   resize() {
     if (!this.container?.isConnected) return;
     const w = this.container.clientWidth, h = this.container.clientHeight; if (!w || !h) return;
@@ -87,6 +95,7 @@ class OfficeWorld {
     if (this.ready) this.renderer.render(this.scene, this.camera);
   }
   async syncActors() {
+    if (this.failed) { this.reportRest(true); return; }
     if (!this.ready || !this.game) return;
     for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { this.scene.remove(actor.group); this.actors.delete(id); }
     for (const [order, id] of this.game.team.entries()) {
@@ -104,6 +113,19 @@ class OfficeWorld {
       finally { this.loadingActors.delete(id); }
     }
   }
+  reportRest(fallback = false) {
+    if (!this.game) return;
+    for (const id of this.game.team) {
+      const trip = this.game.life?.members[id]?.restTrip, actor = this.actors.get(id);
+      if (!trip) continue;
+      const arrived = trip.phase === 'outbound' && (fallback || actor?.state === 'resting' && distance(actor.point,LOUNGE_SEAT.point) < .03) ? 'resting'
+        : trip.phase === 'returning' && (fallback || actor?.state === 'seated') ? 'back' : null;
+      const key = `${id}:${arrived}`;
+      if (!arrived || this.restSignals.has(key)) continue;
+      this.restSignals.add(key);
+      queueMicrotask(() => { this.restSignals.delete(key); this.callbacks.onRest?.(id,arrived); });
+    }
+  }
   frame(time) {
     this.frameId = 0;
     if (!this.container?.isConnected || !this.game || this.failed) return;
@@ -112,6 +134,10 @@ class OfficeWorld {
       this.controls.update();
       const active = activeTasks(this.game), actors = [...this.actors.values()];
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
+      this.reportRest();
+      this.container.dataset.resting = actors.filter(a => a.state === 'resting').map(a=>a.id).join(',');
+      this.loungeSeat?.update(Math.max(0,...actors.map(a=>(a.loungeBlend||0)*a.sit)));
+      this.container.dataset.upgrades = (this.game.life?.upgrades || []).join(',');
       for (const [index, chair] of this.chairs) chair.node.position.z = chair.z + Math.max(0, ...actors.filter(a => a.chairSeat === index).map(a => a.chairPull));
       if (this.cameraGoal) {
         const a = 1 - Math.exp(-dt * (this.reduced.matches ? 100 : 5)), goal = this.cameraGoal;
@@ -195,7 +221,16 @@ class OfficeWorld {
 export function mountOfficeWorld(game, selected, callbacks) {
   const container = document.querySelector('#office-webgl'); if (!container) return;
   try { if (!world) world = new OfficeWorld(callbacks); world.attach(container, game, selected, callbacks); }
-  catch (error) { const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.'; console.warn('Office WebGL:', error.message); }
+  catch (error) {
+    container.parentElement.dataset.officeState = 'fallback';
+    const status = container.parentElement.querySelector('.office-render-status'); if (status) status.textContent = '3D недоступно в этом браузере. Показан облегчённый офис.';
+    callbacks.onBusy(false);
+    console.warn('Office WebGL:', error.message);
+    for (const id of game.team) {
+      const phase = game.life?.members[id]?.restTrip?.phase;
+      if (phase === 'outbound' || phase === 'returning') queueMicrotask(()=>callbacks.onRest?.(id,phase === 'outbound' ? 'resting' : 'back'));
+    }
+  }
 }
 export const detachOfficeWorld = () => world?.detach();
 export const resetOfficeWorld = () => world?.reset();
