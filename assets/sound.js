@@ -1,4 +1,4 @@
-import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=unified-20261024';
+import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=nika-alina-20261024';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
 const CHORDS = [[48,55,59,62],[45,52,55,59],[41,48,52,57],[43,50,53,57]];
@@ -43,16 +43,18 @@ export function createSound() {
     if(context) music.gain.setTargetAtTime(active?.025:.095,context.currentTime,.18);
     document.dispatchEvent(new CustomEvent('nika-voice-state',{detail:{speaking:active}}));
   }
-  function stopVoice() { if(voice){voice.pause();voice.currentTime=0;voice=null;} duck(false); }
+  function stopVoice() { if(voice){voice.pause();voice.currentTime=0;voice.remove();voice=null;} duck(false); }
   function speak(key, force = false) {
     if(!enabled || !unlocked || document.hidden || (!force && lastVoice === key)) return;
     lastVoice = key; stopVoice();
     if(!VOICE_ASSETS[key]) return;
     const audio = new Audio(new URL(`./onboarding/${VOICE_ASSETS[key]}`,import.meta.url).href);
+    audio.hidden = true; audio.dataset.nikaVoice = key; audio.setAttribute('aria-label','Речь Ники');
+    document.body.append(audio);
     voice = audio; audio.volume = .78;
     audio.onplaying = () => { if(voice===audio) duck(true); };
-    audio.onended = audio.onerror = () => { if(voice===audio){voice=null;duck(false);} };
-    audio.play().catch(() => { if(voice===audio){voice=null;duck(false);} });
+    audio.onended = audio.onerror = () => { audio.remove(); if(voice===audio){voice=null;duck(false);} };
+    audio.play().catch(() => { audio.remove(); if(voice===audio){voice=null;duck(false);} });
   }
   function effect(kind) {
     if(!enabled || !unlocked || !context || document.hidden) return;
