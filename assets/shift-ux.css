@@ -133,6 +133,42 @@
 .mini-game .dialog-actions button { flex:1 1 180px; }
 .simple .mini-board { background:#0c1924; }
 .simple .tile:not(.ship) { border-radius:2px; }
+.mini-board .tile { position:relative; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr); place-items:center; }
+.orbit-star,.orbit-rock,.orbit-battery,.orbit-station { grid-area:1/1; }
+.orbit-ship { position:absolute; inset:15%; z-index:2; display:grid; place-items:center; }
+.orbit-ship>svg { width:72%; height:72%; }
+.tile.ship .orbit-star { visibility:hidden; }
+.orbit-rock { width:65%; height:65%; display:grid; place-items:center; font-size:32px; }
+svg.orbit-rock { fill:#536679; stroke:#9aadc0; stroke-width:1.5; }
+svg.orbit-rock circle { fill:#263c50; stroke:#536679; }
+.tile.ship .orbit-rock { opacity:.65; width:90%; height:90%; }
+.orbit-battery,.orbit-station { display:grid; place-items:center; width:55%; height:55%; }
+.orbit-battery>svg,.orbit-station>svg { width:90%; height:90%; }
+.polished .orbit-battery { border:2px solid var(--mint); border-radius:5px; background:#b5c3a31a; box-shadow:0 0 16px #b5c3a322; }
+.polished .orbit-station { border:2px solid var(--mint); border-radius:50%; }
+.polished .mini-board { background-color:#0b1b29; background-image:radial-gradient(circle at 30% 20%,#9cc6e730 1px,transparent 2px),radial-gradient(circle at 80% 60%,#dfc7a835 1px,transparent 2px),radial-gradient(ellipse at 90% 0,#405f7b60,transparent 70%); background-size:37px 49px,59px 41px,100% 100%; }
+.polished .tile:not(.rock):not(.ship) { background:#18344840; }
+.orbit-map-label { position:absolute; right:5px; top:2px; color:var(--mint); }
+#info-dialog .orbit-map-label { font-size:14px; line-height:1; }
+.orbit-dock-lights { position:absolute; left:18%; right:18%; bottom:7%; display:flex; gap:3px; }
+.orbit-dock-lights i { flex:1; height:5px; background:#354b58; border:1px solid #849ba6; }
+.orbit-dock-lights .lit { background:var(--mint); }
+.tile.station-ready { background:#b5c3a335; box-shadow:inset 0 0 0 2px var(--mint); }
+.orbit-map-heading { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:18px; line-height:1.4; margin:16px 0 10px; color:var(--muted); }
+.orbit-map-heading b { color:var(--mint); font-weight:600; }
+.mini-board.edge-tested { border:3px solid var(--mint); }
+.mini-board.edge-contact { box-shadow:0 0 0 3px var(--amber); }
+.mini-board .impact-blocked { box-shadow:inset 0 0 0 3px var(--coral); background:#ff8c7933; }
+.orbit-block-mark,.orbit-bug-mark { position:absolute; right:3px; top:0; z-index:3; color:var(--coral); font-size:26px; font-weight:800; line-height:1; }
+.tile.collision-bug { border:2px dashed var(--coral); background:#ff8c7928; }
+.mini-board .impact-shield-hit { box-shadow:inset 0 0 0 3px var(--mint),0 0 12px #b5c3a370; }
+.orbit-feedback.orbit-warning { color:var(--coral); }
+.orbit-save { display:flex; align-items:flex-start; gap:12px; margin-top:20px; padding:16px; background:#b5c3a310; border:1px solid var(--mint); border-radius:10px; color:var(--mint); }
+.orbit-save>svg { flex:none; margin-top:3px; }
+.orbit-save strong { display:block; font-size:22px; line-height:1.4; }
+.orbit-save span { display:block; color:var(--text); font-size:20px; line-height:1.5; margin-top:6px; }
+.orbit-save-error { border-color:var(--coral); color:var(--coral); background:#ff8c790e; }
+.mini-game[data-save-mode=removed] .orbit-save { color:var(--muted); border-color:var(--line); background:transparent; }
 @media(max-width:480px) {
   #info-dialog:has(.mini-game) { padding:24px 12px; }
   .mini-board { gap:3px; padding:6px; }
@@ -142,4 +178,7 @@
   .orbit-shield>svg { display:none; }
   .orbit-shield span,.mini-status { font-size:18px; }
   .orbit-feedback,.mini-game>p,.mini-controls p { font-size:20px; }
+  .orbit-map-heading { font-size:16px; }.orbit-save { padding:12px; gap:8px; }.orbit-save strong { font-size:20px; }.orbit-save span { font-size:18px; }
+  .orbit-block-mark,.orbit-bug-mark { font-size:20px; }.orbit-dock-lights { bottom:5%; }.orbit-dock-lights i { height:3px; }
+  #info-dialog .orbit-map-label { font-size:10px; right:2px; }.orbit-battery { border-width:1px; }
 }
