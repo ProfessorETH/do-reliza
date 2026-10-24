@@ -1,4 +1,5 @@
 import { AGENTS } from '../data.js';
+import { studioCapacity, upgradeLock, MISSION_REWARDS } from './studio-progression.js';
 
 const clamp = n => Math.max(0, Math.min(100, n));
 const member = () => ({ energy: 85, stress: 15, morale: 70, breaks: 0, restTrip: null, restSerial: 0, raises: 0, praised: 0, warnings: 0 });
@@ -8,6 +9,9 @@ export const CONTRACTS = [
   { id: 'cup', name: 'Орбита · кубок пилотов', client: 'Организаторы турнира', text: 'Гонка: одна батарея, три последовательных ворот, движущийся патруль и медаль за число ходов. За перехват без щита — штраф.', budget: 45000, deadline: 15, reward: 7000, factors: { code: 1.3, qa: 1.3 } },
 ];
 export const UPGRADES = [
+  { id: 'coffee', name: 'Кофейная станция', price: 2000, text: 'Чай, какао и кофе для команды. Один напиток за смену: энергия +15, настроение +5. Действие доступно через сотрудника; отдых по-прежнему нужен.' },
+  { id: 'desk4', name: 'Открыть крыло студии', price: 6000, text: 'Дополнительное помещение с четвёртым компьютером. Можно нанять четвёртого коллегу перед следующим заказом и разделить задачи.' },
+  { id: 'desk5', name: 'Пятое рабочее место', price: 8000, text: 'Ещё один компьютер в новом крыле. Команда до пяти человек: каждому можно поручить свой этап. Найм и оплата требуют отдельного бюджета.' },
   { id: 'lounge', name: 'Обустроить зону отдыха', price: 2500, text: 'В зоне отдыха появятся мягкая накидка и чайный набор. Перерыв восстанавливает 45 энергии вместо 30.' },
   { id: 'quiet', name: 'Организовать тихий офис', price: 3000, text: 'На столах появятся акустические экраны: напряжение от работы +1 вместо +2; событие с шумом решается без потери часа.' },
   { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'У столов появятся новые системные блоки. Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
@@ -108,7 +112,12 @@ export function resolveIncident(s, option) {
 export function careFor(s, id, action) {
   const l = ensureLife(s), m = l.members[id];
   if (!s.team.includes(id)) return 'Выбери сотрудника команды.';
-  if (action === 'break') {
+  if (action === 'coffee') {
+    if (s.stage !== 'work' || !l.upgrades.includes('coffee')) return 'Напиток доступен во время смены после покупки кофейной станции.';
+    if (m.coffee || m.restTrip) return 'Напиток уже получен на этой смене или сотрудник отдыхает.';
+    m.coffee = true; m.energy = clamp(m.energy + 15); m.morale = clamp(m.morale + 5);
+    s.log.push(`Напиток для ${AGENTS.find(a => a.id === id).name}: энергия +15, настроение +5.`);
+  } else if (action === 'break') {
     if (s.stage !== 'work' || m.breaks || m.restTrip) return 'Перерыв доступен во время работы, один за раз. Сначала вернись к компьютеру.';
     const occupied=s.team.some(a=>l.members[a].restTrip);
     const request=1+Math.max(0,...s.team.map(a=>l.members[a].restTrip?.request||0));
@@ -138,9 +147,12 @@ export function buyUpgrade(s, id) {
   const l = ensureLife(s), u = UPGRADES.find(x => x.id === id);
   if (!['hire', 'plan', 'result'].includes(s.stage)) return 'Обустройство доступно до смены или после релиза.';
   if (!u) return 'Нет такого улучшения.';
+  if (upgradeLock(s,id)) return upgradeLock(s,id);
   if (l.upgrades.includes(id)) return 'Уже установлено.';
   if (l.cash < u.price) return 'Недостаточно денег в кассе студии.';
-  l.cash -= u.price; l.upgrades.push(id); s.log.push(`Студия: ${u.name}, ${u.price} ₽. ${u.text}`); return null;
+  l.cash -= u.price; l.upgrades.push(id);
+  while (s.seats.length < studioCapacity(s)) s.seats.push(null);
+  s.log.push(`Студия: ${u.name}, ${u.price} ₽. ${u.text}`); return null;
 }
 export function settleProject(s, result) {
   const l = ensureLife(s);
@@ -161,13 +173,16 @@ export function validLife(s) {
   if (l === undefined) return true; // Safe migration of 0.5 saves.
   const integer = (n, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
   return l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
+    && (l.missionsWon === undefined || Array.isArray(l.missionsWon) && new Set(l.missionsWon).size === l.missionsWon.length && l.missionsWon.every(id=>Object.hasOwn(MISSION_REWARDS,id)))
+    && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===MISSION_REWARDS[l.missionReward.contract].cash)
     && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
     && typeof l.settled === 'boolean' && typeof l.incidentDone === 'boolean'
     && Array.isArray(l.departures) && l.departures.every(id => s.team.includes(id))
     && (l.away === undefined || (Array.isArray(l.away) && l.away.every(id => AGENTS.some(a => a.id === id) && !s.team.includes(id))))
     && Array.isArray(l.history) && l.history.every(h => h && typeof h.name === 'string' && integer(h.score, 0, 100) && integer(h.reward, 0) && Number.isFinite(h.time) && h.time >= 0)
     && l.members && AGENTS.every(a => { const m = l.members[a.id]; return m && ['energy','stress','morale'].every(k => Number.isFinite(m[k]) && m[k] >= 0 && m[k] <= 100) && integer(m.breaks,0,1) && integer(m.raises,0,3) && integer(m.praised,0,5) && integer(m.warnings,0)
+      && (m.coffee === undefined || typeof m.coffee === 'boolean')
       && (m.restSerial === undefined || integer(m.restSerial,0))
-      && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,2) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
+      && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,4) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
     && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && !l.incidentDone);
 }

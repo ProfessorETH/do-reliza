@@ -1,3 +1,4 @@
+import { claimMissionReward } from './studio-progression.js';
 import { missionFor, patrolAt, missionReady, MISSIONS } from './orbit-missions.js';
 // The playable release and its checkpoint must use the same team decisions.
 export const rocks = new Set(MISSIONS.festival.rocks);
@@ -35,8 +36,10 @@ export function restoreOrbit(game, saved) {
 export function moveOrbit(game, flight, dx, dy) { return stepOrbit(game, flight, dx, dy).message; }
 export function recordOrbitResult(game,flight){
   if(!flight?.won||flight.release!==releaseKey(game)||!missionReady(missionFor(game),flight))return false;
-  const id=missionFor(game).id,previous=game.orbitRecords?.[id];
-  if(previous!==undefined&&previous<=flight.moves)return false;
+  const mission=missionFor(game);
+  if(flight.x+','+flight.y!==mission.finish)return false;
+  const rewarded=claimMissionReward(game),id=mission.id,previous=game.orbitRecords?.[id];
+  if(previous!==undefined&&previous<=flight.moves)return rewarded;
   (game.orbitRecords??={})[id]=flight.moves;return true;
 }
 export function stepOrbit(game, flight, dx, dy) {

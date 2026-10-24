@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 import * as THREE from '../vendor/three/three.module.js';
 import { OfficeActor } from '../office-actors.js';
-import { DESKS, LOUNGE_SEAT, isWalkable, distance } from '../office-layout.js';
+import { ALL_DESKS as DESKS, LOUNGE_SEAT, isWalkable, distance } from '../office-layout.js';
 import { poseActor } from '../office-pose.js';
 
 // Node has no browser import map; resolve the unmodified vendored addons locally.
@@ -139,13 +139,13 @@ test('both feet remain on or above floor through a full gait and chair lowering'
 });
 
 test('walk, align, lower and slide finish at all desks at 30/60/120 Hz', async () => {
-  for (const dt of [1/30,1/60,1/120]) for (let seat = 0; seat < 3; seat++) {
-    const a = await actor(); const game = { seats: [null,null,null], officeTargets:{} }; game.seats[seat] = a.id;
+  for (const dt of [1/30,1/60,1/120]) for (let seat = 0; seat < 5; seat++) {
+    const a = await actor(); const game = { seats: [null,null,null,null,null], officeTargets:{} }; game.seats[seat] = a.id;
     a.destination(game); const states = new Set(); let previous = a.point;
     for (let i = 0; i < 30 / dt && a.moving; i++) {
       a.update(dt, i * dt, [a], activity, false, false); states.add(a.state);
       assert.ok(distance(previous, a.point) < .11, `root teleported: ${a.state}`); previous = a.point;
-      if (a.state === 'walk') assert.ok(isWalkable(a.point));
+      if (a.state === 'walk') assert.ok(isWalkable(a.point,undefined,5));
     }
     assert.equal(a.state, 'seated'); assert.equal(a.sit, 1); assert.equal(a.chairPull, 0);
     assert.ok(distance(a.point, DESKS[seat].seat) < .001);
@@ -182,15 +182,15 @@ test('hands reach keyboard and mouse without changing seated pelvis contact', as
 });
 
 test('employees leave each desk, sit in the beanbag, relax and stand before returning without teleporting',async()=>{
-  for(const dt of [1/30,1/60,1/120])for(let slot=0;slot<3;slot++){
-    const a=await actor('mira',slot),game={seats:[null,null,null],officeTargets:{},life:{members:{mira:{restTrip:null,restSerial:1}}}};
+  for(const dt of [1/30,1/60,1/120])for(let slot=0;slot<5;slot++){
+    const a=await actor('mira',slot),game={seats:[null,null,null,null,null],officeTargets:{},life:{members:{mira:{restTrip:null,restSerial:1}}}};
     game.seats[slot]='mira';a.destination(game,true);const seats=[...game.seats];
     game.life.members.mira.restTrip={phase:'outbound',slot};a.destination(game);
     const states=new Set();let previous=a.point,planted=null;
     for(let frame=0;frame<45/dt&&a.moving;frame++){
       a.update(dt,frame*dt,[a],{stage:'work',task:{skill:'code'}},false,false);states.add(a.state);
       assert.ok(distance(previous,a.point)<.11,'continuous lounge travel');previous=a.point;
-      if(a.state==='walk')assert.ok(isWalkable(a.point));
+      if(a.state==='walk')assert.ok(isWalkable(a.point,undefined,5));
       if(a.state==='rest-lower'&&a.sit>.02&&a.sit<.98){
         a.group.updateMatrixWorld(true);const feet=['Left','Right'].map(side=>a.joints[side+'Foot'].getWorldPosition(new THREE.Vector3()));
         if(planted)feet.forEach((p,i)=>assert.ok(Math.hypot(p.x-planted[i].x,p.z-planted[i].z)<.015,'planted foot does not slide during lowering'));

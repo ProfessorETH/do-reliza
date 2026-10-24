@@ -1,6 +1,6 @@
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
 import * as THREE from './vendor/three/three.module.js';
-import { DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
+import { ALL_DESKS as DESKS, ENTRANCE, WAITING, LOUNGE_SEAT, findOfficePath, isWalkable, distance } from './office-layout.js?v=shift-ux-20261024-v2';
 import { poseActor } from './office-pose.js?v=portrait-team-v4-20261024';
 
 const { damp, lerp, clamp } = THREE.MathUtils;
@@ -47,6 +47,7 @@ export class OfficeActor {
   get motionLabel() { return ({ walk: this.restPhase === 'outbound' ? 'Идёт в зону отдыха' : this.restPhase === 'returning' ? 'Возвращается за компьютер' : 'Идёт к компьютеру', 'rest-align':'Подходит к креслу', 'rest-lower':'Устраивается в кресле', 'rest-rise':'Встаёт после отдыха', 'rest-exit':'Возвращается к работе', align: 'Подходит к креслу', lower: 'Садится', slide: 'Придвигается к столу', rise: 'Встаёт', exit: 'Выходит из-за стола', pullout: 'Отодвигает кресло' })[this.state] || ''; }
   transition(state) { this.state = state; this.stateTime = 0; this.stateStart = this.point; }
   destination(game, instant = false) {
+    this.capacity = game.seats.length;
     const m = game.life?.members[this.id], trip = m?.restTrip, resting = ['outbound','resting'].includes(trip?.phase);
     this.restPhase = trip?.phase || null; this.loungeTarget = resting;
     const seat = resting ? -1 : game.seats.indexOf(this.id), point = resting ? LOUNGE_SEAT.point : seat >= 0 ? DESKS[seat].seat : game.officeTargets[this.id] || WAITING[this.order % WAITING.length];
@@ -65,12 +66,12 @@ export class OfficeActor {
   }
   route() {
     const target = this.loungeTarget ? LOUNGE_SEAT.approach : this.seat >= 0 ? approach(this.seat) : this.goal;
-    this.path = findOfficePath(this.point, target, true) || [];
+    this.path = findOfficePath(this.point, target, true, this.capacity) || [];
     this.failed = !this.path.length && distance(this.point, target) > .05;
     this.transition(this.failed ? 'idle' : this.path.length ? 'walk' : this.loungeTarget ? 'rest-align' : this.seat >= 0 ? 'align' : 'idle');
     if (this.state === 'align') this.chairSeat = this.seat;
   }
-  canReach(point) { return findOfficePath(this.chairSeat >= 0 ? approach(this.chairSeat) : this.point, point, true) !== null; }
+  canReach(point) { return findOfficePath(this.chairSeat >= 0 ? approach(this.chairSeat) : this.point, point, true, this.capacity) !== null; }
   place(a, b, amount) { const t = smooth(amount); this.group.position.x = lerp(a[0], b[0], t); this.group.position.z = lerp(a[1], b[1], t); }
   walk(dt, others) {
     const next = this.path[0];
@@ -87,7 +88,7 @@ export class OfficeActor {
     }
     if (remaining > .0001) {
       const x = p[0] + (next[0] - p[0]) / remaining * step, z = p[1] + (next[1] - p[1]) / remaining * step;
-      if (isWalkable([x, z])) { this.group.position.set(x, 0, z); this.phase += step / .8; }
+      if (isWalkable([x, z],undefined,this.capacity)) { this.group.position.set(x, 0, z); this.phase += step / .8; }
     }
     if (distance(this.point, next) < .025) { this.group.position.set(next[0], 0, next[1]); this.path.shift(); }
   }

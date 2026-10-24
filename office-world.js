@@ -1,9 +1,10 @@
+import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
 import { OfficeActor } from './office-actors.js?v=portrait-team-v4-20261024';
-import { DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
+import { ALL_DESKS as DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
 import { agentById, activeTasks } from './engine.js?v=shift-ux-20261024-v2';
 import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
@@ -36,10 +37,18 @@ class OfficeWorld {
     this.controls.target.set(0, 1.3, 0); this.controls.enablePan = true; this.controls.screenSpacePanning = true;
     this.controls.zoomToCursor = true; this.controls.enableDamping = true;
     this.controls.minPolarAngle = .45; this.controls.maxPolarAngle = 1.28;
-    this.controls.minZoom = .8; this.controls.maxZoom = 3; this.controls.update();
+    this.controls.minZoom = .5; this.controls.maxZoom = 3; this.controls.update();
     this.controls.addEventListener('start', () => { this.cameraGoal = null; });
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
     this.art = createOfficeAtmosphere(this.scene, this.renderer);
+    mountStudioSurroundings(this.scene);
+    this.keys = new Set();
+    this.renderer.domElement.tabIndex = 0;
+    this.renderer.domElement.removeAttribute('aria-hidden');
+    this.renderer.domElement.setAttribute('aria-label','3D-офис. Тяни для поворота. В режиме полёта: W A S D — движение, Q E — высота, Escape — выход.');
+    this.renderer.domElement.addEventListener('keydown', e => { if (this.flying && ['KeyW','KeyA','KeyS','KeyD','KeyQ','KeyE'].includes(e.code)) { e.preventDefault(); this.keys.add(e.code); } if(e.key==='Escape'&&this.flying){e.stopPropagation();this.cameraAction('flight-off');} });
+    this.renderer.domElement.addEventListener('keyup', e => this.keys.delete(e.code));
+    this.renderer.domElement.addEventListener('blur', () => this.keys.clear());
     this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.renderer.domElement.addEventListener('pointerdown', e => { this.down = [e.clientX, e.clientY]; });
@@ -50,6 +59,9 @@ class OfficeWorld {
   async loadRoom() {
     try {
       this.room = (await loadModel('office')).scene; this.scene.add(this.room);
+      this.expansion = mountStudioExpansion(this.room);
+      this.expansion.sync(this.game?.life?.upgrades);
+      const arcade=this.room.getObjectByName('Release3D_Arcade'); if(arcade)arcade.userData.hotspot='arcade';
       this.room.traverse(node => {
         if (node.userData.wallSide) { if (!this.walls) this.walls = []; this.walls.push(node); }
         if (Number.isInteger(node.userData.chairIndex)) this.chairs.set(node.userData.chairIndex, { node, z: node.position.z });
@@ -63,6 +75,7 @@ class OfficeWorld {
       await this.art.dress(this.room);
       this.purchases = await mountOfficeUpgrades(this.room);
       this.purchases.sync(this.game?.life?.upgrades);
+      this.expansion.sync(this.game?.life?.upgrades);
       this.loungeSeat = prepareLoungeSeat(this.room);
       this.walls = [];
       this.room.traverse(node => { if (node.userData.wallSide) this.walls.push(node); });
@@ -73,6 +86,8 @@ class OfficeWorld {
     if (!this.initialTeam) this.initialTeam = new Set(callbacks.arriveOnLoad ? [] : game.team);
     this.container = container; this.game = game; this.selected = selected; this.callbacks = callbacks;
     this.purchases?.sync(game.life?.upgrades);
+    this.expansion?.sync(game.life?.upgrades);
+    if(this.cameraCapacity!==game.seats.length){const center=game.seats.length>3?2:0,delta=center-this.controls.target.x;this.controls.target.x=center;this.camera.position.x+=delta;this.cameraCapacity=game.seats.length;}
     container.append(this.renderer.domElement); this.resizeObserver.disconnect(); this.resizeObserver.observe(container);
     this.refreshContainer(); this.resize(); this.syncActors();
     if (!this.frameId) { this.lastFrame = performance.now(); this.frameId = requestAnimationFrame(time => this.frame(time)); }
@@ -82,14 +97,15 @@ class OfficeWorld {
     const parent = this.container.closest('.office-room'); parent.classList.toggle('is-3d', !!this.ready && !this.failed);
     parent.dataset.officeState = this.failed ? 'fallback' : this.ready ? 'ready' : 'loading';
     const status = parent.querySelector('.office-render-status');
-    if (status) status.textContent = this.failed || (this.ready ? window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
+    const flyButton=parent.querySelector('[data-action="office-camera"][data-id="flight"]');if(flyButton){flyButton.setAttribute('aria-pressed',String(!!this.flying));flyButton.textContent=this.flying?'Стоп':'WASD';}
+    if (status) status.textContent = this.failed || (this.ready ? this.flying ? 'Полёт: W A S D · Q / E — высота · тяни — осмотр · Esc — выход' : window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
   }
   fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); this.reportRest(true); }
   resize() {
     if (!this.container?.isConnected) return;
     const w = this.container.clientWidth, h = this.container.clientHeight; if (!w || !h) return;
     this.renderer.setSize(w, h, false);
-    const ratio = w / h, halfH = officeFrame(ratio, this.camera.position.clone().sub(this.controls.target).toArray());
+    const ratio = w / h, halfH = officeFrame(ratio, this.camera.position.clone().sub(this.controls.target).toArray(),1.07,this.game?.seats.length>3?7.2:5.2);
     this.camera.left = -halfH * ratio; this.camera.right = halfH * ratio; this.camera.top = halfH; this.camera.bottom = -halfH;
     this.camera.updateProjectionMatrix();
     if (this.ready) this.renderer.render(this.scene, this.camera);
@@ -131,6 +147,7 @@ class OfficeWorld {
     if (!this.container?.isConnected || !this.game || this.failed) return;
     const dt = Math.min(.05, (time - this.lastFrame) / 1000); this.lastFrame = time;
     if (!document.hidden) {
+      this.fly(dt);
       this.controls.update();
       const active = activeTasks(this.game), actors = [...this.actors.values()];
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
@@ -175,6 +192,18 @@ class OfficeWorld {
         if (button.getAttribute('aria-label') !== label) button.setAttribute('aria-label', label);
       }
     }
+    const menu=parent.querySelector('.actor-actions'), actor=this.actors.get(this.selected);
+    if(menu&&actor){
+      this.projected.copy(actor.group.position).add(new THREE.Vector3(0,actor.sit>.5?1.5:2.1,0)).project(this.camera);
+      const rect=parent.getBoundingClientRect(), width=menu.offsetWidth;
+      menu.style.left=Math.max(width/2+8,Math.min(rect.width-width/2-8,(this.projected.x*.5+.5)*rect.width))+'px';
+      menu.style.top=Math.max(10,Math.min(rect.height-menu.offsetHeight-10,(-this.projected.y*.5+.5)*rect.height-menu.offsetHeight-12))+'px';
+    }
+    for(const el of parent.querySelectorAll('[data-hotspot]')){
+      const points={coffee:[-1,1.5,-3.4],arcade:[3.85,2,-3.38],office:[-3.68,1.1,2.77]};
+      this.projected.fromArray(points[el.dataset.hotspot]).project(this.camera);
+      el.style.left=((this.projected.x*.5+.5)*100)+'%';el.style.top=((-this.projected.y*.5+.5)*100)+'%';
+    }
     const info = parent.querySelector('.office-movement');
     const walking = [...this.actors.values()].filter(a => a.moving).map(a => agentById(a.id).name);
     if (info) { const text = walking.length ? `${walking.join(', ')} — в пути` : ''; if (info.textContent !== text) info.textContent = text; }
@@ -192,16 +221,28 @@ class OfficeWorld {
     this.pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
     const hits = this.raycaster.intersectObjects([this.room, ...[...this.actors.values()].map(a => a.group)], true);
-    const hit = hits[0]; if (!hit) return;
+    const hit = hits.find(h=>{let n=h.object;while(n){if(!n.visible)return false;n=n.parent;}return true;}); if (!hit) return;
     let object = hit.object;
     while (object) {
+      if (object.userData.hotspot) { this.callbacks.onObject?.(object.userData.hotspot); return; }
       if (object.userData.agentId) { this.callbacks.onActor(object.userData.agentId); return; }
       if (Number.isInteger(object.userData.deskIndex)) { this.callbacks.onDesk(object.userData.deskIndex); return; }
       object = object.parent;
     }
     if (hit.point.y < .08 && this.selected) this.callbacks.onFloor([hit.point.x, hit.point.z]);
   }
+  fly(dt) {
+    if(!this.flying||!this.keys.size)return;
+    const forward=this.controls.target.clone().sub(this.camera.position);forward.y=0;forward.normalize();
+    const right=new THREE.Vector3().crossVectors(forward,new THREE.Vector3(0,1,0));
+    const delta=new THREE.Vector3().addScaledVector(forward,(this.keys.has('KeyW')-this.keys.has('KeyS'))*dt*5).addScaledVector(right,(this.keys.has('KeyD')-this.keys.has('KeyA'))*dt*5);
+    delta.y=THREE.MathUtils.clamp(this.camera.position.y+(this.keys.has('KeyE')-this.keys.has('KeyQ'))*dt*4,.7,25)-this.camera.position.y;
+    if(this.controls.target.clone().add(delta).length()>22)return;
+    this.controls.target.add(delta);this.camera.position.add(delta);
+  }
   cameraAction(action) {
+    if(action==='flight'||action==='flight-off'){this.flying=action==='flight'&&!this.flying;this.keys.clear();this.cameraGoal=null;this.controls.minPolarAngle=this.flying ? .1 : .45;this.controls.maxPolarAngle=this.flying?1.5:1.28;this.refreshContainer();if(this.flying)this.renderer.domElement.focus({preventScroll:true});return;}
+    if(['forward','back','up','down'].includes(action)){this.cameraGoal=null;const vector=this.controls.target.clone().sub(this.camera.position);vector.y=0;vector.normalize().multiplyScalar(action==='forward'?1:-1);if(action==='up'||action==='down')vector.set(0,action==='up'?1:-1,0);vector.y=THREE.MathUtils.clamp(this.camera.position.y+vector.y,.7,25)-this.camera.position.y;if(this.controls.target.clone().add(vector).length()<22){this.camera.position.add(vector);this.controls.target.add(vector);}this.controls.update();return;}
     if (action === 'in' || action === 'out') {
       this.cameraGoal = null;
       this.camera.zoom = THREE.MathUtils.clamp(this.camera.zoom * (action === 'in' ? 1.2 : 1/1.2), this.controls.minZoom, this.controls.maxZoom);
@@ -213,7 +254,7 @@ class OfficeWorld {
       this.cameraGoal = { target: actor.group.position.clone().add(new THREE.Vector3(0, .95, 0)), offset: new THREE.Vector3(6,4,-3), zoom: 2.7, actorId: actor.id }; return;
     }
     this.cameraGoal = null;
-    if (action === 'reset') { this.controls.target.set(0,1.3,0); this.camera.position.set(11, 10.5, 13); this.camera.zoom = 1; }
+    if (action === 'reset') { this.flying=false;this.keys.clear();this.controls.minPolarAngle=.45;this.controls.maxPolarAngle=1.28;this.refreshContainer(); const center=this.game.seats.length>3?2:0;this.controls.target.set(center,1.3,0); this.camera.position.set(11+center, 10.5, 13); this.camera.zoom = 1; }
     else {
       const offset = this.camera.position.clone().sub(this.controls.target), spherical = new THREE.Spherical().setFromVector3(offset);
       spherical.theta += action === 'left' ? -.3 : .3;
@@ -222,7 +263,7 @@ class OfficeWorld {
     this.camera.updateProjectionMatrix(); this.controls.update(); this.resize();
   }
   reset() { for (const a of this.actors.values()) this.scene.remove(a.group); this.actors.clear(); this.initialTeam = null; this.busy = false; }
-  detach() { this.container = null; this.resizeObserver.disconnect(); if (this.frameId) cancelAnimationFrame(this.frameId); this.frameId = 0; }
+  detach() { this.keys.clear(); this.container = null; this.resizeObserver.disconnect(); if (this.frameId) cancelAnimationFrame(this.frameId); this.frameId = 0; }
 }
 
 export function mountOfficeWorld(game, selected, callbacks) {
