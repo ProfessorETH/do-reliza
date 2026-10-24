@@ -20,3 +20,12 @@ test('desk interiors, lounge, wall and invalid destinations reject movement', ()
   }
   assert.equal(clearSegment(ENTRANCE, [-2.65, -2.8]), false);
 });
+
+test('walking routes approach chairs from the side without crossing another chair', () => {
+  const points=[ENTRANCE,...WAITING,...DESKS.map(d=>[d.seat[0]+.72,d.seat[1]+.4])];
+  for(const a of points)for(const b of points){
+    const path=findOfficePath(a,b,true);assert.ok(path,`${a} -> ${b}`);let p=a;
+    for(const q of path){assert.ok(clearSegment(p,q,true));p=q;}
+  }
+  assert.equal(findOfficePath(ENTRANCE,DESKS[0].seat,true),null);
+});
