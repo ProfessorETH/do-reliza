@@ -1,3 +1,4 @@
+import { rocks, batteriesFor, canSaveOrbit, freshOrbit, restoreOrbit, moveOrbit } from './assets/orbit.js?v=orbit-2';
 import { createOnboarding } from './assets/onboarding/onboarding.js?v=shift-ux-20261024-v2';
 import { advanceShiftClock, shiftTime } from './assets/shift-clock.js?v=shift-ux-2';
 import { renderStartScreen } from './assets/start-screen.js?v=difficulty-audio-20261024';
@@ -40,6 +41,7 @@ const icon = (name, size = 20) => {
     rocket: '<path d="M9 15 5 19m4-4 6-6m-6 6-4-1 2-6 5-1 3-4 6-1-1 6-4 3-1 5-6 2-1-4z"/><circle cx="16" cy="7" r="1"/>',
     reset: '<path d="M3 10a9 9 0 1 1 1 8M3 4v6h6"/>', sound: '<path d="m4 9 5 0 5-4v14l-5-4H4zm13-1a6 6 0 0 1 0 8"/>',
     brief: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v4H9zm0 9h6m-6 4h4"/>',
+    shield: '<path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/>',
     flag: '<path d="M5 22V3m0 1h14l-3 5 3 5H5"/>',
   }[name] || '<circle cx="12" cy="12" r="7"/>';
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
@@ -234,27 +236,37 @@ function debrief() {
   showDialog(`<div class="eyebrow">РАЗБОР ПРОЕКТА</div><h2 id="dialog-title">Что изменили ваши решения</h2><ul class="debrief-list"><li><b>Подбор и распределение.</b> Среднее соответствие навыков задачам — ${r.quality}%. Самое слабое место: «${weakest.name}» (${fit(game.assignments[weakest.id],weakest)}/100).</li><li><b>Объём.</b> ${game.choices.scope==='focus'?'Вы договорились перенести новую функцию. Это сохранило время и резерв.':game.choices.scope==='shield'?'Добавили щит за 2 000 ₽ и увеличили объём кода. Щит работает в вашей мини-игре.':'Обменяли часть оформления на щит. Дополнительная механика появилась, интерфейс стал проще.'}</li><li><b>Качество.</b> ${game.choices.bug==='fix'?'Вы потратили 2 часа и 1 500 ₽, чтобы исправить сохранение. Теперь мини-игра восстанавливает прогресс.':game.choices.bug==='cut'?'Вы честно сократили функциональность. Мини-игру нужно проходить за одну сессию.':'Вы выпустили известную ошибку. При перезапуске мини-игры прогресс теряется.'}</li><li><b>Проверка кода.</b> ${game.wallBug ? 'Проверка пропущена. В мини-игре корабль проходит сквозь астероиды.' : 'Вы исправили порядок действий: проверка препятствия выполняется до движения.'}</li><li><b>Помощь.</b> ${game.support ? 'Вы провели совместный разбор: разработчик лучше справился с конкретной задачей, но понадобился дополнительный час.' : 'В этой смене команда справлялась без совместного разбора.'}</li><li><b>Срок.</b> ${r.late?`Задержка ${r.late} ч. Резерв времени и параллельная работа помогут в следующей попытке.`:'Команда уложилась в согласованный срок.'}</li></ul><p class="small-muted">Оценка: качество — до 45 баллов; срок — до 25; бюджет — 10; доверие — до 10; отсутствие критического бага — 10. Упрощение визуала снижает оценку на 2,4 балла.</p><button class="primary full" data-action="close-dialog">Вернуться к результату</button>`);
 }
 
-const rocks=new Set(['1,1','3,1','5,1','1,3','3,3','5,3']);
-let batteries=['2,0','4,2','0,4'];
-function freshMini(){return {x:0,y:0,collected:[],shield:game.shield,won:false,moves:0};}
+let miniMessage = '';
+function saveMini() {
+  if(canSaveOrbit(game)){try{localStorage.setItem(MINI,JSON.stringify(mini));}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
+}
 function openMini() {
-  batteries = game.life?.contract === 'club' ? ['1,0','4,4','6,2'] : game.life?.contract === 'cup' ? ['2,4','4,0','6,2'] : ['2,0','4,2','0,4'];
-  mini=freshMini();
-  if(game.checkpoint&&!game.criticalBug){try{const m=JSON.parse(localStorage.getItem(MINI));if(m&&Number.isInteger(m.x)&&Number.isInteger(m.y)&&m.x>=0&&m.x<7&&m.y>=0&&m.y<5&&Array.isArray(m.collected)&&m.collected.every(k=>batteries.includes(k)))mini=m;}catch{}}
+  let stored = null;
+  try { stored = JSON.parse(localStorage.getItem(MINI)); } catch {}
+  mini = restoreOrbit(game, stored);
+  miniMessage = stored && canSaveOrbit(game) && mini.moves === 0 && stored.release !== mini.release
+    ? 'Начат полёт для текущего релиза: старое сохранение не содержит этих решений команды.' : '';
+  saveMini();
   showDialog('<h2 id="dialog-title">Орбита</h2>');renderMini();
 }
 function renderMini() {
-  const full=getResult(game).design>=70;
-  document.querySelector('#dialog-content').innerHTML=`<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button><div class="mini-game ${full?'polished':'simple'}"><div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ</div><h2 id="dialog-title">ОРБИТА <span>0${mini.collected.length} / 03</span></h2><p>${mini.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p><div class="mini-board" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>{const x=i%7,y=Math.floor(i/7),key=`${x},${y}`,ship=mini.x===x&&mini.y===y,rock=rocks.has(key),bat=batteries.includes(key)&&!mini.collected.includes(key),end=x===6&&y===4;return `<button class="tile ${ship?'ship':''} ${rock?'rock':''} ${end?'station':''} ${bat?'battery':''}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${ship?'Корабль':rock?'Астероид':end?'Станция':bat?'Батарея':'Космос'}, ${x+1}, ${y+1}">${ship?icon('rocket',30):rock?'◆':bat?icon('bolt',23):end?icon('flag',24):'<span>·</span>'}</button>`;}).join('')}</div><div class="mini-status"><span>${mini.shield?'◈ Щит готов':game.shield?'Щит израсходован':'Без щита'}</span><span>${game.criticalBug?'Баг сохранения':game.checkpoint?'Автосохранение':'Одна сессия'}</span></div><div class="mini-controls"><button class="secondary" data-action="move" data-dir="left" aria-label="Влево">←</button><div><button class="secondary" data-action="move" data-dir="up" aria-label="Вверх">↑</button><button class="secondary" data-action="move" data-dir="down" aria-label="Вниз">↓</button></div><button class="secondary" data-action="move" data-dir="right" aria-label="Вправо">→</button><p>Стрелки или соседняя клетка.${game.shield?' Щит позволяет один раз пройти через астероид.':''}</p></div>${mini.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}<div class="dialog-actions"><button class="secondary" data-action="reload-mini">${icon('reset',15)} Перезапустить</button><button class="primary" data-action="close-dialog">В студию</button></div></div>`;
+  const full=game.choices.scope!=='swap'&&getResult(game).design>=70, batteries=batteriesFor(game);
+  const shieldText = mini.shield ? 'Щит активен · 1 / 1' : game.shield ? 'Щит израсходован · 0 / 1' : 'Без щита · отложен командой';
+  const shieldReason = game.choices.scope === 'swap' ? 'Команда заменила часть оформления на защиту.' : game.shield ? 'Команда добавила защиту за 2 000 ₽.' : 'Команда сохранила основной объём релиза.';
+  document.querySelector('#dialog-content').innerHTML=`<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть игру">${icon('cross')}</button><div class="mini-game ${full?'polished':'simple'}"><div class="eyebrow">ИГРА ВАШЕЙ КОМАНДЫ</div><h2 id="dialog-title">ОРБИТА <span>0${mini.collected.length} / 03</span></h2><p>${mini.won?'Станция получила энергию. Миссия выполнена!':'Соберите 3 батареи и доберитесь до станции справа внизу.'}</p>
+    <div class="orbit-shield ${mini.shield?'charged':''}">${icon('shield',32)}<div><strong>${shieldText}</strong><span>${shieldReason} ${game.shield?'Щит автоматически защищает при одном столкновении.':''}</span></div></div>
+    <div class="mini-board" role="group" aria-label="Карта. Управление стрелками клавиатуры или соседними клетками.">${Array.from({length:35},(_,i)=>{const x=i%7,y=Math.floor(i/7),key=`${x},${y}`,ship=mini.x===x&&mini.y===y,rock=rocks.has(key),bat=batteries.includes(key)&&!mini.collected.includes(key),end=x===6&&y===4;return `<button class="tile ${ship?'ship':''} ${ship&&mini.shield?'shielded':''} ${rock?'rock':''} ${end?'station':''} ${bat?'battery':''}" data-action="tile" data-x="${x}" data-y="${y}" aria-label="${ship?(mini.shield?'Корабль под щитом':'Корабль'):rock?'Астероид':end?'Станция':bat?'Батарея':'Космос'}, ${x+1}, ${y+1}">${ship?icon('rocket',30):rock?'◆':bat?icon('bolt',23):end?icon('flag',24):'<span>·</span>'}${ship&&mini.shield?'<span class="orbit-shield-ring" aria-hidden="true"></span>':''}</button>`;}).join('')}</div>
+    <div class="orbit-feedback" role="status">${miniMessage||'Корабль готов. Выбери направление.'}</div>
+    <div class="mini-status"><span>${game.criticalBug?'Баг сохранения: полёт теряется при открытии':game.checkpoint?'Автосохранение полёта работает':'Одна сессия: сохранение убрано из релиза'}</span><span>${game.wallBug?'Ошибка: корабль проходит сквозь астероиды':'Проверка движения исправлена'}</span><span>${game.choices.scope==='swap'?'Оформление упрощено ради щита':full?'Оформление команды: полная версия':'Оформление команды: базовая версия'}</span></div>
+    <div class="mini-controls"><button class="secondary" data-action="move" data-dir="left" aria-label="Влево">←</button><div><button class="secondary" data-action="move" data-dir="up" aria-label="Вверх">↑</button><button class="secondary" data-action="move" data-dir="down" aria-label="Вниз">↓</button></div><button class="secondary" data-action="move" data-dir="right" aria-label="Вправо">→</button><p>Стрелки или соседняя клетка.</p></div>${mini.won?'<div class="mini-win">Маршрут завершён. Ваша команда сделала работающую игру!</div>':''}<div class="dialog-actions"><button class="secondary" data-action="reload-mini">${icon('reset',15)} Проверить сохранение</button><button class="secondary" data-action="fresh-mini">Новый полёт</button><button class="primary" data-action="close-dialog">В студию</button></div></div>`;
 }
 function moveMini(dx,dy) {
-  if(!mini||mini.won||Math.abs(dx)+Math.abs(dy)!==1)return;
-  const x=mini.x+dx,y=mini.y+dy,key=`${x},${y}`;if(x<0||x>6||y<0||y>4)return;
-  if(rocks.has(key)&&!game.wallBug){if(!mini.shield){toast('Астероид. Найди обходной маршрут.');return;} mini.shield=false;}
-  mini.x=x;mini.y=y;mini.moves++;if(batteries.includes(key)&&!mini.collected.includes(key))mini.collected.push(key);
-  if(x===6&&y===4){if(mini.collected.length===3)mini.won=true;else toast('Для станции нужны все три батареи.');}
-  if(game.checkpoint&&!game.criticalBug){try{localStorage.setItem(MINI,JSON.stringify(mini));}catch{toast('Браузер не разрешил сохранить мини-игру.');}}
-  renderMini();
+  if(!mini)return;
+  const focus=document.activeElement?.closest('[data-action]');
+  const selector=focus?.dataset.action==='move'?`[data-action="move"][data-dir="${focus.dataset.dir}"]`:'.tile.ship';
+  miniMessage=moveOrbit(game,mini,dx,dy);
+  saveMini();renderMini();
+  dialog.querySelector(selector)?.focus({preventScroll:true});
 }
 document.addEventListener('keydown',e=>{
   if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
@@ -350,6 +362,7 @@ document.addEventListener('click',e=>{
   if(action==='play-mini')openMini();
   if(action==='tile')moveMini(Number(el.dataset.x)-mini.x,Number(el.dataset.y)-mini.y);
   if(action==='move'){const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[el.dataset.dir];moveMini(...d);}
+  if(action==='fresh-mini'){mini=freshOrbit(game);miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();return;}
   if(action==='reload-mini'){openMini();toast(game.criticalBug?'Прогресс потерян: известный баг попал в релиз.':game.checkpoint?'Прогресс восстановлен из сохранения.':'Короткая сессия началась заново — как согласовано с заказчиком.');}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
   if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
