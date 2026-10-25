@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "../../vendor/three/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "../../vendor/meshopt/meshopt_decoder.mjs";
 import { OrbitControls } from "../../vendor/three/controls/OrbitControls.js";
 import { AGENTS } from "../../data.js";
 
@@ -8,7 +9,7 @@ const viewport = document.querySelector("#viewport"),
 const person = document.querySelector("#person"),
   motion = document.querySelector("#motion");
 const controlsButtons = [...document.querySelectorAll("button")];
-const loader = new GLTFLoader(),
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),
   cache = new Map();
 const params = new URLSearchParams(location.search);
 const publishedGallery = document.body.dataset.characters === '7';
