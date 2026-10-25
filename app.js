@@ -1,6 +1,8 @@
 import { renderShift } from './assets/shift-view.js';
 import { renderHiring } from './assets/hiring-view.js';
 import { createOfficeConversations } from './assets/office-conversations.js';
+import { nightShift, nightDecision } from './assets/night-shift.js';
+import { nightPanel } from './assets/night-view.js';
 import { salaryDecision } from './assets/career-employment.js';
 import { employmentPanel } from './assets/employment-view.js';
 import { createOfficeSpeech } from './assets/office-speech.js';
@@ -289,7 +291,7 @@ function syncEventDialog(requestOpen=false) {
 function completeDecision(id,expired=false){
   const event=game.currentEvent;
   const incident=game.life.incident,kind=game.currentEvent;
-  const affected=kind==='life'?(incident.type==='idea'&&id==='life-care'?[...game.team]:[incident.id,...(incident.type==='tension'?[incident.otherId]:[])]):discussionSpeakers(game).map(line=>line.id);
+  const affected=kind==='life'?(incident.type==='night'||incident.type==='idea'&&id==='life-care'?[...game.team]:[incident.id,...(incident.type==='tension'?[incident.otherId]:[])]):discussionSpeakers(game).map(line=>line.id);
   const before=captureMembers(game);
   const error=resolveEvent(game,id);
   if(error){toast(error);return;}
@@ -471,6 +473,11 @@ document.addEventListener('click',e=>{
   if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
   if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
   if(action==='career'){if(isCareer(game))showDialog(careerPanel(game));return;}
+  if(action==='night-preview'){if(game.stage==='work'&&nightShift(game).active)showDialog(nightPanel(game));return;}
+  if(action==='night-rest'){
+    const before=captureMembers(game),error=nightDecision(game,'rest');
+    if(error)toast(error);else{queueMemberFeedback(game,before,[...game.team]);dialog.close();persist();render();toast('Утро: команда отдохнула и вернулась к своим задачам.');}return;
+  }
   if(action==='salary-decision'){
     const before=captureMembers(game),error=salaryDecision(game,id,el.dataset.choice);
     if(error)toast(error);else{queueMemberFeedback(game,before,[id]);persist();render();dialog.close();toast('Условия сотрудника обновлены.');}return;
