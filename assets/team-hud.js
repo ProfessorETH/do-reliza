@@ -22,7 +22,8 @@ export function teamMemberState(game, id) {
   const tone = member.energy<=25&&member.stress>=65 ? 'urgent' : member.energy<35||member.stress>=65||member.morale<35 ? 'low' : member.morale>=80 ? 'bright' : 'calm';
   let activity = game.stage==='plan' ? 'Готовится к смене' : 'На месте';
   let line = agent.quote;
-  if (member.restTrip?.phase==='queued') { activity='Ждёт кресло'; line='Как освободится кресло — возьму паузу. Пока продолжу.'; }
+  if(member.coffeeTrip){activity=({queued:'Ждёт напиток',outbound:'Идёт за напитком',drinking:'Пьёт напиток',returning:'Возвращается за компьютер'})[member.coffeeTrip.phase];line=member.coffeeTrip.phase==='queued'?'Станция занята. Пока продолжу работу.':'Заберу напиток и вернусь к задаче.';}
+  else if (member.restTrip?.phase==='queued') { activity='Ждёт кресло'; line='Как освободится кресло — возьму паузу. Пока продолжу.'; }
   else if (member.restTrip?.phase==='outbound') { activity='Идёт отдыхать'; line='Небольшая пауза — и вернусь со свежей головой.'; }
   else if (member.restTrip?.phase==='returning') { activity='Возвращается'; line='Уже лучше. Возвращаюсь к задаче.'; }
   else if (member.breaks) { activity='На перерыве'; line='Пару минут тишины. Сейчас восстановлю силы.'; }
@@ -31,7 +32,7 @@ export function teamMemberState(game, id) {
   else if (!game.seats.includes(id)) { activity=game.officeTargets?.[id]?'На прогулке':'Ждёт у входа'; line=game.officeTargets?.[id]?'Разомнусь и вернусь.':'Какой компьютер займём?'; }
   else if (task) { activity=task.verb; line=workLines[task.id]; }
   else if (game.stage==='work') { activity='Ждёт свой этап'; line='Жду результат коллег. Потом подключусь к своему этапу.'; }
-  if (!member.restTrip && !member.breaks && !['event','result'].includes(game.stage)) {
+  if (!member.restTrip && !member.coffeeTrip && !member.breaks && !['event','result'].includes(game.stage)) {
     if (tone==='urgent') line='Сил почти не осталось. Нужны отдых и помощь с задачей.';
     else if (member.energy<35) line='Нужна короткая пауза. Потом смогу продолжить.';
     else if (member.stress>=65) line='Сложно продвигаться дальше. Разберём задачу вместе?';
