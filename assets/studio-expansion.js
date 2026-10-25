@@ -40,6 +40,7 @@ export function mountStudioExpansion(room) {
 
 export function mountStudioSurroundings(scene) {
   const city = new THREE.Group(); city.name='EveningNeighborhood';
+  const windows=[];
   const ground = new THREE.Mesh(new THREE.BoxGeometry(40,.25,32),new THREE.MeshBasicMaterial({color:'#1e2e35'}));
   ground.position.set(0,-.7,0); city.add(ground);
   const material=new THREE.MeshStandardMaterial({color:'#32464c',roughness:1});
@@ -50,7 +51,13 @@ export function mountStudioSurroundings(scene) {
     for(let y=0;y<height-1;y++){
       const window=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.02),new THREE.MeshBasicMaterial({color:i%3?'#b59972':'#759b9b'}));
       window.position.set(block.position.x,y+.5,block.position.z+1.42);city.add(window);
+      window.material.transparent=true;windows.push(window.material);
     }
   }
   scene.add(city);
+  return {update(state){
+    if(!city.visible)return;
+    ground.material.color.set(state.ground);material.color.set(state.city);
+    for(const m of windows)m.opacity=.12+state.night*.88;
+  }};
 }

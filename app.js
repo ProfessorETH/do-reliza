@@ -29,7 +29,7 @@ import { createSound } from './assets/sound.js?v=original-cast-20261024';
 import { WAITING } from './office-layout.js?v=shift-ux-20261024-v2';
 import { createDemoGame } from './demo.js?v=shift-ux-20261024-v2';
 import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, canWalkTo, graphicsSettingsHTML } from './assets/office-runtime.js?v=team-hud-20261024';
-import { renderOffice } from './office.js?v=scene-first-20261025';
+import { renderOffice, updateOfficeDaylight } from './office.js?v=scene-first-20261025';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
 import { renderTeamHUD } from './assets/team-hud.js?v=mobile-voices-20261024';
@@ -101,6 +101,7 @@ function clockStatus() {
 }
 function updateClock() {
   if(!game)return;
+  updateOfficeDaylight(game,root);
   const time=shiftTime(game);
   for(const [key,value] of Object.entries({...time,now:time.now.split(' · ')[0],day:time.now.split(' · ')[1]||'В студии',status:clockStatus()}))for(const el of root.querySelectorAll(`[data-clock="${key}"]`)){
     const label=key==='now'&&el.closest('.scene-time')?time.now:value;

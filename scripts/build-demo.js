@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve, join, sep, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
+import { prepareCharacterModels } from './prepare-character-models.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const target = resolve(root, 'dist/demo-v05');
@@ -22,6 +23,8 @@ await cp(join(root, 'assets'), join(stage, 'assets'), {recursive:true,filter:pat
 // These images are emitted by the CSS file loader with content hashes.
 for (const file of ['agents.webp','office.webp','office-mobile.webp','onboarding/nika-portrait.webp']) await rm(join(stage,'assets',file),{force:true});
 await cp(join(root, 'vendor/three/LICENSE'), join(stage, 'THREE-LICENSE.txt'));
+await cp(join(root, 'vendor/meshopt/LICENSE.md'), join(stage, 'MESHOPT-LICENSE.md'));
+await prepareCharacterModels({root,target:join(stage,'assets/models')});
 const js = await build({
   absWorkingDir: root, entryPoints: ['app.js','art/characters/preview.js'], outdir: stage,
   entryNames:'[name]-[hash]', chunkNames:'chunk-[hash]',

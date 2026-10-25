@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { shiftTime } from './shift-clock.js';
+import { shiftTime, shiftMinutes } from './shift-clock.js';
 
 export function mountSceneClock(room) {
   room.traverse(node=>{if(/^SD_(Sign|StudioWord|StudioSubtitle)/.test(node.name))node.visible=false;});
@@ -23,7 +23,7 @@ export function mountSceneClock(room) {
   (room.getObjectByName('Release3D_CutawayBack')||room).add(assembly);
   let previous='';
   return {update(game){
-    const elapsed=9*60+(game.time+(game.clockFraction||0))*60;
+    const elapsed=shiftMinutes(game);
     hour.rotation.z=-elapsed/720*Math.PI*2;minute.rotation.z=-elapsed/60*Math.PI*2;
     const time=shiftTime(game),key=JSON.stringify(time);
     if(key===previous)return;previous=key;

@@ -8,11 +8,12 @@ import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-e
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from './vendor/meshopt/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
 import { OfficeActor } from './office-actors.js?v=portrait-team-v4-20261024';
 import { ALL_DESKS as DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
 import { agentById, activeTasks } from './engine.js?v=shift-ux-20261024-v2';
-import { makeScreen, paintScreen, paintSunset } from './office-screens.js';
+import { makeScreen, paintScreen } from './office-screens.js';
 import { createOfficeAtmosphere } from './assets/office-atmosphere.js?v=3-workspace';
 import { mountOfficeUpgrades } from './assets/office-upgrades.js?v=office-life-1';
 import { prepareLoungeSeat } from './assets/lounge-seat.js?v=seated-breaks-1';
@@ -21,7 +22,7 @@ import { assetURL } from './asset-url.js';
 
 let world;
 const modelCache = new Map();
-const loader = new GLTFLoader();
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 const loadModel = name => {
   if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=body-team-v5-20261025`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);
@@ -49,7 +50,7 @@ class OfficeWorld {
     this.controls.addEventListener('start', () => { this.cameraGoal = null; });
     this.raycaster = new THREE.Raycaster(); this.pointer = new THREE.Vector2(); this.projected = new THREE.Vector3();
     this.art = createOfficeAtmosphere(this.scene, this.renderer);
-    mountStudioSurroundings(this.scene);
+    this.surroundings=mountStudioSurroundings(this.scene);
     this.neighborhood=this.scene.getObjectByName('EveningNeighborhood');
     this.neighborhood.visible=false;
     this.keys = new Set();
@@ -79,7 +80,6 @@ class OfficeWorld {
           node.castShadow = !/_Static_Room_(floor|rug)$/.test(node.name); node.receiveShadow = true;
           if (Number.isInteger(node.userData.screenIndex)) this.screens.set(node.userData.screenIndex, makeScreen(node));
           if (node.name === 'Release3D_ArcadeScreen') this.arcade = makeScreen(node, true);
-          if (node.userData.windowTexture) paintSunset(node);
         }
       });
       await this.art.dress(this.room);
@@ -212,6 +212,8 @@ class OfficeWorld {
       for (const wall of this.walls || []) wall.visible = officeWallVisible(wall.userData.wallSide, viewDirection);
       for (const [index, screen] of this.screens) { const id = this.game.seats[index], task = active.find(t => this.game.assignments[t.id] === id); paintScreen(screen, task, task ? this.game.progress[task.id] : 0, this.game.stage); }
       this.sceneClock?.update(this.game);
+      const daylight=this.art.update(this.game,dt);this.surroundings.update(daylight);
+      this.container.dataset.daylight=daylight.phase;
       if (this.arcade) paintScreen(this.arcade, null, 0, this.game.stage);
       this.labels();
       if (this.container.clientWidth && this.container.clientHeight) this.renderer.render(this.scene, this.camera);
