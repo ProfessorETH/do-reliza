@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "method": "Individually fitted heads with protected collar, unchanged bodies/rig/UV/materials; original input recoverable",
+  "models": [
+    {
+      "id": "mira",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 47836,
+      "beforeBoundsY": [
+        1.2611463525755198,
+        1.9304145896979217
+      ],
+      "afterBoundsY": [
+        1.2650962283521598,
+        1.7935150881704205
+      ],
+      "minJacobianDeterminant": 0.3075627413773372,
+      "maxFixedNeckContactError": 0,
+      "sourceSha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "28b9999e7b68acd0a14b749f2ad3b49c1eb31ceeba48cb36549df4a816947c62",
+      "outputBytes": 20430688
+    },
+    {
+      "id": "pixel",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 49379,
+      "beforeBoundsY": [
+        1.2717782231385846,
+        1.8878871074456613
+      ],
+      "afterBoundsY": [
+        1.271788510878385,
+        1.7611942016587028
+      ],
+      "minJacobianDeterminant": 0.3676607411381757,
+      "maxFixedNeckContactError": 0,
+      "sourceSha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "3a0d86b9135332731e5a6ccdff2406cb19bcef4bce13fe448b8a4b3137268880",
+      "outputBytes": 21912200
+    },
+    {
+      "id": "nord",
+      "scale": 0.85,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 46031,
+      "beforeBoundsY": [
+        1.2871027934604793,
+        1.8265888261580836
+      ],
+      "afterBoundsY": [
+        1.2871027934604793,
+        1.7566005022343711
+      ],
+      "minJacobianDeterminant": 0.5604274553012447,
+      "maxFixedNeckContactError": 4.7186779599747095e-9,
+      "sourceSha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "06a5e7f86c6e045e127868bb84759d63a35268b6758c21cd11801994655c02c5",
+      "outputBytes": 20973052
+    },
+    {
+      "id": "iskra",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 52939,
+      "beforeBoundsY": [
+        1.2858387311590034,
+        1.8316450753639872
+      ],
+      "afterBoundsY": [
+        1.286445562940275,
+        1.7184502572766303
+      ],
+      "minJacobianDeterminant": 0.3400259473281309,
+      "maxFixedNeckContactError": 5.218503398681236e-9,
+      "sourceSha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "7850c43ec77461a72c37ed0800770f58cdc455b23e95eeabad844337c409144d",
+      "outputBytes": 23216504
+    },
+    {
+      "id": "saga",
+      "scale": 0.8,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 52929,
+      "beforeBoundsY": [
+        1.2909077821013388,
+        1.8113688715946448
+      ],
+      "afterBoundsY": [
+        1.2909077821013388,
+        1.721095097275716
+      ],
+      "minJacobianDeterminant": 0.42403417247479336,
+      "maxFixedNeckContactError": 7.572614668508571e-9,
+      "sourceSha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "84dabbcded7182176acda333d32aa488b28e7fbff975b7973171c40d778d9b0f",
+      "outputBytes": 20783132
+    },
+    {
+      "id": "echo",
+      "scale": 0.82,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 46800,
+      "beforeBoundsY": [
+        1.2899280319723638,
+        1.8152878721105448
+      ],
+      "afterBoundsY": [
+        1.2899280319723638,
+        1.7333360551306467
+      ],
+      "minJacobianDeterminant": 0.49044024465671016,
+      "maxFixedNeckContactError": 0,
+      "sourceSha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "06ee08aef9a197cac490942ee553f71bf5f7083ed13f68a3e2cce038861a66d8",
+      "outputBytes": 22554716
+    },
+    {
+      "id": "nika",
+      "scale": 0.7,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 89058,
+      "beforeBoundsY": [
+        1.156956634166769,
+        1.9888706316697216
+      ],
+      "afterBoundsY": [
+        1.156956634166769,
+        1.800209442168805
+      ],
+      "minJacobianDeterminant": 0.194549526442338,
+      "maxFixedNeckContactError": 0,
+      "sourceSha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "7ae448fb60bd944e27f5f3c15d78abdfa05e01126bb8499c61edd1d836f496fd",
+      "outputBytes": 26122888
+    }
+  ]
+}
