@@ -31,7 +31,8 @@
   "notes": [
     "Quiet office and computers show the first authored workstation with its actual upgrade geometry.",
     "Lounge and coffee corner are isolated from material-batched room meshes; gameplay geometry is unchanged.",
-    "Cards use these still renders; the detail view loads an interactive model only when opened."
+    "Cards use these still renders; the detail view loads an interactive model only when opened.",
+    "Coffee station uses the same shared assets/studio-expansion.js constructor as the game, with an authored shelf from office.glb."
   ],
   "posters": [
     {
