@@ -1,0 +1,43 @@
+{
+  "status": "native_reopen_verified",
+  "production_model_sha256": "2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
+  "native_source": "art/blender/mira-polish.blend",
+  "native_source_sha256": "56daef8c0cd52d6bd52e152025a5f45474fbe0aa2821de75a103765cf690a383",
+  "native_source_bytes": 18554870,
+  "rigs": 1,
+  "bones": 25,
+  "actions": 5,
+  "all_actions_fake_user": true,
+  "packed_images": 3,
+  "external_images": 0,
+  "head_parent_bone": "Skin_mira_Head",
+  "blink_shape_keys": [
+    "PortraitBlink"
+  ],
+  "collar_meshes": [
+    "DR_mira_Collar"
+  ],
+  "render_device": "CPU",
+  "native_view_pose": "REST, original editable rig",
+  "views": [
+    {
+      "view": "front",
+      "path": "work/mira-polish/native-final/front.png",
+      "sha256": "55c5d2093b83d5bd0acc7d51c50a443eb57c46bb7aa4cd2d03319e734bf44f6e"
+    },
+    {
+      "view": "quarter",
+      "path": "work/mira-polish/native-final/quarter.png",
+      "sha256": "0e065e4fc16e5a323904763ace76392cce8e811a75f2f19bd0c67bd141c33e19"
+    },
+    {
+      "view": "profile",
+      "path": "work/mira-polish/native-final/profile.png",
+      "sha256": "3b474bf7a888db778316527013c5fe9424f7df728a338116649de78717ff346b"
+    }
+  ],
+  "limits": [
+    "Native images are separate soft-light CPU source views, not substitutes for the parent actual-office pose and keyboard IK checks.",
+    "No live Blender scene, production GLB or saved native source was edited during this reopen."
+  ]
+}

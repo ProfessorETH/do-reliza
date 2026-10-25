@@ -1,0 +1,43 @@
+{
+  "status": "review_candidate_awaiting_front_visual_acceptance",
+  "revision":5,
+  "character":"mira",
+  "sourceSha256":"849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+  "headV4Sha256":"09d0a13360ed28664b8677e0b9d6c8bb6e4fcbd5c23ea76c89d57c560ac9f5b2",
+  "candidateSha256":"796585a7fe63658ea1a26a4a365742ba854b5c6fa4af10a3a6a8ce886322072b",
+  "candidateBytes":30161972,
+  "reproduce":"node art/characters/mira-polish/head_review.js --source BASELINE.glb --output-dir OUTPUT_DIR --lower-curls",
+  "change":"Additional albedo-only copper repair on low, skin-painted curls outside the anatomical neck; geometry is exactly the accepted head V4.",
+  "additionalHairDomain":{
+    "worldCoordinates":"GLTF Y up, front -Z, metres",
+    "y":[1.355,1.46],
+    "absoluteX":[0.075,0.16],
+    "z":[-0.085,0.13],
+    "excludedNeckEllipse":{"radii":[0.050,0.052],"centerZ":0.004,"minimumNormalizedRadius":1.5},
+    "colourGate":"Only desaturated pixels; original copper retained.",
+    "additionalModifiedTexels":46434,
+    "totalModifiedTexelsComparedWithOriginal":107713
+  },
+  "exactV4Comparisons":{
+    "POSITION":true,"NORMAL":true,"TANGENT":true,"TEXCOORD_0":true,
+    "indices":true,"morphTargets":true,"nodes":true,"skins":true,"animations":true
+  },
+  "actualPackedFloat32QC":{
+    "newDegenerateRetainedTriangles":0,
+    "faceNormalHemisphereReversalsRetainedTriangles":0,
+    "changedSkinNeckTriangles":3975,
+    "changedSkinNeckHemisphereReversals":0,
+    "maximumDuplicateUVSeamWorldDrift":0
+  },
+  "additionalTextureTriangleCentroidChecks":{
+    "centralFace":{"samples":4532,"changed":0},
+    "centralNeck":{"samples":255,"changed":0},
+    "ears":{"changed":0}
+  },
+  "limits":[
+    "This is a review-only head candidate; production is not installed by this worker.",
+    "Texture validation uses triangle centroid samples, not proof that every filtered texture footprint is unchanged.",
+    "The body neckline, collar material and pose remain separate work owned by the parent/body worker.",
+    "The narrower repair is a colour pass on existing curls; it does not claim additional strand geometry or removal of all generated shape artifacts."
+  ]
+}
