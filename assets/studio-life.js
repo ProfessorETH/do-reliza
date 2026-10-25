@@ -1,6 +1,7 @@
+import { agentProfile, initCareer, isCareer, contractTerms, releaseIncome, finishCareer, validCareer } from './studio-career.js';
 import { requestCoffee, callNextCoffee, coffeeInTransit, validCoffeeTrips } from './coffee-trip.js';
 import { AGENTS } from '../data.js';
-import { studioCapacity, upgradeLock, MISSION_REWARDS } from './studio-progression.js';
+import { studioCapacity, upgradeLock, MISSION_REWARDS, missionReward } from './studio-progression.js';
 
 const clamp = n => Math.max(0, Math.min(100, n));
 const member = () => ({ energy: 85, stress: 15, morale: 70, breaks: 0, restTrip: null, restSerial: 0, raises: 0, praised: 0, warnings: 0 });
@@ -26,6 +27,7 @@ export const INCIDENTS = {
 
 export function ensureLife(s) {
   if (!s.life) s.life = { version: 1, cash: 5000, completed: 0, contract: 'festival', upgrades: [], members: {}, history: [], seed: Math.floor(Math.random() * 0x100000000), incident: null, incidentDone: false, settled: false, departures: [] };
+  if(isCareer(s)&&!s.life.career)initCareer(s);
   for (const a of AGENTS) s.life.members[a.id] ||= member();
   for (const id of s.team) {
     const m = s.life.members[id];
@@ -58,7 +60,7 @@ export function restArrival(s, id, arrival) {
   if (arrival === 'back' && trip.phase === 'returning') { m.restTrip = null; callNextBreak(s); return true; }
   return false;
 }
-export const contractFor = s => CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0];
+export const contractFor = s => contractTerms(s,CONTRACTS.find(c => c.id === s.life?.contract) || CONTRACTS[0]);
 export function condition(s, id) {
   const m = ensureLife(s).members[id];
   if(m.coffeeTrip){const phase=m.coffeeTrip.phase;return {label:({queued:'Ждёт напиток',outbound:'Идёт за напитком',drinking:'Пьёт напиток',returning:'Возвращается за компьютер'})[phase],reason:phase==='queued'?'Станция занята. Сотрудник ждёт своей очереди за компьютером.':'Энергия +15 и настроение +5 после напитка. Затем сотрудник вернётся на своё место.',factor:phase==='queued'?(m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1):1};}
@@ -80,7 +82,7 @@ export function lifeHour(s, active, completed) {
     else if (awayForRest(m)) continue;
     else if (task) {
       m.energy = clamp(m.energy - 7);
-      const difficult = AGENTS.find(a => a.id === id).stats[task.skill] < 60;
+      const difficult = agentProfile(s,id).stats[task.skill] < 60;
       m.stress = clamp(m.stress + (difficult ? 5 : l.upgrades.includes('quiet') ? 1 : 2));
       if (difficult || m.energy < 25) m.morale = clamp(m.morale - 2);
     } else { m.energy = clamp(m.energy + 3); m.stress = clamp(m.stress - 2); }
@@ -177,7 +179,8 @@ export function buyUpgrade(s, id) {
 export function settleProject(s, result) {
   const l = ensureLife(s);
   if (s.stage !== 'result' || l.settled) return;
-  const reward = result.passed ? contractFor(s).reward + result.score * 20 : 2000;
+  const income=releaseIncome(s,result,contractFor(s)),reward=income.net;
+  finishCareer(s,result);
   l.cash += reward; l.completed++; l.settled = true;
   for (const id of s.team) {
     const m = l.members[id];
@@ -185,16 +188,16 @@ export function settleProject(s, result) {
     if (m.morale < 30 || (m.energy <= 25 && m.stress >= 65)) m.warnings++; else m.warnings = 0;
     if (m.warnings >= 2 && !l.departures.includes(id)) l.departures.push(id);
   }
-  l.history.push({ name: contractFor(s).name, score: result.score, reward, time: s.time });
+  l.history.push({ name: contractFor(s).name, score: result.score, reward, time: s.time, gross:income.gross, upkeep:income.upkeep });
   s.log.push(`Заказ закрыт: в кассу студии +${reward} ₽. Резерв заказчика не переносится.`);
 }
 export function validLife(s) {
   const l = s.life;
   if (l === undefined) return true; // Safe migration of 0.5 saves.
   const integer = (n, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
-  return validCoffeeTrips(s) && l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
+  return validCareer(s) && validCoffeeTrips(s) && l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
     && (l.missionsWon === undefined || Array.isArray(l.missionsWon) && new Set(l.missionsWon).size === l.missionsWon.length && l.missionsWon.every(id=>Object.hasOwn(MISSION_REWARDS,id)))
-    && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===MISSION_REWARDS[l.missionReward.contract].cash)
+    && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===missionReward(s,l.missionReward.contract).cash)
     && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
     && typeof l.settled === 'boolean' && typeof l.incidentDone === 'boolean' && (l.conflictDone === undefined || typeof l.conflictDone === 'boolean')
     && Array.isArray(l.departures) && l.departures.every(id => s.team.includes(id))

@@ -1,6 +1,7 @@
+import { careerFee, contractTerms, contractLock, scorePay, isCareer } from './studio-career.js';
 import { MISSIONS } from './orbit-missions.js';
-import { AGENTS, DIFFICULTIES } from '../data.js';
-import { MISSION_REWARDS } from './studio-progression.js';
+import { AGENTS } from '../data.js';
+import { missionReward } from './studio-progression.js';
 import { upgradeArt, UPGRADE_COPY } from './studio-visuals.js';
 
 export const money=n=>new Intl.NumberFormat('ru-RU').format(n)+' ₽';
@@ -15,10 +16,10 @@ export const MISSION_GOALS={festival:'Собрать 3 батареи и вер�
 
 export function contractCosts(s,c) {
   const team=s.team.filter(id=>!s.life.departures.includes(id));
-  const fees=team.reduce((n,id)=>n+AGENTS.find(a=>a.id===id).cost,0);
-  const budget=c.budget+DIFFICULTIES[s.difficulty].budget-36000;
+  const fees=team.reduce((n,id)=>n+careerFee(s,id,true),0);
+  const terms=contractTerms(s,c),budget=terms.budget;
   const payroll=team.reduce((n,id)=>n+s.life.members[id].raises*1000,0), subsidy=Math.max(0,fees-budget);
-  return {budget,fees,payroll,subsidy,cashAfter:s.life.cash-payroll-subsidy,reserve:Math.max(0,budget-fees),deadline:c.deadline+DIFFICULTIES[s.difficulty].deadline-16};
+  return {budget,fees,payroll,subsidy,cashAfter:s.life.cash-payroll-subsidy,reserve:Math.max(0,budget-fees),deadline:terms.deadline};
 }
 
 export function balanceFlow(before,cost) {
@@ -30,6 +31,6 @@ export function purchasePanel(s,u) {
 }
 
 export function contractPreview(s,c) {
-  const cost=contractCosts(s,c),reward=MISSION_REWARDS[c.id];
-  return `<div class="eyebrow">${c.client}</div><h2 id="dialog-title">${c.name}</h2>${missionArt(c.id)}<p>${MISSION_GOALS[c.id]}</p><div class="commission-numbers"><span>Резерв после оплаты команды<b>${money(cost.reserve)}</b></span><span>Дедлайн<b>${cost.deadline} ч</b></span></div><h3>Старт следующего заказа</h3>${balanceFlow(s.life.cash,cost.payroll+cost.subsidy)}<p class="money-caption">Доплаты ${money(cost.payroll)} · поддержка состава ${money(cost.subsidy)}</p><div class="commission-rewards"><span>За успешный релиз <b>+${money(c.reward)}</b><small>и 20 ₽ за каждый балл</small></span><span>За прохождение миссии <b>+${money(reward.cash)}</b><small>В кассу студии после релиза</small></span></div><details class="life-history"><summary>Команда и условия</summary><p>Бюджет заказчика ${money(cost.budget)}. Оплата состава ${money(cost.fees)}. Команда: энергия +35, напряжение −20.</p><p>${c.text}</p>${s.life.departures.length?`<p>Уходят: ${s.life.departures.map(id=>AGENTS.find(a=>a.id===id).name).join(', ')}. Перед работой найми замену.</p>`:''}</details>${cost.cashAfter<0?'<p class="life-notice">В кассе не хватает денег на старт. Проверь доплаты и состав команды.</p>':''}<div class="dialog-actions"><button class="secondary" data-action="life-contracts">Назад</button><button class="primary" data-action="life-next" data-id="${c.id}" ${cost.cashAfter<0?'disabled':''}>Принять заказ</button></div>`;
+  const cost=contractCosts(s,c),reward=missionReward(s,c.id),terms=contractTerms(s,c),lock=contractLock(s,c.id);
+  return `<div class="eyebrow">${c.client}</div><h2 id="dialog-title">${c.name}</h2>${missionArt(c.id)}<p>${MISSION_GOALS[c.id]}</p><div class="commission-numbers"><span>Резерв после оплаты команды<b>${money(cost.reserve)}</b></span><span>Дедлайн<b>${cost.deadline} ч</b></span></div><h3>Старт следующего заказа</h3>${balanceFlow(s.life.cash,cost.payroll+cost.subsidy)}<p class="money-caption">Доплаты ${money(cost.payroll)} · поддержка состава ${money(cost.subsidy)}</p><div class="commission-rewards"><span>За успешный релиз <b>+${money(terms.reward)}</b><small>и ${scorePay(s)} ₽ за каждый балл${isCareer(s)?' · до расходов':''}</small></span><span>За прохождение миссии <b>+${money(reward.cash)}</b><small>В кассу студии после релиза</small></span></div><details class="life-history"><summary>Команда и условия</summary><p>Бюджет заказчика ${money(cost.budget)}. Оплата состава ${money(cost.fees)}. Команда: энергия +35, напряжение −20.</p><p>${c.text}</p>${s.life.departures.length?`<p>Уходят: ${s.life.departures.map(id=>AGENTS.find(a=>a.id===id).name).join(', ')}. Перед работой найми замену.</p>`:''}</details>${lock?`<p class="life-notice">${lock}</p>`:''}${cost.cashAfter<0?'<p class="life-notice">В кассе не хватает денег на старт. Проверь доплаты и состав команды.</p>':''}<div class="dialog-actions"><button class="secondary" data-action="life-contracts">Назад</button><button class="primary" data-action="life-next" data-id="${c.id}" ${lock?`<p class="life-notice">${lock}</p>`:''}${cost.cashAfter<0||lock?'disabled':''}>Принять заказ</button></div>`;
 }
