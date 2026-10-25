@@ -63,7 +63,7 @@ export function condition(s, id) {
   const m = ensureLife(s).members[id];
   if(m.coffeeTrip){const phase=m.coffeeTrip.phase;return {label:({queued:'Ждёт напиток',outbound:'Идёт за напитком',drinking:'Пьёт напиток',returning:'Возвращается за компьютер'})[phase],reason:phase==='queued'?'Станция занята. Сотрудник ждёт своей очереди за компьютером.':'Энергия +15 и настроение +5 после напитка. Затем сотрудник вернётся на своё место.',factor:phase==='queued'?(m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1):1};}
   if (m.restTrip?.phase === 'queued') return { label: 'Ждёт свободное кресло', reason: 'Перерыв запланирован. Пока кресло занято, сотрудник продолжает работу; затем пойдёт отдыхать сам.', factor: m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1 };
-  if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Игровой час начнётся после прибытия.', factor: 1 };
+  if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Остальная команда продолжает работу; отдых начнётся после посадки.', factor: 1 };
   if (m.restTrip?.phase === 'returning') return { label: 'Возвращается за компьютер', reason: 'Перерыв завершён. Работа продолжится после возвращения на своё место.', factor: 1 };
   if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час в зоне отдыха; остальные продолжают работу.', factor: 1 };
   if (m.energy <= 25 && m.stress >= 65) return { label: 'На грани выгорания', reason: 'Мало энергии и много напряжения. Нужны отдых и помощь с причиной затруднений.', factor: .75 };
@@ -77,6 +77,7 @@ export function lifeHour(s, active, completed) {
   for (const id of s.team) {
     const m = l.members[id], task = active.find(t => s.assignments[t.id] === id);
     if (m.breaks && m.restTrip?.phase === 'resting') { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); m.restTrip = { phase: 'returning', slot: s.team.indexOf(id) }; }
+    else if (awayForRest(m)) continue;
     else if (task) {
       m.energy = clamp(m.energy - 7);
       const difficult = AGENTS.find(a => a.id === id).stats[task.skill] < 60;
@@ -97,9 +98,9 @@ export function scheduleIncident(s) {
     s.log.push(`${AGENTS.find(a=>a.id===upset).name} и ${AGENTS.find(a=>a.id===otherId).name}: напряжение вылилось в спор.`);
     return true;
   }
-  if (l.incidentDone || s.time < 4 + l.seed % 3 || !s.team.length) return false;
+  if (l.incidentDone || s.time < 4 + l.seed % 3 || !present.length) return false;
   const type = ['noise','computer','idea'][(l.seed >>> 8) % 3];
-  const id = s.team[(l.seed >>> 16) % s.team.length];
+  const id = present[(l.seed >>> 16) % present.length];
   l.incident = { type, id }; s.currentEvent = 'life'; s.stage = 'event';
   if (type !== 'idea') { l.members[id].stress = clamp(l.members[id].stress + 10); l.members[id].morale = clamp(l.members[id].morale - 6); }
   s.log.push(`${AGENTS.find(a => a.id === id).name}: ${INCIDENTS[type].title}.`);

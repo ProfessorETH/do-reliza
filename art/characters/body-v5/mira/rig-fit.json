@@ -1,0 +1,70 @@
+{
+  "source_sole_y": -0.98831296,
+  "source_ankle_y": -0.91,
+  "source_knee_y": -0.45,
+  "source_hip_y": 0.1,
+  "source_shoulder_y": 0.54,
+  "source_neck_y": 0.63,
+  "source_center_x": 0.0,
+  "source_center_z": 0.0,
+  "source_shoulder_half_width": 0.28,
+  "source_arm_anchors": {
+    "Left": {
+      "shoulder": [
+        0.28,
+        0.54,
+        -0.02
+      ],
+      "elbow": [
+        0.446,
+        0.279,
+        -0.021
+      ],
+      "wrist": [
+        0.63,
+        0.034,
+        -0.006
+      ]
+    },
+    "Right": {
+      "shoulder": [
+        -0.28,
+        0.54,
+        -0.02
+      ],
+      "elbow": [
+        -0.454,
+        0.278,
+        -0.021
+      ],
+      "wrist": [
+        -0.626,
+        0.034,
+        -0.006
+      ]
+    }
+  },
+  "source_leg_centers": [
+    [
+      -0.91,
+      0.28,
+      -0.023
+    ],
+    [
+      -0.45,
+      0.22,
+      -0.025
+    ],
+    [
+      0.1,
+      0.15,
+      0.0
+    ]
+  ],
+  "neck_cut_y": 1.36,
+  "ankle_cut_y": 0.13,
+  "target_sole_y": 0.001,
+  "measurement": {
+    "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+  }
+}

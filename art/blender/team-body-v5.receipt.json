@@ -1,0 +1,217 @@
+{
+  "status": "native_source_verified",
+  "output": "art/blender/team-body-v5.blend",
+  "bytes": 102979157,
+  "mib": 98.209,
+  "size_limit_bytes": 104857600,
+  "size_limit_basis": "100 MiB GitHub file ceiling; textures/geometry not degraded",
+  "sha256": "9d735a2ff09472fde15ab16d3a0381409d454c1bece8abee4d31bb1304083889",
+  "seconds": 13.138,
+  "packed_images": 20,
+  "external_images": [],
+  "orphan_data_before": {
+    "meshes": 36,
+    "materials": 16,
+    "images": 22,
+    "actions": 35
+  },
+  "orphan_data_after": {
+    "meshes": 35,
+    "materials": 14,
+    "images": 22,
+    "actions": 35
+  },
+  "all_actions_fake_user": true,
+  "models": [
+    {
+      "id": "mira",
+      "source_sha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+      "body_vertices": 54132,
+      "body_triangles": 74632,
+      "head_triangles": 55673,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.3364478945732117e-7,
+      "body_signed_triangle_volume_proxy": 0.09626651243339905,
+      "portrait_head_bone_parent": "Skin_mira_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ]
+    },
+    {
+      "id": "pixel",
+      "source_sha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+      "body_vertices": 63503,
+      "body_triangles": 89795,
+      "head_triangles": 58904,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.4650868251919746e-7,
+      "body_signed_triangle_volume_proxy": 0.11345545825568303,
+      "portrait_head_bone_parent": "Skin_pixel_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.001",
+        "Sit.001",
+        "Stand.001",
+        "Walk.001",
+        "Work.001"
+      ]
+    },
+    {
+      "id": "nord",
+      "source_sha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+      "body_vertices": 62536,
+      "body_triangles": 95023,
+      "head_triangles": 59271,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.337612047791481e-7,
+      "body_signed_triangle_volume_proxy": 0.1133732415357509,
+      "portrait_head_bone_parent": "Skin_nord_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.002",
+        "Sit.002",
+        "Stand.002",
+        "Walk.002",
+        "Work.002"
+      ]
+    },
+    {
+      "id": "echo",
+      "source_sha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+      "body_vertices": 66957,
+      "body_triangles": 92225,
+      "head_triangles": 59196,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.3966928236186504e-7,
+      "body_signed_triangle_volume_proxy": 0.11948705370358204,
+      "portrait_head_bone_parent": "Skin_echo_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.003",
+        "Sit.003",
+        "Stand.003",
+        "Walk.003",
+        "Work.003"
+      ]
+    },
+    {
+      "id": "iskra",
+      "source_sha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+      "body_vertices": 68354,
+      "body_triangles": 79910,
+      "head_triangles": 58486,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.4039687812328339e-7,
+      "body_signed_triangle_volume_proxy": 0.12683536586556818,
+      "portrait_head_bone_parent": "Skin_iskra_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.004",
+        "Sit.004",
+        "Stand.004",
+        "Walk.004",
+        "Work.004"
+      ]
+    },
+    {
+      "id": "saga",
+      "source_sha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+      "body_vertices": 52746,
+      "body_triangles": 79091,
+      "head_triangles": 57568,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.418375177308917e-7,
+      "body_signed_triangle_volume_proxy": 0.12615092391555552,
+      "portrait_head_bone_parent": "Skin_saga_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.005",
+        "Sit.005",
+        "Stand.005",
+        "Walk.005",
+        "Work.005"
+      ]
+    },
+    {
+      "id": "nika",
+      "source_sha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+      "body_vertices": 79113,
+      "body_triangles": 91281,
+      "head_triangles": 57460,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.4528632164001465e-7,
+      "body_signed_triangle_volume_proxy": 0.12023976147666526,
+      "portrait_head_bone_parent": "Skin_nika_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle.006",
+        "Sit.006",
+        "Stand.006",
+        "Walk.006",
+        "Work.006"
+      ]
+    }
+  ],
+  "native_generator": "art/characters/body-v5/rig_build_team_source.py",
+  "native_generator_sha256": "a6038d0ecc59f727cba65f98ab1e0e0fc63f56e41d515c60d515690d6ab1dd5b",
+  "reopen_verification": {
+    "fresh_factory_background_process": true,
+    "models": 7,
+    "bones_per_model": 25,
+    "actions": 35,
+    "all_actions_fake_user": true,
+    "packed_images": 20,
+    "external_image_dependencies": 0,
+    "portrait_heads_bone_parented": true,
+    "nika_repaired_albedo_payload_sha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855",
+    "nika_repaired_albedo_payload_exact": true,
+    "passed": true
+  }
+}

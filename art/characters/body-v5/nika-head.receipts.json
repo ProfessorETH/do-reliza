@@ -1,0 +1,282 @@
+{
+  "schema": "body-v5-public-summary-v1",
+  "version": "nika-head-b-final-root-accepted",
+  "policy": "Local originals unchanged; owner/token omitted; local paths redacted or project-relative",
+  "documents": [
+    {
+      "source": "art/characters/body-v5/nika-head/head-b-final.qc.receipt.json",
+      "source_sha256": "d1c4e6dd0d67798896a12c0066a8a2bfaccdcb13ab65c6386270b81d7e9a9526",
+      "redacted_fields": [],
+      "content": {
+        "status": "accepted_by_root_for_current_game_stylized_detail",
+        "accepted_scope": "Portrait-derived stylized game head; no film-quality identity claim",
+        "root_review": [
+          "Volumetric teal bob coherent",
+          "No gray-draft hair/skin spill",
+          "Approximate portrait geometry; slight nose/skin roughness accepted for office view"
+        ],
+        "output": "art/characters/body-v5/nika-head/head-b-final.glb",
+        "output_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "output_bytes": 4298580,
+        "vertices": 89927,
+        "triangles": 58733,
+        "texture_resolution": 2048,
+        "normal_bake_added": false,
+        "geometry_uv_check": {
+          "source_triangles": 59940,
+          "output_triangles": 58733,
+          "retained_triangles_missing_from_source_at5dp": 0,
+          "method": "Per-triangle position+UV pairs compared as unordered multisets; only accepted small floating component removal",
+          "floating_vertices_removed": 824
+        },
+        "attachment": {
+          "source": "head-b-final.glb",
+          "source_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+          "source_bounds_gltf": [
+            [
+              -0.9598810076713562,
+              -1.0060830116271973,
+              -0.8466519713401794
+            ],
+            [
+              0.9004120230674744,
+              0.9971870183944702,
+              0.8321740031242371
+            ]
+          ],
+          "source_eye_height_ratio": 0.5323800524106839,
+          "source_chin_height_ratio": 0.2876976845706929,
+          "source_eye_center_gltf": [
+            0.10648983027000383,
+            0.06041799194849038,
+            0.5229502392040618
+          ],
+          "source_chin_gltf": [
+            0.07036960710494261,
+            -0.4297468624201011,
+            0.4797524279333037
+          ],
+          "source_face_center_x": 0.10648983027000383,
+          "bounds_center_x": -0.029734492301940918,
+          "source_eye_points_gltf": [
+            [
+              -0.10059975270634679,
+              0.06041799194849039,
+              0.5229502392040618
+            ],
+            [
+              0.31357941324635447,
+              0.060417991948490374,
+              0.5229502392040618
+            ]
+          ],
+          "source_mouth_gltf": [
+            0.09119693808884292,
+            -0.2779432735860829,
+            0.5759582854537338
+          ],
+          "source_forward": "+GLTFZ after actual eye/nose yaw/roll neutralization",
+          "triangles": 58733,
+          "gpu_used_by_worker": false,
+          "source_eye_height_ratio_from_top": 0.46761994758931613,
+          "source_chin_height_ratio_from_top": 0.7123023154293071,
+          "status": "root_accepted_current_game_stylized_detail",
+          "source_geometry_identity_claim": "Approximate portrait geometry; no film-quality identity claim"
+        },
+        "source_graph": "art/characters/body-v5/nika-head/shape-b.api.json",
+        "source_graph_sha256": "a77efdaea7dc2adf0b48e95f98532a8fad0eee3526bc0a11e3b5b12fa9fac348",
+        "shape_b_receipt": "art/characters/body-v5/nika-head/shape-b.receipt.json",
+        "raw_b_sha256": "8c1ffe0d7d1a767894b95057c3bc645989d830e35343d6ae83ba20853c8f75c3",
+        "volumetric_guard": {
+          "minimum_bbox_ratio": 0.861660092068744,
+          "largest_component_ratio": 0.8478260922112362,
+          "large_lowpoly_components": []
+        },
+        "uv_qc": {
+          "min_uv": 0.0,
+          "max_uv": 1.0,
+          "summed_uv_area": 0.248036030973584,
+          "degenerate_triangles": 0,
+          "audit_resolution": 512,
+          "covered_pixels": 64712,
+          "coverage_fraction": 0.246856689453125,
+          "overlap_pixels": 3,
+          "overlap_fraction": 4.635925330696007e-05
+        },
+        "root_owned_paint_source": {
+          "path": "art/characters/body-v5/nika-head/head-b-painted-quality.glb",
+          "sha256": "2993a33d58de4028652074880d931c42390f06a6a51053f7c9dc36d08934232c",
+          "receipt_sha256": "54637e8d48fda0a0d41bb3a8d4d58b6cb3662ade7583ff4b5868df6958f2f50e",
+          "view_resolution": 768,
+          "steps": 30,
+          "atlas": 2048,
+          "unwrap": false
+        },
+        "projection": {
+          "method": "Native Cycles CPU visible-front photo identity + actual Paint teal-hair evidence and luma palettes",
+          "head_frame": "art/characters/body-v5/nika-head/head-b-frame.receipt.json",
+          "landmarks": "art/characters/body-v5/nika-head/landmarks_b_painted.json",
+          "thin_shell_heuristic_used": false,
+          "registered_eye_protected_vertices": 168,
+          "gold_source": "Real albedo texel colour, gated to right/front accessory region; rear excluded",
+          "executed_helper": "art/characters/body-v5/nika-head/front_anchor_b_painted.executed-v3.py.txt",
+          "executed_helper_sha256": "8b9c5e284fd71357e6562001e25173dc539a039e7ebdb15c316328ba35dddf71",
+          "maintained_formatted_helper": "art/characters/body-v5/nika-head/front_anchor_b_painted.py",
+          "maintained_helper_sha256": "9ae03fda0662ff835a6d0d5e3d280ca984639c88d56c78285a1acd543a026a2f",
+          "formatting_ast_equivalent": true
+        },
+        "native_cpu_qa": {
+          "receipt": "art/characters/body-v5/nika-head/qa-b-final/receipt.json",
+          "views": [
+            "front",
+            "three-quarter",
+            "back",
+            "left",
+            "right"
+          ],
+          "all_source_hashes_match": true
+        },
+        "provenance": "art/characters/body-v5/nika-head/reference-provenance.receipt.json",
+        "exact_head_imagegen_prompts_available_in_worker": false,
+        "fallback_and_rejected_drafts_preserved": true,
+        "worker_gpu_used": false,
+        "frontend_or_rig_js_changed_by_worker": false,
+        "recorded_unix": 1792884153.7798584
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/head-b-attachment.receipt.json",
+      "source_sha256": "94177febde0329ae2cb20865859e5daf71dd619cb676bd238ffa78a5dbe75885",
+      "redacted_fields": [],
+      "content": {
+        "source": "head-b-final.glb",
+        "source_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "source_bounds_gltf": [
+          [
+            -0.9598810076713562,
+            -1.0060830116271973,
+            -0.8466519713401794
+          ],
+          [
+            0.9004120230674744,
+            0.9971870183944702,
+            0.8321740031242371
+          ]
+        ],
+        "source_eye_height_ratio": 0.5323800524106839,
+        "source_chin_height_ratio": 0.2876976845706929,
+        "source_eye_center_gltf": [
+          0.10648983027000383,
+          0.06041799194849038,
+          0.5229502392040618
+        ],
+        "source_chin_gltf": [
+          0.07036960710494261,
+          -0.4297468624201011,
+          0.4797524279333037
+        ],
+        "source_face_center_x": 0.10648983027000383,
+        "bounds_center_x": -0.029734492301940918,
+        "source_eye_points_gltf": [
+          [
+            -0.10059975270634679,
+            0.06041799194849039,
+            0.5229502392040618
+          ],
+          [
+            0.31357941324635447,
+            0.060417991948490374,
+            0.5229502392040618
+          ]
+        ],
+        "source_mouth_gltf": [
+          0.09119693808884292,
+          -0.2779432735860829,
+          0.5759582854537338
+        ],
+        "source_forward": "+GLTFZ after actual eye/nose yaw/roll neutralization",
+        "triangles": 58733,
+        "gpu_used_by_worker": false,
+        "source_eye_height_ratio_from_top": 0.46761994758931613,
+        "source_chin_height_ratio_from_top": 0.7123023154293071,
+        "status": "root_accepted_current_game_stylized_detail",
+        "source_geometry_identity_claim": "Approximate portrait geometry; no film-quality identity claim"
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/reference-provenance.receipt.json",
+      "source_sha256": "7f20046b764e70610a5bd63980ddcb7e140f8034f06bca889e5405269dd7f8a0",
+      "redacted_fields": [],
+      "content": {
+        "status": "reference_hashes_preserved_exact_head_imagegen_prompts_unavailable_in_worker_context",
+        "references": [
+          {
+            "role": "identity_original",
+            "path": "assets/onboarding/nika-portrait.webp",
+            "sha256": "c4b4b203180344b63aabd018806f332b8993efddbe0bcdd91d35c7e4fff23bf1",
+            "exact_imagegen_prompt": null,
+            "prompt_status": "Original source asset"
+          },
+          {
+            "role": "front_helper",
+            "path": "art/characters/body-v5/references/nika-head-front-v1.png",
+            "sha256": "0dda379e3a643ddfa5addf69a990173008e2bcff23f66c812b3bb0b00dc75010",
+            "exact_imagegen_prompt": null,
+            "prompt_status": "Generated by root; exact tool prompt not present in this worker context; do not substitute fullbody prompt"
+          },
+          {
+            "role": "quarter_shape_b",
+            "path": "art/characters/body-v5/references/nika-head-quarter-v2.png",
+            "sha256": "f996b882e15513745839881efe04c6bd4728affc61338dd6ef2b78a1c80f44c0",
+            "exact_imagegen_prompt": null,
+            "prompt_status": "Generated by root; exact tool prompt not present in this worker context; do not substitute fullbody prompt"
+          }
+        ],
+        "fullbody_prompt_source": "art/characters/body-v5/references/prompts.json",
+        "fullbody_prompt_scope": "Contains fullbody generation text only; does not establish exact head-front/head-quarter prompts",
+        "generation_workflows": [
+          "art/characters/body-v5/nika-head/shape-a.api.json",
+          "art/characters/body-v5/nika-head/shape-b.api.json"
+        ],
+        "no_prompt_text_invented": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/head-b-cpu-helpers.receipt.json",
+      "source_sha256": "1b13b3499228f4780ee80b0cd484b8ba9e007665a7939ac88e8f3b6d89905aaf",
+      "redacted_fields": [],
+      "content": {
+        "status": "cpu_helpers_ready",
+        "helpers": [
+          {
+            "path": "art/characters/body-v5/nika-head/clean_shape_b.py",
+            "sha256": "6ec50ea5ea5c3e2f12d1cbff949c8dc8feb6904c9da203b8cff5b99f0b113969",
+            "gpu_used": false
+          },
+          {
+            "path": "art/characters/body-v5/nika-head/neutralize_b.py",
+            "sha256": "c1d5a78ed03359c72cd633cf3584112e43c4bf320239aed2e57142d7a8211965",
+            "gpu_used": false
+          },
+          {
+            "path": "art/characters/body-v5/nika-head/preview_cpu_b.py",
+            "sha256": "98abfd31deec8ad0cb3d6d28b64892aeed0f79e04bcc71cdeffdcc8e1728f5c1",
+            "gpu_used": false
+          },
+          {
+            "path": "art/characters/body-v5/nika-head/front_anchor_b_painted.py",
+            "sha256": "9ae03fda0662ff835a6d0d5e3d280ca984639c88d56c78285a1acd543a026a2f",
+            "gpu_used": false
+          }
+        ],
+        "shared_uv_helper": "art/characters/body-v5/prepare_native_uv.py",
+        "output_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "final_qc": "art/characters/body-v5/nika-head/head-b-final.qc.receipt.json",
+        "attachment": "art/characters/body-v5/nika-head/head-b-attachment.receipt.json",
+        "reference_provenance": "art/characters/body-v5/nika-head/reference-provenance.receipt.json",
+        "source_execution_snapshot": "art/characters/body-v5/nika-head/front_anchor_b_painted.executed-v3.py.txt",
+        "no_further_asset_edits_scheduled": true
+      }
+    }
+  ]
+}

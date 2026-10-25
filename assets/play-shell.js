@@ -1,6 +1,6 @@
 import { TASKS } from '../data.js';
 import { teamSeated } from '../engine.js';
-import { contractFor, restInTransit } from './studio-life.js';
+import { contractFor } from './studio-life.js';
 import { employeeEvent } from './employee-event.js';
 import { assetURL } from '../asset-url.js';
 
@@ -16,7 +16,7 @@ export function sceneAction(game,busy=false) {
   if(game.stage==='plan')return TASKS.every(t=>game.assignments[t.id])&&teamSeated(game)
     ? {action:'work',label:busy?'Команда садится…':'Начать смену',disabled:busy}
     : {action:'studio-project',label:'Распределить задачи'};
-  if(game.stage==='work')return {action:'tick',label:restInTransit(game)?'Коллега в пути…':'Следующий час',disabled:restInTransit(game)};
+  if(game.stage==='work')return {action:'tick',label:'Следующий час',disabled:false};
   if(game.stage==='event')return {action:'event-open',label:employeeEvent(game)?'Обсудить с коллегой':'Принять решение'};
   return {action:'play-mini',label:'Играть в «Орбиту»'};
 }
