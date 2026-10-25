@@ -1,0 +1,76 @@
+{
+  "status": "native_source_verified",
+  "output": "art/blender/mira-polish.blend",
+  "bytes": 18554870,
+  "mib": 17.695,
+  "size_limit_bytes": 104857600,
+  "size_limit_basis": "100 MiB GitHub file ceiling; textures/geometry not degraded",
+  "sha256": "56daef8c0cd52d6bd52e152025a5f45474fbe0aa2821de75a103765cf690a383",
+  "seconds": 3.21,
+  "packed_images": 3,
+  "external_images": [],
+  "orphan_data_before": {
+    "meshes": 7,
+    "materials": 5,
+    "images": 5,
+    "actions": 5
+  },
+  "orphan_data_after": {
+    "meshes": 6,
+    "materials": 3,
+    "images": 5,
+    "actions": 5
+  },
+  "all_actions_fake_user": true,
+  "models": [
+    {
+      "id": "mira",
+      "source_sha256": "2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
+      "body_vertices": 53674,
+      "body_triangles": 74070,
+      "head_triangles": 53242,
+      "bones": 25,
+      "maximum_weight_sum_error": 1.3364478945732117e-07,
+      "body_signed_triangle_volume_proxy": 0.08989743069345164,
+      "portrait_head_bone_parent": "Skin_mira_Head",
+      "clip_names": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ],
+      "imported_actions": [
+        "Idle",
+        "Sit",
+        "Stand",
+        "Walk",
+        "Work"
+      ]
+    }
+  ],
+  "reopen_verification": {
+    "status": "native_reopen_verified",
+    "production_model_sha256": "2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
+    "native_source": "art/blender/mira-polish.blend",
+    "native_source_sha256": "56daef8c0cd52d6bd52e152025a5f45474fbe0aa2821de75a103765cf690a383",
+    "native_source_bytes": 18554870,
+    "rigs": 1,
+    "bones": 25,
+    "actions": 5,
+    "all_actions_fake_user": true,
+    "packed_images": 3,
+    "external_images": 0,
+    "head_parent_bone": "Skin_mira_Head",
+    "blink_shape_keys": [
+      "PortraitBlink"
+    ],
+    "collar_meshes": [
+      "DR_mira_Collar"
+    ],
+    "render_device": "CPU",
+    "native_view_pose": "REST, original editable rig"
+  },
+  "native_generator": "art/characters/body-v5/rig_build_team_source.py",
+  "native_generator_sha256": "2892db848b1376b298c57f666f4082dd3b7ebee8a9883ca47b6977c26ed7f36a"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "mira",
+  "status": "local_preview_awaiting_user_review",
+  "productionPublished": false,
+  "sourceSha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+  "outputSha256": "2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
+  "headCandidateSha256": "8f57435ad7ac4bced72aa306201e614cb0fd72395a30992b112fdf8f14bc4089",
+  "bodyAlbedoSha256": "c13ea4265a42d3ae1bcdd7018936a9dcba89c41e2d33d77026c0dc990ccf3702",
+  "sourceRecovery": "scripts/polish-mira.js recoverMiraPolishBase(), exact SHA-checked GLB",
+  "geometry": {
+    "bones": 25,
+    "preservedClips": ["Idle", "Walk", "Sit", "Stand", "Work"],
+    "changedHandVertices": 4066,
+    "bodyVertexPrefixPreserved": 54132,
+    "bodyVerticesAfterLocalNecklineRetopology": 54688,
+    "collarSeparateSkinnedNode": "DR_mira_Collar",
+    "hairNeckNewDegenerateFaces": 0,
+    "hairNeckNewNormalHemisphereReversals": 0,
+    "headUVSeamDuplicateDrift": 0,
+    "skinNeckOriginalSurfaceAndMaterial": true
+  },
+  "runtimeDeskPose": {
+    "scope": "Mira only, blended working pose",
+    "keyboardWristTargetY": 0.864,
+    "keyboardWristTargetZ": -0.55,
+    "hipHeight": 0.6,
+    "elbowHeightKeyboardApprox": 0.828,
+    "chairAndSoleAnchorsPreserved": true,
+    "portableSavedClipSamplesUnchanged": true
+  },
+  "nativeSource": {
+    "path": "art/blender/mira-polish.blend",
+    "sha256": "56daef8c0cd52d6bd52e152025a5f45474fbe0aa2821de75a103765cf690a383",
+    "previousSevenCharacterMasterPreserved": true,
+    "userLiveOfficeBlendModified": false
+  },
+  "validation": {
+    "nodeTests": 215,
+    "hostingTests": 5,
+    "browserGameErrorsAndWarnings": 0,
+    "actualOfficeWorkPoseInspected": true,
+    "frontPortraitComparisonInspected": true,
+    "otherCharacterAssetsChanged": false
+  },
+  "proofs": [
+    "work/mira-polish/final-office-profile.png",
+    "work/mira-polish/final-face.png",
+    "work/mira-polish/final-hands.png",
+    "work/mira-polish/actual-game-work.png"
+  ],
+  "limitations": [
+    "Existing source finger anatomy remains simplified at macro distance",
+    "Some inferred ear and side-hair shading remains conservative",
+    "No hair physics or complete facial rig added",
+    "Visual approval and propagation to the other characters are pending"
+  ]
+}
