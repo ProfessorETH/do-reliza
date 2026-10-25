@@ -8,7 +8,7 @@
       "assetVersion": "9fcd0aa89de4c559c4947143",
       "width": 1280,
       "height": 720,
-      "capturedAtUtc": "2026-10-25T01:23:37.9410790Z",
+      "capturedAtUtc": "2026-10-25T01:23:37.941079Z",
       "sha256": "62a1b4b75720e4c28e8b19a7b81e6a49b866f1359787ba1c98f920742a90190d"
     },
     {
@@ -64,6 +64,51 @@
       "height": 720,
       "capturedAtUtc": "2026-10-25T01:36:38.7854153Z",
       "sha256": "d6cae830e80a797afdd19662fcb5aadd27705f3f03384766a43f66722e9613a8"
+    },
+    {
+      "file": "08-decision.jpg",
+      "acceptedInRevision": "20da85e",
+      "captureContext": "UI QA: technical choice with zero project reserve",
+      "width": 1440,
+      "height": 900,
+      "capturedAtUtc": "2026-10-25T01:41:49.2519193Z",
+      "sha256": "5bbd2732e874b20ea5415d7ed15b27153bfd0c4bb22bb7f3ba8550be7a214647"
+    },
+    {
+      "file": "09-team-reaction.jpg",
+      "acceptedInRevision": "20da85e",
+      "captureContext": "UI QA: reactions after postponing the shield",
+      "width": 1440,
+      "height": 900,
+      "capturedAtUtc": "2026-10-25T01:40:05.9185246Z",
+      "sha256": "5d15a1e9340122200e0dda9cfa1c28de28529a6743fe338a0bc54bdc14885c44"
+    },
+    {
+      "file": "10-orbit.jpg",
+      "acceptedInRevision": "20da85e",
+      "captureContext": "UI QA: festival mission with boundary protection",
+      "width": 1440,
+      "height": 900,
+      "capturedAtUtc": "2026-10-25T01:40:47.1750395Z",
+      "sha256": "dbfedd2f606d298c594542cb264ccf079f52e397a6db26dd63be6046d4e9586e"
+    },
+    {
+      "file": "11-orbit-mobile.jpg",
+      "acceptedInRevision": "20da85e",
+      "captureContext": "UI QA: mobile festival mission after collecting one battery",
+      "width": 390,
+      "height": 844,
+      "capturedAtUtc": "2026-10-25T01:42:24.9698499Z",
+      "sha256": "b5667b845c6279c1b807e4201e653fdf54e26ca8ebb472f97e8f1c0dde29f959"
+    },
+    {
+      "file": "12-release.jpg",
+      "runtimeRevision": "188333d",
+      "assetVersion": "9fcd0aa89de4c559c4947143",
+      "width": 1600,
+      "height": 1000,
+      "capturedAtUtc": "2026-10-25T01:31:49.8503950Z",
+      "sha256": "bcf9e925bca71a21f282fb146d8e0e654f029e3a455c1fb9879d1a8a6dd7314b"
     }
   ]
 }
