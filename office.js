@@ -1,3 +1,4 @@
+import { officeDaylight } from './assets/office-daylight.js';
 import { renderEmployeeCard } from './assets/employee-card.js';
 import { renderSceneFeedback } from './assets/scene-feedback.js';
 import { shiftTime } from './assets/shift-clock.js';
@@ -70,11 +71,12 @@ function workstation(index, agent, task, game) {
   </g>`;
 }
 
-function room() {
+function room(game) {
+  const light=officeDaylight(game);
   return `<defs>
     <linearGradient id="wall-left" x2="1" y2="1"><stop stop-color="#38505c"/><stop offset="1" stop-color="#223942"/></linearGradient>
     <linearGradient id="wall-right" x2="0" y2="1"><stop stop-color="#40535a"/><stop offset="1" stop-color="#263d45"/></linearGradient>
-    <linearGradient id="night-window" x2="0" y2="1"><stop stop-color="#42566b"/><stop offset="1" stop-color="#a9796d"/></linearGradient>
+    <linearGradient id="night-window" x2="0" y2="1"><stop data-daylight-top stop-color="${light.top}"/><stop data-daylight-horizon offset="1" stop-color="${light.horizon}"/></linearGradient>
     <pattern id="wood-floor" width="84" height="42" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .5 -1 .5 0 0)"><rect width="84" height="42" fill="#807461"/><path d="M0 0h84v42H0Z" fill="none" stroke="#675e51" stroke-width="2"/><path d="M7 10h31m8 18h28" stroke="#b29b78" opacity=".18" stroke-width="2"/></pattern>
   </defs>
   <ellipse cx="500" cy="460" rx="418" ry="163" fill="#07151c" opacity=".5"/>
@@ -86,8 +88,8 @@ function room() {
   <path d="M86 395 500 188l414 207" fill="none" stroke="#172e39" stroke-width="10"/>
   <g><path d="m139 211 234-117v126L139 337Z" fill="#162c3a" stroke="#7f8f8d" stroke-width="6"/>
     <path d="m148 216 216-108v106L148 322Z" fill="url(#night-window)"/>
-    <path d="m151 290 26-13v-36l21-10v19l24-12v-44l24-12v36l27-14v-28l28-14v42l27-14v-30l32-16v63L151 317Z" fill="#293e50"/>
-    <path d="m179 259 7-4m40-32 7-4m20-6 7-4m42-21 7-4m26 2 7-4m-133 80 7-4m57-29 7-4m30-15 7-4" stroke="#e4bc7d" stroke-width="4"/>
+    <path data-daylight-city d="m151 290 26-13v-36l21-10v19l24-12v-44l24-12v36l27-14v-28l28-14v42l27-14v-30l32-16v63L151 317Z" fill="${light.city}"/>
+    <path data-daylight-windows opacity="${.08+.92*light.night}" d="m179 259 7-4m40-32 7-4m20-6 7-4m42-21 7-4m26 2 7-4m-133 80 7-4m57-29 7-4m30-15 7-4" stroke="#e4bc7d" stroke-width="4"/>
     <path d="m253 162v107m-109-2 217-109" stroke="#7f8f8d" stroke-width="5"/>
   </g>
   <path d="m555 95 129 65v91l-129-64Z" fill="#c5c1a3" stroke="#223944" stroke-width="7"/>
@@ -113,8 +115,8 @@ export function renderOffice(game, selectedId, moving = false, lifeHTML = '', ex
   const seated = game.seats.filter(Boolean).length;
   const hint = editable ? selected ? `${selected.name}: выбери компьютер${game.seats.includes(selectedId) ? ' для пересадки' : ''} или свободный участок пола.` : seated === game.team.length ? moving ? 'Команда занимает места. Пока можно осмотреть офис.' : game.stage === 'plan' ? 'Распредели задачи. Код и экран можно делать параллельно.' : 'Все на местах. Пора распределить задачи.' : game.team.length ? 'Выбери персонажа в команде, затем компьютер.' : 'Найми первого разработчика — он придёт в студию.' : game.stage === 'event' ? 'Команда ждёт твоего решения. Время на паузе.' : game.stage === 'result' ? 'Релиз готов. Пора сыграть в «Орбиту»!' : 'Нажми на сотрудника, чтобы узнать, как идут дела.';
   return `<section class="studio-scene playable-office" aria-label="Офис команды">
-    <header class="office-heading"><div><span class="eyebrow">СТУДИЯ 01 · ВЕЧЕРНЯЯ СМЕНА</span><h2>Офис твоей команды</h2></div><div class="office-header-actions"><button class="office-brief" data-action="brief">Задание ↗</button><button class="office-expand" data-action="office-expand" aria-label="${expanded?'Вернуть интерфейс':'Развернуть офис'}" title="${expanded?'Вернуть интерфейс · Esc':'Развернуть офис'}">${expanded?'✕':'⛶'}</button></div></header>
-    <nav class="studio-dock" aria-label="Управление студией">${incident?`<button class="incident-dock" data-action="event-open">! ${incident.name} · событие</button>`:''}${!incident?`<button data-action="studio-project">${({hire:'Найм команды',plan:'Задачи',work:'Смена',event:'Событие',result:'Релиз'})[game.stage]}</button>`:''}<button data-action="studio-team">Команда · ${game.team.length}</button><button data-action="life-office">Улучшения · ${game.life.cash.toLocaleString('ru-RU')} ₽</button>${game.stage==='work'?`<button data-action="auto" aria-pressed="${!!game.autoPlay}">${game.autoPlay?'Пауза авто':'Авто'}</button><button data-action="tick">+1 час</button>`:''}</nav><div class="office-room" data-office-state="loading"><div id="office-webgl"></div><button class="scene-time" data-action="scene-time" aria-label="Часы и дедлайн студии"><strong data-clock="now">${shiftTime(game).now}</strong><span>До показа <b data-clock="remaining">${shiftTime(game).remaining}</b></span></button>${renderOfficeCamera(game)}<span class="office-render-status" role="status">Загружаем 3D-студию…</span><span class="office-movement" aria-live="polite"></span><svg class="room-art" viewBox="0 -20 1000 700" aria-hidden="true">${room()}${stations.map((_, i) => workstation(i, agentById(game.seats[i]), active.find(t => game.assignments[t.id] === game.seats[i]), game)).join('')}</svg>
+    <header class="office-heading"><div><span class="eyebrow">СТУДИЯ 01 · <span data-office-period>${officeDaylight(game).label.toUpperCase()}</span></span><h2>Офис твоей команды</h2></div><div class="office-header-actions"><button class="office-brief" data-action="brief">Задание ↗</button><button class="office-expand" data-action="office-expand" aria-label="${expanded?'Вернуть интерфейс':'Развернуть офис'}" title="${expanded?'Вернуть интерфейс · Esc':'Развернуть офис'}">${expanded?'✕':'⛶'}</button></div></header>
+    <nav class="studio-dock" aria-label="Управление студией">${incident?`<button class="incident-dock" data-action="event-open">! ${incident.name} · событие</button>`:''}${!incident?`<button data-action="studio-project">${({hire:'Найм команды',plan:'Задачи',work:'Смена',event:'Событие',result:'Релиз'})[game.stage]}</button>`:''}<button data-action="studio-team">Команда · ${game.team.length}</button><button data-action="life-office">Улучшения · ${game.life.cash.toLocaleString('ru-RU')} ₽</button>${game.stage==='work'?`<button data-action="auto" aria-pressed="${!!game.autoPlay}">${game.autoPlay?'Пауза авто':'Авто'}</button><button data-action="tick">+1 час</button>`:''}</nav><div class="office-room" data-office-state="loading"><div id="office-webgl"></div><button class="scene-time" data-action="scene-time" aria-label="Часы и дедлайн студии"><strong data-clock="now">${shiftTime(game).now}</strong><span>До показа <b data-clock="remaining">${shiftTime(game).remaining}</b></span></button>${renderOfficeCamera(game)}<span class="office-render-status" role="status">Загружаем 3D-студию…</span><span class="office-movement" aria-live="polite"></span><svg class="room-art" viewBox="0 -20 1000 700" aria-hidden="true">${room(game)}${stations.map((_, i) => workstation(i, agentById(game.seats[i]), active.find(t => game.assignments[t.id] === game.seats[i]), game)).join('')}</svg>
       ${renderSceneFeedback(game)}${incident?eventSignal(game,incident):''}${selected&&game.team.includes(selectedId)&&selectedId!==incident?.id?renderEmployeeCard(game,selected.id,{compact}):''}<div class="object-hotspots"><button data-action="office-object" data-id="office" data-hotspot="office" aria-label="Зона отдыха и улучшения">♧</button>${game.life.upgrades.includes('coffee')?'<button data-action="office-object" data-id="coffee" data-hotspot="coffee" aria-label="Кофейная станция">☕</button>':''}<button data-action="office-object" data-id="arcade" data-hotspot="arcade" aria-label="Играть в Орбиту">▶</button></div><div class="desk-interactions">${stations.map(({ x, y }, i) => {
         const agent = agentById(game.seats[i]), task = active.find(t => game.assignments[t.id] === agent?.id);
         const status = game.stage === 'result' ? 'Релиз готов!' : game.stage === 'event' ? 'Обсуждение' : game.stage === 'work' ? task ? task.verb : idleStatus(agent?.id) : 'Готов к смене';
@@ -142,4 +144,12 @@ function eventSignal(game,event) {
 function renderOfficeCamera(game) {
   const buttons=[['out','−','Дальше','Отдалить офис'],['in','+','Ближе','Приблизить офис'],['focus','⌕','Коллега','Приблизить выбранного персонажа'],['left','↶','Влево','Повернуть офис влево'],['right','↷','Вправо','Повернуть офис вправо'],['reset','⌂','Весь офис','Вернуть исходный вид офиса']];
   return `<details class="scene-camera"><summary><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4"/><circle cx="12" cy="12" r="4"/></svg>Камера</summary><div class="office-camera-controls" aria-label="Камера офиса">${buttons.map(([id,glyph,label,aria])=>`<button data-action="office-camera" data-id="${id}" aria-label="${aria}" title="${aria}" ${id==='focus'&&!game.team.length?'disabled':''}><span>${glyph}</span><small>${label}</small></button>`).join('')}<details class="camera-advanced"><summary>Свободный полёт</summary><div>${[['flight','WASD','Свободный полёт камерой'],['forward','↑','Камера вперёд'],['back','↓','Камера назад'],['up','↟','Камера выше'],['down','↡','Камера ниже']].map(([id,glyph,label])=>`<button data-action="office-camera" data-id="${id}" aria-label="${label}">${glyph}</button>`).join('')}</div></details></div></details>`;
+}
+
+export function updateOfficeDaylight(game,root=document){
+  const state=officeDaylight(game);
+  for(const el of root.querySelectorAll('[data-office-period]'))if(el.textContent!==state.label.toUpperCase())el.textContent=state.label.toUpperCase();
+  const room=root.querySelector('.office-room');if(!room||room.dataset.daylightBucket===String(Math.floor(state.minute/5)))return;
+  room.dataset.daylightBucket=String(Math.floor(state.minute/5));
+  for(const [selector,attr,value] of [['[data-daylight-top]','stop-color',state.top],['[data-daylight-horizon]','stop-color',state.horizon],['[data-daylight-city]','fill',state.city],['[data-daylight-windows]','opacity',.08+.92*state.night]])room.querySelector(selector)?.setAttribute(attr,value);
 }

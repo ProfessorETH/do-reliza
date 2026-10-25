@@ -1,3 +1,4 @@
+import { officeDaylight, paintDaylightWindow } from './office-daylight.js';
 import * as THREE from 'three';
 import { GLTFLoader } from '../vendor/three/loaders/GLTFLoader.js';
 import { assetURL } from '../asset-url.js';
@@ -8,20 +9,10 @@ const cozyURL = new URL(assetURL('models/office-cozy.glb?v=1'));
 const shellURL = new URL(assetURL('models/office-shell.glb?v=1'));
 const decorationLoads = new Map();
 
-function eveningWindow(mesh) {
-  const c=document.createElement('canvas');c.width=1024;c.height=344;
-  const ctx=c.getContext('2d'),sky=ctx.createLinearGradient(0,0,0,344);
-  sky.addColorStop(0,'#293d5d');sky.addColorStop(.52,'#986f89');sky.addColorStop(1,'#e3a877');
-  ctx.fillStyle=sky;ctx.fillRect(0,0,1024,344);
-  ctx.fillStyle='#fff0cb';ctx.beginPath();ctx.arc(758,115,27,0,Math.PI*2);ctx.fill();
-  for(let i=0;i<24;i++){ctx.fillStyle=`rgba(243,234,211,${.25+(i%4)*.15})`;ctx.fillRect((i*173+43)%1000,20+(i*37)%130,i%5===0?2:1,2);}
-  for(let i=0;i<26;i++){
-    const x=i*43-20,h=42+(i*67)%85,y=344-h;
-    ctx.fillStyle=i%3===0?'#33445c':'#25394f';ctx.fillRect(x,y,34,h);
-    for(let row=0;row<7;row++)for(let col=0;col<3;col++)if((row*11+col+i)%4===0){ctx.fillStyle='#eec28a';ctx.fillRect(x+6+col*9,y+9+row*14,3,4);}
-  }
-  const map=new THREE.CanvasTexture(c);map.flipY=false;map.colorSpace=THREE.SRGBColorSpace;
-  mesh.material=new THREE.MeshBasicMaterial({map,side:THREE.DoubleSide});
+function daylightWindow() {
+  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=344;
+  const texture=new THREE.CanvasTexture(canvas);texture.flipY=false;texture.colorSpace=THREE.SRGBColorSpace;
+  return {canvas,texture,material:new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})};
 }
 
 function orbitPoster(mesh) {
@@ -63,6 +54,7 @@ function woodTexture() {
 }
 
 export function createOfficeAtmosphere(scene, renderer) {
+  const view=daylightWindow(),lamps=[];let displayedMinute=null,paintKey=null;
   const compact = window.matchMedia('(max-width:760px)').matches;
   renderer.toneMappingExposure = 1.12;
   const ambient = new THREE.HemisphereLight(0x9ebbdc, 0x49313b, .92); scene.add(ambient);
@@ -75,10 +67,10 @@ export function createOfficeAtmosphere(scene, renderer) {
   const fill = new THREE.DirectionalLight(0xc7d7e1, .55); fill.position.set(7, 4, 6); scene.add(fill);
   const reverseFill = new THREE.DirectionalLight(0xffd6b2, .85); reverseFill.position.set(-6, 5, -7); scene.add(reverseFill);
   for (const x of [-2.65, 1.4, 3.8]) {
-    const lamp = new THREE.PointLight(0xffbd72, 11, 4.5, 2); lamp.position.set(x, 2.38, -3.57); scene.add(lamp);
+    const lamp = new THREE.PointLight(0xffbd72, 11, 4.5, 2); lamp.position.set(x, 2.38, -3.57); scene.add(lamp);lamps.push({light:lamp,scale:lamp.intensity/11});
   }
   for (const [x,z] of compact ? [] : DESKS) {
-    const lamp = new THREE.PointLight(0xffd8a1, 1.6, 2.0, 2); lamp.position.set(x-.5, 1.13, -z+.10); scene.add(lamp);
+    const lamp = new THREE.PointLight(0xffd8a1, 1.6, 2.0, 2); lamp.position.set(x-.5, 1.13, -z+.10); scene.add(lamp);lamps.push({light:lamp,scale:lamp.intensity/11});
   }
   if (!compact) { const neon = new THREE.PointLight(0x7fe5d1, 1.4, 3.6, 2); neon.position.set(1.85, 2.18, -3.55); scene.add(neon); }
 
@@ -96,10 +88,22 @@ export function createOfficeAtmosphere(scene, renderer) {
   const palette = {wall:'#20313c', wall_edge:'#344c55', floor:'#876951', oak:'#c29a6b', oak_edge:'#946b48', steel:'#26343e', chair:'#2c3a46', chair_pad:'#617b7a', rug:'#304b53', ivory:'#dfd5bd', coral:'#cf826e', leaf:'#49795e', leaf_light:'#83aa7c'};
   const materialCopies = new Map();
   return {
+    update(game,dt=0){
+      const target=officeDaylight(game).minute;
+      displayedMinute=displayedMinute===null?target:displayedMinute+(target-displayedMinute)*(dt?1-Math.exp(-dt*4):1);
+      const s=officeDaylight({time:(displayedMinute-540)/60});
+      ambient.color.set(s.ambient);ambient.intensity=s.ambientPower;
+      key.color.set(s.key);key.intensity=s.keyPower;moon.intensity=s.moonPower;
+      fill.intensity=.4+(1-s.night)*.25;reverseFill.intensity=.65+s.night*.2;
+      for(const {light,scale} of lamps)light.intensity=s.lampPower*scale;
+      const bucket=Math.floor(s.minute/5);
+      if(bucket!==paintKey){paintDaylightWindow(view.canvas.getContext('2d'),s);view.texture.needsUpdate=true;paintKey=bucket;}
+      return s;
+    },
     async dress(room) {
       room.traverse(node => {
         if (!node.isMesh) return;
-        if (node.userData.windowTexture) { eveningWindow(node); return; }
+        if (node.userData.windowTexture) { node.material=view.material; return; }
         const old = node.material;
         if (!old || Array.isArray(old) || node.userData.screenIndex !== undefined || node.userData.windowTexture) return;
         if (!materialCopies.has(old)) {
