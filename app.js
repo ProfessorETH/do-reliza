@@ -1,9 +1,11 @@
+import { careerSummary, careerResult, careerPanel } from './assets/career-view.js';
+import { isCareer, TRAINING_COST, trainingLock, trainEmployee } from './assets/studio-career.js';
 import { coffeeArrival } from './assets/coffee-trip.js';
 import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 
 import { renderDecisionPanel, renderDecisionReceipt } from './assets/decision-view.js';
 import { discussionSpeakers, studyDecision } from './assets/team-discussion.js';
-import { purchasePanel, contractPreview } from './assets/commission-view.js';
+import { purchasePanel, contractPreview, balanceFlow } from './assets/commission-view.js';
 import { employeeEvent } from './assets/employee-event.js';
 import { sceneHeader, sceneDock, managementBar } from './assets/play-shell.js';
 import { studioCapacity, fundTeam } from './assets/studio-progression.js';
@@ -26,7 +28,7 @@ import { characterLine, characterMoment } from './assets/character-dialogue.js';
 import { ensureLife, condition, careFor, buyUpgrade, restArrival, awayForRest, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
 import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
-import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
+import { createGame, agentById as baseAgentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
 
 const root = document.querySelector('#app');
 const dialog = document.querySelector('#info-dialog');
@@ -44,6 +46,7 @@ let officeExpanded = false;
 let decisionFeedback = null;
 let managementExpanded = false;
 let game = null, candidate = 'mira', difficulty = 'calm', saved = null, savingAvailable = true, mini = null;
+const agentById=id=>baseAgentById(id,game);
 const fit = (id, task) => baseFit(id, task, game);
 const sound = createSound();
 const onboarding = createOnboarding({ storageKey: `${SAVE}-onboarding-v1`, pause: () => {}, refresh: render, sound, onOpen:()=>{workspaceView='office';officeSelection=null;officeExpanded=false;} });
@@ -138,11 +141,11 @@ function seatingPanel() {
 function hirePanel() {
   const a=agentById(candidate), hired=game.team.includes(a.id), canHire=hired||(game.team.length<studioCapacity(game)&&game.budget>=a.cost&&!game.life.away?.includes(a.id));
   const quickTeam = game.team.length >= 3;
-  const coverage=`<div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=70);return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div>`;
+  const coverage=`<div class="coverage">${[['code','Код'],['design','Дизайн'],['qa','Тесты']].map(([key,label])=>{const covered=game.team.some(id=>agentById(id).stats[key]>=(isCareer(game)?25:70));return `<span class="${covered?'covered':''}">${icon(covered?'check':'people',13)}${label}</span>`;}).join('')}</div>`;
   return `<div class="panel-header"><div class="eyebrow">01 / КОМАНДА</div><h1>${quickTeam?'Пора за работу':'Собери команду'}</h1><p>${quickTeam?'Команда в сборе. Следующий шаг — распределить задачи.':'Найми троих — они сами займут компьютеры.'}</p></div>
-    ${!quickTeam?`<div class="hire-progress"><b>${game.team.length}/${studioCapacity(game)}</b>${coverage}</div>`:''}
+    ${careerSummary(game)}${!quickTeam?`<div class="hire-progress"><b>${game.team.length}/${studioCapacity(game)}</b>${coverage}</div>`:''}
     ${quickTeam?`<div class="team-ready"><span class="ready-symbol">${icon('rocket',28)}</span><h2>Ваша цель — релиз</h2><p>Собери план, помогай коллегам и проверь игру перед показом.</p><ol><li>Распредели пять задач</li><li>Помоги с трудными моментами</li><li>Выпусти «Орбиту»</li></ol></div><details class="crew-manage"><summary>Изменить состав команды</summary>`:''}
-    ${candidatePicker(AGENTS,candidate,game.team,{portrait,icon,money,esc})}
+    ${candidatePicker(AGENTS.map(a=>agentById(a.id)),candidate,game.team,{portrait,icon,money,esc})}
     ${game.life.completed>0?`<p class="staffing-budget">Команда: ${game.team.length}/${studioCapacity(game)}. Начать можно втроём.<button class="secondary" data-action="fund-team" ${game.life.cash<=0?'disabled':''}>Добавить ${money(Math.min(5000,game.life.cash))} из кассы</button></p>`:''}${agentDossier(a,{hired,canHire,teamCount:game.team.length,budget:game.budget,capacity:studioCapacity(game)},{portrait,icon,money,esc,radar})}
     ${game.life.away?.includes(a.id)?'<p class="life-notice">Сотрудник покинул студию и пропускает этот заказ. Выбери другого кандидата.</p>':''}
     ${quickTeam?'</details>':''}
@@ -188,12 +191,12 @@ document.addEventListener('character-voice-state',syncCharacterSpeaking);
 function eventPanel() { return renderDecisionPanel(game); }
 function resultPanel() {
   const r=getResult(game);
-  return `<div class="panel-header"><div class="eyebrow">ШАГ 04 · РЕЗУЛЬТАТ</div><h1>${r.title}</h1><p>${r.summary}</p></div>
+  return `<div class="panel-header"><div class="eyebrow">ШАГ 04 · РЕЗУЛЬТАТ</div><h1>${esc(r.title)}</h1><p>${esc(r.summary)}</p></div>
     <div class="result-score"><span class="score-orbit">${icon(r.passed?'rocket':'flag',32)}</span><div><strong>${r.score}<small>/ 100</small></strong><span>оценка проекта в игре</span></div>${badge(r.passed?'РЕЛИЗ ПРИНЯТ':'НУЖНА ДОРАБОТКА',r.passed?'success':'danger')}</div>
     <div class="result-metrics"><div><small>Качество работы</small><b>${r.quality}%</b></div><div><small>Срок</small><b class="${r.late?'coral':'mint'}">${r.late?`+${r.late} ч`:'Вовремя'}</b></div><div><small>Резерв</small><b>${money(game.budget)}</b></div><div><small>Доверие к команде</small><b>${game.trust}%</b></div></div>
     <button class="game-preview" data-action="play-mini"><span class="preview-space"><i>✦</i>${icon('rocket',48)}<i>✧</i></span><span><small>СДЕЛАНО ВАШЕЙ КОМАНДОЙ</small><b>ОРБИТА</b><span>Сыграть в получившуюся игру ${icon('arrow',16)}</span></span>${icon('play',24)}</button>
     <div class="release-features">${game.wallBug?'<span class="coral">Ошибка: астероиды не останавливают корабль</span>':''}<span>${icon(game.shield?'check':'cross',14)} ${game.shield?'Защитный щит':'Без щита'}</span><span>${icon(game.checkpoint&&!game.criticalBug?'check':'cross',14)} ${game.criticalBug?'Баг сохранения':game.checkpoint?'Сохранение работает':'Сессия без сохранения'}</span></div>
-    <div class="career-result"><span class="eyebrow">ЧТО ДЕЛАЛ ТИМЛИД</span><h2>Помог команде выпустить игру</h2><ul class="lead-recap"><li>${game.support?'Разобрал сложную задачу вместе с разработчиком':'Распределил задачи по навыкам'}</li><li>${game.choices.review==='review-skip'?'Пропустил ошибку при проверке кода':'Нашёл ошибку при проверке кода'}</li><li>Решил, что исправлять перед показом</li></ul><button class="text-button" data-action="debrief">Почему такой результат? ${icon('arrow',15)}</button></div>
+    ${careerResult(game)}<div class="career-result"><span class="eyebrow">ЧТО ДЕЛАЛ ТИМЛИД</span><h2>Помог команде выпустить игру</h2><ul class="lead-recap"><li>${game.support?'Разобрал сложную задачу вместе с разработчиком':'Распределил задачи по навыкам'}</li><li>${game.choices.review==='review-skip'?'Пропустил ошибку при проверке кода':'Нашёл ошибку при проверке кода'}</li><li>Решил, что исправлять перед показом</li></ul><button class="text-button" data-action="debrief">Почему такой результат? ${icon('arrow',15)}</button></div>
     <section class="life-result" aria-label="Развитие студии"><h2>Студия живёт дальше</h2><p>За этот заказ: +${money(game.life.history.at(-1)?.reward||0)} в кассу. Всего: ${money(game.life.cash)}. Команда и улучшения сохраняются в следующей смене.</p>${game.life.departures.length?'<p class="life-notice">Есть риск ухода сотрудников. Проверь состояние команды до следующего заказа.</p>':''}<button class="primary" data-action="life-contracts">Следующий заказ →</button><button class="secondary" data-action="life-office">Обустройство и касса</button></section><div class="panel-bottom"><button class="secondary full" data-action="restart">${icon('reset',17)} Начать новую студию</button></div>`;
 }
 let renderedStage = null;
@@ -454,6 +457,15 @@ document.addEventListener('click',e=>{
   if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
   if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
   if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
+  if(action==='career'){if(isCareer(game))showDialog(careerPanel(game));return;}
+  if(action==='career-train-preview'){
+    const skill=el.dataset.skill,error=trainingLock(game,id,skill);if(error){toast(error);return;}
+    const a=agentById(id),name=SKILLS.find(k=>k.key===skill).label;
+    showDialog(`<div class="eyebrow">ОБУЧЕНИЕ МЕЖДУ ЗАКАЗАМИ</div><h2 id="dialog-title">${a.name}: ${name}</h2><p>Навык ${a.stats[skill]} → ${Math.min(90,a.stats[skill]+4)}. Сохранится в следующих заказах.</p>${balanceFlow(game.life.cash,TRAINING_COST)}<p>Один курс сотруднику на этом этапе. После релиза практика даст дополнительный рост.</p><div class="dialog-actions"><button class="secondary" data-action="life-member" data-id="${id}">Назад</button><button class="primary" data-action="career-train" data-id="${id}" data-skill="${skill}">Обучить · ${money(TRAINING_COST)}</button></div>`);return;
+  }
+  if(action==='career-train'){
+    const error=trainEmployee(game,id,el.dataset.skill);if(error)toast(error);else{persist();render();showDialog(memberPanel(game,id));toast('Навык вырос и сохранён.');}return;
+  }
   if(action==='life-office'){showDialog(officePanel(game));return;}
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id)){selectEmployee(id,{focus:false});showDialog(memberPanel(game,id));}return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}

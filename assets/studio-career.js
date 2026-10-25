@@ -19,7 +19,8 @@ export function agentProfile(s,id){
   const a=AGENTS.find(a=>a.id===id);if(!a||!isCareer(s))return a;
   const stats=s.life?.career?.skills[id]||startingSkills(a);
   const strongest=SKILLS.reduce((best,k)=>stats[k.key]>stats[best.key]?k:best,SKILLS[0]);
-  return {...a,stats:{...stats},cost:careerFee(s,id),trait:'Растёт вместе со студией',strength:`${strongest.label} ${stats[strongest.key]}`,weakness:'Навыки растут на выполненных задачах и обучении.',desc:'Начинающий специалист. Практика на заказах развивает профильные навыки, обучение позволяет выбрать направление роста.'};
+  const primary=Math.max(stats.code,stats.design,stats.qa,stats.talk),level=primary>=80?'Опытный специалист':primary>=60?'Уверенный специалист':primary>=40?'Растущий специалист':'Начинающий специалист';
+  return {...a,stats:{...stats},cost:careerFee(s,id),trait:level,strength:`${strongest.label} ${stats[strongest.key]}`,weakness:'Навыки растут на выполненных задачах и обучении.',desc:level+'. Практика на заказах развивает профильные навыки, обучение позволяет выбрать направление роста.'};
 }
 export function contractTerms(s,c){
   if(!isCareer(s))return {...c,budget:c.budget+DIFFICULTIES[s.difficulty].budget-36000,deadline:c.deadline+DIFFICULTIES[s.difficulty].deadline-16};

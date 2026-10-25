@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { AGENTS } from '../data.js';
 import { createGame, hire, seatAgent, beginPlan, recommend, beginWork, tick, resolveEvent, getResult, nextProject, validSave, restoreOffice } from '../engine.js';
 import { agentProfile, trainEmployee, contractLock, contractTerms } from '../assets/studio-career.js';
-import { settleProject, CONTRACTS } from '../assets/studio-life.js';
+import { settleProject, buyUpgrade, CONTRACTS } from '../assets/studio-life.js';
 import { contractCosts } from '../assets/commission-view.js';
 import { missionReward } from '../assets/studio-progression.js';
 import { freshOrbit, recordOrbitResult } from '../assets/orbit.js';
@@ -52,6 +52,9 @@ test('eight-order career unlocks clients, keeps ledger valid and pays mission pr
     const cash=s.life.cash,reward=missionReward(s,s.life.contract).cash;assert.ok(recordOrbitResult(s,flight));assert.equal(s.life.cash,cash+reward);assert.equal(recordOrbitResult(s,flight),false);assert.ok(validSave(s));
   }
   assert.equal(s.life.career.reputation,80);assert.ok(s.life.career.skills.mira.design>=75);assert.ok(s.life.cash>6000);assert.deepEqual(s.life.missionsWon,['festival','club','cup']);
+  assert.equal(buyUpgrade(s,'desk4'),null);assert.equal(buyUpgrade(s,'desk5'),null);assert.equal(nextProject(s,'cup'),null);
+  for(const [id,index] of [['nord',3],['saga',4]]){assert.equal(hire(s,id),null);seatAgent(s,id,index);}
+  assert.equal(s.team.length,5);assert.ok(validSave(s));finish(s);assert.ok(getResult(s).passed);
 });
 test('career save validation rejects corrupted skills, future training and missing progression',()=>{
   const original=studio();for(const corrupt of [s=>s.life.career.skills.mira.code=NaN,s=>s.life.career.skills.mira.code=91,s=>s.life.career.trained.mira=99,s=>delete s.life.career]){const s=structuredClone(original);corrupt(s);assert.equal(!!validSave(s),false);}
