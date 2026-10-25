@@ -1,3 +1,4 @@
+import { bindSpeechMouth } from './assets/speech-mouth.js';
 import { COFFEE_TIMING, coffeeMotion } from './assets/coffee-trip.js';
 import { REACTION_SECONDS } from './assets/character-reactions.js';
 import { bindOfficeSkin } from './office-skeleton.js?v=0.6.0';
@@ -20,6 +21,7 @@ export class OfficeActor {
       if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
     });
     this.portraitHead=model.getObjectByName(`DR_${id}_PortraitHead`)||null;
+    this.speechMouth=bindSpeechMouth(this.portraitHead,id);
     this.skinBindings=bindOfficeSkin(model,this.joints);
     this.group.updateMatrixWorld(true); this.soles = {}; this.footMeshes={}; this.eyeMeshes={};
     for (const side of ['Left','Right']) {
@@ -187,6 +189,7 @@ export class OfficeActor {
     this.eventBlend = damp(this.eventBlend, activity.stage === 'event' && activity.eventParticipant!==false && this.state==='seated' ? 1 : 0, 5, dt);
     const mouseShare = activity.task?.skill === 'design' ? .68 : activity.task?.skill === 'qa' ? .35 : .12;
     this.mouseBlend = damp(this.mouseBlend, (elapsed + this.order * 1.73) % 7 < mouseShare * 7 ? 1 : 0, 5, dt);
+    this.speechMouth?.update(dt,Boolean(activity.speaking),activity.speechLevel||0);
     this.talkBlend=damp(this.talkBlend||0,activity.speaking?1:0,10,dt);
     this.listenBlend=damp(this.listenBlend||0,activity.listening?1:0,7,dt);
     this.talkLevel=damp(this.talkLevel||0,activity.speaking?(activity.speechLevel||0):0,14,dt);
