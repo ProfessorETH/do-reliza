@@ -1,4 +1,6 @@
 """Native Blender CPU-only proposal: repair teal paint on distal Nika hands.
+Optional --neck also repairs non-skin dark/teal fragments inside the measured
+front V-neck, with a six-millimetre margin protecting the white collar.
 Reads the original painted body; writes a NEW PNG/mask/receipt under work/.
 Does not export meshes, alter UVs/material assignments, or modify source files.
 """

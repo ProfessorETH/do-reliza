@@ -89,5 +89,8 @@
     "note": "Body rim contains collar and source fringe. Coplanar cut rings have different topology and are not claimed coincident."
   },
   "visual_acceptance": "Parent browser accepted continuous blazer, hands and clearer V-neck for the current game prototype; generated outer collar contours retained.",
-  "native_source_file": "art/blender/team-body-v5.blend"
+  "native_source_file": "art/blender/team-body-v5.blend",
+  "packed_source_sha256": "9d735a2ff09472fde15ab16d3a0381409d454c1bece8abee4d31bb1304083889",
+  "packed_source_mib": 98.209,
+  "packed_source_native_reopen_verified": true
 }
