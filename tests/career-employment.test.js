@@ -22,6 +22,7 @@ test('salary requests follow real experience, persist on the employee and are ne
   const {s,id}=second();assert.equal(employment(s,id).experience,1);assert.equal(employeeEvent(s).id,id);assert.equal(condition(s,id).label,'Просит прибавку');
   s.timedEvents=true;assert.equal(ensureEventClock(s),null);assert.match(renderDecisionPanel(s),/salary-accept/);assert.match(renderDecisionPanel(s),/Риск ухода/);
   const copy=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(copy));assert.deepEqual(copy.life.career.employment,s.life.career.employment);assert.equal(employeeEvent(copy).key,employeeEvent(s).key);
+  copy.life.members[id].energy=20;copy.life.members[id].stress=80;assert.equal(condition(copy,id).factor,.75);
 });
 test('accepting costs real cash, improves morale and future payroll matches preview',()=>{
   const {s,id}=second(),e=employment(s,id),cost=e.request,cash=s.life.cash,m=s.life.members[id];m.morale=50;m.stress=50;
