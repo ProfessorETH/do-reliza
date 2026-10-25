@@ -1,4 +1,5 @@
 import { agentProfile } from './studio-career.js';
+import { employmentCondition } from './career-employment.js';
 import { studioCapacity } from './studio-progression.js';
 import { activeTasks } from '../engine.js?v=shift-ux-20261024-v2';
 import { condition } from './studio-life.js?v=shift-ux-20261024-v2';
@@ -19,7 +20,8 @@ export function teamMemberState(game, id) {
   if (!agent || !game.team.includes(id)) return null;
   const current = condition(game,id), member = game.life.members[id];
   const task = game.stage === 'work' ? activeTasks(game).find(t => game.assignments[t.id] === id) : null;
-  const tone = member.energy<=25&&member.stress>=65 ? 'urgent' : member.energy<35||member.stress>=65||member.morale<35 ? 'low' : member.morale>=80 ? 'bright' : 'calm';
+  const pay=employmentCondition(game,id);
+  const tone = member.energy<=25&&member.stress>=65||pay?.label==='Планирует уйти' ? 'urgent' : pay||member.energy<35||member.stress>=65||member.morale<35 ? 'low' : member.morale>=80 ? 'bright' : 'calm';
   let activity = game.stage==='plan' ? 'Готовится к смене' : 'На месте';
   let line = agent.quote;
   if(member.coffeeTrip){activity=({queued:'Ждёт напиток',outbound:'Идёт за напитком',drinking:'Пьёт напиток',returning:'Возвращается за компьютер'})[member.coffeeTrip.phase];line=member.coffeeTrip.phase==='queued'?'Станция занята. Пока продолжу работу.':'Заберу напиток и вернусь к задаче.';}
@@ -40,6 +42,7 @@ export function teamMemberState(game, id) {
   }
   const voice = characterMoment(game,id);
   if (voice) line = characterLine(id,voice);
+  if(pay){activity=pay.label;line=pay.reason;}
   return {agent, mood:current.label, tone, activity, line, voice, energy:Math.round(member.energy), morale:Math.round(member.morale), stress:Math.round(member.stress), progress:task?Math.round(game.progress[task.id]):null};
 }
 

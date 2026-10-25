@@ -1,4 +1,5 @@
 import { EVENTS, AGENTS } from '../data.js';
+import { employmentPanel } from './employment-view.js';
 import { INCIDENTS } from './studio-life.js';
 import { memberPortrait, visualIcon } from './studio-visuals.js';
 import { discussionSpeakers, DECISION_EVIDENCE } from './team-discussion.js';
@@ -49,6 +50,7 @@ export function decisionChoices(s) {
 export const effectPills=items=>`<span class="effect-pills">${items.map(p=>`<span class="effect-pill" data-tone="${p.tone}">${p.label}</span>`).join('')}</span>`;
 
 export function renderDecisionPanel(s) {
+  if(s.currentEvent==='life'&&s.life.incident?.type==='salary')return `<div class="eyebrow">ЖИЗНЬ КОМАНДЫ · ОПЫТ И ОПЛАТА</div><h1>Пора обсудить оплату</h1>${employmentPanel(s,s.life.incident.id,{event:true})}`;
   const life=s.currentEvent==='life', incident=s.life.incident;
   const ev=life?INCIDENTS[incident.type]:EVENTS[s.currentEvent];
   const ids=life?[incident.id,...(incident.otherId?[incident.otherId]:[])]:[s.assignments[s.currentEvent==='bug'?'qa':s.currentEvent==='review'?'code':'brief']];
