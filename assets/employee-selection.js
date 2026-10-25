@@ -1,6 +1,6 @@
 import { TASKS } from '../data.js';
 import { activeTasks } from '../engine.js';
-import { condition, restInTransit } from './studio-life.js';
+import { condition } from './studio-life.js';
 import { teamMemberState } from './team-hud.js';
 
 // Read-only presentation of the selected colleague; actions still go through the engine.
@@ -20,13 +20,13 @@ export function employeeOverview(game,id) {
   const action=(name,key,label)=>actions.push({action:name,id:key,label});
   if(game.stage==='work') {
     if(!task&&!away&&state.tone!=='urgent'&&member.energy>=35)action('studio-project','','Показать задачи');
-    if(task&&!game.support&&!restInTransit(game))action('support',task.id,'Разобрать вместе · 1 ч');
+    if(task&&!game.support)action('support',task.id,'Разобрать вместе · 1 ч');
     if(!member.restTrip&&!member.breaks&&!member.coffeeTrip)action('life-break',id,'На перерыв · 1 ч');
     if(!member.restTrip&&!member.coffeeTrip&&!member.coffee&&game.life.upgrades.includes('coffee'))action('life-coffee',id,'За напитком · +15 энергии');
   }
   if(['work','result'].includes(game.stage)&&done>member.praised)action('life-praise',id,'Отметить результат · +10 настроения');
   if(member.energy<35)actions.sort((a,b)=>Number(b.action==='life-break')-Number(a.action==='life-break'));
-  else if(done>member.praised&&member.morale<35)actions.sort((a,b)=>Number(b.action==='life-praise')-Number(a.action==='life-praise'));
+  else if(done>member.praised)actions.sort((a,b)=>Number(b.action==='life-praise')-Number(a.action==='life-praise'));
   if(!actions.length&&['hire','plan'].includes(game.stage))action('seating','', 'Рабочие места');
   if(game.stage==='event')action('event-open','','Обсудить решение');
   return {...state,task:task?{id:task.id,name:task.name,progress:Math.round(game.progress[task.id])}:null,explanation,actions:actions.slice(0,2)};

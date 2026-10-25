@@ -12,3 +12,8 @@
 .scene-first[data-workspace=project] .employee-card { display:none; }
 
 .scene-first .employee-card .employee-card-body { display:block; grid-template-columns:none; }.scene-first .employee-card header small { margin-top:0; }.employee-card .vital>span { display:block; }.employee-card .vital meter { width:100%; }
+.employee-context { margin:0; }.employee-context>summary { display:none; }.employee-context[open] { padding:0; }.employee-context>summary span { margin-left:auto; }
+@media(max-width:700px), (max-height:500px) and (pointer:coarse) { .employee-context>summary { display:flex; align-items:center; gap:8px; min-height:44px; margin-top:6px; color:var(--muted); font-size:13px; cursor:pointer; }.employee-context[open]>summary { color:var(--amber); }.employee-card header .compact-portrait { width:40px; height:40px; }.employee-card>header { padding:8px 12px; }.scene-first .employee-card h2 { font-size:22px; } }
+.scene-first .actor-actions.employee-card { z-index:18; }
+@media(max-width:900px), (max-height:500px) and (pointer:coarse) { .scene-first[data-workspace=office]:has(.employee-card) .office-heading { top:12px; } }
+@media(min-width:701px) and (max-height:500px) and (pointer:coarse) { .scene-first .actor-actions.employee-card { top:72px!important; }.scene-first .employee-card header small { display:none; }.scene-first[data-workspace=office]:has(.employee-card) .office-heading { right:352px; } }

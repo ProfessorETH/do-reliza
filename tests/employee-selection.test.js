@@ -11,10 +11,10 @@ test('selected colleague shows actual work or names the dependency without chang
   assert.match(employeeOverview(g,g.assignments.design).explanation,/Разобрать задание/);
   assert.equal(employeeOverview(g,'nord'),null);assert.deepEqual(g,before);
 });
-test('offered support belongs to this employee and obeys the one-use and travel guards',()=>{
+test('offered support belongs to this employee and obeys the one-use guard while colleagues travel',()=>{
   const g=working(),id=g.assignments.brief,action=employeeOverview(g,id).actions.find(a=>a.action==='support');
   assert.equal(supportTask(g,action.id),null);assert.ok(!employeeOverview(g,id).actions.some(a=>a.action==='support'));
-  const h=working();careFor(h,h.assignments.design,'break');assert.ok(!employeeOverview(h,h.assignments.brief).actions.some(a=>a.action==='support'));
+  const h=working();careFor(h,h.assignments.design,'break');const offered=employeeOverview(h,h.assignments.brief).actions.find(a=>a.action==='support');assert.ok(offered);assert.equal(supportTask(h,offered.id),null);
 });
 test('tired colleague offers rest first; travel, coffee and return never claim current task',()=>{
   const g=working(),id=g.assignments.brief,m=g.life.members[id];m.energy=10;

@@ -49,6 +49,7 @@ export function createGuideBubble({storageKey,onToggle}) {
     if(e.key==='Home'){e.preventDefault();preferred={x:1,y:1};save();schedule();}
     else if(delta){e.preventDefault();const r=bubble.getBoundingClientRect();preferred=normalizeBubble({x:r.left,y:r.top+delta[1]},view());if(delta[0])preferred.x=delta[0]<0?0:1;save();schedule();}
   });
+  document.addEventListener('toggle',schedule,true);
   window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);
   return {
     sync(show,expanded){visible=show;bubble.hidden=!show;bubble.setAttribute('aria-expanded',String(expanded));bubble.setAttribute('aria-label',`Ника — помощница. ${expanded?'Свернуть':'Открыть'} подсказку`);schedule();},
