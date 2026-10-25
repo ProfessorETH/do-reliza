@@ -133,7 +133,13 @@ body:has(.scene-first) #info-dialog .upgrade-state { font-size:8px; }
 body:has(.scene-first) #info-dialog .shop-funds strong { font-size:22px; }
 body:has(.scene-first) #info-dialog .shop-funds small { font-size:10px; }
 body:has(.scene-first) #info-dialog .model-tools { gap:3px; }
-body:has(.scene-first) #info-dialog .model-tools>button { min-width:40px; width:40px; }
+body:has(.scene-first) #info-dialog .model-tools>button { min-width:44px; width:44px; }
  
 }
 
+body:has(.scene-first) #info-dialog .office-catalog[data-filter=available] .upgrade-card:not([data-state=available]),body:has(.scene-first) #info-dialog .office-catalog[data-filter=locked] .upgrade-card:not([data-state=locked]),body:has(.scene-first) #info-dialog .office-catalog[data-filter=owned] .upgrade-card:not([data-state=owned]) { display:none; }
+body:has(.scene-first) #info-dialog .upgrade-photo { overflow:hidden; }body:has(.scene-first) #info-dialog .upgrade-photo .upgrade-art { transform:scale(1.32); }
+@media(max-width:600px) { body:has(.scene-first) #info-dialog .upgrade-photo .upgrade-art { transform:scale(1.6); } }
+@media(max-height:500px) and (min-width:601px) {
+ body:has(.scene-first) #info-dialog .purchase-menu { max-height:calc(100dvh - 76px); }body:has(.scene-first) #info-dialog .purchase-menu .menu-heading { margin-bottom:12px; }body:has(.scene-first) #info-dialog .purchase-menu .menu-heading h2 { font-size:25px; }body:has(.scene-first) #info-dialog .model-preview { height:clamp(150px,calc(100dvh - 230px),260px); }body:has(.scene-first) #info-dialog .model-hint { display:none; }
+}

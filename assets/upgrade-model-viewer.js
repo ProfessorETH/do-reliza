@@ -42,6 +42,7 @@ export class UpgradeModelViewer {
     this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
     this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.35;
     this.renderer.domElement.setAttribute('aria-label','3D-модель улучшения. Потяни, чтобы повернуть.');this.renderer.domElement.setAttribute('role','img');
+    this.onContextLost=()=>{if(!this.disposed)this.fail();};this.renderer.domElement.addEventListener('webglcontextlost',this.onContextLost);
     this.canvasHost=host.querySelector('.model-canvas')||host;this.canvasHost.append(this.renderer.domElement);
     this.scene=new THREE.Scene();this.scene.add(new THREE.HemisphereLight(0xe8f0ff,0x52645c,2));
     const key=new THREE.DirectionalLight(0xffdfb0,3.2);key.position.set(-3,6,5);key.castShadow=true;key.shadow.mapSize.set(512,512);key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=5;key.shadow.camera.bottom=-5;this.scene.add(key);
@@ -49,7 +50,7 @@ export class UpgradeModelViewer {
     this.ground=new THREE.Mesh(new THREE.CylinderGeometry(2.15,2.25,.06,64),new THREE.MeshStandardMaterial({color:0x273d45,roughness:1}));this.ground.position.y=-.04;this.ground.receiveShadow=true;this.scene.add(this.ground);
     this.camera=new THREE.PerspectiveCamera(36,1,.01,80);this.controls=new OrbitControls(this.camera,this.renderer.domElement);this.controls.enablePan=false;this.controls.minPolarAngle=.3;this.controls.maxPolarAngle=1.48;
     this.controls.addEventListener('change',()=>this.draw());
-    this.onClick=e=>{const button=e.target.closest('[data-preview-action]');if(!button)return;const action=button.dataset.previewAction;
+    this.onClick=e=>{const button=e.target.closest('[data-preview-action]');if(!button||!this.model)return;const action=button.dataset.previewAction;
       if(action==='before'||action==='after'){this.after=action==='after';host.querySelectorAll('[data-preview-action=before],[data-preview-action=after]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));this.show(this.id,this.after).catch(()=>this.fail());}
       else if(action==='reset')this.reset();else if(action==='in'||action==='out'){this.camera.position.sub(this.controls.target).multiplyScalar(action==='in'?.85:1.18).clampLength(this.controls.minDistance,this.controls.maxDistance).add(this.controls.target);this.controls.update();}
       else {const offset=this.camera.position.clone().sub(this.controls.target);offset.applyAxisAngle(new THREE.Vector3(0,1,0),action==='left'?-.35:.35);this.camera.position.copy(this.controls.target).add(offset);this.controls.update();}
@@ -58,11 +59,11 @@ export class UpgradeModelViewer {
   }
   async show(id=this.id,after=this.after) {
     const ticket=++this.ticket,model=await createUpgradeModel(id,after);if(this.disposed||ticket!==this.ticket)return;
-    if(this.model)this.scene.remove(this.model);this.model=model;this.scene.add(model);this.id=id;this.after=after;this.reset();this.resize();this.host.dataset.modelReady='true';this.host.querySelector('.model-status')?.setAttribute('hidden','');
+    if(this.model)this.scene.remove(this.model);this.model=model;this.scene.add(model);this.id=id;this.after=after;this.reset();this.resize();this.host.querySelectorAll('[data-preview-action]').forEach(button=>button.disabled=false);this.host.dataset.modelReady='true';this.host.querySelector('.model-status')?.setAttribute('hidden','');
   }
-  reset(){const bounds=new THREE.Box3().setFromObject(this.model),height=bounds.getSize(new THREE.Vector3()).y;this.controls.target.set(0,height*.42,0);this.camera.position.set(4.1,height*.42+3.1,5.2);this.controls.minDistance=3.4;this.controls.maxDistance=11;this.controls.update();this.draw();}
+  reset(){if(!this.model)return;const bounds=new THREE.Box3().setFromObject(this.model),height=bounds.getSize(new THREE.Vector3()).y;this.controls.target.set(0,height*.42,0);this.camera.position.set(4.1,height*.42+3.1,5.2);this.controls.minDistance=3.4;this.controls.maxDistance=11;this.controls.update();this.draw();}
   resize(){if(this.disposed)return;const width=this.fixedSize?.width||this.canvasHost.clientWidth,height=this.fixedSize?.height||this.canvasHost.clientHeight;if(!width||!height)return;this.renderer.setSize(width,height,false);this.camera.aspect=width/height;this.camera.updateProjectionMatrix();this.draw();}
   draw(){if(!this.disposed)this.renderer.render(this.scene,this.camera);}
   fail(){this.host.dataset.modelReady='false';const status=this.host.querySelector('.model-status');if(status){status.hidden=false;status.textContent='Показан снимок предмета из офиса';}}
-  dispose(){this.disposed=true;this.ticket++;this.resizeObserver.disconnect();this.host.removeEventListener('click',this.onClick);this.controls.dispose();this.ground.geometry.dispose();this.ground.material.dispose();this.renderer.dispose();this.renderer.forceContextLoss();this.renderer.domElement.remove();}
+  dispose(){this.disposed=true;this.ticket++;this.resizeObserver.disconnect();this.host.removeEventListener('click',this.onClick);this.controls.dispose();this.renderer.domElement.removeEventListener('webglcontextlost',this.onContextLost);this.ground.geometry.dispose();this.ground.material.dispose();this.renderer.dispose();this.renderer.forceContextLoss();this.renderer.domElement.remove();}
 }
