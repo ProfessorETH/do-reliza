@@ -1,4 +1,5 @@
 import { studioCapacity } from './assets/studio-progression.js';
+import { validOfficeChatter, carryOfficeChatter } from './assets/office-chatter-state.js';
 import { studyDecision, recordDiscussion, validDiscussions } from './assets/team-discussion.js';
 export { studyDecision };
 import { validEventClock } from './assets/event-clock.js';
@@ -179,6 +180,7 @@ export function nextProject(state, contractId) {
   const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
   if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
+  if(state.officeChatter)next.officeChatter=carryOfficeChatter(state);
   next.budget = next.initialBudget = contract.budget + DIFFICULTIES[state.difficulty].budget - 36000;
   next.deadline = contract.deadline + DIFFICULTIES[state.difficulty].deadline - 16;
   const departed=[...l.departures], away=departed.slice(0,AGENTS.length-3);
@@ -209,7 +211,7 @@ export function validSave(s) {
     && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
     && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= studioCapacity(s) && new Set(s.team).size === s.team.length
-    && s.team.every(id => !!agentById(id)) && validDiscussions(s) && Number.isFinite(s.budget) && s.budget >= 0
+    && s.team.every(id => !!agentById(id)) && validDiscussions(s) && validOfficeChatter(s) && Number.isFinite(s.budget) && s.budget >= 0
     && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === studioCapacity(s)
       && s.seats.every(id => id === null || s.team.includes(id))
       && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))
