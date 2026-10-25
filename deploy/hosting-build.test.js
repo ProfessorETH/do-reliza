@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { renderStartScreen } from '../assets/start-screen.js';
+import { createHash } from 'node:crypto';
 
 const root=resolve(import.meta.dirname,'..');
 const manifest=JSON.parse(await readFile(resolve(root,'dist/build-manifest.json'),'utf8'));
@@ -17,7 +18,7 @@ test('production entry and eager preloads exclude Three.js and physical office',
   }
   visit(Object.keys(outputs).find(p=>outputs[p].entryPoint==='app.js'));
   const inputs=[...eager].flatMap(p=>Object.keys(outputs[p].inputs));
-  assert(!inputs.some(p=>p.startsWith('vendor/three/')||p==='office-world.js'));
+  assert(!inputs.some(p=>p.startsWith('vendor/three/')||p.startsWith('vendor/meshopt/')||p==='office-world.js'));
   assert(Object.values(outputs).some(o=>Object.keys(o.inputs).includes('office-world.js')));
   assert.equal(inputs.filter(p=>p==='assets/office-runtime.js').length,1);
 });
@@ -59,6 +60,13 @@ test('public character workshop uses versioned local modules and all seven accep
   }
   for(const id of ['mira','pixel','nord','iskra','saga','echo','nika']) {
     const bytes=await readFile(resolve(root,'dist/demo-v05',manifest.prefix,'assets/models',`${id}.glb`));
-    assert(bytes.equals(await readFile(resolve(root,'assets/models',`${id}.glb`))));
+    const report=JSON.parse(await readFile(resolve(root,'dist/character-transfer-report.json'),'utf8'));
+    const receipt=report.records.find(r=>r.id===id);
+    const hash=b=>createHash('sha256').update(b).digest('hex');
+    assert.equal(hash(bytes),receipt.outputSha256);
+    assert.equal(hash(await readFile(resolve(root,'assets/models',`${id}.glb`))),receipt.sourceSha256);
+    assert(receipt.outputGzipBytes<receipt.sourceGzipBytes*.5);
+    assert.equal(receipt.nodeTransformError,0);
   }
+  assert((await stat(resolve(root,'dist/demo-v05',manifest.prefix,'MESHOPT-LICENSE.md'))).size>0);
 });
