@@ -1,3 +1,4 @@
+import { renderShift } from './assets/shift-view.js';
 import { renderHiring } from './assets/hiring-view.js';
 import { createOfficeConversations } from './assets/office-conversations.js';
 import { salaryDecision } from './assets/career-employment.js';
@@ -154,16 +155,7 @@ function seatingPanel() {
 }
 function hirePanel() { return renderHiring(game,candidate,{portrait,icon,money,esc,busy:officeMoving}); }
 function planPanel() { return renderTaskPlanning(game,{portrait,busy:officeMoving}); }
-function workPanel() {
-  const active=activeTasks(game);
-  const support=active.reduce((low,t)=>!low||fit(game.assignments[t.id],t)<fit(game.assignments[low.id],low)?t:low,null);
-  return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги разработчику с его задачей.</p></div>
-    <div class="work-controls"><button class="primary" data-action="tick">${icon('clock',18)} Следующий час</button></div>
-    <div class="time-strip" role="status">Прошло <strong>${game.time} ч</strong><span>План: ${game.deadline} ч</span></div>
-    <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':awayForRest(game.life.members[a.id])?condition(game,a.id).label:'Разработчик занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
-    <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div><button class="text-button" data-action="activity">Журнал ↗</button>${game.log.slice(-1).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
-    ${game.support?`<div class="support-done">${icon('check',18)}<span>Разбор проведён: ${agentById(game.support.agentId).name}<small>Навык для задачи «${TASKS.find(t=>t.id===game.support.taskId).name}» повышен на 15, максимум до 100.</small></span></div>`:support?`<div class="support-card"><div class="eyebrow">ПОМОЩЬ ТИМЛИДА</div><h2>${agentById(game.assignments[support.id]).name}: «${support.name}»</h2><p>Разберите задачу вместе. Разработчик лучше справится с ней, но ты потратишь час.</p><button class="secondary full" data-action="support" data-id="${support.id}">Помочь с задачей <span>+1 ч</span></button></div>`:''}`;
-}
+function workPanel() { return renderShift(game,{portrait,icon,esc}); }
 function eventVoices() {
   if (!game || game.stage !== 'event') return [];
   if (game.currentEvent === 'life') {
@@ -197,6 +189,8 @@ function workspaceTabs() {
   return sceneDock(game,{icon,money,busy:officeMoving,panelOpen:workspaceView==='project'});
 }
 function render({openProject=false}={}) {
+  const shiftScroll=root.querySelector('.shift-scroll')?.scrollTop||0;
+  const tasksOpen=!!root.querySelector('.shift-all-tasks')?.open;
   const hiringScroll=root.querySelector('.hiring-scroll')?.scrollTop||0;
   const planningScroll=root.querySelector('.planning-scroll')?.scrollTop||0;
   const panelScroll=root.querySelector('.control-panel')?.scrollTop||0;
@@ -216,8 +210,8 @@ function render({openProject=false}={}) {
   if (stageChanged) { workspaceView = game.stage==='plan'||game.stage==='hire'&&game.team.length<3?'project':'office'; managementExpanded=workspaceView==='project';officeExpanded = false;if(employeeEvent(game))officeSelection=null; }
   if(onboarding.isOpen())workspaceView='office';
   if(openProject)workspaceView='project';
-  const planning=game.stage==='plan'&&workspaceView==='project',hiring=game.stage==='hire'&&workspaceView==='project',managementModal=planning||hiring;
-  root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,officeSelection)}${scene()}<${managementModal?'dialog':'section'} id="project-panel" class="control-panel ${planning?'planning-dialog':hiring?'hiring-dialog':''}" ${managementModal?`aria-labelledby="${planning?'planning-title':'hiring-title'}"`:'aria-label="Управление проектом"'} ${workspaceView==='project'?'':'hidden inert'}>${managementModal?'':managementBar(managementExpanded,{icon})}${panels[game.stage]()}</${managementModal?'dialog':'section'}></div></main>`;
+  const planning=game.stage==='plan'&&workspaceView==='project',hiring=game.stage==='hire'&&workspaceView==='project',shifting=game.stage==='work'&&workspaceView==='project',managementModal=planning||hiring||shifting;
+  root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,officeSelection)}${scene()}<${managementModal?'dialog':'section'} id="project-panel" class="control-panel ${planning?'planning-dialog':hiring?'hiring-dialog':shifting?'shift-dialog':''}" ${managementModal?`aria-labelledby="${planning?'planning-title':hiring?'hiring-title':'shift-title'}"`:'aria-label="Управление проектом"'} ${workspaceView==='project'?'':'hidden inert'}>${managementModal?'':managementBar(managementExpanded,{icon})}${panels[game.stage]()}</${managementModal?'dialog':'section'}></div></main>`;
   if(managementModal){const panel=root.querySelector('#project-panel');panel.showModal();panel.addEventListener('cancel',e=>{e.preventDefault();workspaceView='office';render();root.querySelector('.scene-dock [data-id=project]')?.focus({preventScroll:true});});}
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
@@ -238,6 +232,8 @@ function render({openProject=false}={}) {
   syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
   if (officeExpanded) root.querySelectorAll('.game-topbar,.scene-footer,.control-panel,.team-hud').forEach(el => { el.inert = true; });
+  if(!stageChanged&&root.querySelector('.shift-scroll'))root.querySelector('.shift-scroll').scrollTop=shiftScroll;
+  if(tasksOpen&&root.querySelector('.shift-all-tasks'))root.querySelector('.shift-all-tasks').open=true;
   if(!stageChanged&&root.querySelector('.hiring-scroll'))root.querySelector('.hiring-scroll').scrollTop=hiringScroll;
   if(!stageChanged&&root.querySelector('.planning-scroll'))root.querySelector('.planning-scroll').scrollTop=planningScroll;
   if(oldAction==='plan-assign') root.querySelector(`[data-action=plan-assign][data-task="${oldTask}"][data-id="${oldId}"]`)?.focus({preventScroll:true});
@@ -337,7 +333,7 @@ function officeDeskAction(index) {
     else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми разработчика.');
   }else if(occupant){selectEmployee(occupant);}
 }
-function advance() { if(!game||clockBlocked())return;if(tick(game)){game.clockFraction=0;if(game.stage==='result')stopAuto();persist();render();} }
+function advance({manualShift=false}={}) { const ownShift=manualShift&&game?.stage==='work'&&!document.hidden&&!!root.querySelector('.shift-dialog[open]')&&!document.querySelector('dialog[open]:not(.shift-dialog),.nika-guide:not(.nika-collapsed)');if(!game||clockBlocked()&&!ownShift)return;if(tick(game)){game.clockFraction=0;if(game.stage==='result')stopAuto();persist();render();} }
 function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ СТУДИЯ</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Команда, касса, улучшения и история заказов будут заменены. Для продолжения текущей студии выбери следующий заказ после релиза.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
 function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков: каждый сам займёт свободный компьютер. В панели команды можно выбрать, кто за каким компьютером сидит. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час» или на «Авто». Во время обсуждения и открытого окна часы стоят, затем автоход продолжается. Сложную задачу можно разобрать вместе с разработчиком. Пока коллега отдыхает или пьёт, остальные работают. Вернувшийся продолжит свою задачу.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
@@ -518,7 +514,8 @@ document.addEventListener('click',e=>{
   if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один разработчик не может делать код и экран одновременно.');}
   if(action==='back-hire'){game.stage='hire';persist();render({openProject:true});}
   if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
-  if(action==='tick')advance();
+  if(action==='shift-auto'){game.autoPlay=true;workspaceView='office';onboarding.collapseGuide();persist();render();return;}
+  if(action==='tick')advance({manualShift:!!el.closest('.shift-dialog')});
   if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');sound.speakCharacter(game.support.agentId,'support');}}
   if(action==='auto'){game.autoPlay=!game.autoPlay;persist();render();}
   if(action==='study-decision'){const error=studyDecision(game);if(error){toast(error);return;}persist();shownEvent=null;render();return;}
