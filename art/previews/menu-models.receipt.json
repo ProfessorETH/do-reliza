@@ -1,0 +1,68 @@
+{
+  "createdAt": "2026-10-25T00:36:34.437Z",
+  "method": "Native Three.js rendering of authored office furniture; WebP canvas exports",
+  "sources": [
+    {
+      "path": "assets/models/office.glb",
+      "sha256": "62c2e1d30eaf249bb27483cad06d23923839be757bf43776276415932f1fd20e"
+    },
+    {
+      "path": "assets/models/office-upgrades.glb",
+      "sha256": "b8b19f80b03263a33e6148743df1747140be8dc96ca2eaa2910cb71571dd3483"
+    },
+    {
+      "path": "assets/models/office-cozy.glb",
+      "sha256": "6cb4a41abf397939687e7135e42365f90505dd8c6f7af85e7dee3599f09891e0"
+    }
+  ],
+  "renderer": "assets/upgrade-model-viewer.js",
+  "viewport": [
+    720,
+    480
+  ],
+  "camera": {
+    "fov": 36,
+    "position": [
+      4.1,
+      "model height * .42 + 3.1",
+      5.2
+    ]
+  },
+  "notes": [
+    "Quiet office and computers show the first authored workstation with its actual upgrade geometry.",
+    "Lounge and coffee corner are isolated from material-batched room meshes; gameplay geometry is unchanged.",
+    "Cards use these still renders; the detail view loads an interactive model only when opened."
+  ],
+  "posters": [
+    {
+      "id": "lounge",
+      "path": "assets/previews/upgrade-lounge.webp",
+      "sha256": "f43fb2a3931940a88c564cb230526c4c6c620d1add7d303666f7e90170088391"
+    },
+    {
+      "id": "quiet",
+      "path": "assets/previews/upgrade-quiet.webp",
+      "sha256": "cd7616d9ec15a594833bedc89b0a6ee9279ba7280f7d827d9e6883a87fabf4ff"
+    },
+    {
+      "id": "computers",
+      "path": "assets/previews/upgrade-computers.webp",
+      "sha256": "2eceda20fd48d1b2f5556a2cc084d3ead979dab636091a6c270a7f763ecc0518"
+    },
+    {
+      "id": "coffee",
+      "path": "assets/previews/upgrade-coffee.webp",
+      "sha256": "8d23abb522ed70006a772552554b45f30a489b1e2e316832e94d5f3ae167ab07"
+    },
+    {
+      "id": "desk4",
+      "path": "assets/previews/upgrade-desk4.webp",
+      "sha256": "d947cd14f0732fe93bbfbadf2d181ccb03f831e48a1f9cd2050b2167e5a29a6d"
+    },
+    {
+      "id": "desk5",
+      "path": "assets/previews/upgrade-desk5.webp",
+      "sha256": "d947cd14f0732fe93bbfbadf2d181ccb03f831e48a1f9cd2050b2167e5a29a6d"
+    }
+  ]
+}
