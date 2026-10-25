@@ -1,0 +1,70 @@
+/* Shared studio dialog treatment: decisions, their receipts, and the released game. */
+body:has(.scene-first) #event-dialog { width:1080px; max-width:calc(100vw - 32px); max-height:calc(100dvh - 32px); padding:24px; background:var(--panel); border:1px solid var(--line); border-radius:16px; color:var(--text); }
+body:has(.scene-first) #event-dialog .event-modal-label { color:var(--amber); font-size:11px; margin:0 0 8px; }
+body:has(.scene-first) #event-dialog .event-unlimited { color:var(--muted); font-size:13px; margin:0 0 16px; }
+body:has(.scene-first) #event-dialog .decision-scene { background:var(--bg); border-color:var(--line); border-radius:10px; padding:12px 16px; margin-bottom:16px; }
+body:has(.scene-first) #event-dialog .decision-symbol { display:none; }
+body:has(.scene-first) #event-dialog .decision-scene>span { margin-left:auto; color:var(--muted); max-width:none; font-size:12px; }
+body:has(.scene-first) #event-dialog .event-copy h2 { font-size:28px; line-height:1.25; margin:0 0 8px; }body:has(.scene-first) #event-dialog .event-copy p { font-size:15px; color:var(--muted); }
+.decision-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; align-items:start; }
+body:has(.scene-first) #event-dialog .team-discussion { margin:0; padding:16px; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+body:has(.scene-first) #event-dialog .discussion-resources { margin:8px 0 16px; color:var(--muted); }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .discussion-speech { margin:0 0 16px; padding:0; gap:12px; border:0; }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .discussion-speech.is-speaking { outline:2px solid var(--mint); outline-offset:6px; border-radius:8px; }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .compact-portrait { width:44px; height:44px; border-radius:50%; flex:none; }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .discussion-speech p { font-size:14px; line-height:1.5; color:var(--text); margin:8px 0; }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .discussion-speech small { font-size:12px; line-height:1.5; color:var(--muted); }
+body:has(.scene-first) :is(#event-dialog,#info-dialog) .discussion-speech .text-button { min-height:44px; padding:8px 12px; margin:8px 0 0; border:1px solid var(--line); border-radius:8px; font-size:13px; }
+body:has(.scene-first) #event-dialog .discussion-check { border:0; border-top:1px solid var(--line); padding:12px 0 0; background:none; }
+body:has(.scene-first) #event-dialog .discussion-check p { font-size:13px; color:var(--muted); }
+.decision-selection h3 { font-size:20px; margin:0 0 4px; }.decision-selection-hint { font-size:13px; margin:0 0 16px; color:var(--muted); }
+body:has(.scene-first) #event-dialog .decision-card { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:16px; gap:12px; text-align:left; }
+body:has(.scene-first) #event-dialog .decision-card b { font-size:16px; line-height:1.4; }
+body:has(.scene-first) #event-dialog .decision-card:hover:not(:disabled) { border-color:var(--amber); background:var(--surface); }
+body:has(.scene-first) #event-dialog .decision-card:disabled { opacity:1; border-style:dashed; color:var(--muted); background:var(--panel); }.decision-card:disabled .decision-arrow { display:none; }
+body:has(.scene-first) #event-dialog .decision-card:disabled b { color:var(--muted); }
+body:has(.scene-first) #event-dialog .decision-card:disabled .decision-note { color:var(--coral); }
+body:has(.scene-first) #event-dialog .decision-icon { display:none; }
+body:has(.scene-first) #event-dialog .effect-pill { background:var(--surface); border-color:var(--line); color:var(--text); font-size:12px; }.decision-arrow { color:var(--amber); }
+body:has(.scene-first) #event-dialog .effect-pill[data-tone=good] { color:var(--mint); }.decision-card .effect-pill[data-tone=bad] { color:var(--coral); }
+body:has(.scene-first) #event-dialog .decision-details { border-color:var(--line); }.decision-details summary { color:var(--muted); }
+body:has(.scene-first) #info-dialog:has(.decision-receipt) { width:920px; max-width:calc(100vw - 32px); padding:24px; background:var(--panel); }
+body:has(.scene-first) #info-dialog .decision-receipt h2 { font-size:27px; line-height:1.25; margin:8px 56px 12px 0; }
+body:has(.scene-first) #info-dialog .decision-receipt>p { font-size:15px; line-height:1.5; color:var(--muted); }
+.decision-receipt .decision-outcome { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; padding:16px; margin:16px 0 24px; background:var(--bg); border:1px solid var(--line); }
+.decision-outcome>span { font-size:12px; color:var(--muted); }.decision-outcome b { display:block; margin-top:4px; font-size:22px; color:var(--text); }
+.receipt-heading { font-size:16px; margin:0 0 16px; }.receipt-responses { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+body:has(.scene-first) #info-dialog .receipt-responses .discussion-speech { background:var(--bg); padding:16px; border:1px solid var(--line); border-radius:12px; }
+.receipt-footer { position:sticky; bottom:-24px; padding:16px 0 0; background:var(--panel); }.receipt-footer button { min-height:52px; }
+body:has(.scene-first) #info-dialog:has(.mini-game) { width:1040px; max-width:calc(100vw - 32px); max-height:calc(100dvh - 32px); padding:24px; background:var(--panel); }
+.orbit-header { padding-right:52px; }.orbit-header h2 { margin:8px 0; }.orbit-header>p { margin:0 0 16px; }
+.orbit-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:24px; align-items:start; }.orbit-playfield,.orbit-sidebar { min-width:0; }
+body:has(.scene-first) #info-dialog .orbit-header h2 { font-size:28px; letter-spacing:2px; }.orbit-header h2 span { font-size:18px; letter-spacing:0; }
+body:has(.scene-first) #info-dialog .orbit-header p { font-size:15px; line-height:1.5; color:var(--muted); }
+body:has(.scene-first) #info-dialog .mini-board { margin:0; padding:8px; gap:5px; border-radius:12px; border:1px solid var(--line); background-color:var(--bg); }
+body:has(.scene-first) #info-dialog .mini-board.edge-tested { border-color:var(--mint); }
+body:has(.scene-first) #info-dialog .tile { border-radius:7px; }.mini-board .tile:focus-visible { outline:3px solid var(--amber); outline-offset:-3px; }
+body:has(.scene-first) #info-dialog .orbit-map-heading { margin:10px 0; font-size:12px; color:var(--muted); }
+body:has(.scene-first) #info-dialog .orbit-objectives { margin:0; gap:6px; }.orbit-objectives>span { font-size:13px; }
+body:has(.scene-first) #info-dialog .orbit-feedback { font-size:14px; line-height:1.45; margin:12px 0; min-height:40px; }
+body:has(.scene-first) #info-dialog .mini-controls { margin:8px 0 0; gap:8px; }.mini-controls button { min-width:48px; min-height:48px; }.mini-controls p { font-size:12px; }
+body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save) { display:flex; gap:12px; padding:16px; margin:0 0 12px; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save) strong { font-size:15px; line-height:1.4; }body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save) span { font-size:13px; line-height:1.5; color:var(--muted); }
+.orbit-sidebar svg { flex:none; }.orbit-sidebar details summary { min-height:44px; padding-top:8px; font-size:13px; color:var(--amber); }
+.orbit-pilot { padding:16px; margin-bottom:12px; border:1px solid var(--line); border-radius:12px; background:var(--bg); }.orbit-pilot h3 { margin:0 0 12px; font-size:14px; }.orbit-pilot .mini-controls { flex-wrap:wrap; justify-content:center; }.orbit-pilot .mini-controls p { flex-basis:100%; text-align:center; }
+body:has(.scene-first) #info-dialog .orbit-mission-actions { display:block; padding:12px; border:1px solid var(--line); border-radius:10px; margin:0 0 12px; }.orbit-mission-actions button { min-height:44px; width:100%; }
+body:has(.scene-first) #info-dialog .orbit-mission-actions p { font-size:12px; line-height:1.5; }
+body:has(.scene-first) #info-dialog .orbit-footer { position:sticky; bottom:-24px; margin:16px 0 0; padding:16px 0 0; border-top:1px solid var(--line); background:var(--panel); display:flex; flex-wrap:wrap; gap:8px; }.orbit-footer button { min-height:48px; flex:1; }.orbit-footer .primary { margin-left:auto; }
+body:has(.scene-first) #info-dialog .orbit-footer { flex-direction:row; align-items:stretch; }
+body:has(.scene-first) #info-dialog .orbit-footer>button { margin:0; width:auto; min-width:0; flex:1 1 0; white-space:normal; }
+body:has(.scene-first) #info-dialog .orbit-pilot .mini-controls>div { display:flex; flex-direction:column; gap:4px; }
+@media(max-width:720px) {
+  body:has(.scene-first) :is(#event-dialog,#info-dialog:has(.decision-receipt),#info-dialog:has(.mini-game)) { max-width:calc(100vw - 16px); max-height:calc(100dvh - 16px); padding:16px; border-radius:12px; }
+  .decision-layout { display:flex; flex-direction:column; gap:20px; }.decision-selection { order:-1; width:100%; }.decision-advice { width:100%; }
+  body:has(.scene-first) #event-dialog .event-copy h2 { font-size:24px; }.receipt-responses { grid-template-columns:1fr; }.decision-receipt .decision-outcome { gap:8px; padding:12px; }.decision-outcome b { font-size:18px; }.receipt-footer { bottom:-16px; }
+  .orbit-layout { grid-template-columns:1fr; gap:20px; }.orbit-sidebar { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }.orbit-sidebar>* { min-width:0; }.orbit-sidebar :is(.orbit-mission-actions,.mini-win) { grid-column:1/-1; }
+  .orbit-sidebar .orbit-pilot { grid-column:1/-1; order:-1; margin:0; padding:12px; }.orbit-pilot h3 { display:none; }.orbit-pilot .mini-controls { flex-wrap:nowrap; }.orbit-pilot .mini-controls p { flex-basis:auto; max-width:100px; }
+  body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save) { padding:12px; margin:0; display:block; }body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save)>svg { width:22px; margin-bottom:8px; }
+  body:has(.scene-first) #info-dialog .orbit-footer { bottom:-16px; }.orbit-footer button { font-size:13px; padding:8px; }.orbit-header { padding-right:40px; }
+  body:has(.scene-first) #info-dialog .mini-board { gap:3px; padding:5px; }.mini-controls p { max-width:130px; }body:has(.scene-first) #info-dialog .orbit-header h2 { font-size:24px; }
+}
