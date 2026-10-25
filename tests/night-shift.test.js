@@ -52,6 +52,7 @@ test('the first novice project can succeed after a full overnight break and the 
   assert.equal(nextProject(s,'festival'),null);assert.equal(s.life.night,undefined);restoreOffice(s);assert.equal(s.life.night.lastAsked,-1);
 });
 test('legacy saves migrate; corrupt overnight state is rejected',()=>{
+  const broken=prepared();broken.life=null;assert.equal(!!validSave(broken),false);
   const s=prepared();delete s.life.night;assert.ok(validSave(s));restoreOffice(s);s.time=13;scheduleNight(s);resolveEvent(s,'night-rest');
   for(const edit of [n=>n.lastAsked=999,n=>n.lastRest.hours=0,n=>n.lastRest.to=25,n=>n.lastDecision.choice='free',n=>n.lastRest.from=NaN]){const c=structuredClone(s);edit(c.life.night);assert.equal(!!validSave(c),false);}
 });
