@@ -176,7 +176,7 @@ def smooth01(value):
     t=max(0,min(1,value));return t*t*(3-2*t)
 
 
-def geodesic_arm_membership(body,arm_specs):
+def geodesic_arm_membership(body,arm_specs,transition=.12):
     """Separate attached limbs along their surface, not through nearby pants.
 
     Body and distal-arm seeds lie on the measured source anatomy. Geodesics
@@ -208,8 +208,8 @@ def geodesic_arm_membership(body,arm_specs):
         return values
     arms,torso=distances(arm_seeds),distances(body_seeds);result=[]
     for a,b in zip(arms,torso):
-        result.append(None if math.isinf(a) and math.isinf(b) else 0 if math.isinf(a) else 1 if math.isinf(b) else smooth01((b-a+.06)/.12))
-    return result,{'arm_seed_vertices':len(arm_seeds),'torso_seed_vertices':len(body_seeds),'unseeded_island_vertices':sum(v is None for v in result),'shoulder_transition_m':.12}
+        result.append(None if math.isinf(a) and math.isinf(b) else 0 if math.isinf(a) else 1 if math.isinf(b) else smooth01((b-a+transition*.5)/transition))
+    return result,{'arm_seed_vertices':len(arm_seeds),'torso_seed_vertices':len(body_seeds),'unseeded_island_vertices':sum(v is None for v in result),'shoulder_transition_m':transition}
 
 
 def limb_cage_fit(body, config, fit_point, anchors, ident):
@@ -231,7 +231,7 @@ def limb_cage_fit(body, config, fit_point, anchors, ident):
         arm_specs[side]=(source,transforms)
     leg_centers=sorted(config.get('source_leg_centers',[]),key=lambda p:p[0])
     membership=body.data.attributes.new(name='hunyuan_arm_membership',type='FLOAT',domain='POINT')
-    geodesic,geodesic_proof=geodesic_arm_membership(body,arm_specs) if arm_specs else ([None]*len(body.data.vertices),{})
+    geodesic,geodesic_proof=geodesic_arm_membership(body,arm_specs,float(config.get('arm_transition_m',.12))) if arm_specs else ([None]*len(body.data.vertices),{})
     before_cage=[v.co.copy() for v in body.data.vertices]
     arm_count=leg_count=0
     for vertex in body.data.vertices:
@@ -264,16 +264,41 @@ def limb_cage_fit(body, config, fit_point, anchors, ident):
             a,b=next(((a[0],b[0]) for a,b in zip(centers,centers[1:]) if p.z<=b[0].z),(centers[-2][0],centers[-1][0]))
             t=max(0,min(1,(p.z-a.z)/(b.z-a.z)));center=a.lerp(b,t)
             xcenter=abs(center.x);sign=-1 if p.x<0 else 1
-            strength=smooth01((.98-p.z)/.10)*smooth01(abs(p.x)/max(.02,xcenter*.75))*(1-smooth01(blend/.25))
+            arm_suppression=1-blend if config.get('cage_leg_arm_blend')=='linear' else 1-smooth01(blend/.25)
+            strength=smooth01((.98-p.z)/.10)*smooth01(abs(p.x)/max(.02,xcenter*.75))*arm_suppression
             vertex.co.x+=sign*(.115-xcenter)*strength
             vertex.co.y-=center.y*strength;leg_count+=1
+    field_iterations=int(config.get('cage_field_smooth_iterations',0))
+    if field_iterations:
+        import numpy as np
+        base=np.array([tuple(p) for p in before_cage]);delta=np.array([tuple(v.co) for v in body.data.vertices])-base
+        edges=np.array([tuple(e.vertices) for e in body.data.edges],dtype=np.int32)
+        counts=np.maximum(1,np.bincount(edges.ravel(),minlength=len(base)))[:,None]
+        locked=np.array([p.z<.50 or p.z>1.40 or membership.data[i].value>1-1e-6 for i,p in enumerate(before_cage)])
+        fixed=delta.copy()
+        for _ in range(field_iterations):
+            sums=np.zeros_like(delta);np.add.at(sums,edges[:,0],delta[edges[:,1]]);np.add.at(sums,edges[:,1],delta[edges[:,0]])
+            delta=.5*delta+.5*sums/counts;delta[locked]=fixed[locked]
+        for vertex,point in zip(body.data.vertices,base+delta):vertex.co=point
+    if config.get('cage_mode')=='reference':
+        for vertex,point in zip(body.data.vertices,before_cage):vertex.co=point
     body.data.update()
     edge_proof=[]
     for edge in body.data.edges:
         i,j=edge.vertices;before=(before_cage[i]-before_cage[j]).length;after=(body.data.vertices[i].co-body.data.vertices[j].co).length
         if after-before>.01:edge_proof.append({'vertices':[i,j],'before':before,'after':after,'growth':after-before,'before_points':[list(before_cage[i]),list(before_cage[j])],'after_points':[list(body.data.vertices[i].co),list(body.data.vertices[j].co)],'arm_membership':[membership.data[i].value,membership.data[j].value]})
     edge_proof.sort(key=lambda e:e['growth'],reverse=True)
-    return {'fitted_arm_vertices':arm_count,'fitted_leg_vertices':leg_count,'measured_arm_sides':list(arm_specs),'measured_leg_centers':leg_centers,'geodesic_membership':geodesic_proof,'cage_edge_proof':{'edges_growing_over_1cm':len(edge_proof),'worst':edge_proof[:8]}}
+    inspected_area=opposing_area=0;opposing_faces=0
+    for face in body.data.polygons:
+        if len(face.vertices)!=3:continue
+        ids=list(face.vertices);a,b,c=[before_cage[i] for i in ids];x,y,z=[body.data.vertices[i].co for i in ids]
+        if not config.get('ankle_cut_y',.13)<(x.z+y.z+z.z)/3<config.get('neck_cut_y',1.36):continue
+        n0=(b-a).cross(c-a);n1=(y-x).cross(z-x);area=n0.length*.5;inspected_area+=area
+        if n0.dot(n1)<0:opposing_faces+=1;opposing_area+=area
+    ratio=opposing_area/max(1e-12,inspected_area)
+    if 'cage_max_opposing_normal_area_ratio' in config:assert ratio<=config['cage_max_opposing_normal_area_ratio'],f'Cage fold area ratio {ratio}'
+    if 'cage_max_edge_growth_m' in config:assert not edge_proof or edge_proof[0]['growth']<=config['cage_max_edge_growth_m'],'Cage introduces long source triangle ribbons'
+    return {'fitted_arm_vertices':arm_count,'fitted_leg_vertices':leg_count,'measured_arm_sides':list(arm_specs),'measured_leg_centers':leg_centers,'geodesic_membership':geodesic_proof,'displacement_field_smoothing_iterations':field_iterations,'source_normal_rotation_proxy':{'inspected_area_m2':inspected_area,'opposing_source_area_m2':opposing_area,'opposing_area_ratio':ratio,'opposing_faces':opposing_faces},'cage_edge_proof':{'edges_growing_over_1cm':len(edge_proof),'worst':edge_proof[:8]}}
 
 
 def transfer_weights(body, donor, arm, names, ident, ankle_cut, neck_cut,final_smooth_iterations=90):

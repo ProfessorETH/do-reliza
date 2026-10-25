@@ -1,0 +1,979 @@
+{
+  "schema": "body-v5-public-summary-v1",
+  "version": "nika-game-final-20261025",
+  "policy": "Local originals unchanged; owner/token omitted; local paths redacted or project-relative",
+  "documents": [
+    {
+      "source": "art/characters/body-v5/nika/shape-a.receipt.json",
+      "source_sha256": "ab8e71c8e7c40e4c9e828c481f3f00711dd16fcfc8621333a560ef7076003b5d",
+      "redacted_fields": [
+        "$.endpoint"
+      ],
+      "content": {
+        "status": "completed",
+        "endpoint": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "4db6481da7b7e8c089a9e41f165b5fc795dcb969bc6f8463f94a8b58112ee9d1"
+        },
+        "workflow": "shape-a.api.json",
+        "workflow_sha256": "46beb948e452a411011e3ed11c963e4885f78b4d212a5d3f7622694e52b3200b",
+        "reference": "art/characters/body-v5/references/nika-full-front-v1.png",
+        "reference_sha256": "c8e5831901028bf7cf4a01c39135834284ca3b4fb8c4952e4646d1a7f88eb4a7",
+        "reference_size": [
+          1024,
+          1536
+        ],
+        "model": "Hunyuan3D2.1 local split checkpoint/CLIP/VAE",
+        "steps": 40,
+        "latent_tokens": 4096,
+        "octree": 512,
+        "seed": 241020265016,
+        "output_prefix": "do-reliza/body-v5/nika-fullbody-20261024-a",
+        "resource_authorization": "Secondary human2026-10-22 always-unless-blocked; AI Studio secondary_blocked=false; actualqueueempty and29.7GiB free checked before pilot",
+        "scope": "Full generated body candidate; accepted v4 head and existing office rig will be preserved for six staff; Nika mentor model separate",
+        "prompt_id": "4209581c-eb90-492a-aec8-098637d9cba8",
+        "raw_file": "raw/4209581c_000.glb",
+        "raw_bytes": 34521732
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika/body-painted-quality.receipt.json",
+      "source_sha256": "cd40282eb6a7a653ab700761f65b6418cf183c1069270fae222b91237360bf7f",
+      "redacted_fields": [
+        "$.<operational field omitted>",
+        "$.source_package",
+        "$.export_staging",
+        "$.embedded_image_packing.source",
+        "$.embedded_image_packing.destination"
+      ],
+      "content": {
+        "batch_paint_version": 1,
+        "status": "completed",
+        "batch_receipt": "work/body-v5-paint-quality-five.paint-20261024T220148Z-bb81ca27.receipt.json",
+        "started_unix": 1792879605.3446198,
+        "method": "Installed local Hunyuan3D2.1 Paint API, offline; shared diffusion model, fresh renderer per body",
+        "mesh": "art/characters/body-v5/nika/body-uv-b45.glb",
+        "reference": "art/characters/body-v5/references/nika-full-front-v1.png",
+        "mesh_sha256": "f00a2d916450690d9218d483e98b2cbe0ac558ea154b4f784505bff490995d04",
+        "reference_sha256": "c8e5831901028bf7cf4a01c39135834284ca3b4fb8c4952e4646d1a7f88eb4a7",
+        "output": "art/characters/body-v5/nika/body-painted-quality.glb",
+        "settings": {
+          "views": 6,
+          "view_resolution": 768,
+          "texture_resolution": 2048,
+          "steps": 30,
+          "guidance": 3.0,
+          "seed": 24102026,
+          "torch_memory_cap_gib": 14,
+          "native_headroom_gib": 2,
+          "minimum_reserve_gib": 2,
+          "camera_azimuths": [
+            0,
+            90,
+            180,
+            270,
+            0,
+            180
+          ],
+          "camera_elevations": [
+            0,
+            0,
+            0,
+            0,
+            90,
+            -90
+          ],
+          "view_weights": [
+            1,
+            0.15,
+            0.5,
+            0.15,
+            0.05,
+            0.05
+          ],
+          "ortho_scale": 1.1,
+          "unwrap": false
+        },
+        "prompt": "high quality",
+        "prompt_source": "Installed textureGenPipeline.py hardcoded image_caption",
+        "source_package": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "bc219ffb8fe56e74ff8bc806e75817df4d5d030981e35184e15e0a448c04c21d"
+        },
+        "installed_pipeline_sha256": "284ecab02c640b684735cea3c9e609d34f55539608a9d1b7be08799d2f258ada",
+        "installed_renderer_sha256": "9e4a7ba9293f43b03b5256577afeb30332b6d1b6aa7dc7b29c5b0aee01548f89",
+        "installed_diffusion_pipeline_sha256": "3accd73ca91a1b67a5f7546b8f518fe9603f4251b1a10ab8122b69985888965e",
+        "installed_multiview_loader_sha256": "92707f7e77d89997bfc51684534b75961c2745ec8095385f84322fb5529b2f34",
+        "script_sha256": "b3a1259f414b89f109634421e85b9003e3fe692ec764344ac19af9caaca8bf8e",
+        "scope": "Texture candidate; not rigged or approved for the game",
+        "resource_preflight": {
+          "free_bytes": 28679602176,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3682598912,
+          "required_free_bytes": 15644753920
+        },
+        "resource_before_owned_vae_restore": {
+          "free_bytes": 28679602176,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3682598912,
+          "required_free_bytes": 15644753920
+        },
+        "owned_vae_reuse": {
+          "applied": true,
+          "scope": "Only this process's shared multiview pipeline VAE",
+          "public_api": "shared_model.pipeline.vae.to(shared_model.pipeline._execution_device)",
+          "execution_device": "cuda:0",
+          "vae_device_before": "cpu",
+          "vae_device_after": "cuda:0",
+          "offload_hook_type": "CpuOffload",
+          "offload_hook_identity_preserved": true,
+          "global_or_foreign_model_unload": false
+        },
+        "owned_vae_after_generation": {
+          "vae_device": "cpu",
+          "execution_device": "cuda:0",
+          "offload_hook_type": "CpuOffload"
+        },
+        "views_directory": "art/characters/body-v5/nika/body-painted-quality-views",
+        "renderer_uv_mesh": "art/characters/body-v5/nika/body-painted-quality-views/renderer-uv-mesh.npz",
+        "renderer_uv_mesh_sha256": "1c7159ca4a2f78fe9b1fa7cbc4f7320bb7037557f9e997f77586f39202b3fc53",
+        "views_sha256": {
+          "albedo-0.png": "171845bae4f328b51838e57b218193268d6722f5f27321581d62acf3f6255734",
+          "albedo-1.png": "7792e612acaf92dc03e9f2948b03844dfca7e5e8c41e059666d6e746b0210c74",
+          "albedo-2.png": "c00c21e415d0b5d1aef2a76565fc6661fd9b344f00f7a8f56b00364eb2282c08",
+          "albedo-3.png": "2c51e9ca884b3c5c5213dbd9625c51d48b4e63b3f7d34a4b4f3bd447c4f6617d",
+          "albedo-4.png": "4fdd53122b66658f14ffd31430ca7ee30fa63f5688a8c98b10be56073e060ae1",
+          "albedo-5.png": "66766bec6b162a517e9baec3157f4fd080f85994f247698c1b3f8b9eaec86742",
+          "mr-0.png": "422496d10bfd6bf2b4c1e0e4b8a9b264f105fc5fc860d245cd8271e66580623e",
+          "mr-1.png": "dc8a1dd7edc9a6d72365f46a3b44824d1fb93b89c9f693673e9da439e642f977",
+          "mr-2.png": "9dfabd0963a1a6477a1f60f3383abfca8205337da5677b947ddd0e1c98d04a1b",
+          "mr-3.png": "cefea8c9a8ce63ee778093ac6047d0130095e2e6afccff96a878aa79c2246c00",
+          "mr-4.png": "d0e3d08ac138a3b210067b76e5dad3351dfd5d03f46f1513ea5849a7978b6d0a",
+          "mr-5.png": "b09195d25f29ce2ab57a27f498ec2f98525cd86d3052ebc5d5b669351db1532a"
+        },
+        "resource_before_bake": {
+          "free_bytes": 28568453120,
+          "total_bytes": 34190458880,
+          "own_reserved_bytes": 3793747968,
+          "required_free_bytes": 15533604864
+        },
+        "export_staging": {
+          "local_path_or_text_omitted": true,
+          "original_text_sha256": "1324120c16341264d740c9c4047adad1f5a71dd2d5140627122983266cd890cb"
+        },
+        "embedded_image_packing": {
+          "method": "CPU lossless PNG/JPEG data-URI to BIN bufferView packing",
+          "source": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "c7f09d1d126c328ed90b019ecbfcaab8e0645e47ca121481eba7d7e97b7637a0"
+          },
+          "destination": {
+            "local_path_or_text_omitted": true,
+            "original_text_sha256": "ddc925c10d5e0c1fc0167004f3d1f5474a7b42b4fbf96547e86dcdf3ba312633"
+          },
+          "source_sha256": "b655ad80f67c7fde9b9edbf829c82174a9fadd422f6d5b5ed51284bae480f4a0",
+          "output_sha256": "3bfab7982e990af6256fc0d385e330d7fd7df36c643d6e691f9dbcb709e6846a",
+          "original_bin_prefix_sha256": "50dac1854fbd3fe870bdfcf4d6ab6540e21e832e4e3809bd43245b7b2a5e0260",
+          "original_geometry_bin_preserved": true,
+          "packed_images": [
+            {
+              "index": 0,
+              "mime_type": "image/png",
+              "bytes": 3710470,
+              "sha256": "4feb481457e427eb2e7564f35f78d0a7fc9502d6d876d6538f183e828760df9b"
+            },
+            {
+              "index": 1,
+              "mime_type": "image/png",
+              "bytes": 1959312,
+              "sha256": "864ef2b3154bdf73eb08ed8793d6ef150fcca9d668a87a7d9daac0e90aaf7805"
+            }
+          ],
+          "source_bytes": 14241840,
+          "output_bytes": 12352040
+        },
+        "post_export_free_bytes": 28568453120,
+        "output_sha256": "3bfab7982e990af6256fc0d385e330d7fd7df36c643d6e691f9dbcb709e6846a",
+        "output_bytes": 12352040,
+        "peak_torch_bytes": 14942208000,
+        "finished_unix": 1792879733.2761781,
+        "diffusion_retries": 0
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika/body-rigged-quality.receipt.json",
+      "source_sha256": "4be204f78432609da4b13535b4954c6be771e656a2df8d980cc0f2d1b53d7d67",
+      "redacted_fields": [],
+      "content": {
+        "id": "nika",
+        "method": "Measured limb-cage fit with source-geodesic membership; continuous anatomical weights, donor finger detail, native fitted-surface relaxation and rigid ankle contacts; original skeleton/animations not exported",
+        "base_sha256": "0186e71b29488b5853560a48481abbd48423cee3c9f172ffdb4e1e52d224fcca",
+        "body_sha256": "3bfab7982e990af6256fc0d385e330d7fd7df36c643d6e691f9dbcb709e6846a",
+        "fit": {
+          "arm_transition_m": 0.3,
+          "cage_leg_arm_blend": "linear",
+          "cage_field_smooth_iterations": 120,
+          "weight_smooth_iterations": 260,
+          "source_sole_y": -0.9883087873458862,
+          "source_ankle_y": -0.91,
+          "source_knee_y": -0.43,
+          "source_hip_y": 0.2,
+          "source_shoulder_y": 0.59,
+          "source_neck_y": 0.72,
+          "source_center_x": 0.0,
+          "source_center_z": -0.00827,
+          "source_shoulder_half_width": 0.23,
+          "source_arm_anchors": {
+            "Left": {
+              "shoulder": [
+                0.23,
+                0.59,
+                -0.00973
+              ],
+              "elbow": [
+                0.35128,
+                0.31,
+                -0.07121
+              ],
+              "wrist": [
+                0.42086,
+                0.055,
+                -0.03171
+              ]
+            },
+            "Right": {
+              "shoulder": [
+                -0.23,
+                0.59,
+                -0.00681
+              ],
+              "elbow": [
+                -0.35463,
+                0.31,
+                -0.07211
+              ],
+              "wrist": [
+                -0.42294,
+                0.055,
+                -0.03016
+              ]
+            }
+          },
+          "source_leg_centers": [
+            [
+              -0.91,
+              0.21467,
+              0.10712
+            ],
+            [
+              -0.43,
+              0.20827,
+              -0.0345
+            ],
+            [
+              0.1,
+              0.17877,
+              -0.0299
+            ]
+          ],
+          "neck_cut_y": 1.36,
+          "ankle_cut_y": 0.13,
+          "measurement": {
+            "source_sha256": "9bc76b76f105affebd07e486964b3cb236b244308d594103017721578d02a807",
+            "method": "Manual front/side geometry layer Y positions; per-side actual mesh cross-section X/Z centers. No bbox normalization. Review pose required.",
+            "raw_y_percentiles": [
+              -0.9883087873458862,
+              -0.9843789311051369,
+              -0.9722021895647049,
+              0.9488876885175702,
+              0.9763687162399299,
+              0.988287627696991
+            ],
+            "raw_body_top_hint": 0.9763687252998352,
+            "arm_sections": {
+              "Left_shoulder": {
+                "vertices": 223,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.18758,
+                    0.57495,
+                    -0.15397
+                  ],
+                  [
+                    0.34504,
+                    0.60625,
+                    0.13451
+                  ]
+                ]
+              },
+              "Left_elbow": {
+                "vertices": 214,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.27268,
+                    0.29429,
+                    -0.13704
+                  ],
+                  [
+                    0.42988,
+                    0.32623,
+                    -0.00538
+                  ]
+                ]
+              },
+              "Left_wrist": {
+                "vertices": 215,
+                "raw_xyz_p5_p95": [
+                  [
+                    0.31777,
+                    0.0397,
+                    -0.08778
+                  ],
+                  [
+                    0.52395,
+                    0.07203,
+                    0.02436
+                  ]
+                ]
+              },
+              "Right_shoulder": {
+                "vertices": 221,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.34897,
+                    0.57495,
+                    -0.15787
+                  ],
+                  [
+                    -0.18786,
+                    0.60623,
+                    0.14425
+                  ]
+                ]
+              },
+              "Right_elbow": {
+                "vertices": 230,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.4344,
+                    0.29409,
+                    -0.13836
+                  ],
+                  [
+                    -0.27485,
+                    0.32597,
+                    -0.00585
+                  ]
+                ]
+              },
+              "Right_wrist": {
+                "vertices": 218,
+                "raw_xyz_p5_p95": [
+                  [
+                    -0.52432,
+                    0.03771,
+                    -0.08779
+                  ],
+                  [
+                    -0.32156,
+                    0.07073,
+                    0.02747
+                  ]
+                ]
+              }
+            },
+            "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox (distant source artifacts bias bbox). Review pose required.",
+            "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+          },
+          "target_sole_y": 0.001
+        },
+        "estimated_fit": false,
+        "material_policy": {
+          "metallic": 0.0,
+          "roughness": 0.8,
+          "generated_mr_disconnected": true,
+          "basecolor_untouched": true,
+          "material_count": 1
+        },
+        "front_rotation_proof": {
+          "method": "mesh_data_rotation_Z_pi",
+          "maximum_sample_error_m": 4.470348358154297e-08,
+          "samples": 32,
+          "source_front_gltf": "+Z",
+          "target_front_gltf": "-Z"
+        },
+        "height_interpolation": "linear",
+        "limb_cage": {
+          "fitted_arm_vertices": 29846,
+          "fitted_leg_vertices": 35779,
+          "measured_arm_sides": [
+            "Left",
+            "Right"
+          ],
+          "measured_leg_centers": [
+            [
+              -0.91,
+              0.21467,
+              0.10712
+            ],
+            [
+              -0.43,
+              0.20827,
+              -0.0345
+            ],
+            [
+              0.1,
+              0.17877,
+              -0.0299
+            ]
+          ],
+          "geodesic_membership": {
+            "arm_seed_vertices": 4339,
+            "torso_seed_vertices": 18436,
+            "unseeded_island_vertices": 108,
+            "shoulder_transition_m": 0.3
+          },
+          "cage_edge_proof": {
+            "edges_growing_over_1cm": 5,
+            "worst": [
+              {
+                "vertices": [
+                  41273,
+                  56645
+                ],
+                "before": 0.042850462865209785,
+                "after": 0.053405461276435445,
+                "growth": 0.01055499841122566,
+                "before_points": [
+                  [
+                    -0.4241216480731964,
+                    0.005223116837441921,
+                    0.9178698062896729
+                  ],
+                  [
+                    -0.40278103947639465,
+                    0.004418628290295601,
+                    0.9550194144248962
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.4250287413597107,
+                    0.0535004697740078,
+                    0.9048390984535217
+                  ],
+                  [
+                    -0.3966136872768402,
+                    0.060292720794677734,
+                    0.9495447278022766
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  53722,
+                  56645
+                ],
+                "before": 0.0247108634620242,
+                "after": 0.03510419290065194,
+                "growth": 0.010393329438627742,
+                "before_points": [
+                  [
+                    -0.38348570466041565,
+                    0.003615760710090399,
+                    0.9704360365867615
+                  ],
+                  [
+                    -0.40278103947639465,
+                    0.004418628290295601,
+                    0.9550194144248962
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.3696233034133911,
+                    0.06094210222363472,
+                    0.9719813466072083
+                  ],
+                  [
+                    -0.3966136872768402,
+                    0.060292720794677734,
+                    0.9495447278022766
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  56645,
+                  56647
+                ],
+                "before": 0.027868271625914542,
+                "after": 0.03825317588710241,
+                "growth": 0.01038490426118787,
+                "before_points": [
+                  [
+                    -0.40278103947639465,
+                    0.004418628290295601,
+                    0.9550194144248962
+                  ],
+                  [
+                    -0.37787842750549316,
+                    0.00397466029971838,
+                    0.9675215482711792
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.3966136872768402,
+                    0.060292720794677734,
+                    0.9495447278022766
+                  ],
+                  [
+                    -0.36326223611831665,
+                    0.06134144961833954,
+                    0.9682499766349792
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  56621,
+                  56622
+                ],
+                "before": 0.04419819801310448,
+                "after": 0.054572485096224414,
+                "growth": 0.010374287083119937,
+                "before_points": [
+                  [
+                    -0.3727206289768219,
+                    0.0016089987475425005,
+                    0.972291111946106
+                  ],
+                  [
+                    -0.4168770909309387,
+                    0.001291419262997806,
+                    0.9741849899291992
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.3562811613082886,
+                    0.05819378048181534,
+                    0.9757797122001648
+                  ],
+                  [
+                    -0.4108535647392273,
+                    0.058166276663541794,
+                    0.9756895303726196
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "vertices": [
+                  56618,
+                  56621
+                ],
+                "before": 0.021251315823810762,
+                "after": 0.03127875286602666,
+                "growth": 0.010027437042215898,
+                "before_points": [
+                  [
+                    -0.3753165602684021,
+                    0.0017888536676764488,
+                    0.9511997103691101
+                  ],
+                  [
+                    -0.3727206289768219,
+                    0.0016089987475425005,
+                    0.972291111946106
+                  ]
+                ],
+                "after_points": [
+                  [
+                    -0.36235636472702026,
+                    0.05804680660367012,
+                    0.9450969696044922
+                  ],
+                  [
+                    -0.3562811613082886,
+                    0.05819378048181534,
+                    0.9757797122001648
+                  ]
+                ],
+                "arm_membership": [
+                  1.0,
+                  1.0
+                ]
+              }
+            ]
+          }
+        },
+        "winding_proof": {
+          "source_winding_preserved_during_open_surface_cuts": true,
+          "body_signed_triangle_volume_proxy": 0.12023980639564395
+        },
+        "source_bounds_blender": [
+          [
+            -0.549252986907959,
+            -0.2602730095386505,
+            -0.9866759777069092
+          ],
+          [
+            0.5491399765014648,
+            0.24921400845050812,
+            0.9857310056686401
+          ]
+        ],
+        "fit_knots_y": [
+          [
+            -0.9883087873458862,
+            0.001
+          ],
+          [
+            -0.91,
+            0.09
+          ],
+          [
+            -0.43,
+            0.48
+          ],
+          [
+            0.2,
+            0.88
+          ],
+          [
+            0.59,
+            1.258
+          ],
+          [
+            0.72,
+            1.385
+          ],
+          [
+            0.9857310056686401,
+            1.600284095340156
+          ]
+        ],
+        "target_sole_y": 0.001,
+        "neck_cut_y": 1.36,
+        "ankle_cut_y": 0.13,
+        "uniform_depth_scale": 0.810157982123508,
+        "width_scale": 1.0652173913043477,
+        "ankle_contact_proof": {
+          "matching_ring_points": 257,
+          "coordinate_tolerance_m": 0.0001,
+          "maximum_nearest_ring_distance_m": 0.0,
+          "body_ring_equals_shoe_rings": true
+        },
+        "weights": {
+          "opposite_limb_repairs": 0,
+          "fallback_vertices": 0,
+          "anatomical_leg_vertices": 28962,
+          "anatomical_arm_vertices": 20028,
+          "source_measured_continuous_arm_membership": true,
+          "native_smooth_iterations": 3,
+          "final_fitted_surface_smooth_iterations": 260
+        },
+        "status": "staged_review_required",
+        "seconds": 42.98,
+        "stage_bytes": 9170424,
+        "stage_sha256": "ae033c06370d3c0c61591eb4b39620944186c41233ab918e288ea6987acd7ecf",
+        "body_vertices": 45917,
+        "body_triangles": 91281,
+        "shoe_triangles": {
+          "LeftFoot": 3288,
+          "RightFoot": 3201
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika/portrait-base-game.receipt.json",
+      "source_sha256": "eadab6e4f14234afab9d46e3abd9905de2ea193c719d7011fcd3f0b1c67c8209",
+      "redacted_fields": [],
+      "content": {
+        "mentorOnly": true,
+        "rigSourceSha256": "f1af17d4f6ea1a250ae8478fd09980364b916a55b66098bb47a044fd4acc4ad0",
+        "version": 4,
+        "id": "nika",
+        "baseSha256": "65368886e50fbabe0c59890a9d8efbd1a52dc46db3adfe87dd9ac00e760b2fb8",
+        "headSha256": "731ddd4f22cea0f0b28a11ed94525ac3dd1dcfa7571bf7a0159db06f49908db4",
+        "outputSha256": "b5004dfd4fa91216b90ce8b8a3f7ad158ac42b7cbfe64cfa52aa555516ef9688",
+        "sourceBounds": {
+          "min": [
+            -0.9598810076713562,
+            -1.001710057258606,
+            -0.8466519713401794
+          ],
+          "max": [
+            0.9004120230674744,
+            0.9971870183944702,
+            0.8321740031242371
+          ]
+        },
+        "alignment": {
+          "scale": 0.416186509868774,
+          "eyeRatio": 0.4686429520839237,
+          "chinRatio": 0.7138606075294627,
+          "targetEyeY": 1.599,
+          "targetChinY": 1.395,
+          "neckCutY": 1.4,
+          "offsetX": 0,
+          "offsetY": 0,
+          "offsetZ": 0
+        },
+        "headWorldMatrix": [
+          -0.416186509868774,
+          0,
+          -5.096814771591024e-17,
+          0,
+          0,
+          0.416186509868774,
+          0,
+          0,
+          5.096814771591024e-17,
+          0,
+          -0.416186509868774,
+          0,
+          -0.012375094573864718,
+          1.573854846797678,
+          -0.0030127675308920516,
+          1
+        ],
+        "headBoneWorldMatrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1.3849999904632568,
+          0,
+          1
+        ],
+        "removedOldHeadTriangles": [
+          22234
+        ],
+        "originalBinaryBytesPreserved": 2704360,
+        "originalAnimationsPreserved": true,
+        "portraitNode": 60,
+        "originalHeadJoint": 6,
+        "headMeshes": 1,
+        "blink": null,
+        "note": "Only old head draw indices and old face/eye mesh visibility change. Body attributes, rig nodes, binds and clip samples are retained."
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/nika-quality-neck.receipt.json",
+      "source_sha256": "5a56f9271d1ad3d85eb3787e0df27e003935bf1acce62a2ef03823fd093aa42e",
+      "redacted_fields": [],
+      "content": {
+        "id": "nika",
+        "version": 5,
+        "baseSha256": "b5004dfd4fa91216b90ce8b8a3f7ad158ac42b7cbfe64cfa52aa555516ef9688",
+        "stageSha256": "ae033c06370d3c0c61591eb4b39620944186c41233ab918e288ea6987acd7ecf",
+        "baseBinaryPrefixBytes": 7191648,
+        "maximumAnchorError": 4.078804856737233e-07,
+        "parts": {
+          "Body": {
+            "vertices": 79113,
+            "triangles": 91281,
+            "bounds": {
+              "minX": -0.6299639940261841,
+              "maxX": 0.6269885897636414,
+              "minY": 0.12999999523162842,
+              "maxY": 1.3600000143051147
+            }
+          },
+          "LeftFoot": {
+            "vertices": 3148,
+            "triangles": 3288,
+            "bounds": {
+              "minX": -0.21479064182068375,
+              "maxX": -0.03501238111040117,
+              "minY": 0.002855727879663323,
+              "maxY": 0.12999999489658134
+            }
+          },
+          "RightFoot": {
+            "vertices": 3044,
+            "triangles": 3201,
+            "bounds": {
+              "minX": 0.03275475847300016,
+              "maxX": 0.20662361436816404,
+              "minY": 0.002881876448432045,
+              "maxY": 0.12999999502921958
+            }
+          }
+        },
+        "outputBytes": 20417504,
+        "outputSha256": "51baccb2c50bc892810a02a36b351b4704b86be167847e28cee452b6860f8516",
+        "originalAnimationsPreserved": true,
+        "acceptedPortraitPreserved": true,
+        "realGeneratedShoeSurfaces": true
+      }
+    },
+    {
+      "source": "art/characters/body-v5/assembled/nika-quality-final.receipt.json",
+      "source_sha256": "5b496db06008177ad9559e42a244ab9dbdd6e740aa3f5a83eac3cc9e4687a85d",
+      "redacted_fields": [],
+      "content": {
+        "id": "nika",
+        "method": "Native Blender measured UV colour repair",
+        "originalModelSha256": "51baccb2c50bc892810a02a36b351b4704b86be167847e28cee452b6860f8516",
+        "oldAlbedoSha256": "4feb481457e427eb2e7564f35f78d0a7fc9502d6d876d6538f183e828760df9b",
+        "newAlbedoSha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855",
+        "geometryUvRigClipsAndHeadUnchanged": true,
+        "outputSha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+        "outputBytes": 23939612
+      }
+    },
+    {
+      "source": "work/nika-hand-repair/nika-body-skin-albedo-v2.receipt.json",
+      "source_sha256": "78f5617ca63542c5400387d757a2659aa3d293332e89823cae9bda3efb06fc13",
+      "redacted_fields": [],
+      "content": {
+        "status": "native_blender_texture_proposal_only",
+        "source_glb_sha256": "3bfab7982e990af6256fc0d385e330d7fd7df36c643d6e691f9dbcb709e6846a",
+        "source_geometry_uv_topology_sha256": "9d5c7c92bb11294e7b09f60660320c7d24e686b02b233abd5f26a4847b1feb16",
+        "geometry_uv_rig_changed": false,
+        "source_file_unchanged": true,
+        "image_size": [
+          2048,
+          2048
+        ],
+        "output": "work/nika-hand-repair/nika-body-skin-albedo-v2.png",
+        "output_sha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855",
+        "affected_texels": 6464,
+        "outside_measured_roi_texels_changed": 0,
+        "source_hand_domain": {
+          "absolute_x_min": 0.35,
+          "raw_y_max": 0.045,
+          "full_repair_below_raw_y": 0.025,
+          "actual_wrist_raw_y": 0.055
+        },
+        "source_neck_domain": {
+          "enabled": true,
+          "raw_y_range": [
+            0.54,
+            0.695
+          ],
+          "raw_y_halfwidth_knots": [
+            [
+              0.54,
+              0
+            ],
+            [
+              0.58,
+              0.04
+            ],
+            [
+              0.62,
+              0.075
+            ],
+            [
+              0.655,
+              0.09
+            ],
+            [
+              0.69,
+              0.075
+            ]
+          ],
+          "inward_collar_margin": 0.006,
+          "native_front_depth_max": 0,
+          "replace_only": "teal or non-warm dark fragments; valid skin and white collar unchanged"
+        },
+        "affected_source_bounds": {
+          "min": [
+            -0.5022386312484741,
+            -0.16035303473472595,
+            -0.12303286045789719
+          ],
+          "max": [
+            0.5258471369743347,
+            0.10070570558309555,
+            0.6939885020256042
+          ]
+        },
+        "same_region_color_donors": [
+          {
+            "region": "negative-X hand",
+            "source_x_sign": -1,
+            "affected_texels": 2326,
+            "skin_donors": 5290
+          },
+          {
+            "region": "positive-X hand",
+            "source_x_sign": 1,
+            "affected_texels": 2404,
+            "skin_donors": 4823
+          },
+          {
+            "region": "front V-neck",
+            "source_x_sign": 0,
+            "affected_texels": 1734,
+            "skin_donors": 5734
+          }
+        ],
+        "seconds": 36.11
+      }
+    },
+    {
+      "source": "work/nika-neck-ring-qc.json",
+      "source_sha256": "333ef90d5cc6474f9424d644f424091cc76b4da49c57e6f440e35b8fe853a8ae",
+      "redacted_fields": [],
+      "content": {
+        "candidate": "nika-quality-neck.glb",
+        "roi": {
+          "absXMax": 0.11,
+          "zMin": -0.09,
+          "zMax": 0.02,
+          "cutY": 1.36,
+          "exactYTolerance": 5e-07
+        },
+        "headToBodyFrontNeckXZ": {
+          "points": 28,
+          "targetSegments": 118,
+          "min": 0.0002915631247735264,
+          "median": 0.009930185955408195,
+          "p95": 0.025532617035181768,
+          "max": 0.026807132700426617,
+          "maxYPlaneError": 4.5227088740773524e-10
+        },
+        "bodyToHeadFrontNeckXZ": {
+          "points": 154,
+          "targetSegments": 23,
+          "min": 0.0014316189896660364,
+          "median": 0.032174847548226033,
+          "p95": 0.06942196378734336,
+          "max": 0.08227133256303651,
+          "maxYPlaneError": 6.699263255249832e-08
+        },
+        "note": "Nearest segment distances, not welded seam; clothing/hair fringe outside central neck ROI excluded"
+      }
+    }
+  ]
+}

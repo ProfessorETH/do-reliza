@@ -3,7 +3,7 @@
  */
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
-import {resolve,dirname} from 'node:path';
+import {resolve,dirname,relative,isAbsolute,sep} from 'node:path';
 import {createHash} from 'node:crypto';
 import {parseGLB,packGLB,recoverPortraitBase,attachPortraitHead} from '../../../scripts/attach-portrait-head.js';
 import {recoverHunyuanBodyBase} from '../../../scripts/attach-hunyuan-body.js';
@@ -29,7 +29,9 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
     if(opts['target-eye-y']!==undefined)options.targetEyeY=Number(opts['target-eye-y']);
     if(opts['target-chin-y']!==undefined)options.targetChinY=Number(opts['target-chin-y']);
     const result=attachPortraitHead(template,head,options);
-    const target=resolve(ROOT,'art/characters/body-v5/nika/portrait-base.glb');
+    const target=resolve(ROOT,opts.output??'art/characters/body-v5/nika/portrait-base.glb');
+    const rel=relative(resolve(ROOT,'art/characters/body-v5/nika'),target);
+    if(!rel||rel==='..'||rel.startsWith(`..${sep}`)||isAbsolute(rel))throw new Error('Mentor output must stay in body-v5/nika');
     await writeFile(target,result.bytes,{flag:'wx'});
     await writeFile(target.replace('.glb','.receipt.json'),JSON.stringify({mentorOnly:true,rigSourceSha256:createHash('sha256').update(source).digest('hex'),...result.receipt},null,2)+'\n');
   }
