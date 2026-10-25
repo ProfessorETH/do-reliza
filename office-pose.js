@@ -62,6 +62,10 @@ export function poseActor(actor, elapsed, reduced) {
   j.Head.rotation.x+=expression*(kind==='sad'?-.22:kind==='joy'?.07:kind==='calm'?-.06-reaction.wave*.025:reaction.wave*.08);
   j.Head.rotation.z+=expression*(kind==='curious'?.12:kind==='sad'?.04:0);
   if(coffee.active){j.Torso.rotation.x-=.09*coffee.reach*(1-coffee.sip);j.Head.rotation.x+=coffee.sip*.045;}
+  const talk=(actor.talkBlend||0)*(1-(actor.gait||0))*(1-rest)*(coffee.active?0:1);
+  const listen=(actor.listenBlend||0)*(1-(actor.gait||0))*(1-rest)*(coffee.active?0:1);
+  j.Head.rotation.y+=(actor.talkTurn||0)*(talk+listen*.55);
+  if(!reduced)j.Head.rotation.x+=talk*(.012*Math.sin(t*2.7)+(actor.talkLevel||0)*.025);
   const blinkTime = (t + actor.order * .77) % 4.3;
   const blink = reduced ? 1 : 1 - Math.sin(clamp(blinkTime / .15, 0, 1) * Math.PI) * .97;
   const portraitHead=actor.portraitHead, portraitBlink=portraitHead?.userData?.portraitBlinkMorph;
@@ -109,6 +113,10 @@ export function poseActor(actor, elapsed, reduced) {
         :kind==='calm'?new THREE.Vector3(sign*.28,.97-j.Hips.position.y,-.25)
         :new THREE.Vector3(sign*.31,1.12-j.Hips.position.y,-.29);
       target.lerp(gesture,expression);palmAngle=lerp(palmAngle,kind==='joy'?2.7:2.1,expression);
+    }
+    if(side==='Right'&&!reduced&&talk>0){
+      target.lerp(new THREE.Vector3(.28,1.08-j.Hips.position.y,-.25),talk*.32);
+      palmAngle=lerp(palmAngle,2.2,talk*.3);
     }
     if(coffee.active){
       if(side==='Right'){

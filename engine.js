@@ -1,5 +1,6 @@
 import { agentProfile, careerFee, contractTerms, contractLock, isCareer } from './assets/studio-career.js';
 import { studioCapacity } from './assets/studio-progression.js';
+import { validOfficeChatter, carryOfficeChatter } from './assets/office-chatter-state.js';
 import { studyDecision, recordDiscussion, validDiscussions } from './assets/team-discussion.js';
 export { studyDecision };
 import { validEventClock } from './assets/event-clock.js';
@@ -87,7 +88,7 @@ export function supportTask(state, taskId) {
 }
 export function recommend(state) {
   if (state.stage !== 'plan') return;
-  for (const task of TASKS) state.assignments[task.id] = [...state.team].sort((a, b) => fit(b, task) - fit(a, task))[0];
+  for (const task of TASKS) state.assignments[task.id] = [...state.team].sort((a, b) => fit(b, task, state) - fit(a, task, state))[0];
 }
 export function beginWork(state) {
   if (state.stage !== 'plan' || !teamSeated(state) || !TASKS.every(t => state.team.includes(state.assignments[t.id]))) return false;
@@ -182,6 +183,7 @@ export function nextProject(state, contractId) {
   const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
   if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
+  if(state.officeChatter)next.officeChatter=carryOfficeChatter(state);
   const terms=contractTerms(state,contract);
   next.budget = next.initialBudget = terms.budget;
   next.deadline = terms.deadline;
@@ -214,7 +216,7 @@ export function validSave(s) {
     && (s.autoPlay===undefined||typeof s.autoPlay==='boolean')
     && (s.clockFraction===undefined||Number.isFinite(s.clockFraction)&&s.clockFraction>=0&&s.clockFraction<1)
     && DIFFICULTIES[s.difficulty] && Array.isArray(s.team) && s.team.length <= studioCapacity(s) && new Set(s.team).size === s.team.length
-    && s.team.every(id => !!agentById(id)) && validDiscussions(s) && Number.isFinite(s.budget) && s.budget >= 0
+    && s.team.every(id => !!agentById(id)) && validDiscussions(s) && validOfficeChatter(s) && Number.isFinite(s.budget) && s.budget >= 0
     && (s.seats === undefined || (Array.isArray(s.seats) && s.seats.length === studioCapacity(s)
       && s.seats.every(id => id === null || s.team.includes(id))
       && new Set(s.seats.filter(Boolean)).size === s.seats.filter(Boolean).length))

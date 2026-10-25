@@ -187,6 +187,12 @@ export class OfficeActor {
     this.eventBlend = damp(this.eventBlend, activity.stage === 'event' && activity.eventParticipant!==false && this.state==='seated' ? 1 : 0, 5, dt);
     const mouseShare = activity.task?.skill === 'design' ? .68 : activity.task?.skill === 'qa' ? .35 : .12;
     this.mouseBlend = damp(this.mouseBlend, (elapsed + this.order * 1.73) % 7 < mouseShare * 7 ? 1 : 0, 5, dt);
+    this.talkBlend=damp(this.talkBlend||0,activity.speaking?1:0,10,dt);
+    this.listenBlend=damp(this.listenBlend||0,activity.listening?1:0,7,dt);
+    this.talkLevel=damp(this.talkLevel||0,activity.speaking?(activity.speechLevel||0):0,14,dt);
+    const target=activity.speechTarget;
+    const turn=target?angle(this.group.rotation.y,Math.atan2(this.point[0]-target[0],this.point[1]-target[1])):0;
+    this.talkTurn=damp(this.talkTurn||0,clamp(turn,-.5,.5),5,dt);
     poseActor(this, elapsed, reducedMotion);this.updateCup(reducedMotion);
   }
   updateCup(reduced){
