@@ -124,7 +124,7 @@ class OfficeWorld {
   async syncActors() {
     if (this.failed) { this.reportRest(true);settleCoffeeFallback(this.game,this.callbacks.onCoffee); return; }
     if (!this.ready || !this.game) return;
-    for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { this.scene.remove(actor.group); this.actors.delete(id); }
+    for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { actor.speechMouth?.dispose(); this.scene.remove(actor.group); this.actors.delete(id); }
     for (const [order, id] of this.game.team.entries()) {
       let actor = this.actors.get(id);
       if (actor) { actor.order = order; actor.destination(this.game); continue; }
@@ -365,7 +365,7 @@ class OfficeWorld {
     }
     this.camera.updateProjectionMatrix(); this.controls.update(); this.resize();
   }
-  reset() { for (const a of this.actors.values()) this.scene.remove(a.group); this.actors.clear(); this.initialTeam = null; this.busy = false; }
+  reset() { for (const a of this.actors.values()) {a.speechMouth?.dispose();this.scene.remove(a.group);} this.actors.clear(); this.initialTeam = null; this.busy = false; }
   detach() { this.keys.clear(); this.container = null; this.resizeObserver.disconnect(); if (this.frameId) cancelAnimationFrame(this.frameId); this.frameId = 0; }
 }
 
