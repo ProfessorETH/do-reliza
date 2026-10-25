@@ -9,7 +9,7 @@ export const ENTRANCE = [4.1, 3.25];
 export const WAITING = [[3.9, 2.8], [3.1, 3.2], [2.3, 3.25]];
 // One physical beanbag. Only its owner enters the furniture footprint during
 // the authored lowering/rising transition; navigation ends on the clear floor.
-export const LOUNGE_SEAT = { point: [-3.68, 2.77], approach: [-2.85, 2.8], stance: [-3.38, 2.77], yaw: -Math.PI / 2, surfaceHeight: .50, hipHeight: .62, footForward: .36 };
+export const LOUNGE_SEAT = { point: [-3.68, 2.97], approach: [-2.85, 2.97], stance: [-3.38, 2.97], yaw: -Math.PI / 2, surfaceHeight: .50, hipHeight: .62, footForward: .36 };
 // All four inner wall faces are x=±4.91 / z=±3.91. Keep a body-width margin.
 export const WALK_BOUNDS = { minX: -4.55, maxX: 4.55, minZ: -3.55, maxZ: 3.55 };
 export const BODY_RADIUS = .34;

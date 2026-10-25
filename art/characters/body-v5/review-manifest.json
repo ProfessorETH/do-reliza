@@ -1,0 +1,41 @@
+{
+  "updated": "seven-accepted-production-v5-20261025",
+  "note": "Шесть сотрудников с новыми телами и портретными головами, плюс Ника-наставница. Ходьба, посадка и работа: 25 костей и пять движений. Кисти и края воротника Ники пока упрощены.",
+  "models": {
+    "mira": {
+      "file": "mira-quality.glb",
+      "sha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+      "url": "../../assets/models/mira.glb"
+    },
+    "pixel": {
+      "file": "pixel-quality.glb",
+      "sha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+      "url": "../../assets/models/pixel.glb"
+    },
+    "nord": {
+      "file": "nord-quality.glb",
+      "sha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+      "url": "../../assets/models/nord.glb"
+    },
+    "iskra": {
+      "file": "iskra-quality.glb",
+      "sha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+      "url": "../../assets/models/iskra.glb"
+    },
+    "saga": {
+      "file": "saga-quality.glb",
+      "sha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+      "url": "../../assets/models/saga.glb"
+    },
+    "echo": {
+      "file": "echo-quality.glb",
+      "sha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+      "url": "../../assets/models/echo.glb"
+    },
+    "nika": {
+      "url": "../../assets/models/nika.glb",
+      "sha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b"
+    }
+  },
+  "acceptance": true
+}

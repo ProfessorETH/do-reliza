@@ -1,0 +1,177 @@
+{
+  "weight_smooth_iterations": 260,
+  "source_sole_y": -0.9883211255073547,
+  "source_ankle_y": -0.91,
+  "source_knee_y": -0.43,
+  "source_hip_y": 0.1,
+  "source_shoulder_y": 0.62,
+  "source_neck_y": 0.72,
+  "source_center_x": 0.0,
+  "source_center_z": -0.017195,
+  "source_shoulder_half_width": 0.25,
+  "source_arm_anchors": {
+    "Left": {
+      "shoulder": [
+        0.25,
+        0.62,
+        -0.01658
+      ],
+      "elbow": [
+        0.39587,
+        0.31,
+        -0.02717
+      ],
+      "wrist": [
+        0.44658,
+        0.055,
+        0.02583
+      ]
+    },
+    "Right": {
+      "shoulder": [
+        -0.25,
+        0.62,
+        -0.01781
+      ],
+      "elbow": [
+        -0.3593,
+        0.31,
+        -0.02752
+      ],
+      "wrist": [
+        -0.4141,
+        0.055,
+        0.03519
+      ]
+    }
+  },
+  "source_leg_centers": [
+    [
+      -0.91,
+      0.24464,
+      0.14594
+    ],
+    [
+      -0.43,
+      0.20039,
+      0.03656
+    ],
+    [
+      0.1,
+      0.19464,
+      -0.00756
+    ]
+  ],
+  "neck_cut_y": 1.36,
+  "ankle_cut_y": 0.13,
+  "target_sole_y": 0.001,
+  "surface_smooth_iterations": 0,
+  "measurement": {
+    "source_sha256": "ef9f196fc74337123488da2b1d0e343bff3247e8a8c560b70cd038eb56e14fff",
+    "method": "Manual front/side 3D geometry layer Y positions; actual independent per-side X/Z cross-section centers. No bbox normalization. Native pose review required.",
+    "manual_anatomical_y_uncertainty_source_units": 0.02,
+    "raw_y_percentiles": [
+      -0.9883211255073547,
+      -0.9843975540995598,
+      -0.9693304538726807,
+      0.9609408289194107,
+      0.9804927605390549,
+      0.9843986630439758
+    ],
+    "arm_sections": {
+      "Left_shoulder": {
+        "vertices": 348,
+        "raw_xyz_p5_p95": [
+          [
+            0.21454,
+            0.60421,
+            -0.15794
+          ],
+          [
+            0.39562,
+            0.63638,
+            0.12478
+          ]
+        ]
+      },
+      "Left_elbow": {
+        "vertices": 339,
+        "raw_xyz_p5_p95": [
+          [
+            0.29589,
+            0.29385,
+            -0.11891
+          ],
+          [
+            0.49586,
+            0.32568,
+            0.06457
+          ]
+        ]
+      },
+      "Left_wrist": {
+        "vertices": 273,
+        "raw_xyz_p5_p95": [
+          [
+            0.33778,
+            0.03835,
+            -0.05611
+          ],
+          [
+            0.55539,
+            0.07019,
+            0.10777
+          ]
+        ]
+      },
+      "Right_shoulder": {
+        "vertices": 237,
+        "raw_xyz_p5_p95": [
+          [
+            -0.31352,
+            0.60484,
+            -0.12875
+          ],
+          [
+            -0.20857,
+            0.63594,
+            0.09314
+          ]
+        ]
+      },
+      "Right_elbow": {
+        "vertices": 164,
+        "raw_xyz_p5_p95": [
+          [
+            -0.41526,
+            0.29344,
+            -0.11896
+          ],
+          [
+            -0.30334,
+            0.32553,
+            0.06392
+          ]
+        ]
+      },
+      "Right_wrist": {
+        "vertices": 163,
+        "raw_xyz_p5_p95": [
+          [
+            -0.46206,
+            0.03759,
+            -0.02131
+          ],
+          [
+            -0.36614,
+            0.07192,
+            0.09169
+          ]
+        ]
+      }
+    },
+    "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox",
+    "sole_calibration": "Final1mm target for preservedclipfloor<=12mm",
+    "hood_note": "Generatedhood/collar may crossheadcutplane; inspectpreservedhoodrimwithacceptedheadbeforepromotion"
+  }
+}

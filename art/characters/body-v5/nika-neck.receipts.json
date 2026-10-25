@@ -1,0 +1,194 @@
+{
+  "schema": "body-v5-public-summary-v1",
+  "version": "nika-head-b-game-neck-v2-actual57460",
+  "policy": "Local originals unchanged; owner/token omitted; local paths redacted or project-relative",
+  "documents": [
+    {
+      "source": "art/characters/body-v5/nika-head/neck-selection.json",
+      "source_sha256": "bbb3c6f70b677b69fbc731904f124e018eeb265aa3a53d2cc752649bb5f0939c",
+      "redacted_fields": [],
+      "content": {
+        "versioned_full_input": "art/characters/body-v5/nika-head/neck-selection.json",
+        "full_input_sha256": "bbb3c6f70b677b69fbc731904f124e018eeb265aa3a53d2cc752649bb5f0939c",
+        "selected_face_count": 1308,
+        "selected_vertex_count": 1098,
+        "source_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "world_cut_y": 1.36,
+        "source_cut_gltf_y": -0.5138437737088299,
+        "below_plane_teal_faces_selected": 0,
+        "selection_method": "7 albedo samples per triangle; warm skin>=4/7, teal hair<=1/7; connected eligible lower component seeded only at central anatomical neck baseY<-.90 |X|<.40; no whole-head clipping"
+      },
+      "large_coordinate_arrays": "Stored once in the versioned full input"
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/head-b-game-neck.qc.receipt.json",
+      "source_sha256": "17a267569178992dabbceab8bb8fd181bff4275541620a1db08af69883cb4139",
+      "redacted_fields": [],
+      "content": {
+        "status": "verified_cpu_skin_only_neck_derivative",
+        "source": "art/characters/body-v5/nika-head/head-b-final.glb",
+        "source_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "output": "art/characters/body-v5/nika-head/head-b-game-neck.glb",
+        "output_sha256": "731ddd4f22cea0f0b28a11ed94525ac3dd1dcfa7571bf7a0159db06f49908db4",
+        "world_cut_y": 1.36,
+        "source_cut_gltf_y": -0.5138437737088299,
+        "open_ring_no_cap": true,
+        "selected_skin_faces": 1308,
+        "teal_hair_faces_selected": 0,
+        "lower_teal_hair_faces_preserved": 10188,
+        "unselected_face_uv_winding_audit": {
+          "source_unselected_count": 57425,
+          "exact_cyclic_position_uv_multiset_matches_5dp": 57424,
+          "adjacent_shared_edge_refinement": {
+            "source_face": 45014,
+            "child_faces": [
+              43982,
+              43983
+            ],
+            "source_area": 0.00047411434133890504,
+            "children_area": 0.0004741144241431855,
+            "uv_interpolation_max_error": 3.651405899862681e-8,
+            "winding_normal_min_dot": 0.9999999999986892
+          },
+          "deleted_or_moved_unselected_surface": false
+        },
+        "texture_payloads_identical": true,
+        "texture_payload_sha256": [
+          "41fe9bc3f074f98dad12397fe3f988248a54e91c1f7deef00725cbf97ad60dcb"
+        ],
+        "source_final_eb36_unchanged": true,
+        "triangles_before": 58733,
+        "triangles_after": 57460,
+        "bounds_gltf": [
+          [
+            -0.9598810076713562,
+            -1.001710057258606,
+            -0.8466519713401794
+          ],
+          [
+            0.9004120230674744,
+            0.9971870183944702,
+            0.8321740031242371
+          ]
+        ],
+        "top_origin_eye_ratio": 0.4686429520839237,
+        "top_origin_chin_ratio": 0.7138606075294627,
+        "expected_attach_scale": 0.4161865098687739,
+        "expected_attach_translate_y": 1.573854846797678,
+        "target_eye_y": 1.599,
+        "target_chin_y": 1.395,
+        "global_face_winding_recalculated": false,
+        "ring_distance_status": "Same exactY plane; XZ distances to final merged body pending root/head_attachment check, not claimed zero",
+        "known_collar_intersection_proof": {
+          "old_world_y": 1.36,
+          "head_minus_body_z_m": [
+            -0.0047,
+            0.0018
+          ],
+          "lower_neck_hidden_behind_shirt_at_1_34_m": 0.0182
+        },
+        "gpu_used": false,
+        "failed_cpu_attempt_receipt": "art/characters/body-v5/nika-head/head-b-game-neck.failed-layer-order.receipt.json",
+        "native_cpu_helper": "art/characters/body-v5/nika-head/trim_game_neck.py",
+        "native_cpu_helper_sha256": "b13cf57f2eb9e27a4b47c3e0c1c7b002f06f948d521079c10e1de2c13bd5e160"
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/head-b-game-neck.attachment.receipt.json",
+      "source_sha256": "d2029374e8dedcc10ac76490167d3b081e0e7cf7ed912284263f449b24b2bee2",
+      "redacted_fields": [],
+      "content": {
+        "source": "head-b-game-neck.glb",
+        "source_sha256": "731ddd4f22cea0f0b28a11ed94525ac3dd1dcfa7571bf7a0159db06f49908db4",
+        "source_bounds_gltf": [
+          [
+            -0.9598810076713562,
+            -1.001710057258606,
+            -0.8466519713401794
+          ],
+          [
+            0.9004120230674744,
+            0.9971870183944702,
+            0.8321740031242371
+          ]
+        ],
+        "source_eye_height_ratio": 0.5313570479160763,
+        "source_chin_height_ratio": 0.2861393924705373,
+        "source_eye_center_gltf": [
+          0.10648983027000383,
+          0.06041799194849038,
+          0.5229502392040618
+        ],
+        "source_chin_gltf": [
+          0.07036960710494261,
+          -0.4297468624201011,
+          0.4797524279333037
+        ],
+        "source_face_center_x": 0.10648983027000383,
+        "bounds_center_x": -0.029734492301940918,
+        "source_eye_points_gltf": [
+          [
+            -0.10059975270634679,
+            0.06041799194849039,
+            0.5229502392040618
+          ],
+          [
+            0.31357941324635447,
+            0.060417991948490374,
+            0.5229502392040618
+          ]
+        ],
+        "source_mouth_gltf": [
+          0.09119693808884292,
+          -0.2779432735860829,
+          0.5759582854537338
+        ],
+        "source_forward": "+GLTFZ after actual eye/nose yaw/roll neutralization",
+        "triangles": 57460,
+        "gpu_used_by_worker": false,
+        "source_eye_height_ratio_from_top": 0.4686429520839237,
+        "source_chin_height_ratio_from_top": 0.7138606075294627,
+        "status": "root_accepted_current_game_stylized_detail",
+        "source_geometry_identity_claim": "Approximate portrait geometry; no film-quality identity claim",
+        "source_eye_chin_points_unchanged": true,
+        "schema_version": 2,
+        "source_art_triangles": 58733,
+        "actual_triangles": 57460,
+        "metadata_correction": {
+          "reason": "Inherited art-head count corrected to actual derivative index accessor count",
+          "previous_receipt": "art/characters/body-v5/nika-head/head-b-game-neck.attachment.pre-triangle-count-fix.receipt.json",
+          "previous_receipt_sha256": "329619c9e9c9b30b1786998a5f220102301c548a7da387b4a14a8aff91a3b311",
+          "geometry_edited": false
+        }
+      }
+    },
+    {
+      "source": "art/characters/body-v5/nika-head/neck-trim-inputs.receipt.json",
+      "source_sha256": "58c5f9ef16024adbb3c6f0793589362c4d09f338c0e7185de3bf96cee8dc8d58",
+      "redacted_fields": [],
+      "content": {
+        "status": "version_ready_cpu_neck_trim_inputs",
+        "helper": "art/characters/body-v5/nika-head/trim_game_neck.py",
+        "helper_sha256": "b13cf57f2eb9e27a4b47c3e0c1c7b002f06f948d521079c10e1de2c13bd5e160",
+        "selection": "art/characters/body-v5/nika-head/neck-selection.json",
+        "selection_sha256": "bbb3c6f70b677b69fbc731904f124e018eeb265aa3a53d2cc752649bb5f0939c",
+        "selection_copy_byte_identical_to": "work/body-v5-nika-neck-selection.receipt.json",
+        "source_art": "art/characters/body-v5/nika-head/head-b-final.glb",
+        "source_art_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+        "source_art_tracked_in_git": true,
+        "output": "art/characters/body-v5/nika-head/head-b-game-neck.glb",
+        "output_sha256": "731ddd4f22cea0f0b28a11ed94525ac3dd1dcfa7571bf7a0159db06f49908db4",
+        "actual_triangles": 57460,
+        "qc": "art/characters/body-v5/nika-head/head-b-game-neck.qc.receipt.json",
+        "qc_sha256": "17a267569178992dabbceab8bb8fd181bff4275541620a1db08af69883cb4139",
+        "attachment_receipt": "art/characters/body-v5/nika-head/head-b-game-neck.attachment.receipt.json",
+        "attachment_receipt_sha256": "d2029374e8dedcc10ac76490167d3b081e0e7cf7ed912284263f449b24b2bee2",
+        "metadata_history": "art/characters/body-v5/nika-head/head-b-game-neck.attachment.pre-triangle-count-fix.receipt.json",
+        "metadata_history_sha256": "329619c9e9c9b30b1786998a5f220102301c548a7da387b4a14a8aff91a3b311",
+        "cpu_only": true,
+        "geometry_changed_by_housekeeping": false,
+        "fresh_clone_replay": "Use the versioned head-b-final.glb plus neck-selection.json with trim_game_neck.py; choose a new output path because existing outputs are immutable"
+      }
+    }
+  ]
+}

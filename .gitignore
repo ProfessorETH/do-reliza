@@ -36,3 +36,43 @@ art/characters/portrait-v4/*/head-normal-sample.blend
 art/characters/portrait-v4/*/*-test.*
 art/characters/portrait-v4/assembled/*-test.*
 art/characters/portrait-v4/assembled/*-preview.*
+
+# Full-body generation v5: keep raw generations and rebuild intermediates local.
+art/characters/body-v5/*/raw/
+art/characters/body-v5/*/raw-*/
+art/characters/body-v5/*/body-clean.blend
+art/characters/body-v5/*/body-painted.glb
+art/characters/body-v5/*/body-painted-views/
+art/characters/body-v5/*/paint-uv-state.npz
+art/characters/body-v5/*/body-final.blend
+art/characters/body-v5/assembled/*-test.*
+art/characters/body-v5/assembled/*-control.*
+art/characters/body-v5/*/*-test.*
+art/characters/body-v5/*/body-uv.*
+art/characters/body-v5/*/body-painted-uv.*
+art/characters/body-v5/*/body-painted-uv-views/
+art/characters/body-v5/*/*.paint-owner.lock
+art/characters/body-v5/*/*owner*.json
+art/characters/body-v5/*/body-rigged.blend
+
+# Rebuild stages stay local; deployable GLBs live in assets/models and the
+# packed editable team source lives in art/blender. Sanitized receipts are kept.
+art/characters/body-v5/*/*.glb
+art/characters/body-v5/*/*.blend
+art/characters/body-v5/*/*.npz
+art/characters/body-v5/*/*-views/
+art/characters/body-v5/*/qa*/
+art/characters/body-v5/*/*.receipt.json
+art/characters/body-v5/*/*.qc.json
+art/characters/body-v5/*/appearance*.json
+art/characters/body-v5/*/head*.json
+art/characters/body-v5/*/paint*.json
+art/characters/body-v5/*/*.history.json
+art/characters/body-v5/nika-head/front_anchor.py
+art/characters/body-v5/nika-head/front_anchor_b.py
+art/characters/body-v5/nika-head/*.v[0-9].py
+art/characters/body-v5/nika-head/*.executed-*.py.txt
+art/characters/body-v5/nika-head/preview_cpu.py
+art/characters/body-v5/nika-head/landmarks.json
+art/characters/body-v5/nika-head/landmarks_b.json
+art/characters/body-v5/nika-head/shape-a.api.json

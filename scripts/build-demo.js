@@ -23,7 +23,7 @@ await cp(join(root, 'assets'), join(stage, 'assets'), {recursive:true,filter:pat
 for (const file of ['agents.webp','office.webp','office-mobile.webp','onboarding/nika-portrait.webp']) await rm(join(stage,'assets',file),{force:true});
 await cp(join(root, 'vendor/three/LICENSE'), join(stage, 'THREE-LICENSE.txt'));
 const js = await build({
-  absWorkingDir: root, entryPoints: ['app.js'], outdir: stage,
+  absWorkingDir: root, entryPoints: ['app.js','art/characters/preview.js'], outdir: stage,
   entryNames:'[name]-[hash]', chunkNames:'chunk-[hash]',
   bundle:true, splitting:true, format:'esm', platform:'browser', target:'es2022',
   minify:true, metafile:true, legalComments:'eof',
@@ -40,6 +40,8 @@ const css = await build({
   outdir:stage,entryNames:'styles-[hash]',assetNames:'media/[name]-[hash]',
   bundle:true,minify:true,metafile:true,loader:{'.webp':'file','.ttf':'file'},target:['chrome100','safari15.4'],
 });
+// The public character viewer ships only its UI and accepted game assets.
+await cp(join(root,'art/hunyuan/preview.css'),join(stage,'characters.css'));
 // Cache by the contents of the entire directory, including late-loaded media.
 async function files(directory) {
   const found=[];
@@ -80,6 +82,20 @@ html=html.replace(/\s*<link rel="stylesheet"[^>]*>/g,'')
     `<script type="module" src="${prefix}${name(app)}"></script>`,
   ].join('\n  '));
 await writeFile(join(target,'index.html'),html);
+const galleryScript=Object.keys(js.metafile.outputs).find(path=>js.metafile.outputs[path].entryPoint==='art/characters/preview.js');
+const galleryAtlas=Object.keys(css.metafile.outputs).find(path=>css.metafile.outputs[path].inputs['assets/agents.webp']);
+const galleryNika=Object.keys(css.metafile.outputs).find(path=>css.metafile.outputs[path].inputs['assets/onboarding/nika-portrait.webp']);
+if(!galleryScript||!galleryAtlas||!galleryNika)throw new Error('Public character viewer assets are missing');
+let gallery=await readFile(join(root,'art/characters/preview.html'),'utf8');
+gallery=gallery.replace(/<body>/,`<body data-characters="7" data-assets-root="${prefix}assets/" data-portrait-atlas="${prefix}${name(galleryAtlas)}" data-nika-reference="${prefix}${name(galleryNika)}">`)
+  .replace(/href="\.\.\/\.\.\/assets\/favicon.svg"/,`href="${prefix}assets/favicon.svg"`)
+  .replace(/href="\.\.\/hunyuan\/preview.css"/,`href="${prefix}characters.css"`)
+  .replace(/<script type="importmap">[\s\S]*?<\/script>/,'')
+  .replace(/src="preview.js(?:\?[^"]*)?"/,`src="${prefix}${name(galleryScript)}"`)
+  .replace(/href="\.\.\/\.\.\/\?demo=1"/,'href="./?demo=1&amp;graphics=3d"')
+  .replace(/<strong>Эти модели уже используются в офисе\.<\/strong>/,'<strong>Шесть сотрудников и Ника, наставница.</strong> Сотрудники работают в игровом офисе; модель Ники можно рассмотреть здесь.')
+  .replace(/background-image: url\("\.\.\/\.\.\/assets\/agents.png"\);/,'background-image: none;');
+await writeFile(join(target,'characters.html'),gallery);
 const pkg = JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 await writeFile(join(target,'version.json'),JSON.stringify({version:pkg.version,assetVersion,buildDate:new Date().toISOString(),demo:'?demo=1'},null,2));
 const agentsImage=Object.keys(css.metafile.outputs).find(path=>css.metafile.outputs[path].inputs['assets/agents.webp']);

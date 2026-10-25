@@ -10,9 +10,17 @@ const person = document.querySelector("#person"),
 const controlsButtons = [...document.querySelectorAll("button")];
 const loader = new GLTFLoader(),
   cache = new Map();
-const portraitPreview = new URLSearchParams(location.search).get('portrait') === '4';
-const reviewManifest = portraitPreview ? fetch('portrait-v4/review-manifest.json').then(response=>response.json()) : Promise.resolve(null);
-let faceView = true;
+const params = new URLSearchParams(location.search);
+const publishedGallery = document.body.dataset.characters === '7';
+const assetRoot = document.body.dataset.assetsRoot ?? '../../assets/';
+const bodyPreview = !publishedGallery && params.get('body') === '5';
+const portraitPreview = !publishedGallery && params.get('portrait') === '4';
+const reviewFolder = bodyPreview ? 'body-v5' : 'portrait-v4';
+const reviewManifest = bodyPreview || portraitPreview ? fetch(`${reviewFolder}/review-manifest.json`,{cache:'no-store'}).then(response=>{if(!response.ok)throw new Error('Review manifest unavailable');return response.json();}) : Promise.resolve(null);
+const people = [...AGENTS, {id:'nika',name:'Ника',role:'Наставница'}];
+if(bodyPreview || publishedGallery){person.add(new Option('Ника · наставница','nika'));document.querySelector('header small').textContent='06 СОТРУДНИКОВ + НИКА';}
+if(bodyPreview)motion.add(new Option('Исходная поза','Bind'));
+let faceView = !(bodyPreview || publishedGallery);
 let model,
   mixer,
   skeleton,
@@ -34,6 +42,7 @@ function poseView(back = false) {
 function angleView(angle){const d=camera.position.distanceTo(orbit.target);camera.position.copy(orbit.target).add(new THREE.Vector3(Math.sin(angle)*d,.04,-Math.cos(angle)*d));orbit.update();}
 function play() {
   if (!actions) return;
+  if(motion.value==='Bind'){mixer.stopAllAction();activeAction=null;return;}
   const action = actions[motion.value];
   if (!action) return;
   activeAction?.fadeOut(0.18);
@@ -50,21 +59,21 @@ function play() {
 async function load() {
   const request = ++token,
     id = person.value,
-    agent = AGENTS.find((a) => a.id === id);
+    agent = people.find((a) => a.id === id);
   viewport.setAttribute("aria-busy", "true");
-  status.textContent = `Загружаем ${agent.name}…`;
+  status.textContent = `Загружаем модель: ${agent.name}…`;
   controlsButtons.forEach((b) => (b.disabled = true));
   try {
     const manifest=await reviewManifest;
     if(manifest){
       for(const option of person.options)option.disabled=!manifest.models[option.value];
-      const label=document.querySelector('footer p');label.textContent=manifest.acceptance?'Портретные модели уже в игре. Сравнивай их с исходными портретами, меняй ракурс и проверяй движения.':'Предпросмотр новой головы. Тела и анимации взяты из рабочей игры. Сравниваем лицо и волосы с исходным портретом перед обновлением основной версии.';
+      const label=document.querySelector('footer p');label.textContent=bodyPreview?(manifest.note??'Проверяем новые тела: одежду, походку и посадку.'):manifest.acceptance?'Портретные модели уже в игре. Сравнивай их с исходными портретами, меняй ракурс и проверяй движения.':'Предпросмотр новой головы. Тела и анимации взяты из рабочей игры. Сравниваем лицо и волосы с исходным портретом перед обновлением основной версии.';
       if(!manifest.models[id])throw new Error('Head candidate is not ready');
     }
     if (!cache.has(id))
       cache.set(
         id,
-        loader.loadAsync(manifest?`portrait-v4/assembled/${manifest.models[id].file}?v=${manifest.updated}`:`../../assets/models/${id}.glb?v=portrait-v4`),
+        loader.loadAsync(manifest?`${manifest.models[id].url??`${reviewFolder}/assembled/${manifest.models[id].file}`}?v=${manifest.updated}`:`${assetRoot}models/${id}.glb?v=body-v5`),
       );
     const gltf = await cache.get(id);
     if (request !== token) return;
@@ -99,6 +108,8 @@ async function load() {
     role.textContent = agent.role;
     title.append(role);
     const portrait = document.querySelector("#portrait");
+    portrait.style.backgroundImage=id==='nika'?`url("${document.body.dataset.nikaReference??`${assetRoot}onboarding/nika-portrait.webp`}")`:publishedGallery?`url("${document.body.dataset.portraitAtlas}")`:'';
+    portrait.style.backgroundSize=id==='nika'?'cover':'';
     portrait.style.backgroundPosition = `${(agent.index % 3) * 50}% ${Math.floor(agent.index / 3) * 100}%`;
     portrait.setAttribute("aria-label", `Исходный портрет: ${agent.name}`);
     let bones = 0,
@@ -190,6 +201,7 @@ try {
   document.querySelector('#profile').addEventListener('click',()=>angleView(Math.PI/2));
   document.querySelector('#face-view').addEventListener('click',()=>{faceView=true;poseView();});
   document.querySelector('#body-view').addEventListener('click',()=>{faceView=false;poseView();});
+  document.querySelector('#outfit-view').addEventListener('click',()=>{faceView=false;orbit.target.set(0,1.03,0);camera.position.set(0,1.07,-1.6);orbit.update();});
   document
     .querySelector("#back")
     .addEventListener("click", () => poseView(true));

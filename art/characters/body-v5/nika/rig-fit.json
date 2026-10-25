@@ -1,0 +1,180 @@
+{
+  "cage_max_opposing_normal_area_ratio": 0.001,
+  "cage_max_edge_growth_m": 0.03,
+  "arm_transition_m": 0.30,
+  "cage_leg_arm_blend": "linear",
+  "cage_field_smooth_iterations": 120,
+  "weight_smooth_iterations": 260,
+  "source_sole_y": -0.9883087873458862,
+  "source_ankle_y": -0.91,
+  "source_knee_y": -0.43,
+  "source_hip_y": 0.20,
+  "source_shoulder_y": 0.59,
+  "source_neck_y": 0.72,
+  "source_center_x": 0.0,
+  "source_center_z": -0.00827,
+  "source_shoulder_half_width": 0.23,
+  "source_arm_anchors": {
+    "Left": {
+      "shoulder": [
+        0.23,
+        0.59,
+        -0.00973
+      ],
+      "elbow": [
+        0.35128,
+        0.31,
+        -0.07121
+      ],
+      "wrist": [
+        0.42086,
+        0.055,
+        -0.03171
+      ]
+    },
+    "Right": {
+      "shoulder": [
+        -0.23,
+        0.59,
+        -0.00681
+      ],
+      "elbow": [
+        -0.35463,
+        0.31,
+        -0.07211
+      ],
+      "wrist": [
+        -0.42294,
+        0.055,
+        -0.03016
+      ]
+    }
+  },
+  "source_leg_centers": [
+    [
+      -0.91,
+      0.21467,
+      0.10712
+    ],
+    [
+      -0.43,
+      0.20827,
+      -0.0345
+    ],
+    [
+      0.1,
+      0.17877,
+      -0.0299
+    ]
+  ],
+  "neck_cut_y": 1.36,
+  "ankle_cut_y": 0.13,
+  "measurement": {
+    "source_sha256": "9bc76b76f105affebd07e486964b3cb236b244308d594103017721578d02a807",
+    "method": "Manual front/side geometry layer Y positions; per-side actual mesh cross-section X/Z centers. No bbox normalization. Review pose required.",
+    "raw_y_percentiles": [
+      -0.9883087873458862,
+      -0.9843789311051369,
+      -0.9722021895647049,
+      0.9488876885175702,
+      0.9763687162399299,
+      0.988287627696991
+    ],
+    "raw_body_top_hint": 0.9763687252998352,
+    "arm_sections": {
+      "Left_shoulder": {
+        "vertices": 223,
+        "raw_xyz_p5_p95": [
+          [
+            0.18758,
+            0.57495,
+            -0.15397
+          ],
+          [
+            0.34504,
+            0.60625,
+            0.13451
+          ]
+        ]
+      },
+      "Left_elbow": {
+        "vertices": 214,
+        "raw_xyz_p5_p95": [
+          [
+            0.27268,
+            0.29429,
+            -0.13704
+          ],
+          [
+            0.42988,
+            0.32623,
+            -0.00538
+          ]
+        ]
+      },
+      "Left_wrist": {
+        "vertices": 215,
+        "raw_xyz_p5_p95": [
+          [
+            0.31777,
+            0.0397,
+            -0.08778
+          ],
+          [
+            0.52395,
+            0.07203,
+            0.02436
+          ]
+        ]
+      },
+      "Right_shoulder": {
+        "vertices": 221,
+        "raw_xyz_p5_p95": [
+          [
+            -0.34897,
+            0.57495,
+            -0.15787
+          ],
+          [
+            -0.18786,
+            0.60623,
+            0.14425
+          ]
+        ]
+      },
+      "Right_elbow": {
+        "vertices": 230,
+        "raw_xyz_p5_p95": [
+          [
+            -0.4344,
+            0.29409,
+            -0.13836
+          ],
+          [
+            -0.27485,
+            0.32597,
+            -0.00585
+          ]
+        ]
+      },
+      "Right_wrist": {
+        "vertices": 218,
+        "raw_xyz_p5_p95": [
+          [
+            -0.52432,
+            0.03771,
+            -0.08779
+          ],
+          [
+            -0.32156,
+            0.07073,
+            0.02747
+          ]
+        ]
+      }
+    },
+    "source_depth_center_basis": "Mean measured shoulder cross-section centers, not global bbox (distant source artifacts bias bbox). Review pose required.",
+    "sole_calibration": "Final fit only: target1mm so preserved portable clips stay within12mm floor tolerance; runtime also reads real new soles."
+  },
+  "target_sole_y": 0.001
+}
