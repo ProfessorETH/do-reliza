@@ -1,3 +1,4 @@
+import { mountMenuPreview, disposeMenuPreview } from './assets/menu-preview-runtime.js';
 import { careerSummary, careerResult, careerPanel } from './assets/career-view.js';
 import { isCareer, TRAINING_COST, trainingLock, trainEmployee } from './assets/studio-career.js';
 import { coffeeArrival } from './assets/coffee-trip.js';
@@ -109,10 +110,12 @@ function showDialog(html) {
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
   if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus({preventScroll:true});
   dialog.scrollTop=0;
+  mountMenuPreview(dialog);
 }
 dialog.addEventListener('cancel',()=>sound.stopVoice('character'));
 dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){sound.stopVoice('character');dialog.close();}});
 dialog.addEventListener('close', () => {
+  disposeMenuPreview();
   if(decisionFeedback){const feedback=decisionFeedback;decisionFeedback=null;if(feedback.game===game){queueMemberFeedback(game,feedback.before,feedback.affected);for(const response of feedback.responses)queueActorReaction(game,response.id,response.kind==='agree'?'joy':response.kind==='reconsider'?'calm':'sad');render();root.querySelector('[data-action="tick"]')?.focus({preventScroll:true});}}
   if (dialogOrigin) [...root.querySelectorAll('[data-action]')].find(el => el.dataset.action === dialogOrigin.action && el.dataset.id === dialogOrigin.id)?.focus({ preventScroll: true });
 });
@@ -466,7 +469,7 @@ document.addEventListener('click',e=>{
   if(action==='career-train'){
     const error=trainEmployee(game,id,el.dataset.skill);if(error)toast(error);else{persist();render();showDialog(memberPanel(game,id));toast('Навык вырос и сохранён.');}return;
   }
-  if(action==='life-office'){showDialog(officePanel(game));return;}
+  if(action==='life-office'){showDialog(officePanel(game,{filter:id}));return;}
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id)){selectEmployee(id,{focus:false});showDialog(memberPanel(game,id));}return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){

@@ -1,0 +1,145 @@
+/* Studio menus share the game theme; scope above legacy modal rules. */
+body:has(.scene-first) #info-dialog:has([data-studio-menu]) { width:1040px; max-width:calc(100vw - 24px); max-height:calc(100dvh - 24px); padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--panel); color:var(--text); }
+body:has(.scene-first) #info-dialog:has([data-studio-menu]) #dialog-content>.dialog-close { position:sticky; display:grid; place-items:center; top:0; right:0; left:auto; margin:0 0 -44px auto; width:44px; height:44px; min-height:44px; padding:0; z-index:12; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:var(--text); }
+body:has(.scene-first) #info-dialog .menu-heading { padding-right:56px; margin:0 0 20px; }
+body:has(.scene-first) #info-dialog .menu-heading .eyebrow { font-size:11px; color:var(--mint); letter-spacing:1.6px; }
+body:has(.scene-first) #info-dialog .menu-heading h2 { margin:10px 0 8px; font-size:32px; line-height:1.2; }
+body:has(.scene-first) #info-dialog .menu-heading>p { margin:0; color:var(--muted); font-size:16px; line-height:1.5; }
+body:has(.scene-first) #info-dialog .shop-funds { display:grid; grid-template-columns:1.2fr 1fr; gap:12px; margin:0 0 18px; }
+body:has(.scene-first) #info-dialog .shop-funds>div { display:grid; gap:4px; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+body:has(.scene-first) #info-dialog .shop-funds span { font-size:14px; }
+body:has(.scene-first) #info-dialog .shop-funds strong { font-size:28px; line-height:1.3; font-variant-numeric:tabular-nums; }
+body:has(.scene-first) #info-dialog .shop-funds small { font-size:12px; color:var(--muted); }
+body:has(.scene-first) #info-dialog .shop-funds .shop-cash { border-color:var(--studio-accent-line); }
+body:has(.scene-first) #info-dialog .shop-cash strong { color:var(--amber); }
+body:has(.scene-first) #info-dialog .shop-reserve strong { font-size:24px; }
+body:has(.scene-first) #info-dialog .shop-notice { margin:12px 0; padding:12px; border:1px solid var(--studio-accent-line); border-radius:10px; background:var(--studio-accent-soft); color:var(--text); font-size:14px; line-height:1.5; }
+body:has(.scene-first) #info-dialog .shop-notice.installed { color:var(--mint); border-color:var(--studio-success-line); }
+body:has(.scene-first) #info-dialog .office-shop .shop-filters { position:sticky; top:0; z-index:5; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:8px 56px 12px 0; margin:0 0 4px; background:var(--panel); }
+body:has(.scene-first) #info-dialog .office-shop .shop-filters>button { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:10px; border-radius:10px; font-size:15px; }
+body:has(.scene-first) #info-dialog .shop-filters b { display:grid; place-items:center; min-width:24px; height:24px; padding:0 5px; border-radius:7px; background:#ffffff0e; font-size:13px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-card { display:flex; flex-direction:column; min-width:0; border:1px solid var(--line); border-radius:14px; background:var(--bg); overflow:hidden; }
+body:has(.scene-first) #info-dialog .upgrade-photo { position:relative; height:190px; background:radial-gradient(ellipse at 50% 70%,#34505a,var(--bg) 85%); }
+body:has(.scene-first) #info-dialog .upgrade-photo .upgrade-art { display:block; width:100%; height:100%; object-fit:contain; }
+body:has(.scene-first) #info-dialog .upgrade-state { position:absolute; left:10px; top:10px; padding:4px 7px; border:1px solid var(--line); border-radius:6px; background:#14212bd9; color:var(--muted); font-size:11px; }
+body:has(.scene-first) #info-dialog .upgrade-card[data-state=owned] .upgrade-state { color:var(--mint); }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-copy { display:flex; flex-direction:column; flex:1; gap:10px; padding:16px; min-height:0; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-copy h3 { margin:0; font-size:20px; line-height:1.3; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-effect { margin:0; min-height:42px; color:var(--muted); font-size:14px; line-height:1.5; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-requirement { margin:0; font-size:13px; color:var(--amber); line-height:1.5; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row { display:flex; gap:10px; align-items:end; justify-content:space-between; margin-top:auto; padding-top:4px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row>span { display:grid; gap:3px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row small { color:var(--muted); font-size:12px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row strong { color:var(--text); font-size:23px; white-space:nowrap; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row>button { min-height:48px; padding:10px 12px; border:1px solid var(--studio-accent-line); border-radius:9px; background:var(--surface); color:var(--text); font-size:14px; font-weight:600; }
+body:has(.scene-first) #info-dialog .shop-information { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0 0; }
+body:has(.scene-first) #info-dialog .shop-information .life-history { margin:0; padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
+body:has(.scene-first) #info-dialog .shop-information summary { min-height:44px; padding:6px 0; color:var(--text); font-size:15px; cursor:pointer; }
+body:has(.scene-first) #info-dialog .shop-information p { font-size:14px; line-height:1.6; color:var(--muted); }
+body:has(.scene-first) #info-dialog .menu-return { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:20px; }
+body:has(.scene-first) #info-dialog .menu-return>span { color:var(--muted); font-size:13px; }
+body:has(.scene-first) #info-dialog .menu-return>button { min-height:48px; padding:10px 16px; font-size:15px; border-color:var(--line); }
+body:has(.scene-first) #info-dialog .purchase-menu { display:flex; flex-direction:column; max-height:calc(100dvh - 76px); }
+body:has(.scene-first) #info-dialog .purchase-menu .menu-heading { flex:none; }
+body:has(.scene-first) #info-dialog .purchase-layout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:24px; min-height:0; overflow:auto; overscroll-behavior:contain; }
+body:has(.scene-first) #info-dialog .purchase-model { min-width:0; }
+body:has(.scene-first) #info-dialog .model-preview { position:relative; height:350px; overflow:hidden; border:1px solid var(--line); border-radius:14px; background:radial-gradient(ellipse at 50% 65%,#34505a,var(--bg) 85%); }
+body:has(.scene-first) #info-dialog .model-preview>.model-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+body:has(.scene-first) #info-dialog .model-canvas { position:absolute; inset:0; }
+body:has(.scene-first) #info-dialog .model-canvas canvas { display:block; width:100%; height:100%; touch-action:none; }
+body:has(.scene-first) #info-dialog .model-preview[data-model-ready=true]>.model-poster { visibility:hidden; }
+body:has(.scene-first) #info-dialog .model-preview[data-model-ready=false] .model-canvas { display:none; }
+body:has(.scene-first) #info-dialog .model-status { position:absolute; left:12px; right:12px; bottom:72px; width:fit-content; margin:auto; padding:6px 10px; border-radius:8px; background:var(--panel); color:var(--muted); font-size:13px; }
+body:has(.scene-first) #info-dialog .model-status[hidden] { display:none; }
+body:has(.scene-first) #info-dialog .model-tools { position:absolute; bottom:12px; left:12px; right:12px; display:flex; justify-content:center; gap:5px; }
+body:has(.scene-first) #info-dialog .model-tools>button { min-width:44px; width:44px; min-height:44px; padding:0; border:1px solid var(--line); border-radius:8px; color:var(--text); background:var(--panel); font:22px var(--font-ui); }
+body:has(.scene-first) #info-dialog .model-comparison { position:absolute; left:12px; right:12px; top:12px; display:flex; gap:6px; }
+body:has(.scene-first) #info-dialog .model-comparison>button { min-height:44px; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--text); font-size:13px; }
+body:has(.scene-first) #info-dialog .model-comparison>button[aria-pressed=true] { border-color:var(--amber); color:var(--studio-accent-ink); background:var(--amber); }
+body:has(.scene-first) #info-dialog .model-new-item { position:absolute; top:14px; left:14px; font-size:12px; color:var(--muted); }
+body:has(.scene-first) #info-dialog .model-preview[data-model-ready=false] :is(.model-tools,.model-comparison) { display:none; }
+body:has(.scene-first) #info-dialog .model-hint { font-size:12px; color:var(--muted); line-height:1.5; margin:10px 0 0; }
+body:has(.scene-first) #info-dialog .purchase-information { min-width:0; padding-right:4px; }
+body:has(.scene-first) #info-dialog .purchase-information>.eyebrow { font-size:11px; color:var(--mint); }
+body:has(.scene-first) #info-dialog .purchase-information>p { margin:10px 0 16px; font-size:15px; line-height:1.65; color:var(--muted); }
+body:has(.scene-first) #info-dialog .purchase-price { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+body:has(.scene-first) #info-dialog .purchase-price>span { font-size:14px; }
+body:has(.scene-first) #info-dialog .purchase-price strong { color:var(--amber); font-size:28px; white-space:nowrap; }
+body:has(.scene-first) #info-dialog .purchase-ledger { display:grid; gap:10px; margin:14px 0; }
+body:has(.scene-first) #info-dialog .purchase-ledger>div { display:flex; justify-content:space-between; gap:12px; }
+body:has(.scene-first) #info-dialog .purchase-ledger dt { font-size:14px; color:var(--muted); }
+body:has(.scene-first) #info-dialog .purchase-ledger dd { margin:0; font-size:17px; white-space:nowrap; }
+body:has(.scene-first) #info-dialog .purchase-information .money-caption { font-size:12px; }
+body:has(.scene-first) #info-dialog .purchase-actions { display:flex; justify-content:space-between; gap:12px; padding-top:16px; margin:16px 0 0; border-top:1px solid var(--line); flex:none; }
+body:has(.scene-first) #info-dialog .purchase-actions>button { min-height:52px; font-size:16px; padding:12px 18px; }
+body:has(.scene-first) #info-dialog .purchase-actions>.primary { min-width:230px; }
+@media(max-width:900px) {
+body:has(.scene-first) #info-dialog .office-shop .upgrade-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+body:has(.scene-first) #info-dialog .purchase-layout { gap:16px; }
+body:has(.scene-first) #info-dialog .model-preview { height:300px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-copy h3 { font-size:19px; }
+ 
+}
+@media(max-width:600px) {
+body:has(.scene-first) #info-dialog:has([data-studio-menu]) { width:calc(100vw - 16px); max-width:none; max-height:calc(100dvh - 16px); padding:14px; border-radius:14px; }
+body:has(.scene-first) #info-dialog .menu-heading { margin-bottom:16px; }
+body:has(.scene-first) #info-dialog .menu-heading h2 { font-size:27px; }
+body:has(.scene-first) #info-dialog .menu-heading>p { font-size:14px; }
+body:has(.scene-first) #info-dialog .menu-heading .eyebrow { font-size:10px; letter-spacing:1px; }
+body:has(.scene-first) #info-dialog .shop-funds { gap:8px; margin-bottom:12px; grid-template-columns:1fr 1fr; }
+body:has(.scene-first) #info-dialog .shop-funds>div { padding:12px; }
+body:has(.scene-first) #info-dialog .shop-funds strong { font-size:25px; }
+body:has(.scene-first) #info-dialog .shop-reserve strong { font-size:22px; }
+body:has(.scene-first) #info-dialog .shop-funds span { font-size:12px; }
+body:has(.scene-first) #info-dialog .shop-funds small { font-size:11px; }
+body:has(.scene-first) #info-dialog .office-shop .shop-filters { gap:6px; padding-right:52px; }
+body:has(.scene-first) #info-dialog .office-shop .shop-filters>button { flex-direction:column; gap:3px; padding:7px 2px!important; font-size:12px!important; min-height:60px!important; }
+body:has(.scene-first) #info-dialog .shop-filters b { height:18px; min-width:20px; font-size:11px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-grid { grid-template-columns:1fr; gap:10px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-card { display:grid; grid-template-columns:100px minmax(0,1fr); }
+body:has(.scene-first) #info-dialog .upgrade-photo { min-height:180px; height:100%; }
+body:has(.scene-first) #info-dialog .upgrade-state { top:7px; left:5px; right:5px; text-align:center; font-size:9px; padding:4px 2px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-copy { padding:12px; gap:8px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-copy h3 { font-size:18px; }
+body:has(.scene-first) #info-dialog .office-shop .upgrade-effect { min-height:0; font-size:13px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row { gap:6px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row strong { font-size:20px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row>button { min-height:44px; padding:8px; font-size:12px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row small { font-size:10px; }
+body:has(.scene-first) #info-dialog .shop-information { grid-template-columns:1fr; gap:8px; margin-top:14px; }
+body:has(.scene-first) #info-dialog .shop-information .life-history { padding:10px 12px; }
+body:has(.scene-first) #info-dialog .shop-information summary { font-size:14px; }
+body:has(.scene-first) #info-dialog .menu-return { flex-direction:column; align-items:stretch; margin-top:14px; gap:10px; }
+body:has(.scene-first) #info-dialog .menu-return>button { width:100%; }
+body:has(.scene-first) #info-dialog .purchase-menu { max-height:calc(100dvh - 48px); }
+body:has(.scene-first) #info-dialog .purchase-layout { display:block; }
+body:has(.scene-first) #info-dialog .model-preview { height:270px; }
+body:has(.scene-first) #info-dialog .model-hint { margin-bottom:16px; }
+body:has(.scene-first) #info-dialog .purchase-information>.eyebrow { display:none; }
+body:has(.scene-first) #info-dialog .purchase-information>p { font-size:14px; margin:10px 0 14px; }
+body:has(.scene-first) #info-dialog .purchase-actions { display:grid; grid-template-columns:1fr 1.5fr; gap:8px; margin-top:12px; padding-top:12px; }
+body:has(.scene-first) #info-dialog .purchase-actions>button { min-width:0!important; min-height:52px; padding:10px; font-size:14px; }
+body:has(.scene-first) #info-dialog .model-comparison>button { font-size:12px; padding:8px; }
+body:has(.scene-first) #info-dialog .purchase-price strong { font-size:25px; }
+
+
+}
+@media(max-width:360px) {
+body:has(.scene-first) #info-dialog .office-shop .upgrade-card { grid-template-columns:88px minmax(0,1fr); }
+body:has(.scene-first) #info-dialog .upgrade-buy-row { display:grid; gap:8px; }
+body:has(.scene-first) #info-dialog .upgrade-buy-row>button { width:100%; }
+body:has(.scene-first) #info-dialog .upgrade-state { font-size:8px; }
+body:has(.scene-first) #info-dialog .shop-funds strong { font-size:22px; }
+body:has(.scene-first) #info-dialog .shop-funds small { font-size:10px; }
+body:has(.scene-first) #info-dialog .model-tools { gap:3px; }
+body:has(.scene-first) #info-dialog .model-tools>button { min-width:44px; width:44px; }
+ 
+}
+
+body:has(.scene-first) #info-dialog .office-catalog[data-filter=available] .upgrade-card:not([data-state=available]),body:has(.scene-first) #info-dialog .office-catalog[data-filter=locked] .upgrade-card:not([data-state=locked]),body:has(.scene-first) #info-dialog .office-catalog[data-filter=owned] .upgrade-card:not([data-state=owned]) { display:none; }
+body:has(.scene-first) #info-dialog .upgrade-photo { overflow:hidden; }body:has(.scene-first) #info-dialog .upgrade-photo .upgrade-art { transform:scale(1.32); }
+@media(max-width:600px) { body:has(.scene-first) #info-dialog .upgrade-photo .upgrade-art { transform:scale(1.6); } }
+@media(max-height:500px) and (min-width:601px) {
+ body:has(.scene-first) #info-dialog .purchase-menu { max-height:calc(100dvh - 76px); }body:has(.scene-first) #info-dialog .purchase-menu .menu-heading { margin-bottom:12px; }body:has(.scene-first) #info-dialog .purchase-menu .menu-heading h2 { font-size:25px; }body:has(.scene-first) #info-dialog .model-preview { height:clamp(150px,calc(100dvh - 230px),260px); }body:has(.scene-first) #info-dialog .model-hint { display:none; }
+}
