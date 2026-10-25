@@ -18,19 +18,19 @@ export function sceneAction(game,busy=false) {
     : {action:'studio-project',label:'Распределить задачи'};
   if(game.stage==='work')return {action:'tick',label:'Следующий час',disabled:false};
   if(game.stage==='event')return {action:'event-open',label:employeeEvent(game)?'Обсудить с коллегой':'Принять решение'};
-  return {action:'play-mini',label:'Играть в «Орбиту»'};
+  return game.life.missionsWon?.includes(contractFor(game).id)?{action:'life-contracts',label:'Следующий заказ →'}:{action:'play-mini',label:'Играть в «Орбиту»'};
 }
 export function sceneHeader(game,{logo,icon,money,time,soundEnabled,status}) {
   return `<header class="game-topbar scene-header">${logo()}
     <button class="scene-contract" data-action="brief"><span>Заказ ${game.life.completed+(game.stage==='result'?0:1)} · ${steps[game.stage]}/4 ${phases[game.stage]}</span><b>${contractFor(game).name}</b></button>
     <div class="scene-budget"><span>Резерв проекта</span><b>${money(game.budget)}</b></div>
     <div class="play-clock"><button class="play-clock-now" data-action="scene-time" aria-label="Часы и дедлайн студии"><span data-clock="day">${time.now.split(' · ')[1]||'В студии'}</span><b data-clock="now">${time.now.split(' · ')[0]}</b></button><div><span>До показа</span><b data-clock="remaining">${time.remaining}</b></div><span class="sr-only">Показ: <span data-clock="end">${time.end}</span></span>
-    <button class="secondary scene-auto" data-action="auto" aria-describedby="play-clock-status" aria-pressed="${!!game.autoPlay}" ${game.stage==='result'?'disabled':''}>${icon(game.autoPlay?'pause':'play',18)}${game.autoPlay?'Пауза':'Авто'}</button><span class="sr-only" id="play-clock-status" data-clock="status">${status}</span></div>
+    <span class="sr-only" id="play-clock-status" data-clock="status">${status}</span></div>
     <div class="scene-header-tools"><button class="scene-tool" data-action="sound" aria-pressed="${soundEnabled}" aria-label="${soundEnabled?'Выключить':'Включить'} звук">${icon('sound',20)}<span>Звук</span></button><button class="scene-tool" data-action="menu" aria-label="Меню игры">${icon('menu',20)}<span>Меню</span></button></div></header>`;
 }
 export function sceneDock(game,{icon,money,busy,panelOpen}) {
   const next=sceneAction(game,busy), progress=Math.round(TASKS.reduce((n,t)=>n+game.progress[t.id],0)/TASKS.length);
   const descriptions={hire:game.team.length<3?`${game.team.length} из 3 коллег в студии`:'Команда готова к первому шагу',plan:'Пять задач · выбери исполнителей',work:`Готовность проекта ${progress}%`,event:'Смена ждёт твоего решения',result:'Игра готова. Проверь, что получилось'};
-  return `<footer class="scene-footer"><div class="scene-next"><div><span>${steps[game.stage]}/4 · ${phases[game.stage]}</span><p>${descriptions[game.stage]}</p></div><button class="primary" data-action="${next.action}" ${next.disabled?'disabled':''}>${next.label}${icon(next.action==='tick'?'clock':'arrow',20)}</button></div>
+  return `<footer class="scene-footer"><div class="scene-next"><div><span>${steps[game.stage]}/4 · ${phases[game.stage]}</span><p>${descriptions[game.stage]}</p></div><div class="scene-time-controls">${['work','event'].includes(game.stage)?`<button class="secondary scene-auto" data-action="auto" aria-describedby="play-clock-status" aria-pressed="${!!game.autoPlay}">${icon(game.autoPlay?'pause':'play',18)}${game.autoPlay?'Пауза':'Авто'}</button>`:''}${game.stage==='result'?`<button class="secondary scene-next-order" data-action="${next.action==='life-contracts'?'play-mini':'life-contracts'}">${next.action==='life-contracts'?'Сыграть ещё':'Следующий заказ →'}</button>`:''}<button class="primary" data-action="${next.action}" ${next.disabled?'disabled':''}>${next.label}${icon(next.action==='tick'?'clock':'arrow',20)}</button></div></div>
     <nav class="scene-dock" aria-label="Управление студией"><button data-action="workspace" data-id="office" aria-pressed="${!panelOpen}">${icon('home',20)}<span>Студия</span></button><button data-action="workspace" data-id="project" aria-controls="project-panel" aria-expanded="${panelOpen}" aria-pressed="${panelOpen}">${icon('brief',20)}<span>${game.stage==='hire'?'Найм':game.stage==='result'?'Результат':'Задачи'}</span></button><button data-action="studio-team">${icon('people',20)}<span>Команда <small>${game.team.length}</small></span></button><button data-action="life-office">${icon('settings',20)}<span>Улучшения <small>${money(game.life.cash)}</small></span></button></nav></footer>`;
 }
