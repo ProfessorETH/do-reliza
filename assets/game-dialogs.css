@@ -55,6 +55,9 @@ body:has(.scene-first) #info-dialog :is(.orbit-shield,.orbit-save) strong { font
 body:has(.scene-first) #info-dialog .orbit-mission-actions { display:block; padding:12px; border:1px solid var(--line); border-radius:10px; margin:0 0 12px; }.orbit-mission-actions button { min-height:44px; width:100%; }
 body:has(.scene-first) #info-dialog .orbit-mission-actions p { font-size:12px; line-height:1.5; }
 body:has(.scene-first) #info-dialog .orbit-footer { position:sticky; bottom:-24px; margin:16px 0 0; padding:16px 0 0; border-top:1px solid var(--line); background:var(--panel); display:flex; flex-wrap:wrap; gap:8px; }.orbit-footer button { min-height:48px; flex:1; }.orbit-footer .primary { margin-left:auto; }
+body:has(.scene-first) #info-dialog .orbit-footer { flex-direction:row; align-items:stretch; }
+body:has(.scene-first) #info-dialog .orbit-footer>button { margin:0; width:auto; min-width:0; flex:1 1 0; white-space:normal; }
+body:has(.scene-first) #info-dialog .orbit-pilot .mini-controls>div { display:flex; flex-direction:column; gap:4px; }
 @media(max-width:720px) {
   body:has(.scene-first) :is(#event-dialog,#info-dialog:has(.decision-receipt),#info-dialog:has(.mini-game)) { max-width:calc(100vw - 16px); max-height:calc(100dvh - 16px); padding:16px; border-radius:12px; }
   .decision-layout { display:flex; flex-direction:column; gap:20px; }.decision-selection { order:-1; width:100%; }.decision-advice { width:100%; }
