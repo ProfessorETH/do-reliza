@@ -11,7 +11,7 @@ import { freshOrbit, recordOrbitResult } from '../assets/orbit.js';
 import { missionRoute } from './orbit-route.js';
 
 function studio(){const s=createGame('bootstrap');for(const [i,id] of ['mira','iskra','echo'].entries()){assert.equal(hire(s,id),null);seatAgent(s,id,i);}return s;}
-function finish(s,ignore=false){beginPlan(s);recommend(s);beginWork(s);for(let n=0;n<150&&s.stage!=='result';n++){if(s.stage==='event')assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:ignore?'ignore':s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='salary'?'salary-accept':'life-care'}[s.currentEvent]),null);else assert.equal(tick(s),true);}assert.equal(s.stage,'result');for(const id of pendingSalary(s))assert.equal(salaryDecision(s,id,'accept'),null);assert.ok(validSave(s));return s;}
+function finish(s,ignore=false){beginPlan(s);recommend(s);beginWork(s);for(let n=0;n<150&&s.stage!=='result';n++){if(s.stage==='event')assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:ignore?'ignore':s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='salary'?'salary-accept':s.life.incident?.type==='night'?'night-work':'life-care'}[s.currentEvent]),null);else assert.equal(tick(s),true);}assert.equal(s.stage,'result');for(const id of pendingSalary(s))assert.equal(salaryDecision(s,id,'accept'),null);assert.ok(validSave(s));return s;}
 
 test('bootstrapped studio can afford three novices and cannot borrow expert stats from classic games',()=>{
   const originals=structuredClone(AGENTS),s=studio();assert.equal(s.life.cash,800);assert.equal(s.budget,2400);

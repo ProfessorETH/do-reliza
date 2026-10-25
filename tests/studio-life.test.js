@@ -10,7 +10,7 @@ function working(seed=0) {
 }
 function finish(s) {
   for(let n=0;n<100&&s.stage!=='result';n++) {
-    if(s.stage==='event') assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:'life-care'}[s.currentEvent]),null);
+    if(s.stage==='event') assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='night'?'night-work':'life-care'}[s.currentEvent]),null);
     else assert.equal(tick(s),true);
   }
   assert.equal(s.stage,'result');assert.ok(validSave(s));return s;
