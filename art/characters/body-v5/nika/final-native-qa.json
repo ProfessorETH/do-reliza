@@ -1,0 +1,93 @@
+{
+  "status": "accepted_game_prototype",
+  "asset": "assets/models/nika.glb",
+  "sha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+  "bytes": 23939612,
+  "source_paint_sha256": "3bfab7982e990af6256fc0d385e330d7fd7df36c643d6e691f9dbcb709e6846a",
+  "accepted_body_stage_sha256": "ae033c06370d3c0c61591eb4b39620944186c41233ab918e288ea6987acd7ecf",
+  "head_original_sha256": "eb36a37df3c77aec4243596fd96042ce9bb085d9c24042e46622b2f9e6e0952b",
+  "head_skin_neck_derivative_sha256": "731ddd4f22cea0f0b28a11ed94525ac3dd1dcfa7571bf7a0159db06f49908db4",
+  "rig": {
+    "bones": 25,
+    "skinned_mesh_nodes": 1,
+    "body_vertices": 79113,
+    "body_triangles": 91281,
+    "maximum_weight_sum_error": 1.4528632164001465e-7,
+    "original_five_clips": [
+      "Idle",
+      "Sit",
+      "Stand",
+      "Walk",
+      "Work"
+    ],
+    "maximum_bind_anchor_error_m": 4.078804856737233e-7,
+    "ankle_ring_nearest_error_m": 0,
+    "maximum_saved_clip_sole_error_m": 0.003139151418778491,
+    "maximum_all_upper_triangle_edge_growth_m": 0.029717788388399006,
+    "saved_clips_and_runtime_poses_verified": true
+  },
+  "body_fit": {
+    "source_hip_y": 0.2,
+    "source_neck_y": 0.72,
+    "height_interpolation": "linear",
+    "source_surface_resmoothed": false,
+    "displacement_field_iterations": 120,
+    "weight_relaxation_iterations": 260,
+    "source_normal_rotation_proxy": {
+      "inspection_height_range_m": [
+        0.5,
+        1.4
+      ],
+      "before_opposing_faces": 1222,
+      "before_opposing_source_area_m2": 0.03491939016689108,
+      "after_opposing_faces": 18,
+      "after_opposing_source_area_m2": 0.0002998332616227907,
+      "note": "Comparison to source normals is a deformation diagnostic, not a global watertightness claim"
+    }
+  },
+  "albedo_repair": {
+    "method": "Native Blender image pixels and measured source-geometry UV mask",
+    "png_sha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855",
+    "affected_hand_texels": 4730,
+    "affected_front_vneck_texels": 1734,
+    "source_geometry_uv_topology_sha256": "9d5c7c92bb11294e7b09f60660320c7d24e686b02b233abd5f26a4847b1feb16",
+    "source_file_unchanged": true,
+    "disk_colorspace": "sRGB",
+    "disk_outside_roi_max_rgba_error": 0,
+    "disk_outside_roi_changed_channels": 0,
+    "original_model_bin_prefix_unchanged": true,
+    "original_geometry_uv_rig_clips_and_head_unchanged": true
+  },
+  "collar_ring": {
+    "plane_y": 1.36,
+    "front_roi": {
+      "absXMax": 0.11,
+      "zMin": -0.09,
+      "zMax": 0.02,
+      "cutY": 1.36,
+      "exactYTolerance": 5e-7
+    },
+    "head_to_body_front_xz": {
+      "points": 28,
+      "targetSegments": 118,
+      "min": 0.0002915631247735264,
+      "median": 0.009930185955408195,
+      "p95": 0.025532617035181768,
+      "max": 0.026807132700426617,
+      "maxYPlaneError": 4.5227088740773524e-10
+    },
+    "body_to_head_front_xz": {
+      "points": 154,
+      "targetSegments": 23,
+      "min": 0.0014316189896660364,
+      "median": 0.032174847548226033,
+      "p95": 0.06942196378734336,
+      "max": 0.08227133256303651,
+      "maxYPlaneError": 6.699263255249832e-8
+    },
+    "welded": false,
+    "note": "Body rim contains collar and source fringe. Coplanar cut rings have different topology and are not claimed coincident."
+  },
+  "visual_acceptance": "Parent browser accepted continuous blazer, hands and clearer V-neck for the current game prototype; generated outer collar contours retained.",
+  "native_source_file": "art/blender/team-body-v5.blend"
+}

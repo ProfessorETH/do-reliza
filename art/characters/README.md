@@ -5,6 +5,9 @@
 Текущие тела v5 получены в Hunyuan3D 2.1 по полным референсам персонажей.
 Принятые головы сотрудников v4 и существующие анимации сохранены.
 Процесс, параметры текстурирования и проверки: [body-v5/README.md](body-v5/README.md).
+Редактируемая мастерская всех семи моделей: [team-body-v5.blend](../blender/team-body-v5.blend).
+Текстуры упакованы, сохранены 35 Actions. Скелеты открываются в Rest Position;
+для воспроизведения Actions переключите их в Pose Position.
 Прежние `team-portrait-v4.blend` и `team-rigged-v3.blend` сохранены.
 `receipt.json` и `export-receipt.json` описывают предыдущие версии.
 
