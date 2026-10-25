@@ -23,7 +23,7 @@ import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
 import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-voices-20261024';
 import { characterLine, characterMoment } from './assets/character-dialogue.js';
-import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
+import { ensureLife, condition, careFor, buyUpgrade, restArrival, awayForRest, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
 import { nextProject } from './engine.js?v=shift-ux-20261024-v2';
 import { createGame, agentById, hire, beginPlan, assign, fit as baseFit, recommend, beginWork, tick, taskStatus, activeTasks, resolveEvent, getResult, validSave, supportTask, restoreOffice, seatAgent, teamSeated, walkInOffice } from './engine.js?v=shift-ux-20261024-v2';
@@ -79,14 +79,13 @@ function persist() {
 let toastTimeout;
 function toast(message) { const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('visible'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => el.classList.remove('visible'), 3400); }
 function stopAuto() { if(game) game.autoPlay = false; }
-function clockBlocked() { return document.hidden || !!document.querySelector('dialog[open],.nika-guide:not(.nika-collapsed)') || restInTransit(game); }
+function clockBlocked() { return document.hidden || !!document.querySelector('dialog[open],.nika-guide:not(.nika-collapsed)'); }
 function clockStatus() {
   if(game.stage==='result')return 'Смена завершена';
   if(!game.autoPlay)return 'Авто выключено';
   if(game.stage==='event')return 'Авто ждёт твоего решения';
   if(game.stage!=='work')return 'Авто начнётся со сменой';
   if(document.querySelector('dialog[open],.nika-guide:not(.nika-collapsed)'))return 'Авто ждёт закрытия окна';
-  if(restInTransit(game))return 'Авто ждёт сотрудника';
   return 'Авто ведёт смену';
 }
 function updateClock() {
@@ -162,12 +161,11 @@ function planPanel() {
 }
 function workPanel() {
   const active=activeTasks(game);
-  const travelling=restInTransit(game);
   const support=active.reduce((low,t)=>!low||fit(game.assignments[t.id],t)<fit(game.assignments[low.id],low)?t:low,null);
   return `<div class="panel-header"><div class="eyebrow">3 / 4 · СМЕНА</div><h1>Команда за работой</h1><p>Пропусти час или помоги разработчику с его задачей.</p></div>
-    <div class="work-controls"><button class="primary" data-action="tick" ${travelling?'disabled':''}>${icon('clock',18)} ${travelling?'В пути…':'Следующий час'}</button></div>
-    <div class="time-strip" role="status">Прошло <strong>${game.time} ч</strong><span>${travelling?'Дорога не расходует часы':`План: ${game.deadline} ч`}</span></div>
-    <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':'Разработчик занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
+    <div class="work-controls"><button class="primary" data-action="tick">${icon('clock',18)} Следующий час</button></div>
+    <div class="time-strip" role="status">Прошло <strong>${game.time} ч</strong><span>План: ${game.deadline} ч</span></div>
+    <div class="work-tasks">${TASKS.map(t=>{const status=taskStatus(game,t), a=agentById(game.assignments[t.id]);const running=active.some(x=>x.id===t.id);return `<article class="work-task ${status==='done'?'done':running?'active':''}"><div class="work-task-icon">${icon(status==='done'?'check':running?'bolt':'lock',17)}</div><div><h2>${t.name}</h2><span>${a.name} · ${status==='done'?'Готово':running?'В работе':status==='locked'?'Ждёт предыдущие задачи':awayForRest(game.life.members[a.id])?condition(game,a.id).label:'Разработчик занят'}</span><div class="meter"><i style="width:${game.progress[t.id]}%"></i></div></div><strong>${Math.round(game.progress[t.id])}%</strong></article>`;}).join('')}</div>
     <div class="activity-log"><div class="eyebrow">ИЗ СТУДИИ</div><button class="text-button" data-action="activity">Журнал ↗</button>${game.log.slice(-1).reverse().map((m,i)=>`<p class="${i===0?'latest':''}"><span></span>${esc(m)}</p>`).join('')}</div>
     ${game.support?`<div class="support-done">${icon('check',18)}<span>Разбор проведён: ${agentById(game.support.agentId).name}<small>Навык для задачи «${TASKS.find(t=>t.id===game.support.taskId).name}» повышен на 15, максимум до 100.</small></span></div>`:support?`<div class="support-card"><div class="eyebrow">ПОМОЩЬ ТИМЛИДА</div><h2>${agentById(game.assignments[support.id]).name}: «${support.name}»</h2><p>Разберите задачу вместе. Разработчик лучше справится с ней, но ты потратишь час.</p><button class="secondary full" data-action="support" data-id="${support.id}">Помочь с задачей <span>+1 ч</span></button></div>`:''}`;
 }
@@ -323,7 +321,7 @@ function officeDeskAction(index) {
 function advance() { if(!game||clockBlocked())return;if(tick(game)){game.clockFraction=0;if(game.stage==='result')stopAuto();persist();render();} }
 function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
 function resetDialog() { showDialog(`<div class="eyebrow">НОВАЯ СТУДИЯ</div><h2 id="dialog-title">Начать с чистого листа?</h2><p>Команда, касса, улучшения и история заказов будут заменены. Для продолжения текущей студии выбери следующий заказ после релиза.</p><div class="dialog-actions"><button class="secondary" data-action="close-dialog">Остаться</button><button class="primary" data-action="confirm-new">Начать заново</button></div>`); }
-function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков: каждый сам займёт свободный компьютер. В панели команды можно выбрать, кто за каким компьютером сидит. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час» или на «Авто». Во время обсуждения и открытого окна часы стоят, затем автоход продолжается. Сложную задачу можно разобрать вместе с разработчиком.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
+function about() { showDialog(`<div class="eyebrow">ДО РЕЛИЗА · v0.5</div><h2 id="dialog-title">Кто такой тимлид?</h2><p>Это разработчик, который руководит командой: помогает разобраться с задачами, выбирает технические решения и проверяет код.</p><p>Найми троих разработчиков: каждый сам займёт свободный компьютер. В панели команды можно выбрать, кто за каким компьютером сидит. До начала смены можно нажать на свободный пол, чтобы пройтись по офису. Потяни сцену мышью или пальцем, чтобы повернуть её. Дальше собери план для маленькой игры. Код отвечает за механику, дизайн — за экран, тесты — за поиск ошибок, общение — за понимание задания. Темп показывает, как быстро разработчик работает.</p><p>Время двигается кнопкой «Следующий час» или на «Авто». Во время обсуждения и открытого окна часы стоят, затем автоход продолжается. Сложную задачу можно разобрать вместе с разработчиком. Пока коллега отдыхает или пьёт, остальные работают. Вернувшийся продолжит свою задачу.</p><p class="small-muted">Это игровая модель профессии. Разработчики — персонажи с заданными навыками; реальные языковые модели не подключены. Графика создана с помощью ИИ. Сохранение работает в этом браузере.</p><button class="primary full" data-action="close-dialog">Понятно ${icon('check')}</button>`); }
 function inspect(id) {
   if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}
   const a=agentById(id); if(!a)return;

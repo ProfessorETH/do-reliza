@@ -4,7 +4,7 @@ export { studyDecision };
 import { validEventClock } from './assets/event-clock.js';
 import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
-import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, restInTransit, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
+import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 export const VERSION = 1;
 export const agentById = id => AGENTS.find(a => a.id === id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
@@ -74,7 +74,6 @@ export function assign(state, taskId, agentId) {
 export const fit = (agentId, task, state) => clamp((agentById(agentId)?.stats[task.skill] || 0) + (state?.support && state.support.agentId === agentId && state.support.taskId === task.id ? 15 : 0));
 export function supportTask(state, taskId) {
   if (state.stage !== 'work') return 'Сначала вернитесь к работе.';
-  if (restInTransit(state)) return 'Дождись, пока сотрудник сядет отдыхать или вернётся за компьютер.';
   if (state.support) return 'На этой смене вы уже провели совместный разбор.';
   const task = activeTasks(state).find(t => t.id === taskId);
   if (!task) return 'Помочь можно с задачей, которая сейчас в работе.';
@@ -107,10 +106,10 @@ export function activeTasks(state) {
 }
 export function tick(state) {
   if (state.stage !== 'work') return false;
-  if (restInTransit(state)) return false; // Real-time travel never consumes extra game hours or skips the break.
   const active = activeTasks(state);
-  if (!active.length && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
-  if (!active.length && !state.team.some(id => state.life?.members[id]?.breaks)) return false;
+  const pendingCare=()=>state.team.some(id=>{const m=state.life?.members[id];return m?.restTrip||m?.coffeeTrip||m?.breaks;});
+  if (!active.length && !pendingCare() && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
+  if (!active.length && !pendingCare()) return false;
   state.time += 1;
   const completed = [];
   for (const task of active) {
@@ -129,7 +128,7 @@ export function tick(state) {
   else if (!state.choices.review && state.progress.code >= 100) { state.currentEvent = 'review'; state.stage = 'event'; }
   else if (!state.choices.bug && state.progress.qa >= 100) { state.currentEvent = 'bug'; state.stage = 'event'; }
   else if (scheduleIncident(state)) { /* The persisted event pauses time like technical decisions. */ }
-  else if (TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; state.log.push('Версия передана заказчику. Пора проверить результат.'); settleProject(state,getResult(state)); }
+  else if (!pendingCare() && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; state.log.push('Версия передана заказчику. Пора проверить результат.'); settleProject(state,getResult(state)); }
   return true;
 }
 export function resolveEvent(state, optionId) {

@@ -10,7 +10,7 @@ function working(){const s=createDemoGame();s.stage='work';s.life.upgrades=['cof
 test('coffee grants nothing until drinking finishes and restores only once across reload',()=>{
   const s=working(),id=s.team[0],m=s.life.members[id];s.autoPlay=true;
   assert.equal(careFor(s,id,'coffee'),null);assert.equal(m.energy,30);assert.equal(m.morale,40);assert.ok(!m.coffee);
-  assert.ok(restInTransit(s));const time=s.time;assert.equal(tick(s),false);assert.equal(s.time,time);assert.equal(s.autoPlay,true);
+  assert.ok(restInTransit(s));const time=s.time;assert.equal(tick(s),true);assert.equal(s.time,time+1);assert.equal(s.autoPlay,true);
   for(const phase of ['outbound','drinking','returning']){
     assert.equal(m.coffeeTrip.phase,phase);assert.ok(validSave(s));const saved=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(saved));
     assert.ok(careFor(saved,id,'coffee'));

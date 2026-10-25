@@ -10,7 +10,7 @@ test('the scene action respects seating, assignments and rest travel without cha
   assert.equal(JSON.stringify(s),before);
   s.seats[0]=null;assert.equal(sceneAction(s).action,'studio-project');s.seats[0]='mira';
   s.stage='plan';assert.equal(sceneAction(s).action,'work');delete s.assignments.code;assert.equal(sceneAction(s).action,'studio-project');
-  s.stage='work';assert.equal(sceneAction(s).action,'tick');s.life.members.mira.restTrip={phase:'outbound'};assert.equal(sceneAction(s).disabled,true);
+  s.stage='work';assert.equal(sceneAction(s).action,'tick');s.life.members.mira.restTrip={phase:'outbound'};assert.equal(sceneAction(s).disabled,false);
   s.stage='event';assert.equal(sceneAction(s).action,'event-open');s.stage='result';assert.equal(sceneAction(s).action,'play-mini');
 });
 test('damaged or obsolete bubble positions recover to a visible position',()=>{
