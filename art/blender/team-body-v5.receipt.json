@@ -1,12 +1,12 @@
 {
   "status": "native_source_verified",
   "output": "art/blender/team-body-v5.blend",
-  "bytes": 102979157,
-  "mib": 98.209,
+  "bytes": 103149500,
+  "mib": 98.371,
   "size_limit_bytes": 104857600,
   "size_limit_basis": "100 MiB GitHub file ceiling; textures/geometry not degraded",
-  "sha256": "9d735a2ff09472fde15ab16d3a0381409d454c1bece8abee4d31bb1304083889",
-  "seconds": 13.138,
+  "sha256": "4b4c8cbaea893da59b43d66c3c2ac07e8545bf4cc173ac75c2bd06476826f199",
+  "seconds": 55.13,
   "packed_images": 20,
   "external_images": [],
   "orphan_data_before": {
@@ -25,12 +25,12 @@
   "models": [
     {
       "id": "mira",
-      "source_sha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+      "source_sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
       "body_vertices": 54132,
       "body_triangles": 74632,
       "head_triangles": 55673,
       "bones": 25,
-      "maximum_weight_sum_error": 1.3364478945732117e-7,
+      "maximum_weight_sum_error": 1.3364478945732117e-07,
       "body_signed_triangle_volume_proxy": 0.09626651243339905,
       "portrait_head_bone_parent": "Skin_mira_Head",
       "clip_names": [
@@ -50,12 +50,12 @@
     },
     {
       "id": "pixel",
-      "source_sha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+      "source_sha256": "b9b350f0aa355df650eaf1e3b70e8dcc0cea1dea6d42cf2b1feca22cf7e481fd",
       "body_vertices": 63503,
       "body_triangles": 89795,
       "head_triangles": 58904,
       "bones": 25,
-      "maximum_weight_sum_error": 1.4650868251919746e-7,
+      "maximum_weight_sum_error": 1.4650868251919746e-07,
       "body_signed_triangle_volume_proxy": 0.11345545825568303,
       "portrait_head_bone_parent": "Skin_pixel_Head",
       "clip_names": [
@@ -75,12 +75,12 @@
     },
     {
       "id": "nord",
-      "source_sha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+      "source_sha256": "e6d29aafab92a74df099b43a50d7e331b9455a1552b480463d3e25202e29b1cd",
       "body_vertices": 62536,
       "body_triangles": 95023,
       "head_triangles": 59271,
       "bones": 25,
-      "maximum_weight_sum_error": 1.337612047791481e-7,
+      "maximum_weight_sum_error": 1.337612047791481e-07,
       "body_signed_triangle_volume_proxy": 0.1133732415357509,
       "portrait_head_bone_parent": "Skin_nord_Head",
       "clip_names": [
@@ -100,12 +100,12 @@
     },
     {
       "id": "echo",
-      "source_sha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+      "source_sha256": "c9aea7267dda40a4d3172a046a096c29c712239b20cbcefc50c281bdfac29974",
       "body_vertices": 66957,
       "body_triangles": 92225,
       "head_triangles": 59196,
       "bones": 25,
-      "maximum_weight_sum_error": 1.3966928236186504e-7,
+      "maximum_weight_sum_error": 1.3966928236186504e-07,
       "body_signed_triangle_volume_proxy": 0.11948705370358204,
       "portrait_head_bone_parent": "Skin_echo_Head",
       "clip_names": [
@@ -125,12 +125,12 @@
     },
     {
       "id": "iskra",
-      "source_sha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+      "source_sha256": "ce870e159dc82205cbc849db5eee08e95198f2a59f79f15ebe5c0718c8414044",
       "body_vertices": 68354,
       "body_triangles": 79910,
       "head_triangles": 58486,
       "bones": 25,
-      "maximum_weight_sum_error": 1.4039687812328339e-7,
+      "maximum_weight_sum_error": 1.4039687812328339e-07,
       "body_signed_triangle_volume_proxy": 0.12683536586556818,
       "portrait_head_bone_parent": "Skin_iskra_Head",
       "clip_names": [
@@ -150,12 +150,12 @@
     },
     {
       "id": "saga",
-      "source_sha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+      "source_sha256": "6280556b28296cec083a69180e85cfa0615da23adc393f2c084f71ee5cafd2e2",
       "body_vertices": 52746,
       "body_triangles": 79091,
       "head_triangles": 57568,
       "bones": 25,
-      "maximum_weight_sum_error": 1.418375177308917e-7,
+      "maximum_weight_sum_error": 1.418375177308917e-07,
       "body_signed_triangle_volume_proxy": 0.12615092391555552,
       "portrait_head_bone_parent": "Skin_saga_Head",
       "clip_names": [
@@ -175,12 +175,12 @@
     },
     {
       "id": "nika",
-      "source_sha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+      "source_sha256": "339252c3413811752240da4850c7c437a95073204e2d80326910abd7e715d4f4",
       "body_vertices": 79113,
       "body_triangles": 91281,
       "head_triangles": 57460,
       "bones": 25,
-      "maximum_weight_sum_error": 1.4528632164001465e-7,
+      "maximum_weight_sum_error": 1.4528632164001465e-07,
       "body_signed_triangle_volume_proxy": 0.12023976147666526,
       "portrait_head_bone_parent": "Skin_nika_Head",
       "clip_names": [
@@ -202,16 +202,14 @@
   "native_generator": "art/characters/body-v5/rig_build_team_source.py",
   "native_generator_sha256": "a6038d0ecc59f727cba65f98ab1e0e0fc63f56e41d515c60d515690d6ab1dd5b",
   "reopen_verification": {
-    "fresh_factory_background_process": true,
-    "models": 7,
-    "bones_per_model": 25,
+    "status": "passed",
+    "rigs": 7,
+    "bones_per_rig": 25,
     "actions": 35,
     "all_actions_fake_user": true,
     "packed_images": 20,
     "external_image_dependencies": 0,
-    "portrait_heads_bone_parented": true,
-    "nika_repaired_albedo_payload_sha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855",
-    "nika_repaired_albedo_payload_exact": true,
-    "passed": true
+    "input_hashes_match_final_proportions_receipt": true,
+    "nika_repaired_albedo_sha256": "ee14da3d1c481da9210419fc6ab070a93a9c4003c0dffd1f4a50488841a0a855"
   }
 }

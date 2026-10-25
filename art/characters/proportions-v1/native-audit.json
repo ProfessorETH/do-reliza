@@ -1,0 +1,34 @@
+{
+  "status": "qualified_rest_geometry_audit",
+  "final_asset_hashes": "receipt.json:models[].outputSha256",
+  "scope": "Seven fitted rigid portrait heads; bodies, rigs and animation samples retain their accepted geometry and data.",
+  "method": {
+    "baseline": "Embedded pre-proportion original GLB recovered with recoverHeadProportionBase",
+    "space": "World rest coordinates, unchanged indexed triangles",
+    "new_degenerate_triangle_threshold_area_m2": 1e-12,
+    "old_new_normal_opposition": "Dot product of old and fitted geometric face normals below zero. This is a direction comparison, not proof of a negative deformation Jacobian.",
+    "smooth_normal_mismatch": "Originally geometric-to-mean-vertex-normal alignment above 0.2, fitted alignment below -0.1.",
+    "timing": "Positions and normals audited before final tangent-only correction. Final tangent changes do not change these triangle results."
+  },
+  "models": [
+    {"id":"mira", "scale":0.76, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":3, "new_smooth_normal_mismatch_triangles":5},
+    {"id":"pixel", "scale":0.76, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":1, "new_smooth_normal_mismatch_triangles":1},
+    {"id":"nord", "scale":0.85, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":10, "new_smooth_normal_mismatch_triangles":7},
+    {"id":"iskra", "scale":0.76, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":4, "new_smooth_normal_mismatch_triangles":8},
+    {"id":"saga", "scale":0.80, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":7, "new_smooth_normal_mismatch_triangles":30},
+    {"id":"echo", "scale":0.82, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":1, "new_smooth_normal_mismatch_triangles":2},
+    {"id":"nika", "scale":0.70, "new_degenerate_triangles":0, "old_new_normal_opposition_triangles":65, "new_smooth_normal_mismatch_triangles":74}
+  ],
+  "interpretation": [
+    "The transition is orientation-preserving at evaluated vertices; the main face above the collar transition scales uniformly.",
+    "The strict triangle-direction audit is not zero. Most affected Nika triangles are lower rear hair near world Y 1.35–1.40 and Z +0.12–+0.19; the opposed-direction source area is approximately 0.00705 square metres, 0.148 percent of the head surface.",
+    "A positive smooth Jacobian alone does not guarantee that coarse triangle chords retain the direction of their original face normal. This audit does not claim zero folded or flipped-looking faces.",
+    "The parent inspected the current rear hair/collar closeup and accepted the prototype without significant new visible holes.",
+    "The final seven-asset automated checks separately verify the locked collar, preserved body/rig/UV/textures/clips, finite unit normals, orthogonal unit tangents and transformed blink deltas."
+  ],
+  "limits": [
+    "No new GPU generation or body refit was performed.",
+    "Rest geometry audit does not replace visual inspection at every camera angle.",
+    "Hair crown bounds include buns, bobs and other hairstyle volume; they are not anatomical skull landmarks."
+  ]
+}
