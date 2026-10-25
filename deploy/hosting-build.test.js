@@ -48,3 +48,17 @@ test('the accepted start audio portrait uses the module asset root, not the HTML
   assert(!markup.includes('src="assets/'));
   assert.match(markup,/src="[^"]+\/assets\/onboarding\/nika-avatar\.webp"/);
 });
+
+test('public character workshop uses versioned local modules and all seven accepted models', async () => {
+  const gallery=await readFile(resolve(root,'dist/demo-v05/characters.html'),'utf8');
+  assert.match(gallery,/data-characters="7"/);
+  assert(!gallery.includes('importmap'));
+  for(const [,path] of gallery.matchAll(/(?:src|href)="(static\/[^"]+)"/g)) {
+    assert(path.startsWith(manifest.prefix));
+    assert((await stat(resolve(root,'dist/demo-v05',path))).isFile());
+  }
+  for(const id of ['mira','pixel','nord','iskra','saga','echo','nika']) {
+    const bytes=await readFile(resolve(root,'dist/demo-v05',manifest.prefix,'assets/models',`${id}.glb`));
+    assert(bytes.equals(await readFile(resolve(root,'assets/models',`${id}.glb`))));
+  }
+});
