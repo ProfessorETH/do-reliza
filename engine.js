@@ -1,4 +1,5 @@
 import { agentProfile, careerFee, contractTerms, contractLock, isCareer } from './assets/studio-career.js';
+import { salaryBonus, pendingSalary, endEmployment } from './assets/career-employment.js';
 import { studioCapacity } from './assets/studio-progression.js';
 import { validOfficeChatter, carryOfficeChatter } from './assets/office-chatter-state.js';
 import { studyDecision, recordDiscussion, validDiscussions } from './assets/team-discussion.js';
@@ -180,7 +181,8 @@ export function nextProject(state, contractId) {
   const locked=contractLock(state,contractId);if(locked)return locked;
   settleProject(state, getResult(state));
   const l = ensureLife(state);
-  const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
+  if(pendingSalary(state).some(id=>!l.departures.includes(id)))return 'Сначала обсуди запросы на прибавку: согласуй, отложи или выбери замену.';
+  const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + salaryBonus(state,id), 0);
   if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
   if(state.officeChatter)next.officeChatter=carryOfficeChatter(state);
@@ -202,6 +204,7 @@ export function nextProject(state, contractId) {
     if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   if(isCareer(state))l.career.rateOrder=l.completed;
+  endEmployment(state,departed);
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.conflictDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
   next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
   next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽; поддержка расширенного состава: ${subsidy} ₽. Команда отдохнула между заказами.`];

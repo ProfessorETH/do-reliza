@@ -3,7 +3,7 @@ export function eventKey(game) {
 }
 export function ensureEventClock(game) {
   const key=eventKey(game);
-  if(!key || game.currentEvent!=='life' || game.life.incident?.type==='idea' || game.difficulty==='calm' || game.timedEvents===false)return null;
+  if(!key || game.currentEvent!=='life' || ['idea','salary'].includes(game.life.incident?.type) || game.difficulty==='calm' || game.timedEvents===false)return null;
   if(game.eventClock?.key!==key)game.eventClock={key,remaining:game.difficulty==='hard'?30000:45000,paused:false};
   return game.eventClock;
 }

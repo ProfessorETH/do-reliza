@@ -1,4 +1,5 @@
 import { upgradeOffer, modelPreview } from './upgrade-shop.js';
+import { salaryBonus } from './career-employment.js';
 import { careerFee, contractTerms, contractLock, scorePay, isCareer } from './studio-career.js';
 import { MISSIONS } from './orbit-missions.js';
 import { AGENTS } from '../data.js';
@@ -19,7 +20,7 @@ export function contractCosts(s,c) {
   const team=s.team.filter(id=>!s.life.departures.includes(id));
   const fees=team.reduce((n,id)=>n+careerFee(s,id,true),0);
   const terms=contractTerms(s,c),budget=terms.budget;
-  const payroll=team.reduce((n,id)=>n+s.life.members[id].raises*1000,0), subsidy=Math.max(0,fees-budget);
+  const payroll=team.reduce((n,id)=>n+salaryBonus(s,id),0), subsidy=Math.max(0,fees-budget);
   return {budget,fees,payroll,subsidy,cashAfter:s.life.cash-payroll-subsidy,reserve:Math.max(0,budget-fees),deadline:terms.deadline};
 }
 

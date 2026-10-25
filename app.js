@@ -1,4 +1,6 @@
 import { createOfficeConversations } from './assets/office-conversations.js';
+import { salaryDecision } from './assets/career-employment.js';
+import { employmentPanel } from './assets/employment-view.js';
 import { createOfficeSpeech } from './assets/office-speech.js';
 
 import { renderTaskPlanning } from './assets/task-planning.js';
@@ -471,6 +473,10 @@ document.addEventListener('click',e=>{
   if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
   if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
   if(action==='career'){if(isCareer(game))showDialog(careerPanel(game));return;}
+  if(action==='salary-decision'){
+    const before=captureMembers(game),error=salaryDecision(game,id,el.dataset.choice);
+    if(error)toast(error);else{queueMemberFeedback(game,before,[id]);persist();render();dialog.close();toast('Условия сотрудника обновлены.');}return;
+  }
   if(action==='career-train-preview'){
     const skill=el.dataset.skill,error=trainingLock(game,id,skill);if(error){toast(error);return;}
     const a=agentById(id),name=SKILLS.find(k=>k.key===skill).label;
@@ -494,6 +500,7 @@ document.addEventListener('click',e=>{
   }
   if(action==='life-raise-preview'){
     if(!game.team.includes(id))return;
+    if(isCareer(game)){showDialog(`<h2 id="dialog-title">Условия ${agentById(id).name}</h2>${employmentPanel(game,id)}`);return;}
     showDialog(`<div class="eyebrow">УСЛОВИЯ РАБОТЫ</div><h2 id="dialog-title">Повысить оплату ${agentById(id).name}?</h2><p>Выплатить сейчас 1 000 ₽ из кассы студии. Каждый следующий заказ будет требовать ещё 1 000 ₽ доплаты этому сотруднику. Настроение +15; предупреждение об уходе снимается.</p><div class="dialog-actions"><button class="secondary" data-action="life-member" data-id="${id}">Назад</button><button class="primary" data-action="life-raise" data-id="${id}">Подтвердить · 1 000 ₽</button></div>`);return;
   }
   if(action==='life-buy-preview'){
