@@ -1,40 +1,34 @@
 {
-  "updated": "seven-accepted-production-v5-20261025",
+  "updated": "head-proportions-v1-20261025",
   "note": "Шесть сотрудников с новыми телами и портретными головами, плюс Ника-наставница. Ходьба, посадка и работа: 25 костей и пять движений. Кисти и края воротника Ники пока упрощены.",
   "models": {
     "mira": {
-      "file": "mira-quality.glb",
-      "sha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
-      "url": "../../assets/models/mira.glb"
+      "url": "../../assets/models/mira.glb",
+      "sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6"
     },
     "pixel": {
-      "file": "pixel-quality.glb",
-      "sha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
-      "url": "../../assets/models/pixel.glb"
+      "url": "../../assets/models/pixel.glb",
+      "sha256": "b9b350f0aa355df650eaf1e3b70e8dcc0cea1dea6d42cf2b1feca22cf7e481fd"
     },
     "nord": {
-      "file": "nord-quality.glb",
-      "sha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
-      "url": "../../assets/models/nord.glb"
+      "url": "../../assets/models/nord.glb",
+      "sha256": "e6d29aafab92a74df099b43a50d7e331b9455a1552b480463d3e25202e29b1cd"
     },
     "iskra": {
-      "file": "iskra-quality.glb",
-      "sha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
-      "url": "../../assets/models/iskra.glb"
+      "url": "../../assets/models/iskra.glb",
+      "sha256": "ce870e159dc82205cbc849db5eee08e95198f2a59f79f15ebe5c0718c8414044"
     },
     "saga": {
-      "file": "saga-quality.glb",
-      "sha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
-      "url": "../../assets/models/saga.glb"
+      "url": "../../assets/models/saga.glb",
+      "sha256": "6280556b28296cec083a69180e85cfa0615da23adc393f2c084f71ee5cafd2e2"
     },
     "echo": {
-      "file": "echo-quality.glb",
-      "sha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
-      "url": "../../assets/models/echo.glb"
+      "url": "../../assets/models/echo.glb",
+      "sha256": "c9aea7267dda40a4d3172a046a096c29c712239b20cbcefc50c281bdfac29974"
     },
     "nika": {
       "url": "../../assets/models/nika.glb",
-      "sha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b"
+      "sha256": "339252c3413811752240da4850c7c437a95073204e2d80326910abd7e715d4f4"
     }
   },
   "acceptance": true

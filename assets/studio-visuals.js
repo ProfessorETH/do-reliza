@@ -1,3 +1,4 @@
+import { assetURL } from '../asset-url.js';
 export function visualIcon(kind,size=24) {
   const paths={energy:'M13 2 4 14h7l-1 8 10-13h-7Z',mood:'M8 9h.01M16 9h.01M7 14q5 6 10 0',stress:'m4 17 5-10 5 7 6-10',rest:'M4 12V8q0-3 3-3h10q3 0 3 3v4M3 12h18v6H3zM5 18v3m14-3v3',coffee:'M4 6h12v9q0 5-6 5t-6-5ZM16 8h2a3 3 0 0 1 0 6h-2M7 2v2m6-2v2',info:'M12 10v7m0-11v1',focus:'M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6',talk:'M3 4h18v13H9l-5 4v-4H3Z'};
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${['mood','info'].includes(kind)?'<circle cx="12" cy="12" r="10"/>':''}<path d="${paths[kind]||paths.info}"/></svg>`;
@@ -6,14 +7,7 @@ export function memberPortrait(a){return `<span class="compact-portrait" style="
 export function memberMeters(m){return `<div class="visual-vitals">${[['energy','Энергия',m.energy],['mood','Настроение',m.morale],['stress','Напряжение',m.stress]].map(([kind,label,value])=>`<div class="vital ${kind}" data-low="${kind==='stress'?value>=65:value<35}" title="${label}: ${Math.round(value)} из 100">${visualIcon(kind)}<span>${label}<b>${Math.round(value)}</b><meter min="0" max="100" value="${value}" aria-label="${label}">${Math.round(value)}</meter></span></div>`).join('')}</div>`;}
 
 export const UPGRADE_COPY={coffee:['Напитки для команды','+15 энергии · +5 настроения'],desk4:['Четвёртое место','Новое крыло · команда до 4'],desk5:['Пятое место','Ещё один коллега · команда до 5'],lounge:['Уютный отдых','Перерыв: +45 энергии вместо 30'],quiet:['Тихий офис','Напряжение от работы: +1 вместо +2'],computers:['Быстрые компьютеры','Код и сборка быстрее на 10%']};
-export function upgradeArt(id){
-  const desk='<path d="m35 94 97-30 81 38-97 35Z" fill="#c89c6d"/><path d="m35 94 81 43v9L35 104Zm81 43 97-35v9l-97 36Z" fill="#996e4a"/><path d="M47 107v38m144-28v31m-74 0v27" stroke="#40575a" stroke-width="9"/><path d="m87 56 64-16v47l-64 19Z" fill="#23393e" stroke="#8baba4" stroke-width="4"/><path d="m94 63 50-13v30l-50 15Z" fill="#78ac9c"/><path d="m116 98 1 12 14 5" fill="none" stroke="#344e50" stroke-width="5"/>';
-  const illustrations={
-    coffee:'<path d="m82 42 65-14 32 19-66 18Z" fill="#86a79b"/><path d="m82 42 31 23v98l-31-22Z" fill="#416862"/><path d="m113 65 66-18v95l-66 21Z" fill="#537f73"/><path d="m125 80 41-11v22l-41 11Z" fill="#c3d9b5"/><path d="m125 120 39-10v35l-39 10Z" fill="#213b3d"/><ellipse cx="146" cy="142" rx="14" ry="6" fill="#d4a773"/><path d="M135 127v14q10 10 20-3v-16Z" fill="#f3debb"/><path d="M156 127q15-5 8 9l-8 2" fill="none" stroke="#f3debb" stroke-width="4"/><path d="M141 114q-7-7 0-14m10 12q-7-7 0-14" stroke="#d8ead2" fill="none" stroke-width="3"/>',
-    lounge:'<ellipse cx="128" cy="158" rx="76" ry="17" fill="#152c3040"/><path d="M58 134q-7-46 20-61 48-40 88-14 35 21 30 70-15 43-75 37-48 0-63-32" fill="#9b625b"/><path d="M74 125q4-44 45-53 45-4 59 45-40-15-104 8Z" fill="#b58373"/><path d="M81 128q43-24 92-4-32 39-92 4" fill="#d1b486"/><path d="m176 150 42-12 22 14-41 14Z" fill="#c8a476"/><path d="m201 164 0 13m27-20v13" stroke="#48625c" stroke-width="5"/>',
-    quiet:desk+'<path d="m37 88 68-19V38L37 57Z" fill="#6a9283" stroke="#b8ccb1" stroke-width="3"/><path d="m154 67 55 24V53l-55-25Z" fill="#658b7e" stroke="#b8ccb1" stroke-width="3"/>',
-    computers:desk+'<path d="m171 117 23-8 14 10-23 8Z" fill="#6e9290"/><path d="m171 117 14 10v40l-14-8Z" fill="#36555c"/><path d="m185 127 23-8v40l-23 8Z" fill="#253e45"/><path d="m190 138 12-4m-12 12 12-4" stroke="#99e0bd" stroke-width="3"/>',
-    desk4:desk,desk5:desk,
-  };
-  return `<svg class="upgrade-art" viewBox="0 0 260 190" aria-hidden="true"><ellipse cx="130" cy="164" rx="102" ry="15" fill="#152c3030"/>${illustrations[id]||desk}${id==='desk4'||id==='desk5'?`<circle cx="213" cy="43" r="24" fill="#f2d6a0"/><text x="213" y="51" fill="#28423e" text-anchor="middle" font-size="25" font-family="sans-serif" font-weight="700">${id==='desk4'?4:5}</text>`:''}</svg>`;
+export function upgradeArt(id,{eager=false}={}) {
+  if(!UPGRADE_COPY[id])return '';
+  return `<img class="upgrade-art model-poster" src="${assetURL('previews/upgrade-'+id+'.webp')}" alt="${UPGRADE_COPY[id][0]} — предмет из игрового офиса" width="720" height="480" loading="${eager?'eager':'lazy'}" decoding="async">`;
 }

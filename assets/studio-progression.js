@@ -1,9 +1,11 @@
+import { isCareer, careerPremium } from './studio-career.js';
 // Permanent studio discoveries, separate from a flight checkpoint or best time.
 export const MISSION_REWARDS = {
   festival: { cash: 3000, unlock: 'Кофейная станция' },
   club: { cash: 6000, unlock: 'Крыло студии · четвёртое место' },
   cup: { cash: 8000, unlock: 'Пятое рабочее место' },
 };
+export const missionReward=(s,id)=>({...MISSION_REWARDS[id],cash:isCareer(s)?careerPremium(id):MISSION_REWARDS[id].cash});
 export const studioCapacity = s => !Array.isArray(s?.life?.upgrades) ? 3 : s.life.upgrades.includes('desk5') ? 5 : s.life.upgrades.includes('desk4') ? 4 : 3;
 export function upgradeLock(s, id) {
   const wins = s.life?.missionsWon || [];
@@ -14,7 +16,7 @@ export function upgradeLock(s, id) {
   return '';
 }
 export function claimMissionReward(game) {
-  const l = game.life, reward = MISSION_REWARDS[l?.contract];
+  const l = game.life, reward = MISSION_REWARDS[l?.contract]&&missionReward(game,l.contract);
   if (game.stage !== 'result' || !l?.settled || !reward) return false;
   // One payment per released order, even after replay, reload or a new record.
   if (l.missionReward?.order === l.completed) return false;

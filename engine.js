@@ -1,3 +1,4 @@
+import { agentProfile, careerFee, contractTerms, contractLock, isCareer } from './assets/studio-career.js';
 import { studioCapacity } from './assets/studio-progression.js';
 import { validOfficeChatter, carryOfficeChatter } from './assets/office-chatter-state.js';
 import { studyDecision, recordDiscussion, validDiscussions } from './assets/team-discussion.js';
@@ -7,7 +8,7 @@ import { AGENTS, TASKS, DIFFICULTIES } from './data.js';
 import { isWalkable } from './office-layout.js?v=shift-ux-20261024-v2';
 import { ensureLife, condition, lifeHour, scheduleIncident, resolveIncident, settleProject, validLife, awayForRest, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 export const VERSION = 1;
-export const agentById = id => AGENTS.find(a => a.id === id);
+export const agentById = (id,state) => agentProfile(state,id);
 export const clamp = (n, min = 0, max = 100) => Math.max(min, Math.min(max, n));
 export function createGame(difficulty = 'normal') {
   const mode = DIFFICULTIES[difficulty] || DIFFICULTIES.normal;
@@ -20,7 +21,7 @@ export function createGame(difficulty = 'normal') {
   ensureLife(state); return state;
 }
 export function hire(state, id) {
-  const a = agentById(id);
+  const a = agentById(id,state);
   if (!a || state.stage !== 'hire') return 'Сейчас команда уже работает.';
   if (state.life?.away?.includes(id)) return 'Сотрудник ушёл из студии и пропускает этот заказ.';
   if (state.team.includes(id)) {
@@ -72,7 +73,7 @@ export function assign(state, taskId, agentId) {
   if (state.stage !== 'plan' || !TASKS.some(t => t.id === taskId) || !state.team.includes(agentId)) return false;
   state.assignments[taskId] = agentId; return true;
 }
-export const fit = (agentId, task, state) => clamp((agentById(agentId)?.stats[task.skill] || 0) + (state?.support && state.support.agentId === agentId && state.support.taskId === task.id ? 15 : 0));
+export const fit = (agentId, task, state) => clamp((agentById(agentId,state)?.stats[task.skill] || 0) + (state?.support && state.support.agentId === agentId && state.support.taskId === task.id ? 15 : 0));
 export function supportTask(state, taskId) {
   if (state.stage !== 'work') return 'Сначала вернитесь к работе.';
   if (state.support) return 'На этой смене вы уже провели совместный разбор.';
@@ -114,7 +115,7 @@ export function tick(state) {
   state.time += 1;
   const completed = [];
   for (const task of active) {
-    const id = state.assignments[task.id], a = agentById(id);
+    const id = state.assignments[task.id], a = agentById(id,state);
     const hours = state.workload[id] || 0;
     const fatigue = hours > 7 ? .85 : 1;
     const equipment = state.life?.upgrades.includes('computers') && ['code','release'].includes(task.id) ? 1.1 : 1;
@@ -161,6 +162,7 @@ export function resolveEvent(state, optionId) {
   state.currentEvent = null; state.stage = 'work'; return null;
 }
 export function getResult(state) {
+  if(isCareer(state)&&state.stage==='result'&&state.life?.settled&&state.life.career.lastResult)return {...state.life.career.lastResult};
   const quality = Math.round(TASKS.reduce((sum, t) => sum + fit(state.assignments[t.id], t, state), 0) / TASKS.length);
   const critical = state.criticalBug || state.wallBug;
   const late = Math.max(0, state.time - state.deadline);
@@ -175,17 +177,24 @@ export function nextProject(state, contractId) {
   if (state.stage !== 'result') return 'Сначала заверши текущий заказ.';
   const contract = CONTRACTS.find(c => c.id === contractId);
   if (!contract) return 'Выбери следующий заказ.';
+  const locked=contractLock(state,contractId);if(locked)return locked;
   settleProject(state, getResult(state));
   const l = ensureLife(state);
   const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
   if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
+<<<<<<< HEAD
   if(state.officeChatter)next.officeChatter=carryOfficeChatter(state);
   next.budget = next.initialBudget = contract.budget + DIFFICULTIES[state.difficulty].budget - 36000;
   next.deadline = contract.deadline + DIFFICULTIES[state.difficulty].deadline - 16;
+=======
+  const terms=contractTerms(state,contract);
+  next.budget = next.initialBudget = terms.budget;
+  next.deadline = terms.deadline;
+>>>>>>> origin/main
   const departed=[...l.departures], away=departed.slice(0,AGENTS.length-3);
-  const fees = team.reduce((sum,id) => sum + agentById(id).cost, 0);
-  const replacements=AGENTS.filter(a=>!team.includes(a.id)&&!away.includes(a.id)).sort((a,b)=>a.cost-b.cost).slice(0,Math.max(0,3-team.length));
+  const fees = team.reduce((sum,id) => sum + careerFee(state,id,true), 0);
+  const replacements=AGENTS.map(a=>({...a,cost:careerFee(state,a.id,true)})).filter(a=>!team.includes(a.id)&&!away.includes(a.id)).sort((a,b)=>a.cost-b.cost).slice(0,Math.max(0,3-team.length));
   const minimumFees=fees+replacements.reduce((sum,a)=>sum+a.cost,0);
   if (next.budget+l.cash-payroll<minimumFees) return 'Не хватает общего бюджета для состава команды (нужно минимум трое). Выбери более оплачиваемый заказ или сохрани часть команды.';
   const subsidy = Math.max(0, fees - next.budget);
@@ -197,6 +206,7 @@ export function nextProject(state, contractId) {
     const m = l.members[id]; m.energy = clamp(m.energy + 35); m.stress = clamp(m.stress - 20); m.breaks = 0; m.restTrip = null; m.praised = 0; m.coffee = false; m.coffeeTrip = null;
     if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
+  if(isCareer(state))l.career.rateOrder=l.completed;
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.conflictDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
   next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
   next.log = [`Новый заказ: ${contract.name}. ${contract.text}`, `Доплаты из кассы студии: ${payroll} ₽; поддержка расширенного состава: ${subsidy} ₽. Команда отдохнула между заказами.`];

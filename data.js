@@ -41,6 +41,7 @@ export const TASKS = [
     description: 'Собрать проверенные части в одну игру для фестиваля.' },
 ];
 export const DIFFICULTIES = {
+  bootstrap: { name:'Студия с нуля',budget:8000,deadline:32,description:'Начинающая команда, маленькая касса и развитие на много заказов' },
   calm: { name: 'Первая смена', budget: 36000, deadline: 16, description: 'Больше времени и бюджета' },
   normal: { name: 'Обычная', budget: 32000, deadline: 13, description: 'Нужно выбирать и договариваться' },
   hard: { name: 'Сложная', budget: 29000, deadline: 11, description: 'Каждый час на счету' },

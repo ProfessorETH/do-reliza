@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "method": "Individually fitted heads with protected collar and corrected normal-map basis",
+  "models": [
+    {
+      "id": "mira",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 47836,
+      "beforeBoundsY": [
+        1.2611463525755198,
+        1.9304145896979217
+      ],
+      "afterBoundsY": [
+        1.2650962283521598,
+        1.7935150881704205
+      ],
+      "minJacobianDeterminant": 0.3075627413773372,
+      "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 1,
+      "sourceSha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+      "outputBytes": 21196360
+    },
+    {
+      "id": "pixel",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 49379,
+      "beforeBoundsY": [
+        1.2717782231385846,
+        1.8878871074456613
+      ],
+      "afterBoundsY": [
+        1.271788510878385,
+        1.7611942016587028
+      ],
+      "minJacobianDeterminant": 0.3676607411381757,
+      "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 3,
+      "sourceSha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "b9b350f0aa355df650eaf1e3b70e8dcc0cea1dea6d42cf2b1feca22cf7e481fd",
+      "outputBytes": 22702560
+    },
+    {
+      "id": "nord",
+      "scale": 0.85,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 46031,
+      "beforeBoundsY": [
+        1.2871027934604793,
+        1.8265888261580836
+      ],
+      "afterBoundsY": [
+        1.2871027934604793,
+        1.7566005022343711
+      ],
+      "minJacobianDeterminant": 0.5604274553012447,
+      "maxFixedNeckContactError": 4.7186779599747095e-9,
+      "tangentFallbacks": 5,
+      "sourceSha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "e6d29aafab92a74df099b43a50d7e331b9455a1552b480463d3e25202e29b1cd",
+      "outputBytes": 21709844
+    },
+    {
+      "id": "iskra",
+      "scale": 0.76,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 52939,
+      "beforeBoundsY": [
+        1.2858387311590034,
+        1.8316450753639872
+      ],
+      "afterBoundsY": [
+        1.286445562940275,
+        1.7184502572766303
+      ],
+      "minJacobianDeterminant": 0.3400259473281309,
+      "maxFixedNeckContactError": 5.218503398681236e-9,
+      "tangentFallbacks": 2,
+      "sourceSha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "ce870e159dc82205cbc849db5eee08e95198f2a59f79f15ebe5c0718c8414044",
+      "outputBytes": 24063828
+    },
+    {
+      "id": "saga",
+      "scale": 0.8,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 52929,
+      "beforeBoundsY": [
+        1.2909077821013388,
+        1.8113688715946448
+      ],
+      "afterBoundsY": [
+        1.2909077821013388,
+        1.721095097275716
+      ],
+      "minJacobianDeterminant": 0.42403417247479336,
+      "maxFixedNeckContactError": 7.572614668508571e-9,
+      "tangentFallbacks": 2,
+      "sourceSha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "6280556b28296cec083a69180e85cfa0615da23adc393f2c084f71ee5cafd2e2",
+      "outputBytes": 21630292
+    },
+    {
+      "id": "echo",
+      "scale": 0.82,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 46800,
+      "beforeBoundsY": [
+        1.2899280319723638,
+        1.8152878721105448
+      ],
+      "afterBoundsY": [
+        1.2899280319723638,
+        1.7333360551306467
+      ],
+      "minJacobianDeterminant": 0.49044024465671016,
+      "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 1,
+      "sourceSha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "c9aea7267dda40a4d3172a046a096c29c712239b20cbcefc50c281bdfac29974",
+      "outputBytes": 23303808
+    },
+    {
+      "id": "nika",
+      "scale": 0.7,
+      "neckY": 1.36,
+      "chinY": 1.395,
+      "vertices": 89058,
+      "beforeBoundsY": [
+        1.156956634166769,
+        1.9888706316697216
+      ],
+      "afterBoundsY": [
+        1.156956634166769,
+        1.800209442168805
+      ],
+      "minJacobianDeterminant": 0.194549526442338,
+      "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 0,
+      "sourceSha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
+      "bodyRigClipsUvsAndTexturesUnchanged": true,
+      "outputSha256": "339252c3413811752240da4850c7c437a95073204e2d80326910abd7e715d4f4",
+      "outputBytes": 26122912
+    }
+  ]
+}

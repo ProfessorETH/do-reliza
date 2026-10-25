@@ -3,6 +3,7 @@ import { assetURL } from '../asset-url.js';
 import { graphicsSettingsHTML } from './office-runtime.js?v=team-hud-20261024';
 
 export const DIFFICULTY_OPTIONS = [
+  {id:'bootstrap',title:'С нуля',description:'Долгая карьера: 800 ₽ в кассе, начинающая команда, обучение и репутация. Новые заказы открываются постепенно.'},
   { id:'calm', title:'Легко', description:'Для первого раза: больше времени и денег на ошибки.' },
   { id:'normal', title:'Обычно', description:'Обычный запас времени и денег. Продумай план команды.' },
   { id:'hard', title:'Сложно', description:'Меньше времени и денег. Для опытных тимлидов.' },
@@ -15,7 +16,7 @@ export function renderStartScreen({ difficulty, saved, demo, logo, icon, money, 
   const setup=`<fieldset class="difficulty-picker"><legend>Сложность игры</legend>
     <div class="difficulty-choices">${DIFFICULTY_OPTIONS.map(option=>`<label class="difficulty-choice${mode.id===option.id?' chosen':''}"><input type="radio" name="difficulty" value="${option.id}" ${mode.id===option.id?'checked':''} aria-describedby="difficulty-description"><span>${option.title}</span></label>`).join('')}</div>
     <p id="difficulty-description" class="difficulty-description">${mode.description}</p>
-    <div class="difficulty-resources"><span>Бюджет команды <b>${money(settings.budget)}</b></span><span>До релиза <b>${settings.deadline} игровых часов</b></span></div>
+    <div class="difficulty-resources"><span>Бюджет команды <b>${money(settings.budget)}</b></span><span>До релиза <b>${settings.deadline} игровых часов</b></span>${mode.id==='bootstrap'?'<span>Навыки <b>10–32 / 100</b></span>':''}</div>
   </fieldset>`;
   const audio=`<section class="start-audio" data-ready="${audioReady}" aria-labelledby="start-audio-title">
     <img src="${assetURL('onboarding/nika-avatar.webp')}" alt="" width="44" height="44">
