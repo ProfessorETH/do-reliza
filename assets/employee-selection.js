@@ -1,4 +1,5 @@
 import { TASKS } from '../data.js';
+import { nightShift } from './night-shift.js';
 import { activeTasks } from '../engine.js';
 import { condition } from './studio-life.js';
 import { teamMemberState } from './team-hud.js';
@@ -18,6 +19,7 @@ export function employeeOverview(game,id) {
   else if(game.stage==='work'&&!task)explanation=waiting.length?'Сначала нужны результаты: '+waiting.map(name=>'«'+name+'»').join(', ')+'.':next?'Пока занят другой задачей.':'Все назначенные задачи завершены.';
   const actions=[];
   const action=(name,key,label)=>actions.push({action:name,id:key,label});
+  if(game.stage==='work'&&nightShift(game).active)action('night-preview','','Команду домой до 09:00');
   if(game.stage==='work') {
     if(!task&&!away&&state.tone!=='urgent'&&member.energy>=35)action('studio-project','','Показать задачи');
     if(task&&!game.support)action('support',task.id,'Разобрать вместе · 1 ч');

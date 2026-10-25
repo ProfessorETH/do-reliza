@@ -13,7 +13,7 @@ function work(s){assert.equal(beginPlan(s),true);recommend(s);assert.equal(begin
 function advance(s,stop=false){for(let n=0;n<180&&s.stage!=='result';n++){
   if(s.stage==='event'){
     if(s.life.incident?.type==='salary'&&stop)return s.life.incident.id;
-    assert.equal(resolveEvent(s,s.life.incident?.type==='salary'?'salary-accept':({scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:'life-care'})[s.currentEvent]),null);
+    assert.equal(resolveEvent(s,s.life.incident?.type==='salary'?'salary-accept':({scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='night'?'night-work':'life-care'})[s.currentEvent]),null);
   }else tick(s);
 }assert.equal(s.stage,'result');return null;}
 function second(){const s=studio();work(s);advance(s);assert.equal(nextProject(s,'festival'),null);work(s);const id=advance(s,true);assert.ok(id);return {s,id};}

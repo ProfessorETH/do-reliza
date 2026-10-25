@@ -12,7 +12,7 @@ import { ALL_DESKS, ENTRANCE, LOUNGE_SEAT, findOfficePath, clearSegment, isWalka
 function finish(s) {
   beginPlan(s); recommend(s); beginWork(s);
   for(let n=0;n<100&&s.stage!=='result';n++) {
-    if(s.stage==='event') resolveEvent(s,{scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:'life-care'}[s.currentEvent]);
+    if(s.stage==='event') resolveEvent(s,{scope:'focus',review:'review-fix',bug:s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='night'?'night-work':'life-care'}[s.currentEvent]);
     else tick(s);
   }
   assert.equal(s.stage,'result');return s;

@@ -11,7 +11,7 @@ function prepared(ids=['mira','iskra','echo'],difficulty='normal') {
 function finish(s,scope='focus',bug='fix',review='review-fix') {
   for(let i=0;i<100&&s.stage!=='result';i++){
     if(s.stage==='event'){
-      let option=s.currentEvent==='life'?'life-care':s.currentEvent==='scope'?scope:s.currentEvent==='review'?review:bug;
+      let option=s.currentEvent==='life'?(s.life.incident?.type==='night'?'night-work':'life-care'):s.currentEvent==='scope'?scope:s.currentEvent==='review'?review:bug;
       if(option==='shield'&&s.budget<2000)option='focus';
       if(option==='fix'&&s.budget<1500)option='cut';
       assert.equal(resolveEvent(s,option),null);

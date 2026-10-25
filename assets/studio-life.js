@@ -1,4 +1,5 @@
 import { agentProfile, initCareer, isCareer, contractTerms, releaseIncome, finishCareer, validCareer } from './studio-career.js';
+import { nightShift, ensureNight, scheduleNight, nightDecision, validNight } from './night-shift.js';
 import { ensureEmployment, requestSalary, settleEmployment, salaryDecision, employmentCondition } from './career-employment.js';
 import { requestCoffee, callNextCoffee, coffeeInTransit, validCoffeeTrips } from './coffee-trip.js';
 import { AGENTS } from '../data.js';
@@ -20,6 +21,7 @@ export const UPGRADES = [
   { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'У столов появятся новые системные блоки. Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
 ];
 export const INCIDENTS = {
+  night: { title: 'Команда просится домой', text: 'Уже ночь. Продолжить ради дедлайна или вернуться к работе утром?' },
   salary: { title: 'Пора обсудить оплату', text: 'Сотрудник набрался опыта и хочет пересмотреть условия.', care: 'Согласовать прибавку' },
   noise: { title: 'Созвон за соседним столом', text: 'Громкое обсуждение мешает сосредоточиться. Сотрудник уже несколько раз терял мысль.', upgrade: 'quiet', care: 'Договориться о тихом часе', effect: 'Напряжение −12 · +1 ч без тихого офиса' },
   computer: { title: 'Сборка снова зависла', text: 'Компьютер подвёл в середине работы. Сотрудник переживает, что задерживает всех.', upgrade: 'computers', care: 'Помочь настроить компьютер', effect: 'Напряжение −12 · +1 ч без обновления компьютеров' },
@@ -31,6 +33,7 @@ export function ensureLife(s) {
   if (!s.life) s.life = { version: 1, cash: 5000, completed: 0, contract: 'festival', upgrades: [], members: {}, history: [], seed: Math.floor(Math.random() * 0x100000000), incident: null, incidentDone: false, settled: false, departures: [] };
   if(isCareer(s)&&!s.life.career)initCareer(s);
   if(isCareer(s))ensureEmployment(s);
+  ensureNight(s);
   for (const a of AGENTS) s.life.members[a.id] ||= member();
   for (const id of s.team) {
     const m = s.life.members[id];
@@ -76,26 +79,31 @@ export function condition(s, id) {
   if (m.energy < 35) return { label: 'Усталость', reason: 'Долго работает без отдыха. Перерыв вернёт энергию.', factor: .9 };
   if (m.stress >= 65) return { label: 'Нужна поддержка', reason: 'Накопилось напряжение от работы и событий. Помогут разбор и отдых.', factor: .9 };
   if (m.morale < 35) return { label: 'Настроение упало', reason: 'Неудачи и нерешённые проблемы расстраивают. Заметь результат и обсуди условия.', factor: .95 };
+  if(['work','event'].includes(s.stage)&&nightShift(s).active)return {label:'Хочет домой',reason:'После 22:00 работа отнимает 12 энергии за час вместо 7. Можно закончить смену и вернуться в 09:00, но дедлайн не сдвинется.',factor:1};
   return { label: m.morale >= 80 ? 'Воодушевление' : 'В порядке', reason: 'Успехи поднимают настроение; сложная работа и нерешённые проблемы его снижают.', factor: 1 };
 }
 export function lifeHour(s, active, completed) {
   const l = ensureLife(s);
+  // tick has already advanced time: charge the hour that was actually worked.
+  const night=nightShift({...s,time:Math.max(0,s.time-1),clockFraction:0}).active;
   for (const id of s.team) {
     const m = l.members[id], task = active.find(t => s.assignments[t.id] === id);
     if (m.breaks && m.restTrip?.phase === 'resting') { m.breaks--; m.energy = clamp(m.energy + (l.upgrades.includes('lounge') ? 45 : 30)); m.stress = clamp(m.stress - 15); m.morale = clamp(m.morale + 3); m.restTrip = { phase: 'returning', slot: s.team.indexOf(id) }; }
     else if (awayForRest(m)) continue;
     else if (task) {
-      m.energy = clamp(m.energy - 7);
+      m.energy = clamp(m.energy - (night?12:7));
       const difficult = agentProfile(s,id).stats[task.skill] < 60;
-      m.stress = clamp(m.stress + (difficult ? 5 : l.upgrades.includes('quiet') ? 1 : 2));
+      m.stress = clamp(m.stress + (difficult ? 5 : l.upgrades.includes('quiet') ? 1 : 2)+(night?2:0));
       if (difficult || m.energy < 25) m.morale = clamp(m.morale - 2);
-    } else { m.energy = clamp(m.energy + 3); m.stress = clamp(m.stress - 2); }
+      if(night)m.morale=clamp(m.morale-1);
+    } else { m.energy = clamp(m.energy + (night?0:3)); m.stress = clamp(m.stress - (night?1:2)); }
     if (completed.some(t => s.assignments[t.id] === id)) { m.morale = clamp(m.morale + 8); m.stress = clamp(m.stress - 6); }
   }
 }
 export function scheduleIncident(s) {
   const l = ensureLife(s);
   if (s.stage !== 'work' || l.incident) return false;
+  if(scheduleNight(s))return true;
   const present = s.team.filter(id => !awayForRest(l.members[id]));
   if(isCareer(s)&&s.time>=2){
     const id=present.find(id=>Object.keys(s.progress).some(t=>s.assignments[t]===id&&s.progress[t]>=100)&&requestSalary(s,id));
@@ -118,6 +126,7 @@ export function scheduleIncident(s) {
 }
 export function resolveIncident(s, option) {
   const l = ensureLife(s), ev = l.incident;
+  if(s.stage==='event'&&s.currentEvent==='life'&&ev?.type==='night')return nightDecision(s,({'night-rest':'rest','night-work':'work'})[option]);
   if(s.stage==='event'&&s.currentEvent==='life'&&ev?.type==='salary'){
     const error=salaryDecision(s,ev.id,({'salary-accept':'accept','salary-defer':'defer','salary-replace':'replace'})[option]);
     if(error)return error;l.incident=null;s.currentEvent=null;s.stage='work';return null;
@@ -209,7 +218,7 @@ export function validLife(s) {
   const l = s.life;
   if (l === undefined) return true; // Safe migration of 0.5 saves.
   const integer = (n, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(n) && n >= min && n <= max;
-  return validCareer(s) && validCoffeeTrips(s) && l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
+  return validNight(s) && validCareer(s) && validCoffeeTrips(s) && l && l.version === 1 && integer(l.cash, 0) && integer(l.completed, 0) && integer(l.seed, 0, 0xffffffff)
     && (l.missionsWon === undefined || Array.isArray(l.missionsWon) && new Set(l.missionsWon).size === l.missionsWon.length && l.missionsWon.every(id=>Object.hasOwn(MISSION_REWARDS,id)))
     && (l.missionReward === undefined || l.missionReward && integer(l.missionReward.order,1,l.completed) && Object.hasOwn(MISSION_REWARDS,l.missionReward.contract) && l.missionReward.cash===missionReward(s,l.missionReward.contract).cash)
     && CONTRACTS.some(c => c.id === l.contract) && Array.isArray(l.upgrades) && new Set(l.upgrades).size === l.upgrades.length && l.upgrades.every(id => UPGRADES.some(u => u.id === id))
@@ -221,5 +230,5 @@ export function validLife(s) {
       && (m.coffee === undefined || typeof m.coffee === 'boolean')
       && (m.restSerial === undefined || integer(m.restSerial,0))
       && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,4) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
-    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && (l.incident.type === 'salary' ? isCareer(s)&&l.career.employment[l.incident.id].status==='pending' : l.incident.type === 'tension' ? !l.conflictDone && s.team.includes(l.incident.otherId) && l.incident.otherId !== l.incident.id : !l.incidentDone));
+    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && (l.incident.type === 'night' ? nightShift(s).active&&l.night?.lastAsked===nightShift(s).night : l.incident.type === 'salary' ? isCareer(s)&&l.career.employment[l.incident.id].status==='pending' : l.incident.type === 'tension' ? !l.conflictDone && s.team.includes(l.incident.otherId) && l.incident.otherId !== l.incident.id : !l.incidentDone));
 }

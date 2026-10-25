@@ -14,7 +14,7 @@ function release(scope = 'shield', bug = 'fix', review = 'review-fix') {
 }
 function finish(game, scope, bug, review) {
   for (let n = 0; n < 100 && game.stage !== 'result'; n++) {
-    if (game.stage === 'event') assert.equal(resolveEvent(game, { scope, bug, review, life: 'life-care' }[game.currentEvent]), null);
+    if (game.stage === 'event') assert.equal(resolveEvent(game, { scope, bug, review, life:game.life.incident?.type==='night'?'night-work':'life-care' }[game.currentEvent]), null);
     else tick(game);
   }
   assert.equal(game.stage, 'result');

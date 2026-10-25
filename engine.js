@@ -1,4 +1,5 @@
 import { agentProfile, careerFee, contractTerms, contractLock, isCareer } from './assets/studio-career.js';
+import { scheduleNight } from './assets/night-shift.js';
 import { salaryBonus, pendingSalary, endEmployment } from './assets/career-employment.js';
 import { studioCapacity } from './assets/studio-progression.js';
 import { validOfficeChatter, carryOfficeChatter } from './assets/office-chatter-state.js';
@@ -112,6 +113,7 @@ export function tick(state) {
   const active = activeTasks(state);
   const pendingCare=()=>state.team.some(id=>{const m=state.life?.members[id];return m?.restTrip||m?.coffeeTrip||m?.breaks;});
   if (!active.length && !pendingCare() && TASKS.every(t => state.progress[t.id] >= 100)) { state.stage = 'result'; settleProject(state,getResult(state)); return true; }
+  if(scheduleNight(state))return true;
   if (!active.length && !pendingCare()) return false;
   state.time += 1;
   const completed = [];
@@ -204,6 +206,7 @@ export function nextProject(state, contractId) {
     if (departed.includes(id)) { m.raises = 0; m.warnings = 0; } // Ended agreements do not create future payroll obligations.
   }
   if(isCareer(state))l.career.rateOrder=l.completed;
+  delete l.night;
   endEmployment(state,departed);
   l.contract = contract.id; l.incident = null; l.incidentDone = false; l.conflictDone = false; l.settled = false; l.seed = (Math.imul(l.seed,1664525) + 1013904223) >>> 0;
   next.life = l; next.timedEvents = state.timedEvents; next.orbitRecords = state.orbitRecords;
