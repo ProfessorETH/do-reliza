@@ -194,7 +194,7 @@ let renderedStage = null;
 function workspaceTabs() {
   return sceneDock(game,{icon,money,busy:officeMoving,panelOpen:workspaceView==='project'});
 }
-function render() {
+function render({openProject=false}={}) {
   const hiringScroll=root.querySelector('.hiring-scroll')?.scrollTop||0;
   const planningScroll=root.querySelector('.planning-scroll')?.scrollTop||0;
   const panelScroll=root.querySelector('.control-panel')?.scrollTop||0;
@@ -213,6 +213,7 @@ function render() {
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>${employeeEvent(game)?employeeEvent(game).name+' ждёт тебя в офисе. Нажми на красный сигнал над сотрудником. Таймер решения начнётся после открытия.':'Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.'}</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { workspaceView = game.stage==='plan'||game.stage==='hire'&&game.team.length<3?'project':'office'; managementExpanded=workspaceView==='project';officeExpanded = false;if(employeeEvent(game))officeSelection=null; }
   if(onboarding.isOpen())workspaceView='office';
+  if(openProject)workspaceView='project';
   const planning=game.stage==='plan'&&workspaceView==='project',hiring=game.stage==='hire'&&workspaceView==='project',managementModal=planning||hiring;
   root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,officeSelection)}${scene()}<${managementModal?'dialog':'section'} id="project-panel" class="control-panel ${planning?'planning-dialog':hiring?'hiring-dialog':''}" ${managementModal?`aria-labelledby="${planning?'planning-title':'hiring-title'}"`:'aria-label="Управление проектом"'} ${workspaceView==='project'?'':'hidden inert'}>${managementModal?'':managementBar(managementExpanded,{icon})}${panels[game.stage]()}</${managementModal?'dialog':'section'}></div></main>`;
   if(managementModal){const panel=root.querySelector('#project-panel');panel.showModal();panel.addEventListener('cancel',e=>{e.preventDefault();workspaceView='office';render();root.querySelector('.scene-dock [data-id=project]')?.focus({preventScroll:true});});}
@@ -508,7 +509,7 @@ document.addEventListener('click',e=>{
   if(action==='plan'){if(!officeMoving&&beginPlan(game)){officeSelection=null;persist();render();}}
   if(action==='plan-assign'){if(assign(game,el.dataset.task,id)){persist();render();}return;}
   if(action==='recommend'){recommend(game);persist();render();toast('Предложил исполнителей. Проверь: один разработчик не может делать код и экран одновременно.');}
-  if(action==='back-hire'){game.stage='hire';persist();render();}
+  if(action==='back-hire'){game.stage='hire';persist();render({openProject:true});}
   if(action==='work'){if(!officeMoving&&beginWork(game)){officeSelection=null;persist();render();}}
   if(action==='tick')advance();
   if(action==='support'){if(dialog.open)dialog.close();const error=supportTask(game,id);if(error)toast(error);else{game.clockFraction=0;persist();render();toast('Разобрались вместе: навык для этой задачи +15. Потрачен 1 час.');sound.speakCharacter(game.support.agentId,'support');}}
