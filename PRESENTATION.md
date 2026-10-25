@@ -7,6 +7,7 @@
 - Игра: https://do-reliza.xyz/.
 - Быстрый показ с готовой командой: https://do-reliza.xyz/?demo=1.
 - Мастерская персонажей: https://do-reliza.xyz/characters.html.
+- [Готовые кадры для слайдов](presentation/README.md).
 - Репозиторий: https://github.com/ProfessorETH/do-reliza. Доступ участнице уже предоставлен; ссылка на закрытый репозиторий сама по себе не даёт доступ жюри.
 - [Запуск и размещение](DEPLOY.md), [критерии кейса](CASE-CHECK.md), [правила карьеры «С нуля»](planning/CAREER.md).
 
