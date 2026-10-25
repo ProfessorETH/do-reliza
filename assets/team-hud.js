@@ -1,5 +1,5 @@
+import { agentProfile } from './studio-career.js';
 import { studioCapacity } from './studio-progression.js';
-import { AGENTS } from '../data.js';
 import { activeTasks } from '../engine.js?v=shift-ux-20261024-v2';
 import { condition } from './studio-life.js?v=shift-ux-20261024-v2';
 import { characterLine, characterMoment } from './character-dialogue.js';
@@ -15,7 +15,7 @@ const workLines = {
 };
 
 export function teamMemberState(game, id) {
-  const agent = AGENTS.find(a => a.id === id);
+  const agent = agentProfile(game,id);
   if (!agent || !game.team.includes(id)) return null;
   const current = condition(game,id), member = game.life.members[id];
   const task = game.stage === 'work' ? activeTasks(game).find(t => game.assignments[t.id] === id) : null;
