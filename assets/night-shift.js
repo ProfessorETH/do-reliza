@@ -38,7 +38,7 @@ export function nightDecision(s,choice){
   delete s.eventClock;return null;
 }
 export function validNight(s){
-  const n=s.life.night;if(n===undefined)return true;
+  const n=s.life?.night;if(n===undefined)return true;
   const finite=x=>Number.isFinite(x)&&x>=0;
   return n&&n.version===1&&Number.isSafeInteger(n.lastAsked)&&n.lastAsked>=-1&&n.lastAsked<=nightShift(s).night
     &&(n.lastDecision===null||n.lastDecision&&['rest','work'].includes(n.lastDecision.choice)&&Number.isSafeInteger(n.lastDecision.night)&&n.lastDecision.night>=0&&n.lastDecision.night<=n.lastAsked&&finite(n.lastDecision.time)&&n.lastDecision.time<=s.time)
