@@ -20,7 +20,7 @@ test('the shipped cast contains every line, seven original voices and the valida
   assert.equal(new Set(Object.values(designs).map(v=>v.voiceId)).size,7);
   assert.equal(Object.keys(VOICE_ASSETS).length,17);
   const expected=await json('content/voice-lines.json');
-  assert.equal(Object.keys(CHARACTER_VOICES).length,72);
+  assert.equal(Object.keys(CHARACTER_VOICES).length,expected.filter(l=>l.id!=='nika').length);
   assert.equal(receipt.lines.length,expected.length);
   assert.equal(new Set(receipt.lines.map(l=>l.key)).size,expected.length);
   assert.deepEqual(receipt.lines.map(l=>l.key).sort(),expected.map(l=>l.key).sort());

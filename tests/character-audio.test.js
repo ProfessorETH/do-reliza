@@ -39,6 +39,26 @@ test('a rewritten caption cannot play the recording of an older line',async t=>{
   const count=made.length;assert.equal(sound.speakCharacter('mira','concern',true),false);assert.equal(made.length,count);
 });
 
+test('ambient speech yields to every existing channel and cancellation never calls the next speaker',async t=>{
+  const {sound,made}=await player(t);const ended=[],started=[];
+  sound.speakCharacter('nord','intro',true);
+  assert.equal(sound.speakExchange([{id:'mira',kind:'intro'}],false,{ambient:true}),false);
+  sound.stopVoice();
+  assert.equal(sound.speakExchange([{id:'mira',kind:'intro'},{id:'pixel',kind:'intro'}],false,{ambient:true,onStart:l=>started.push(l.id),onDone:status=>ended.push(status)}),true);
+  const first=made.at(-1);first.onplaying();assert.deepEqual(started,['mira']);assert.equal(sound.characterSpeech.id,'mira');assert.equal(sound.characterSpeech.ambient,true);
+  sound.speak('story-0',true);const count=made.length;first.onended();assert.equal(made.length,count);assert.deepEqual(ended,['cancelled']);
+  sound.stopAmbient();assert.equal(made.at(-1).dataset.voiceOwner,'nika');assert.equal(made.at(-1).paused,false);
+});
+
+test('the speech indicator reads the playing audio waveform and releases the analyser on stop',async t=>{
+  const {sound,made}=await player(t);let disconnected=0;
+  window.AudioContext.prototype.createAnalyser=()=>({fftSize:0,connect(){},disconnect(){disconnected++;},getFloatTimeDomainData(data){data.fill(.08);}});
+  window.AudioContext.prototype.createMediaElementSource=()=>({connect(){},disconnect(){disconnected++;}});
+  sound.speakCharacter('mira','intro',true);made.at(-1).onplaying();
+  assert.ok(sound.characterSpeech.level>0&&sound.characterSpeech.level<1);
+  sound.stopVoice();assert.equal(sound.characterSpeech,null);assert.equal(disconnected,2);
+});
+
 test('a two-person argument plays in order and stops completely when muted',async t=>{
   const {sound,doc,made}=await player(t);
   assert.equal(sound.speakExchange([{id:'mira',kind:'conflict'},{id:'nord',kind:'concern'}],true),true);

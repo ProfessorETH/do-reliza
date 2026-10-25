@@ -1,5 +1,6 @@
 import { AGENTS } from '../data.js';
 import { OPINIONS } from './team-discussion.js';
+import { OFFICE_CHATTER_LINES } from './office-chatter-lines.js';
 import { getResult } from '../engine.js?v=shift-ux-20261024-v2';
 
 // Written for these characters. Every voiced sentence also appears as text.
@@ -48,6 +49,7 @@ export const CHARACTER_LINES = {
   },
 };
 for (const agent of AGENTS) CHARACTER_LINES[agent.id].intro = agent.quote;
+for (const [id, lines] of Object.entries(OFFICE_CHATTER_LINES)) Object.assign(CHARACTER_LINES[id],lines);
 for (const [id, events] of Object.entries(OPINIONS)) {
   for (const [event, [, text]] of Object.entries(events)) CHARACTER_LINES[id][event] = text;
 }

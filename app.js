@@ -1,3 +1,6 @@
+import { createOfficeConversations } from './assets/office-conversations.js';
+import { createOfficeSpeech } from './assets/office-speech.js';
+
 import { renderTaskPlanning } from './assets/task-planning.js';
 import { mountMenuPreview, disposeMenuPreview } from './assets/menu-preview-runtime.js';
 import { careerSummary, careerResult, careerPanel } from './assets/career-view.js';
@@ -100,6 +103,10 @@ function updateClock() {
     if(el.textContent!==String(label))el.textContent=label;
   }
 }
+const officeSpeech=createOfficeSpeech();
+const officeChat=createOfficeConversations({sound,getGame:()=>game,isBlocked:()=>clockBlocked()||officeMoving||workspaceView!=='office',persist:()=>persist(),draw:(speech,s)=>officeSpeech.update(speech,s)});
+document.addEventListener('character-voice-state',()=>officeChat.tick());
+setInterval(()=>officeChat.tick(),200);
 let lastClockFrame=performance.now();
 setInterval(()=>{const now=performance.now(),delta=now-lastClockFrame;lastClockFrame=now;if(game){if(advanceShiftClock(game,delta,clockBlocked()))advance();updateClock();updateEventClock(delta);}},100);
 document.addEventListener('visibilitychange',()=>{lastClockFrame=performance.now();persist();});
@@ -222,6 +229,7 @@ function render() {
   if(planning){const panel=root.querySelector('#project-panel');panel.showModal();panel.addEventListener('cancel',e=>{e.preventDefault();workspaceView='office';render();root.querySelector('.scene-dock [data-id=project]')?.focus({preventScroll:true});});}
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
+    getSpeech:()=>officeChat.speech,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
     onCoffee:(id,arrival,source)=>{if(game===source){const before=captureMembers(game);if(coffeeArrival(game,id,arrival)){if(arrival==='drank')queueMemberFeedback(game,before,[id]);persist();render();}}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
@@ -233,6 +241,7 @@ function render() {
   });
   onboarding.sync(game, officeMoving);
   syncCharacterSpeaking();
+  officeChat.tick();
   if(manageOpen&&!stageChanged&&root.querySelector('.crew-manage'))root.querySelector('.crew-manage').open=true;
   syncEventDialog();
   if(!stageChanged&&root.querySelector('.control-panel'))root.querySelector('.control-panel').scrollTop=panelScroll;
@@ -306,7 +315,7 @@ function updateEventClock(delta){
 eventDialog.addEventListener('close',()=>sound.stopVoice('character'));
 eventDialog.addEventListener('scroll',()=>eventDialog.classList.toggle('event-clock-compact',eventDialog.scrollTop>80),{passive:true});
 eventDialog.addEventListener('cancel',e=>{e.preventDefault();if(employeeEvent(game)){openedIncidentKey=null;eventDialog.close();return;}const clock=game&&ensureEventClock(game);if(clock){clock.paused=true;persist();updateEventClock(0);}else eventDialog.querySelector('#event-title')?.focus();});
-function selectEmployee(id,{focus=true}={}) {
+function selectEmployee(id,{focus=true,speak=true}={}) {
   if(!game?.team.includes(id))return;
   const changed=officeSelection!==id;
   officeSelection=id;workspaceView='office';onboarding.collapseGuide();
@@ -314,7 +323,7 @@ function selectEmployee(id,{focus=true}={}) {
   render();
   if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}
   if(focus)root.querySelector('#employee-name')?.focus({preventScroll:true});
-  if(changed){const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
+  if(changed&&speak){const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
 }
 function clearEmployeeSelection() {
   const previous=officeSelection;officeSelection=null;sound.stopVoice('character');render();
@@ -418,6 +427,9 @@ mobileUI.addEventListener('change',()=>{if(game)render();});
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');if(!el||el.disabled)return;
   const action=el.dataset.action,id=el.dataset.id;
+  if(action==='office-talk-skip'){officeChat.skip();root.querySelector('.scene-next .primary')?.focus({preventScroll:true});return;}
+  if(action==='office-talk-focus'){if(officeSelection!==id)selectEmployee(id,{speak:false});officeCamera('focus');return;}
+  if(action==='office-talk-toggle'){officeChat.toggle();e.target.closest('button').textContent=officeChat.enabled?'Разговоры в студии: включены':'Разговоры в студии: выключены';e.target.closest('button').setAttribute('aria-pressed',String(officeChat.enabled));return;}
   if(action==='sound'){sound.toggle();render();return;}
   if(action==='start-sound'){
     if(!sound.enabled)sound.toggle();
@@ -527,7 +539,7 @@ document.addEventListener('click',e=>{
   if(action==='fresh-mini'){mini=freshOrbit(game);miniEffect={};miniMessage='Новый полёт: оборудование восстановлено по решениям команды.';saveMini();renderMini();dialog.querySelector('.tile.ship')?.focus({preventScroll:true});return;}
   if(action==='reload-mini'){openMini(true);dialog.querySelector('.tile.ship')?.focus({preventScroll:true});}
   if(action==='brief')showDialog(`<div class="eyebrow">ЗАКАЗ · ${esc(contractFor(game).client)}</div><h2 id="dialog-title">${esc(contractFor(game).name)}</h2><p>${esc(contractFor(game).text)}</p><ul class="debrief-list"><li>Бюджет на команду и резерв: <b>${money(game.initialBudget)}</b>.</li><li>Срок: <b>${game.deadline} игровых часов</b>.</li><li>Команда: три разработчика на ваш выбор.</li><li>Согласуйте новые функции и ограничения до показа.</li></ul><p>Твоя работа как тимлида — разобрать задачу с командой, помочь с трудностями и проверить код перед показом.</p><button class="primary full" data-action="close-dialog">За работу</button>`);
-  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="guide-open">Ника · подсказки и голос</button><button class="secondary full" data-action="brief">Задание заказчика</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
+  if(action==='menu'){showDialog(`<div class="eyebrow">СТУДИЯ НА ПАУЗЕ</div><h2 id="dialog-title">До релиза</h2><p>${savingAvailable?'Прогресс автоматически сохранён в этом браузере.':'Сохранение недоступно. Не закрывайте вкладку до конца сессии.'}</p><details class="menu-graphics"><summary>Графика и производительность</summary>${graphicsSettingsHTML()}</details><div class="menu-buttons"><button class="secondary full" data-action="office-talk-toggle" aria-pressed="${officeChat.enabled}">Разговоры в студии: ${officeChat.enabled?'включены':'выключены'}</button><button class="primary full" data-action="close-dialog">Продолжить игру</button><button class="secondary full" data-action="life-office">Касса и улучшения</button><button class="secondary full" data-action="guide-open">Ника · подсказки и голос</button><button class="secondary full" data-action="brief">Задание заказчика</button><button class="secondary full" data-action="about">Как играть</button><button class="secondary full" data-action="home">На главный экран</button></div>`);}
   if(action==='home'){dialog.close();persist();game=null;render();}
 });
 let demoArrival = false;

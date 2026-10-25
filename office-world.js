@@ -1,6 +1,7 @@
 import { settleCoffeeFallback } from './assets/coffee-trip.js';
 import { reactionForChanges, planInspection } from './assets/character-reactions.js';
 import { sceneActions } from './assets/scene-feedback.js';
+import { placeSpeechElement } from './assets/office-speech.js';
 import { placeFeedback } from './assets/scene-feedback.js';
 import { mountSceneClock } from './assets/scene-clock.js';
 import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-expansion.js';
@@ -181,7 +182,8 @@ class OfficeWorld {
           if(visits.length){for(const visit of visits)this.actors.get(visit.id).inspect({...visit,key:action.key},this.game);this.consumedActions.add(action.key);}
         }else if(action.type==='purchase')this.consumedActions.add(action.key);
       }
-      for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
+      const speech=this.callbacks.getSpeech?.();
+      for (const actor of actors) actor.update(dt, time / 1000, actors, { speaking:speech?.id===actor.id, listening:speech?.listenerId===actor.id, speechLevel:speech?.level||0, speechTarget:this.actors.get(speech?.id===actor.id?speech?.listenerId:speech?.id)?.point, stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
       const selectedActor=this.actors.get(this.selected);
       this.selectionRing.visible=!!selectedActor;
       if(selectedActor)this.selectionRing.position.set(selectedActor.group.position.x,.035,selectedActor.group.position.z);
@@ -220,6 +222,12 @@ class OfficeWorld {
     const parent = this.container.closest('.office-room');
     const viewRect=this.container.getBoundingClientRect(),roomRect=parent.getBoundingClientRect();
     const point=()=>({x:viewRect.left-roomRect.left+(this.projected.x*.5+.5)*viewRect.width,y:viewRect.top-roomRect.top+(-this.projected.y*.5+.5)*viewRect.height});
+    const balloon=parent.querySelector('[data-office-speech]'),speaker=this.actors.get(balloon?.dataset.officeSpeech);
+    if(balloon&&speaker){
+      speaker.joints.Head.getWorldPosition(this.projected);this.projected.y+=.22;this.projected.project(this.camera);
+      const location=point();location.offscreen=Math.abs(this.projected.x)>1||Math.abs(this.projected.y)>1||Math.abs(this.projected.z)>1;
+      placeSpeechElement(balloon,location,parent);
+    }
     this.feedbackHighlights ||= new Map();
     const feedback=[...parent.querySelectorAll('[data-scene-feedback]')];
     const activeKeys=new Set(feedback.map(el=>el.dataset.sceneFeedback));

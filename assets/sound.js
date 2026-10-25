@@ -1,5 +1,6 @@
 import { VOICE_ASSETS } from './onboarding/voice-manifest.js?v=original-cast-20261024';
 import { characterVoicePath } from './character-voice.js';
+import { characterLine } from './character-dialogue.js';
 import { assetURL } from '../asset-url.js';
 
 // Original quiet score, synthesized locally in the browser. No music downloads.
@@ -8,6 +9,18 @@ const hz = note => 440 * 2 ** ((note - 69) / 12);
 export function createSound() {
   let enabled = true, context, master, music, fx, timer, nextBeat = 0, beat = 0, voice, lastVoice = '';
   let voiceOn = false, unlocked = false, voiceOwner = null, lastCastVoice = '';
+  let exchangeDone=null,voiceMode='dialogue',meter=null;
+  function releaseMeter(){meter?.source.disconnect();meter?.analyser.disconnect();meter=null;}
+  function characterSpeech(){
+    if(!voiceOn||voiceOwner!=='character'||!voice)return null;
+    if(meter&&performance.now()>=meter.next){
+      meter.analyser.getFloatTimeDomainData(meter.data);
+      const rms=Math.sqrt(meter.data.reduce((sum,n)=>sum+n*n,0)/meter.data.length);
+      meter.level+=(Math.min(1,rms*6)-meter.level)*.55;meter.next=performance.now()+70;
+    }
+    const id=voice.dataset.characterId,key=voice.dataset.characterVoice;
+    return {id,key,text:characterLine(id,key.slice(id.length+1)),level:meter?.level||0,audible:true,ambient:voiceMode==='ambient'};
+  }
   try { enabled = localStorage.getItem('before-release-sound-v1') !== 'off'; } catch { /* Session only. */ }
   function note(midi, when, duration, volume, type = 'sine', bus = music) {
     const oscillator = context.createOscillator(), gain = context.createGain();
@@ -44,14 +57,16 @@ export function createSound() {
     voiceOn = active;
     if(context) music.gain.setTargetAtTime(active?.025:.095,context.currentTime,.18);
     document.dispatchEvent(new CustomEvent('nika-voice-state',{detail:{speaking:active && owner === 'nika'}}));
-    document.dispatchEvent(new CustomEvent('character-voice-state',{detail:{speaking:active && owner === 'character',id:voice?.dataset.characterId}}));
+    document.dispatchEvent(new CustomEvent('character-voice-state',{detail:{speaking:active && owner === 'character',id:voice?.dataset.characterId,key:voice?.dataset.characterVoice}}));
   }
   function stopVoice(owner) {
     if (owner && voiceOwner !== owner) return;
     if(voice){voice.pause();voice.currentTime=0;voice.remove();voice=null;}
+    releaseMeter();const ended=exchangeDone;exchangeDone=null;
     voiceOwner = null; duck(false);
+    ended?.('cancelled');
   }
-  function playRecord(path, owner, key, id, done) {
+  function playRecord(path, owner, key, id, done, onStart) {
     const audio = new Audio(assetURL(path));
     audio.hidden = true; audio.dataset.voiceOwner = owner;
     if(owner === 'nika') audio.dataset.nikaVoice = key;
@@ -59,10 +74,15 @@ export function createSound() {
     audio.setAttribute('aria-label',owner === 'nika' ? 'Речь Ники' : 'Речь разработчика');
     document.body.append(audio);
     voice = audio; voiceOwner = owner; audio.volume = .78;
-    audio.onplaying = () => { if(voice===audio) duck(true); };
+    if(context?.createMediaElementSource&&context?.createAnalyser){
+      try {const analyser=context.createAnalyser(),source=context.createMediaElementSource(audio);analyser.fftSize=256;source.connect(analyser);analyser.connect(context.destination);meter={source,analyser,data:new Float32Array(256),next:0,level:0};}catch{/* HTML audio still works without a meter. */}
+    }
+    audio.onplaying = () => { if(voice===audio){duck(true);onStart?.();} };
+    let finished=false;
     const finish = () => {
+      if(finished)return;finished=true;
       audio.remove();
-      if(voice===audio){voice=null;voiceOwner=null;duck(false);done?.();}
+      if(voice===audio){releaseMeter();voice=null;voiceOwner=null;duck(false);done?.();}
     };
     audio.onended = audio.onerror = finish;
     audio.play().catch(finish);
@@ -73,17 +93,18 @@ export function createSound() {
     if(!VOICE_ASSETS[key]) return;
     playRecord(`onboarding/${VOICE_ASSETS[key]}`,'nika',key);
   }
-  function speakExchange(lines, force = false) {
-    if(!enabled || !unlocked || document.hidden || (!force && voiceOwner === 'nika')) return false;
+  function speakExchange(lines, force = false, options={}) {
+    if(!enabled || !unlocked || document.hidden || (!force && (voiceOwner === 'nika'||options.ambient&&voice))) return false;
     const clips = lines.slice(0,2).filter(line => characterVoicePath(line.id,line.kind));
     if(!clips.length) return false;
     const signature = clips.map(line=>`${line.id}-${line.kind}`).join(':');
     if(!force && signature === lastCastVoice) return false;
     lastCastVoice = signature; stopVoice();
+    voiceMode=options.ambient?'ambient':'dialogue';exchangeDone=options.onDone||null;
     const next = index => {
-      const line = clips[index]; if(!line) return;
+      const line = clips[index]; if(!line){const ended=exchangeDone;exchangeDone=null;ended?.('done');return;}
       const key = `${line.id}-${line.kind}`;
-      playRecord(characterVoicePath(line.id,line.kind),'character',key,line.id,()=>next(index+1));
+      playRecord(characterVoicePath(line.id,line.kind),'character',key,line.id,()=>next(index+1),()=>options.onStart?.(line));
     };
     next(0); return true;
   }
@@ -103,6 +124,8 @@ export function createSound() {
   }
   document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();clearTimeout(timer);context?.suspend();}else if(unlocked&&enabled)unlock();});
   return {unlock,effect,speak,stopVoice,toggle,button,speakExchange,
+    stopAmbient:()=>{if(voiceMode==='ambient')stopVoice('character');},
+    get characterSpeech(){return characterSpeech();},get busy(){return Boolean(voice);},
     speakCharacter:(id,kind='intro',force=false)=>speakExchange([{id,kind}],force),
     hasCharacterVoice:(id,kind='intro')=>Boolean(characterVoicePath(id,kind)),
     get speakingCharacter(){return voiceOwner === 'character' && voiceOn ? voice?.dataset.characterId : null;},
