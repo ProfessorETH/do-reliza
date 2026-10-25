@@ -16,16 +16,16 @@ function finish(s) {
   assert.equal(s.stage,'result');assert.ok(validSave(s));return s;
 }
 test('break pauses only its employee; queued coworkers continue working and take turns in one chair',()=>{
-  const s=working();s.progress.brief=100; // Design and code are genuinely parallel now.
+  const s=working();s.choices={scope:'focus',review:'review-fix',bug:'fix'};s.life.incidentDone=true;s.life.conflictDone=true;s.progress.brief=100; // Design and code are genuinely parallel now.
   const id=s.assignments.design, other=s.assignments.code;
   s.life.members[id].energy=20;s.life.members[id].stress=70;
   assert.equal(condition(s,id).label,'На грани выгорания');
   assert.equal(careFor(s,id,'break'),null);assert.ok(!activeTasks(s).some(t=>s.assignments[t.id]===id));
-  assert.equal(tick(s),false);assert.equal(s.time,0);assert.equal(restArrival(s,id,'resting'),true);
+  assert.equal(tick(s),true);assert.equal(s.time,1);assert.equal(restArrival(s,id,'resting'),true);
   tick(s);assert.equal(s.progress.design,0);assert.ok(s.progress.code>0);
   assert.equal(s.life.members[id].energy,50);assert.equal(s.life.members[id].stress,55);
   assert.equal(s.life.members[id].breaks,0);assert.ok(s.life.members[other].energy<85);
-  assert.equal(tick(s),false);assert.equal(restArrival(s,id,'back'),true);
+  assert.equal(tick(s),true);assert.equal(restArrival(s,id,'back'),true);
   for(const aid of s.team)assert.equal(careFor(s,aid,'break'),null);
   assert.equal(s.team.filter(a=>s.life.members[a].restTrip.phase==='queued').length,2);
   assert.equal(restArrival(s,s.team[0],'resting'),true);
@@ -95,15 +95,16 @@ test('legacy saves migrate and damaged simulation data cannot enter the game',()
 });
 test('travel and rest survive reload without duplicated recovery or stale work assignments',()=>{
   const s=working(),id=s.assignments.brief,assignments=structuredClone(s.assignments);
+  s.choices={scope:'focus',review:'review-fix',bug:'fix'};s.life.incidentDone=true;s.life.conflictDone=true;
   s.life.members[id].energy=10;careFor(s,id,'break');
   let restored=restoreOffice(JSON.parse(JSON.stringify(s)));assert.ok(validSave(restored));
-  assert.equal(restInTransit(restored),true);assert.equal(tick(restored),false);
+  assert.equal(restInTransit(restored),true);assert.equal(tick(restored),true);
   const before=structuredClone(restored);assert.equal(typeof supportTask(restored,'brief'),'string');assert.deepEqual(restored,before);
   assert.equal(restArrival(restored,id,'back'),false);assert.equal(restArrival(restored,id,'resting'),true);
   assert.equal(restArrival(restored,id,'resting'),false);tick(restored);
   assert.equal(restored.life.members[id].energy,40);
   restored=restoreOffice(JSON.parse(JSON.stringify(restored)));assert.ok(validSave(restored));
-  assert.equal(tick(restored),false);assert.equal(restArrival(restored,id,'back'),true);
+  assert.equal(tick(restored),true);assert.equal(restArrival(restored,id,'back'),true);
   assert.equal(restArrival(restored,id,'back'),false);assert.deepEqual(restored.assignments,assignments);
   tick(restored);assert.ok(restored.progress.brief>0);assert.ok(restored.life.members[id].energy<40);
   const bad=structuredClone(restored);bad.life.members[id].restTrip={phase:'resting',slot:8};assert.equal(!!validSave(bad),false);
