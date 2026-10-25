@@ -7,3 +7,10 @@ test('catalog and confirmation use native model posters and keep every item insp
  for(const u of UPGRADES){const card=purchasePanel(s,u);assert.match(card,new RegExp('data-model-viewer="'+u.id+'"'));assert.match(card,/Цена улучшения/);assert.ok(!card.includes('<svg'));}
  s.stage='work';assert.match(purchasePanel(s,UPGRADES[3]),/data-action="life-buy"[^>]*disabled/);assert.equal(upgradeOffer(s,'unknown'),null);assert.match(modelPreview('lounge'),/До улучшения/);
 });
+
+test('bootstrap career keeps its reputation entry, reward amounts and purchase limits in model menus',async()=>{
+ const {createGame}=await import('../engine.js'),{CONTRACTS}=await import('../assets/studio-life.js'),{contractPreview}=await import('../assets/commission-view.js');
+ const s=createGame('bootstrap'),html=renderOfficeCatalog(s);assert.match(html,/СТУДИЯ С НУЛЯ/);assert.match(html,/data-action="career"/);assert.match(html,/\+500 ₽ в кассу/);
+ for(const u of UPGRADES){const copy=structuredClone(s),offer=upgradeOffer(s,u.id);assert.equal(offer.canBuy,!buyUpgrade(copy,u.id));}
+ const preview=contractPreview(s,CONTRACTS.find(c=>c.id==='club')),button=preview.match(/<button[^>]*data-action="life-next"[^>]*>/)?.[0];assert.ok(button);assert.match(button,/disabled/);assert.ok(!button.includes('<p'));
+});
