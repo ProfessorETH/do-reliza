@@ -75,7 +75,12 @@ test('six portable skins contain weighted bones, five clips and bone-attached ey
       for(let i=0;i<weights.count;i++)assert.ok(Math.abs(weights.getX(i)+weights.getY(i)+weights.getZ(i)+weights.getW(i)-1)<.001,`${id}: normalized weights`);
     });
     if(a.portraitHead){
-      assert.equal(skins,1,`${id}: portrait head uses the existing Head bone`);
+      const collar=a.group.getObjectByName(`DR_${id}_Collar`);
+      assert.equal(skins,collar?2:1,`${id}: body and optional fitted collar use the existing rig`);
+      if(collar){
+        assert.ok(collar.isSkinnedMesh);
+        assert.deepEqual(collar.skeleton.bones.map(b=>b.name),a.group.getObjectByName(`DR_${id}_Skin`).skeleton.bones.map(b=>b.name));
+      }
       assert.equal(a.portraitHead.parent.name,`Skin_${id}_Head`);
       assert.ok(a.portraitHead.parent.isBone);
       assert.equal(a.portraitHead.userData.portraitHeadVersion,4);
