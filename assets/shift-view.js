@@ -11,8 +11,9 @@ export function shiftOverview(game) {
     const resting=awayForRest(m),weak=!!task&&fit(id,task,game)<55&&!game.support;
     const needsHelp=!resting&&(s.tone==='urgent'||s.tone==='low'||weak);
     const reason=resting?'Восстанавливает силы. Вернётся к работе после отдыха.':s.energy<35?'Мало энергии — предложи перерыв.':s.stress>=65?'Высокое напряжение — коллеге нужна поддержка.':s.morale<35?'Настроение снизилось — обсуди, как помочь.':weak?'Задача сложна для текущего навыка. Можно разобрать её вместе.':s.explanation;
-    return {...s,needsHelp,reason,resting,actions:s.actions.filter(a=>a.action!=='studio-project')};
+    return {...s,needsHelp,reason,resting,actions:s.actions.filter(a=>a.action!=='studio-project'&&(a.action!=='life-break'||needsHelp)).slice(0,1)};
   });
+  members.sort((a,b)=>Number(b.needsHelp)-Number(a.needsHelp)||Number(!!b.task)-Number(!!a.task));
   return {members,done,progress:Math.round(TASKS.reduce((n,t)=>n+game.progress[t.id],0)/TASKS.length),attention:members.filter(m=>m.needsHelp).length};
 }
 
