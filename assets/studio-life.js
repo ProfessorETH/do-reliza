@@ -1,4 +1,5 @@
 import { agentProfile, initCareer, isCareer, contractTerms, releaseIncome, finishCareer, validCareer } from './studio-career.js';
+import { ensureEmployment, requestSalary, settleEmployment, salaryDecision, employmentCondition } from './career-employment.js';
 import { requestCoffee, callNextCoffee, coffeeInTransit, validCoffeeTrips } from './coffee-trip.js';
 import { AGENTS } from '../data.js';
 import { studioCapacity, upgradeLock, MISSION_REWARDS, missionReward } from './studio-progression.js';
@@ -19,6 +20,7 @@ export const UPGRADES = [
   { id: 'computers', name: 'Обновить компьютеры', price: 4500, text: 'У столов появятся новые системные блоки. Код и сборка выполняются на 10% быстрее; сбой компьютера устраняется без потери часа.' },
 ];
 export const INCIDENTS = {
+  salary: { title: 'Пора обсудить оплату', text: 'Сотрудник набрался опыта и хочет пересмотреть условия.', care: 'Согласовать прибавку' },
   noise: { title: 'Созвон за соседним столом', text: 'Громкое обсуждение мешает сосредоточиться. Сотрудник уже несколько раз терял мысль.', upgrade: 'quiet', care: 'Договориться о тихом часе', effect: 'Напряжение −12 · +1 ч без тихого офиса' },
   computer: { title: 'Сборка снова зависла', text: 'Компьютер подвёл в середине работы. Сотрудник переживает, что задерживает всех.', upgrade: 'computers', care: 'Помочь настроить компьютер', effect: 'Напряжение −12 · +1 ч без обновления компьютеров' },
   idea: { title: 'Получилось лучше, чем ожидали', text: 'Сотрудник нашёл удачный приём и хочет показать его коллегам. У команды появился повод порадоваться.', care: 'Дать поделиться находкой', effect: 'Настроение всей команды +8 · +1 ч' },
@@ -28,6 +30,7 @@ export const INCIDENTS = {
 export function ensureLife(s) {
   if (!s.life) s.life = { version: 1, cash: 5000, completed: 0, contract: 'festival', upgrades: [], members: {}, history: [], seed: Math.floor(Math.random() * 0x100000000), incident: null, incidentDone: false, settled: false, departures: [] };
   if(isCareer(s)&&!s.life.career)initCareer(s);
+  if(isCareer(s))ensureEmployment(s);
   for (const a of AGENTS) s.life.members[a.id] ||= member();
   for (const id of s.team) {
     const m = s.life.members[id];
@@ -68,6 +71,7 @@ export function condition(s, id) {
   if (m.restTrip?.phase === 'outbound') return { label: 'Идёт на перерыв', reason: 'Направляется в зону отдыха. Остальная команда продолжает работу; отдых начнётся после посадки.', factor: 1 };
   if (m.restTrip?.phase === 'returning') return { label: 'Возвращается за компьютер', reason: 'Перерыв завершён. Работа продолжится после возвращения на своё место.', factor: 1 };
   if (m.breaks) return { label: 'На перерыве', reason: 'Отдыхает один игровой час в зоне отдыха; остальные продолжают работу.', factor: 1 };
+  const pay=employmentCondition(s,id);if(pay)return {...pay,factor:m.energy<=25&&m.stress>=65?.75:m.energy<35||m.stress>=65?.9:m.morale<35?.95:1};
   if (m.energy <= 25 && m.stress >= 65) return { label: 'На грани выгорания', reason: 'Мало энергии и много напряжения. Нужны отдых и помощь с причиной затруднений.', factor: .75 };
   if (m.energy < 35) return { label: 'Усталость', reason: 'Долго работает без отдыха. Перерыв вернёт энергию.', factor: .9 };
   if (m.stress >= 65) return { label: 'Нужна поддержка', reason: 'Накопилось напряжение от работы и событий. Помогут разбор и отдых.', factor: .9 };
@@ -93,6 +97,10 @@ export function scheduleIncident(s) {
   const l = ensureLife(s);
   if (s.stage !== 'work' || l.incident) return false;
   const present = s.team.filter(id => !awayForRest(l.members[id]));
+  if(isCareer(s)&&s.time>=2){
+    const id=present.find(id=>Object.keys(s.progress).some(t=>s.assignments[t]===id&&s.progress[t]>=100)&&requestSalary(s,id));
+    if(id){l.incident={type:'salary',id};s.currentEvent='life';s.stage='event';return true;}
+  }
   const upset = present.find(id => l.members[id].stress >= 75 || l.members[id].morale <= 25);
   if (!l.conflictDone && s.time >= 2 && upset && present.length >= 2) {
     const otherId = present.filter(id => id !== upset).sort((a,b) => l.members[a].stress - l.members[b].stress)[0];
@@ -110,6 +118,10 @@ export function scheduleIncident(s) {
 }
 export function resolveIncident(s, option) {
   const l = ensureLife(s), ev = l.incident;
+  if(s.stage==='event'&&s.currentEvent==='life'&&ev?.type==='salary'){
+    const error=salaryDecision(s,ev.id,({'salary-accept':'accept','salary-defer':'defer','salary-replace':'replace'})[option]);
+    if(error)return error;l.incident=null;s.currentEvent=null;s.stage='work';return null;
+  }
   if (s.stage !== 'event' || s.currentEvent !== 'life' || !ev || !['life-care', 'life-wait'].includes(option)) return 'Выбери решение события.';
   const m = l.members[ev.id], info = INCIDENTS[ev.type];
   if (ev.type === 'tension') {
@@ -156,6 +168,7 @@ export function careFor(s, id, action) {
     if (l.departures.includes(id)) return 'Следующий заказ уже запланирован без этого сотрудника.';
     l.departures.push(id); s.log.push(`Контракт ${AGENTS.find(a => a.id === id).name} не будет продлён. Для следующего заказа понадобится замена.`);
   } else if (action === 'raise') {
+    if(isCareer(s))return salaryDecision(s,id,'accept');
     if (s.stage !== 'result') return 'Условия оплаты обсуждаем между заказами.';
     if (m.raises >= 3) return 'Условия уже улучшены трижды.';
     if (l.cash < 1000) return 'В кассе студии нужно 1 000 ₽.';
@@ -186,8 +199,9 @@ export function settleProject(s, result) {
     const m = l.members[id];
     m.morale = clamp(m.morale + (result.passed ? 5 : -10));
     if (m.morale < 30 || (m.energy <= 25 && m.stress >= 65)) m.warnings++; else m.warnings = 0;
-    if (m.warnings >= 2 && !l.departures.includes(id)) l.departures.push(id);
+    if (!isCareer(s)&&m.warnings >= 2 && !l.departures.includes(id)) l.departures.push(id);
   }
+  settleEmployment(s);
   l.history.push({ name: contractFor(s).name, score: result.score, reward, time: s.time, gross:income.gross, upkeep:income.upkeep });
   s.log.push(`Заказ закрыт: в кассу студии +${reward} ₽. Резерв заказчика не переносится.`);
 }
@@ -207,5 +221,5 @@ export function validLife(s) {
       && (m.coffee === undefined || typeof m.coffee === 'boolean')
       && (m.restSerial === undefined || integer(m.restSerial,0))
       && (m.restTrip == null || (s.team.includes(a.id) && ['work','event','result'].includes(s.stage) && ['queued','outbound','resting','returning'].includes(m.restTrip.phase) && (m.restTrip.request===undefined||integer(m.restTrip.request,1)) && integer(m.restTrip.slot,0,4) && m.restTrip.slot === s.team.indexOf(a.id) && m.breaks === (m.restTrip.phase === 'returning' ? 0 : 1))); })
-    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && (l.incident.type === 'tension' ? !l.conflictDone && s.team.includes(l.incident.otherId) && l.incident.otherId !== l.incident.id : !l.incidentDone));
+    && (l.incident === null ? s.currentEvent !== 'life' : l.incident && INCIDENTS[l.incident.type] && s.team.includes(l.incident.id) && s.currentEvent === 'life' && s.stage === 'event' && (l.incident.type === 'salary' ? isCareer(s)&&l.career.employment[l.incident.id].status==='pending' : l.incident.type === 'tension' ? !l.conflictDone && s.team.includes(l.incident.otherId) && l.incident.otherId !== l.incident.id : !l.incidentDone));
 }

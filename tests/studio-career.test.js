@@ -1,3 +1,4 @@
+import { salaryDecision, pendingSalary } from '../assets/career-employment.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AGENTS } from '../data.js';
@@ -10,7 +11,7 @@ import { freshOrbit, recordOrbitResult } from '../assets/orbit.js';
 import { missionRoute } from './orbit-route.js';
 
 function studio(){const s=createGame('bootstrap');for(const [i,id] of ['mira','iskra','echo'].entries()){assert.equal(hire(s,id),null);seatAgent(s,id,i);}return s;}
-function finish(s,ignore=false){beginPlan(s);recommend(s);beginWork(s);for(let n=0;n<150&&s.stage!=='result';n++){if(s.stage==='event')assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:ignore?'ignore':s.budget>=1500?'fix':'cut',life:'life-care'}[s.currentEvent]),null);else assert.equal(tick(s),true);}assert.equal(s.stage,'result');assert.ok(validSave(s));return s;}
+function finish(s,ignore=false){beginPlan(s);recommend(s);beginWork(s);for(let n=0;n<150&&s.stage!=='result';n++){if(s.stage==='event')assert.equal(resolveEvent(s,{scope:'focus',review:'review-fix',bug:ignore?'ignore':s.budget>=1500?'fix':'cut',life:s.life.incident?.type==='salary'?'salary-accept':'life-care'}[s.currentEvent]),null);else assert.equal(tick(s),true);}assert.equal(s.stage,'result');for(const id of pendingSalary(s))assert.equal(salaryDecision(s,id,'accept'),null);assert.ok(validSave(s));return s;}
 
 test('bootstrapped studio can afford three novices and cannot borrow expert stats from classic games',()=>{
   const originals=structuredClone(AGENTS),s=studio();assert.equal(s.life.cash,800);assert.equal(s.budget,2400);
@@ -52,7 +53,7 @@ test('eight-order career unlocks clients, keeps ledger valid and pays mission pr
     const cash=s.life.cash,reward=missionReward(s,s.life.contract).cash;assert.ok(recordOrbitResult(s,flight));assert.equal(s.life.cash,cash+reward);assert.equal(recordOrbitResult(s,flight),false);assert.ok(validSave(s));
   }
   assert.equal(s.life.career.reputation,80);assert.ok(s.life.career.skills.mira.design>=75);assert.ok(s.life.cash>6000);assert.deepEqual(s.life.missionsWon,['festival','club','cup']);
-  assert.equal(buyUpgrade(s,'desk4'),null);assert.equal(buyUpgrade(s,'desk5'),null);assert.equal(nextProject(s,'cup'),null);
+  assert.equal(buyUpgrade(s,'desk4'),null);for(let n=0;s.life.cash<11000&&n<10;n++){assert.equal(nextProject(s,'cup'),null);finish(s);const flight=freshOrbit(s);missionRoute(s,flight);assert.ok(flight.won);recordOrbitResult(s,flight);}assert.equal(buyUpgrade(s,'desk5'),null);assert.equal(nextProject(s,'cup'),null);
   for(const [id,index] of [['nord',3],['saga',4]]){assert.equal(hire(s,id),null);seatAgent(s,id,index);}
   assert.equal(s.team.length,5);assert.ok(validSave(s));finish(s);assert.ok(getResult(s).passed);
 });
