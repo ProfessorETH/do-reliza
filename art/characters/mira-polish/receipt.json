@@ -35,12 +35,16 @@
     "userLiveOfficeBlendModified": false
   },
   "validation": {
-    "nodeTests": 215,
+    "nodeTests": 233,
     "hostingTests": 5,
     "browserGameErrorsAndWarnings": 0,
     "actualOfficeWorkPoseInspected": true,
     "frontPortraitComparisonInspected": true,
     "otherCharacterAssetsChanged": false
+  },
+  "reviewBuild": {
+    "assetVersion": "023a61fc972c7d84fbbe860b",
+    "publication": "built locally only"
   },
   "proofs": [
     "work/mira-polish/final-office-profile.png",
