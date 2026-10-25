@@ -4,10 +4,13 @@ import {readFile} from 'node:fs/promises';
 import {Matrix4,Vector3,Quaternion} from '../vendor/three/three.module.js';
 import {parseGLB,accessorValues} from '../scripts/attach-portrait-head.js';
 import {recoverHeadProportionBase} from '../scripts/fit-head-proportions.js';
+import {recoverMiraPolishBase} from '../scripts/polish-mira.js';
 
 const scales={mira:.76,pixel:.76,nord:.85,iskra:.76,saga:.80,echo:.82,nika:.70};
-for(const [id,scale]of Object.entries(scales))test(`${id}: smaller head preserves collar, body, portrait UVs and portable animations`,async()=>{
-  const bytes=await readFile(new URL(`../assets/models/${id}.glb`,import.meta.url)),after=parseGLB(bytes),before=parseGLB(recoverHeadProportionBase(bytes));
+for(const [id,scale]of Object.entries(scales))test(`${id}: proportion layer preserves collar, body, portrait UVs and portable animations`,async()=>{
+  // Later scoped modelling has its own live-geometry acceptance tests. Audit
+  // the reversible proportion layer against its actual original input here.
+  const bytes=recoverMiraPolishBase(await readFile(new URL(`../assets/models/${id}.glb`,import.meta.url))),after=parseGLB(bytes),before=parseGLB(recoverHeadProportionBase(bytes));
   const {json:a,bin:ab}=after,{json:b,bin:bb}=before;
   assert.equal(a.asset.extras.headProportions.scale,scale);
   for(const key of ['nodes','skins','animations','materials','images','textures'])assert.deepEqual(a[key],b[key],key);

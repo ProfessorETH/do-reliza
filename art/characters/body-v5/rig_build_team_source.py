@@ -33,11 +33,17 @@ def glb_json(path):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--force',action='store_true')
+    parser.add_argument('--character',choices=IDS,help='Pack one reviewed character in a separate source file')
+    parser.add_argument('--output',help='Project-relative native source destination')
     args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
-    assert args.force or not OUTPUT.exists(),'Review existing packed source before --force'
+    ids=[args.character] if args.character else IDS
+    output=(ROOT/args.output).resolve() if args.output else OUTPUT
+    assert output.is_relative_to(ROOT) and output.suffix=='.blend','Native source must stay in this project'
+    assert not args.character or args.output,'Single-character packs need an explicit separate output'
+    assert args.force or not output.exists(),'Review existing packed source before --force'
     sources={}
     # Validate the complete input set before changing even this isolated scene.
-    for ident in IDS:
+    for ident in ids:
         path=ROOT/f'assets/models/{ident}.glb';doc,sha=glb_json(path)
         assert doc['asset'].get('extras',{}).get('hunyuanBodyVersion')==5,f'{ident}: accepted v5 body required'
         assert doc['asset']['extras'].get('portraitHeadVersion')==4,f'{ident}: accepted portrait attachment required'
@@ -50,7 +56,7 @@ def main():
     scene.display.shading.light='STUDIO';scene.display.shading.color_type='TEXTURE'
     team=bpy.data.collections.new('Team Body V5 — accepted game sources');scene.collection.children.link(team)
     report=[]
-    for index,ident in enumerate(IDS):
+    for index,ident in enumerate(ids):
         source=sources[ident];before=set(bpy.data.objects);before_actions=set(bpy.data.actions)
         bpy.ops.import_scene.gltf(filepath=str(source['path']))
         imported=set(bpy.data.objects)-before;actions=set(bpy.data.actions)-before_actions
@@ -63,7 +69,7 @@ def main():
             collection.objects.link(obj)
             if obj.parent not in imported:
                 matrix=obj.matrix_world.copy();obj.parent=root;obj.matrix_world=matrix
-        root.location.x=(index-3)*1.12
+        root.location.x=(index-(len(ids)-1)/2)*1.12
         body=next(o for o in imported if o.name==f'DR_{ident}_Skin' and o.type=='MESH')
         head=next(o for o in imported if o.name==f'DR_{ident}_PortraitHead' and o.type=='MESH')
         armature=next(o for o in imported if o.type=='ARMATURE' and f'Skin_{ident}_Head' in o.data.bones)
@@ -97,16 +103,18 @@ def main():
     camera_data=bpy.data.cameras.new('Team Review Camera');camera=bpy.data.objects.new('Team Review Camera',camera_data);scene.collection.objects.link(camera)
     camera.location=(0,10,3.8);camera.rotation_euler=(Vector((0,0,1))-camera.location).to_track_quat('-Z','Y').to_euler();camera_data.type='ORTHO';camera_data.ortho_scale=8.8;scene.camera=camera
     scene.render.resolution_x=1920;scene.render.resolution_y=1080;scene.render.resolution_percentage=100
-    scene['source_rebuild_command']='blender --background --factory-startup --threads 6 --python-exit-code 1 --python art/characters/body-v5/rig_build_team_source.py -- --force'
+    command='blender --background --factory-startup --threads 6 --python-exit-code 1 --python art/characters/body-v5/rig_build_team_source.py -- --force'
+    if args.character:command+=f' --character {args.character} --output {output.relative_to(ROOT).as_posix()}'
+    scene['source_rebuild_command']=command
     scene['source_receipt']=json.dumps(report,ensure_ascii=False)
     bpy.ops.object.select_all(action='DESELECT')
-    OUTPUT.parent.mkdir(parents=True,exist_ok=True)
+    output.parent.mkdir(parents=True,exist_ok=True)
     bpy.context.preferences.filepaths.save_version=0 # First pack is separately preserved under work/.
-    bpy.ops.wm.save_as_mainfile(filepath=str(OUTPUT),compress=True)
-    size=OUTPUT.stat().st_size
+    bpy.ops.wm.save_as_mainfile(filepath=str(output),compress=True)
+    size=output.stat().st_size
     assert size<MAX_PACKED_BYTES,f'Packed source exceeds 100 MiB: {size}'
-    receipt={'status':'native_source_verified','output':str(OUTPUT.relative_to(ROOT)).replace('\\','/'),'bytes':size,'mib':round(size/1024/1024,3),'size_limit_bytes':MAX_PACKED_BYTES,'size_limit_basis':'100 MiB GitHub file ceiling; textures/geometry not degraded','sha256':hashlib.sha256(OUTPUT.read_bytes()).hexdigest(),'seconds':round(time.monotonic()-started,3),'packed_images':sum(bool(i.packed_file) for i in bpy.data.images),'external_images':unpacked,'orphan_data_before':before_purge,'orphan_data_after':after_purge,'all_actions_fake_user':all(a.use_fake_user for a in bpy.data.actions),'models':report}
-    OUTPUT.with_suffix('.receipt.json').write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    receipt={'status':'native_source_verified','output':str(output.relative_to(ROOT)).replace('\\','/'),'bytes':size,'mib':round(size/1024/1024,3),'size_limit_bytes':MAX_PACKED_BYTES,'size_limit_basis':'100 MiB GitHub file ceiling; textures/geometry not degraded','sha256':hashlib.sha256(output.read_bytes()).hexdigest(),'seconds':round(time.monotonic()-started,3),'packed_images':sum(bool(i.packed_file) for i in bpy.data.images),'external_images':unpacked,'orphan_data_before':before_purge,'orphan_data_after':after_purge,'all_actions_fake_user':all(a.use_fake_user for a in bpy.data.actions),'models':report}
+    output.with_suffix('.receipt.json').write_text(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     print('PACKED_TEAM_SOURCE',json.dumps(receipt,ensure_ascii=False),flush=True)
 
 

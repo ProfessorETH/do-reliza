@@ -1,0 +1,191 @@
+{
+  "status": "frozen body candidates; final composite office QA owned by root",
+  "source_sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+  "hands": {
+    "source_sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+    "output_sha256": "cf723a9024bd4d2179bdd9404ae4ef22f4bc3ec8f3a297700318a20099be39c6",
+    "status": "review-only",
+    "body_vertices": 54132,
+    "body_triangles": 74632,
+    "stats": {
+      "Left": {
+        "wrist": [
+          -0.4591802927290688,
+          0.7514165496092698,
+          3.526224065479398e-08
+        ],
+        "elbow": [
+          -0.35598431148208953,
+          0.9954976276623916,
+          4.30843966651675e-08
+        ],
+        "changed": 1971,
+        "depth_before": 0.13173480704426765,
+        "depth_after": 0.09340284109528436,
+        "max_displacement": 0.024232867620167357,
+        "mean_hand_ownership": 1.0
+      },
+      "Right": {
+        "wrist": [
+          0.4591802753535249,
+          0.7514164812598029,
+          4.1841812622084883e-08
+        ],
+        "elbow": [
+          0.35598431148208953,
+          0.9954976276623916,
+          4.30843966651675e-08
+        ],
+        "changed": 2055,
+        "depth_before": 0.13498665764927864,
+        "depth_after": 0.09447595483566251,
+        "max_displacement": 0.025081407233763217,
+        "mean_hand_ownership": 1.0
+      }
+    },
+    "changed_vertices": 4066,
+    "flipped_triangles": 0,
+    "source_unchanged": true,
+    "topology_UV_weights_unchanged": true,
+    "outside_hand_positions_exact": true,
+    "skin_target_srgb": [
+      0.84,
+      0.615,
+      0.46
+    ],
+    "albedo_modified_texels": 77893,
+    "warning": "Existing finger topology retained. Does not add separated fingers or new anatomy.",
+    "head_and_neck_untouched": true,
+    "gpu_used": false
+  },
+  "bodytop": {
+    "source_sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+    "status": "review-only-native-retopology",
+    "immutable_prefix": 54132,
+    "vertices": 54688,
+    "body_triangles": 74070,
+    "collar_triangles": 449,
+    "native_cut_plane_y": 1.345,
+    "garment_outer_contact_vertices": 161,
+    "garment_outer_max_position_gap": 0.0,
+    "collar_inner": {
+      "front_y": 1.335,
+      "back_y": 1.36,
+      "rx": 0.057,
+      "rz": 0.058,
+      "center_z": 0.004
+    },
+    "agreed_skin": {
+      "rx": 0.05,
+      "rz": 0.052,
+      "center_z": 0.004
+    },
+    "radial_clearance_axes": [
+      0.007,
+      0.006
+    ],
+    "confirmed_floating_triangles_removed": 125,
+    "capped_connected_loops": [
+      {
+        "vertices": 13,
+        "triangles": 11
+      },
+      {
+        "vertices": 5,
+        "triangles": 3
+      }
+    ],
+    "minimum_new_collar_triangle_area": 3.146966021105868e-11,
+    "prefix_positions_UV_weights_exact": true,
+    "body_original_winding_preserved": true,
+    "body_below_1_345_geometry_exact": true,
+    "cloth_srgb": [
+      0.36470588235294116,
+      0.36470588235294116,
+      0.22745098039215686
+    ],
+    "cloth_linear": [
+      0.10946171077829933,
+      0.10946171077829933,
+      0.042311410620809675
+    ],
+    "GPU_used": false,
+    "note": "Native BMesh clips only the top15mm. New fabric joins exact cut boundary to measured neck interface. Root office QC required."
+  },
+  "colour_version": "v5 anatomical neckline plus guarded 12px UV padding; frozen v4 hand colour",
+  "colour": {
+    "version": 5,
+    "source_sha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+    "base_albedo_sha256": "b8f06f545b968ab189f80991e8eef89d73f508a0acf8ab951eeb981e01170784",
+    "output_sha256": "c13ea4265a42d3ae1bcdd7018936a9dcba89c41e2d33d77026c0dc990ccf3702",
+    "padding_radius_px": 12,
+    "original_neck_ROI_texels": 27479,
+    "expanded_ROI_texels": 160936,
+    "writable_ROI_texels": 154137,
+    "changed_texels": 151661,
+    "outside_expanded_ROI_exact": true,
+    "hands_exact": true,
+    "protected_jeans_feet_bare_arm_exact": true,
+    "body_geometry_and_UV_unchanged": true,
+    "vertex_bilinear_and_box_mip_QC": {
+      "1": {
+        "vertices": 665,
+        "tan_R_div_G_above_1_3": 0,
+        "max_R_div_G": 1.0080642212589106
+      },
+      "2": {
+        "vertices": 665,
+        "tan_R_div_G_above_1_3": 0,
+        "max_R_div_G": 1.0168247123500438
+      },
+      "4": {
+        "vertices": 665,
+        "tan_R_div_G_above_1_3": 0,
+        "max_R_div_G": 1.0433576014757855
+      },
+      "8": {
+        "vertices": 665,
+        "tan_R_div_G_above_1_3": 0,
+        "max_R_div_G": 1.081996068790664
+      }
+    },
+    "GPU_used": false,
+    "status": "review-only padded neck texture; root front office QA required"
+  },
+  "helper_sha256": {
+    "glb_support.py": "889277da497bee6e924b7ab068c7bf94374c402c30bbdbd7d7c2b51bc8a97ad7",
+    "prepare_hands.py": "1c39e47c41218bb9df6edf931f5ccb2bff74be31b0720ce87f71075ecf82e431",
+    "review_hands.py": "8812abcb7a245f838da248fc17c44fcda33a30fdf7dfb3112c2c006219a53611",
+    "prepare_bodytop_native_input.py": "6e949f1b7854729ee44759bd2e9b4b6ec4dec2cf65e42d644c16bff5753e0785",
+    "retopo_bodytop_native.py": "4224e9ac16681b4e382657165948f43668a550750e7b1ae38e2009da03a18bb6",
+    "finish_bodytop.py": "7a673d53aecdd0b37456c44454b456caf8717c4d38fec72cc7356391652d916b",
+    "triangulate_collar.mjs": "591e6964c636c1581a54840a1018ffbf56bf04a92f3224d431375f7c7d150e0a",
+    "review_bodytop.py": "62bd3e16857585d927652340e0beaf5f976281ba010b5cc979f268739e1c558e",
+    "prepare_hand_albedo_v3.py": "fc324b3071d481aae8bab97b03c953dd4525282d375de4c493d913bb3e3e8781",
+    "pad_neck_albedo_v5.py": "08c13e8fab851bed5873c5443b96665846962eed1587699219481dda4ec3e117",
+    "BODY-WORKFLOW.md": "b8b73fb8eb4c61f03794f698688569418f3d337aa479db6b49180c51730ce1a5"
+  },
+  "candidate_sha256": {
+    "hands_patch": "53efca7bae190974356b9243bcccb6cbff3d8bbc17f088be592d7d9de55add1d",
+    "bodytop_patch": "4382d9bdcb6c5066a4e29ecb2220d95b77197496108816bd5d356d5ef754b3b2",
+    "combined_albedo": "c13ea4265a42d3ae1bcdd7018936a9dcba89c41e2d33d77026c0dc990ccf3702"
+  },
+  "validation": {
+    "own_python_ruff": "pass",
+    "native_hand_six_sides": "reviewed; source angular fingers retained",
+    "native_bodytop_v1": "rejected after office front showed high collar and baked V-neck",
+    "bodytop_v2": "root reports improved neckline shape; final composite QA pending v5 colour",
+    "v4_body_uv_edge_audit": "104/665 source vertex samples tan at atlas gutters; demonstrated texture defect",
+    "v5_body_uv_edge_audit": "0/665 tan actual bilinear source samples and 0/665 at box mip levels2,4,8",
+    "gpu_used": false
+  },
+  "rejected": [
+    "distal-only strong hand compression",
+    "UV-seam inconsistent geometry attempts",
+    "radial ring fit",
+    "harmonic ring fit",
+    "high horizontal crew-neck candidate",
+    "hue-only old V-neck mask",
+    "un-padded anatomical v4 texture gutters"
+  ]
+}

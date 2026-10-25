@@ -1,0 +1,52 @@
+{
+  "status":"parent_office_review_accepted",
+  "revision":6,
+  "character":"mira",
+  "sourceSha256":"849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+  "headCandidateSha256":"8f57435ad7ac4bced72aa306201e614cb0fd72395a30992b112fdf8f14bc4089",
+  "headCandidateBytes":29790304,
+  "finalCombinedLocalModelSha256":"2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
+  "reproduce":"node art/characters/mira-polish/head_review.js --source BASELINE.glb --output-dir OUTPUT_DIR --lower-curls --hair-padding 8",
+  "change":"V5 head geometry and colour repair, plus an 8px nearest-copper UV-edge padding pass excluding all occupied non-hair UV triangles and a 1px guard.",
+  "diagnosticBeforePadding":{
+    "hairUVBoundaryBilinearSamples":34161,
+    "samplesMixingCopperAndUnrepairedLightTexel":6257,
+    "uniqueLightNeighbourTexels":11900
+  },
+  "fullProtectedTextureQC":{
+    "occupiedNonHairTexels":1606791,
+    "protectedIncluding1pxGuardTexels":1890853,
+    "modifiedProtectedTexels":0,
+    "modifiedProtectedGuardTexels":0,
+    "maximumProtectedRGBError":0,
+    "newPaddingTexelsChangedAfter8bitPNGSave":277949
+  },
+  "exactV5Comparisons":{
+    "POSITION":true,"NORMAL":true,"TANGENT":true,"TEXCOORD_0":true,
+    "indices":true,"morphTargets":true,"nodes":true,"skins":true,"animations":true
+  },
+  "actualPackedFloat32GeometryQC":{
+    "newDegenerateRetainedTriangles":0,
+    "faceNormalHemisphereReversalsRetainedTriangles":0,
+    "changedSkinNeckTriangles":3975,
+    "changedSkinNeckHemisphereReversals":0,
+    "maximumDuplicateUVSeamWorldDrift":0
+  },
+  "frontApronDiagnostic":{
+    "headTrianglesBelowY1_38AndFrontZLessThanMinus0_085":0,
+    "frontHeadSkinBoundsBelowY1_38":[[-0.0592134,1.2718619,-0.0529112],[0.0591810,1.3799281,0.0039159]],
+    "conclusion":"The remaining wide V-shaped shirt contamination was not a wide front head-neck apron; the parent/body worker repaired the body atlas and collar separately. No further head geometry was cut."
+  },
+  "nativeSource":{
+    "path":"art/blender/mira-polish.blend",
+    "sha256":"56daef8c0cd52d6bd52e152025a5f45474fbe0aa2821de75a103765cf690a383",
+    "bytes":18554870,
+    "qa":"art/characters/mira-polish/native-final-qa.json"
+  },
+  "limits":[
+    "The padding can recolour unprotected neighbouring hair texels within 8px as well as atlas gutters; occupied non-hair texels are exactly protected.",
+    "CPU source views still show a dense generated rear hairstyle and a small copper patch below the ear. This is an accepted game prototype, not a claim of final film-quality hair.",
+    "The single-character pack replaces no team master. Live Blender was not used or saved.",
+    "This worker did not install production assets or change the combined model after the parent freeze."
+  ]
+}

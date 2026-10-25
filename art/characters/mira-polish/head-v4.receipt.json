@@ -1,0 +1,42 @@
+{
+  "status": "office_review_accepted_head_only",
+  "revision": 4,
+  "character": "mira",
+  "sourceSha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+  "candidateSha256": "09d0a13360ed28664b8677e0b9d6c8bb6e4fcbd5c23ea76c89d57c560ac9f5b2",
+  "candidateBytes": 30144468,
+  "helper": "art/characters/mira-polish/head_review.js",
+  "nativeHelper": "art/characters/mira-polish/head_review.py",
+  "reproduce": "node art/characters/mira-polish/head_review.js --source BASELINE.glb --output-dir OUTPUT_DIR",
+  "changes": {
+    "nativeBackHairSmooth": {"factor":0.35,"iterations":3},
+    "rearHairZ": {"before":0.19614257,"after":0.17238480},
+    "neck": "Original surface/UV/material retained; continuous elliptical narrowing with positive radial derivative, no cylindrical insert.",
+    "neckTarget": {"radii":[0.050,0.052],"centerZ":0.004,"transitionY":[1.385,1.415]},
+    "removedLowerSkinSkirtTriangles":2431,
+    "templeAlbedoPixelsModified":61279,
+    "positionWeldedProxyPoints":27346,
+    "originalExportedHeadVertices":47836
+  },
+  "actualPackedFloat32QC": {
+    "newDegenerateRetainedTriangles":0,
+    "faceNormalHemisphereReversalsRetainedTriangles":0,
+    "changedSkinNeckTriangles":3975,
+    "changedSkinNeckHemisphereReversals":0,
+    "maximumDuplicateUVSeamWorldDrift":0,
+    "normalMaxUnitError":4.970291445083319e-8,
+    "tangentMaxUnitError":4.8735431246171856e-8,
+    "tangentNormalMaxDot":7.372326571442045e-8,
+    "originalBinPrefixByteIdentical":true,
+    "bodyRigAndClipDataUnchanged":true,
+    "originalBlinkAccessorUnchanged":true,
+    "centralFaceTextureCentroidChecks": {"triangles":4532,"changedSamples":0}
+  },
+  "visualReview": "Parent inspected current office profile: rear apron removed and head acceptable. Body collar scraps are handled separately.",
+  "limits": [
+    "This receipt describes the head-only review candidate; final combined Mira requires separate native and office validation.",
+    "Temple recolouring is conservative near ears and facial skin; small remaining sideburn shading is not claimed repaired.",
+    "No production installation, hand change, body collar change, rig edit or animation edit performed by this helper.",
+    "Input must be recovered baseline; already polished models are rejected to prevent compounding."
+  ]
+}
