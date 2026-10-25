@@ -124,6 +124,9 @@ class OfficeWorld {
   async syncActors() {
     if (this.failed) { this.reportRest(true);settleCoffeeFallback(this.game,this.callbacks.onCoffee); return; }
     if (!this.ready || !this.game) return;
+    // Start the selected team's downloads together. Installation stays ordered;
+    // cached promises prevent duplicate transfers during intermediate renders.
+    for(const id of this.game.team)if(!this.actors.has(id))void loadModel(id).catch(()=>{});
     for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { actor.speechMouth?.dispose(); this.scene.remove(actor.group); this.actors.delete(id); }
     for (const [order, id] of this.game.team.entries()) {
       let actor = this.actors.get(id);
