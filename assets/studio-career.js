@@ -1,4 +1,5 @@
 import { AGENTS, SKILLS, TASKS, DIFFICULTIES } from '../data.js';
+import { validEmployment } from './career-employment.js';
 export const isCareer=s=>s?.difficulty==='bootstrap';
 export const TRAINING_COST=600;
 export const careerPremium=id=>({festival:500,club:900,cup:1300})[id];
@@ -64,7 +65,7 @@ export function validCareer(s){
   const c=s.life?.career;if(!isCareer(s))return c==null;
   const integer=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
   const known=id=>AGENTS.some(a=>a.id===id);
-  return !!c&&c.version===1&&integer(c.reputation,0,100)&&integer(c.rateOrder,0,s.life.completed)
+  return validEmployment(s)&&!!c&&c.version===1&&integer(c.reputation,0,100)&&integer(c.rateOrder,0,s.life.completed)
     &&c.skills&&AGENTS.every(a=>c.skills[a.id]&&SKILLS.every(k=>integer(c.skills[a.id][k.key],10,90)))
     &&c.trained&&Object.entries(c.trained).every(([id,n])=>known(id)&&integer(n,0,s.life.completed))
     &&c.lastGrowth&&Object.entries(c.lastGrowth).every(([id,g])=>known(id)&&g&&Object.entries(g).every(([key,n])=>SKILLS.some(k=>k.key===key)&&integer(n,1,90)))
