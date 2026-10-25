@@ -13,11 +13,13 @@ export function employeeOverview(game,id) {
   const waiting=next?.depends.filter(dep=>game.progress[dep]<100).map(dep=>TASKS.find(t=>t.id===dep).name)||[];
   const done=TASKS.filter(t=>game.assignments[t.id]===id&&game.progress[t.id]>=100).length;
   let explanation=condition(game,id).reason;
+  if(task&&['calm','bright'].includes(state.tone))explanation=task.description;
   if(away)explanation=member.coffeeTrip?'Энергия восстановится после напитка. Затем сотрудник вернётся к задаче.':'Работа продолжится после отдыха и возвращения за компьютер.';
   else if(game.stage==='work'&&!task)explanation=waiting.length?'Сначала нужны результаты: '+waiting.map(name=>'«'+name+'»').join(', ')+'.':next?'Пока занят другой задачей.':'Все назначенные задачи завершены.';
   const actions=[];
   const action=(name,key,label)=>actions.push({action:name,id:key,label});
   if(game.stage==='work') {
+    if(!task&&!away&&state.tone!=='urgent'&&member.energy>=35)action('studio-project','','Показать задачи');
     if(task&&!game.support&&!restInTransit(game))action('support',task.id,'Разобрать вместе · 1 ч');
     if(!member.restTrip&&!member.breaks&&!member.coffeeTrip)action('life-break',id,'На перерыв · 1 ч');
     if(!member.restTrip&&!member.coffeeTrip&&!member.coffee&&game.life.upgrades.includes('coffee'))action('life-coffee',id,'За напитком · +15 энергии');

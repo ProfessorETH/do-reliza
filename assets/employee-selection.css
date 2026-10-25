@@ -10,3 +10,5 @@
 @media(min-width:701px) and (max-height:500px) and (pointer:coarse) { .scene-first .actor-actions.employee-card { top:116px!important; bottom:96px; left:auto!important; right:8px; width:330px; max-height:none; }.employee-card>header { padding:6px 10px; }.employee-card .compact-portrait { display:none; }.employee-card-body { padding:8px 10px; }.employee-card .visual-vitals { display:none; } }
 
 .scene-first[data-workspace=project] .employee-card { display:none; }
+
+.scene-first .employee-card .employee-card-body { display:block; grid-template-columns:none; }.scene-first .employee-card header small { margin-top:0; }.employee-card .vital>span { display:block; }.employee-card .vital meter { width:100%; }
