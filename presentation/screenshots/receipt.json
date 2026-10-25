@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "captureMethod": "Actual Chromium browser screenshots, inspected visually",
+  "captures": [
+    {
+      "file": "01-start.jpg",
+      "runtimeRevision": "188333d",
+      "assetVersion": "9fcd0aa89de4c559c4947143",
+      "width": 1280,
+      "height": 720,
+      "capturedAtUtc": "2026-10-25T01:23:37.9410790Z",
+      "sha256": "62a1b4b75720e4c28e8b19a7b81e6a49b866f1359787ba1c98f920742a90190d"
+    },
+    {
+      "file": "02-office.jpg",
+      "runtimeRevision": "188333d",
+      "assetVersion": "9fcd0aa89de4c559c4947143",
+      "width": 1600,
+      "height": 1000,
+      "capturedAtUtc": "2026-10-25T01:20:59.2777375Z",
+      "sha256": "c7142cb22d3963ee48aad24a105f5bb838044d9317c0893e5d7a8032ac7c5b3e"
+    },
+    {
+      "file": "03-employee.jpg",
+      "runtimeRevision": "188333d",
+      "assetVersion": "9fcd0aa89de4c559c4947143",
+      "width": 1600,
+      "height": 1000,
+      "capturedAtUtc": "2026-10-25T01:21:19.3303105Z",
+      "sha256": "f1b40a00634d82f7a5f1a775a31792c94b89f7a263b2146a51a0b09863243010"
+    },
+    {
+      "file": "04-planning.jpg",
+      "runtimeRevision": "54df3be",
+      "assetVersion": "47d5dc85901646afe632f31f",
+      "width": 1600,
+      "height": 1000,
+      "capturedAtUtc": "2026-10-25T01:39:53.3201071Z",
+      "sha256": "2e0673bdb9d55193d6b6acbb59fe0d241edb12dcdf4a3357f6fada8f718dc815"
+    },
+    {
+      "file": "05-planning-mobile.jpg",
+      "runtimeRevision": "54df3be",
+      "assetVersion": "47d5dc85901646afe632f31f",
+      "width": 390,
+      "height": 844,
+      "capturedAtUtc": "2026-10-25T01:39:59.1087452Z",
+      "sha256": "3826ecba46f24656a90e8dec0abac3470b91b8e9a6a49ade449776c962231b5c"
+    },
+    {
+      "file": "06-model-inspection.jpg",
+      "runtimeRevision": "188333d",
+      "assetVersion": "9fcd0aa89de4c559c4947143",
+      "width": 1600,
+      "height": 1000,
+      "capturedAtUtc": "2026-10-25T01:22:25.7426609Z",
+      "sha256": "5540120af48041d992e8be1cead0696d7b1c74779e1d7ef3e6faed9e81f53212"
+    },
+    {
+      "file": "07-conversation.png",
+      "runtimeRevision": "54df3be",
+      "assetVersion": "47d5dc85901646afe632f31f",
+      "width": 1280,
+      "height": 720,
+      "capturedAtUtc": "2026-10-25T01:36:38.7854153Z",
+      "sha256": "d6cae830e80a797afdd19662fcb5aadd27705f3f03384766a43f66722e9613a8"
+    }
+  ]
+}
