@@ -21,7 +21,7 @@ import { mountOfficeWorld, detachOfficeWorld, resetOfficeWorld, officeCamera, ca
 import { renderOffice } from './office.js?v=scene-first-20261025';
 import { AGENTS, TASKS, SKILLS, DIFFICULTIES, EVENTS } from './data.js';
 import { candidatePicker, agentDossier } from './assets/studio-ui-components.js?v=shift-ux-2';
-import { renderTeamHUD, renderTeamMemberPreview } from './assets/team-hud.js?v=mobile-voices-20261024';
+import { renderTeamHUD } from './assets/team-hud.js?v=mobile-voices-20261024';
 import { characterLine, characterMoment } from './assets/character-dialogue.js';
 import { ensureLife, condition, careFor, buyUpgrade, restArrival, restInTransit, UPGRADES, CONTRACTS, contractFor } from './assets/studio-life.js?v=shift-ux-20261024-v2';
 import { memberPanel, officePanel, contractsPanel } from './assets/studio-life-view.js?v=shift-ux-20261024-v2';
@@ -39,7 +39,6 @@ const SAVE = DEMO ? 'before-release-demo-v1' : 'before-release-v1';
 const MINI = DEMO ? 'before-release-demo-orbit-v1' : 'before-release-orbit-v1';
 let officeSelection = null, officeMoving = false;
 let workspaceView = 'office';
-let hudSelection = null;
 let soundPreviewed = false;
 let officeExpanded = false;
 let decisionFeedback = null;
@@ -220,13 +219,13 @@ function render() {
   const panels={hire:hirePanel,plan:planPanel,work:workPanel,event:()=>`<div class="event-waiting"><div class="eyebrow">КОМАНДА ЖДЁТ</div><h1>Нужно твоё решение</h1><p>${employeeEvent(game)?employeeEvent(game).name+' ждёт тебя в офисе. Нажми на красный сигнал над сотрудником. Таймер решения начнётся после открытия.':'Смена приостановлена. Ответь на событие, чтобы команда продолжила работу.'}</p><button class="primary" data-action="event-open">Открыть событие</button></div>`,result:resultPanel};
   if (stageChanged) { workspaceView = game.stage==='plan'||game.stage==='hire'&&game.team.length<3?'project':'office'; managementExpanded=workspaceView==='project';officeExpanded = false;if(employeeEvent(game))officeSelection=null; }
   if(onboarding.isOpen())workspaceView='office';
-  root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,hudSelection)}${scene()}<section id="project-panel" class="control-panel" aria-label="Управление проектом" ${workspaceView==='project'?'':'hidden inert'}>${managementBar(managementExpanded,{icon})}${panels[game.stage]()}</section></div></main>`;
+  root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,officeSelection)}${scene()}<section id="project-panel" class="control-panel" aria-label="Управление проектом" ${workspaceView==='project'?'':'hidden inert'}>${managementBar(managementExpanded,{icon})}${panels[game.stage]()}</section></div></main>`;
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     onBusy:busy=>{if(officeMoving!==busy){officeMoving=busy;if(game)render();}},
     onCoffee:(id,arrival,source)=>{if(game===source){const before=captureMembers(game);if(coffeeArrival(game,id,arrival)){if(arrival==='drank')queueMemberFeedback(game,before,[id]);persist();render();}}},
     onRest:(id,arrival)=>{if(game&&restArrival(game,id,arrival)){persist();render();}},
-    onActor:id=>{if(!game)return;if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}hudSelection=null;workspaceView='office';officeSelection=officeSelection===id?null:id;onboarding.collapseGuide();render();root.querySelector('.actor-actions header b')?.focus({preventScroll:true});},
+    onActor:id=>selectEmployee(id),
     onObject:id=>officeObject(id),
     onDesk:index=>{if(game)officeDeskAction(index);},
     onFloor:point=>officeWalk(point),
@@ -305,6 +304,20 @@ function updateEventClock(delta){
 eventDialog.addEventListener('close',()=>sound.stopVoice('character'));
 eventDialog.addEventListener('scroll',()=>eventDialog.classList.toggle('event-clock-compact',eventDialog.scrollTop>80),{passive:true});
 eventDialog.addEventListener('cancel',e=>{e.preventDefault();if(employeeEvent(game)){openedIncidentKey=null;eventDialog.close();return;}const clock=game&&ensureEventClock(game);if(clock){clock.paused=true;persist();updateEventClock(0);}else eventDialog.querySelector('#event-title')?.focus();});
+function selectEmployee(id,{focus=true}={}) {
+  if(!game?.team.includes(id))return;
+  const changed=officeSelection!==id;
+  officeSelection=id;workspaceView='office';onboarding.collapseGuide();
+  if(dialog.open)dialog.close();
+  render();
+  if(employeeEvent(game)?.id===id){syncEventDialog(true);return;}
+  if(focus)root.querySelector('#employee-name')?.focus({preventScroll:true});
+  if(changed){const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
+}
+function clearEmployeeSelection() {
+  const previous=officeSelection;officeSelection=null;sound.stopVoice('character');render();
+  root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});
+}
 function officeWalk(point) {
   if(!game||!officeSelection)return;
   if(!canWalkTo(officeSelection,point)){toast('Не пройти: выбери свободное место ближе к проходу.');return;}
@@ -316,9 +329,9 @@ function officeDeskAction(index) {
   const occupant=game.seats[index];
   if(['hire','plan'].includes(game.stage)){
     if(officeSelection){const name=agentById(officeSelection).name;const error=seatAgent(game,officeSelection,index);if(error)toast(error);else{officeSelection=null;persist();render();toast(`${name} направляется к компьютеру ${index+1}.`);}}
-    else if(occupant){officeSelection=occupant;render();}
+    else if(occupant){selectEmployee(occupant);}
     else toast(game.team.length?'Выбери персонажа в команде, затем этот компьютер.':'Сначала выбери и найми разработчика.');
-  }else if(occupant){officeSelection=officeSelection===occupant?null:occupant;render();}
+  }else if(occupant){selectEmployee(occupant);}
 }
 function advance() { if(!game||clockBlocked())return;if(tick(game)){game.clockFraction=0;if(game.stage==='result')stopAuto();persist();render();} }
 function newGame() { stopAuto(); resetOfficeWorld(); officeMoving=false; game=createGame(difficulty); candidate='mira'; officeSelection=null; mini=null; try{localStorage.removeItem(MINI);}catch{} persist(); render(); onboarding.start(game); }
@@ -380,12 +393,11 @@ function moveMini(dx,dy) {
 }
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&!officeExpanded&&!document.querySelector('dialog[open]')) {
-    if(officeSelection){officeSelection=null;render();}
-    else if(hudSelection){hudSelection=null;render();}
+    if(officeSelection){clearEmployeeSelection();}
     else if(workspaceView==='project'){workspaceView='office';render();root.querySelector('.scene-dock [data-id="project"]')?.focus({preventScroll:true});}
   }
   if (e.key==='Escape' && officeExpanded && !document.querySelector('dialog[open]')) {
-    if(officeSelection){officeSelection=null;render();}else{officeExpanded=false; render(); root.querySelector('[data-action="office-expand"]')?.focus();}
+    if(officeSelection){clearEmployeeSelection();}else{officeExpanded=false; render(); root.querySelector('[data-action="office-expand"]')?.focus();}
   }
   const keyboardDialog=document.querySelector('dialog[open]');
   if(keyboardDialog&&e.key==='Tab'){
@@ -420,7 +432,7 @@ document.addEventListener('click',e=>{
   if(action==='continue'){game=structuredClone(saved);difficulty=game.difficulty;candidate=game.team[0]||'mira';render();return;}
   if(!game)return;
   if(action==='workspace'){workspaceView=id==='project'&&workspaceView==='project'?'office':id;officeExpanded=false;officeSelection=null;if(dialog.open){sound.stopVoice('character');dialog.close();}onboarding.collapseGuide();render();}
-  if(action==='team-focus'){officeSelection=null;const activity=root.querySelector(`[data-team-activity="${id}"]`)?.textContent;hudSelection=id;onboarding.collapseGuide();render();showDialog(renderTeamMemberPreview(game,id,activity));const kind=characterMoment(game,id);if(kind)sound.speakCharacter(id,kind,true);else sound.stopVoice('character');}
+  if(action==='team-focus'){selectEmployee(id);return;}
   if(action==='guide-open'){if(dialog.open)dialog.close();onboarding.openGuide();render();return;}
   if(action==='panel-size'){managementExpanded=!managementExpanded;render();return;}
   if(action==='studio-project'){officeExpanded=false;workspaceView='project';onboarding.collapseGuide();render();root.querySelector('.management-topbar [data-id="office"]')?.focus({preventScroll:true});return;}
@@ -429,7 +441,7 @@ document.addEventListener('click',e=>{
   if(action==='office-object'){officeObject(id);return;}
   if(action==='fund-team'){const error=fundTeam(game);if(error)toast(error);else{persist();render();}return;}
   if(action==='character-voice'){sound.speakCharacter(id,el.dataset.kind,true);return;}
-  if(action==='team-dismiss'){sound.stopVoice('character');const previous=hudSelection;hudSelection=null;render();root.querySelector(`[data-action="team-focus"][data-id="${previous}"]`)?.focus({preventScroll:true});}
+  if(action==='team-dismiss'){clearEmployeeSelection();return;}
   if(action==='seating'){showDialog(`<h2 id="dialog-title">Рабочие места</h2>${seatingPanel()}`);}
   if(action==='event-open'){syncEventDialog(true);return;}
   if(action==='event-dismiss'){openedIncidentKey=null;eventDialog.close();return;}
@@ -445,12 +457,13 @@ document.addEventListener('click',e=>{
   if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
   if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
   if(action==='life-office'){showDialog(officePanel(game));return;}
-  if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id))showDialog(memberPanel(game,id));return;}
+  if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id)){selectEmployee(id,{focus:false});showDialog(memberPanel(game,id));}return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
+    const fromEmployeeCard=!!el.closest('.employee-card');
     const before=captureMembers(game);
     const error=careFor(game,id,action.slice(5));
-    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee'){officeSelection=null;workspaceView='office';officeExpanded=false;render();toast(game.life.members[id].coffeeTrip.phase==='queued'?'Напиток заказан. Сотрудник ждёт свободную станцию.':'Сотрудник идёт за напитком. Энергия восстановится после питья.');}else if(action!=='life-break')showDialog(memberPanel(game,id));else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
+    if(error)toast(error);else{queueMemberFeedback(game,before);if(action==='life-break'||action==='life-coffee')dialog.close();persist();render();if(action==='life-coffee'){officeSelection=id;workspaceView='office';officeExpanded=false;render();toast(game.life.members[id].coffeeTrip.phase==='queued'?'Напиток заказан. Сотрудник ждёт свободную станцию.':'Сотрудник идёт за напитком. Энергия восстановится после питья.');}else if(action!=='life-break'&&!fromEmployeeCard)showDialog(memberPanel(game,id));else if(action!=='life-break')toast('Результат отмечен. Настроение сотрудника улучшилось.');else toast(game.life.members[id].restTrip.phase==='queued'?`${agentById(id).name}: перерыв запланирован, ждём свободное кресло.`:`${agentById(id).name} идёт в зону отдыха.`);}return;
   }
   if(action==='life-release-preview'){
     if(!game.team.includes(id))return;
@@ -487,13 +500,13 @@ document.addEventListener('click',e=>{
   if(action==='auto'){game.autoPlay=!game.autoPlay;persist();render();}
   if(action==='study-decision'){const error=studyDecision(game);if(error){toast(error);return;}persist();shownEvent=null;render();return;}
   if(action==='decision'){completeDecision(id);return;}
-  if(action==='office-select'){officeSelection=officeSelection===id?null:id;render();}
+  if(action==='office-select'){selectEmployee(id);return;}
   if(action==='office-walk')officeWalk(WAITING[game.team.indexOf(officeSelection)%WAITING.length]);
-  if(action==='office-cancel'){officeSelection=null;render();}
+  if(action==='office-cancel'){clearEmployeeSelection();return;}
   if(action==='office-desk')officeDeskAction(Number(id));
   if(action==='office-camera')officeCamera(id);
   if(action==='inspect-agent')inspect(id);
-  if(action==='watch-agent'){dialog.close();officeSelection=id;workspaceView='office';render();officeCamera('focus');}
+  if(action==='watch-agent'){selectEmployee(id);officeCamera('focus');}
   if(action==='restart')resetDialog();
   if(action==='debrief')debrief();
   if(action==='play-mini')openMini();

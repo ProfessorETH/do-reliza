@@ -31,6 +31,8 @@ class OfficeWorld {
     this.callbacks = callbacks; this.actors = new Map(); this.loadingActors = new Set(); this.screens = new Map(); this.chairs = new Map(); this.selected = null; this.busy = false;
     this.restSignals = new Set();
     this.scene = new THREE.Scene();
+    this.selectionRing=new THREE.Mesh(new THREE.RingGeometry(.38,.48,48),new THREE.MeshBasicMaterial({color:0xe7bd80,transparent:true,opacity:.85,side:THREE.DoubleSide,depthWrite:false}));
+    this.selectionRing.rotation.x=-Math.PI/2;this.selectionRing.visible=false;this.scene.add(this.selectionRing);
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -180,6 +182,10 @@ class OfficeWorld {
         }else if(action.type==='purchase')this.consumedActions.add(action.key);
       }
       for (const actor of actors) actor.update(dt, time / 1000, actors, { stage: this.game.stage, eventParticipant:this.game.currentEvent!=='life'||this.game.life?.incident?.id===actor.id, incident:this.game.currentEvent==='life'&&this.game.life?.incident?.id===actor.id?this.game.life.incident.type:null, task: active.find(t => this.game.assignments[t.id] === actor.id) }, this.reduced.matches, this.selected === actor.id);
+      const selectedActor=this.actors.get(this.selected);
+      this.selectionRing.visible=!!selectedActor;
+      if(selectedActor)this.selectionRing.position.set(selectedActor.group.position.x,.035,selectedActor.group.position.z);
+      this.container.dataset.selectedAgent=this.selected||'';
       this.reportRest();this.reportCoffee();
       this.container.dataset.coffee=actors.filter(a=>a.coffeePhase&&a.coffeePhase!=='queued').map(a=>a.id+':'+a.state).join(',');
       const stationCup=this.room?.getObjectByName('CoffeeStationCup');if(stationCup)stationCup.visible=!actors.some(a=>a.cup.visible);
@@ -298,10 +304,8 @@ class OfficeWorld {
     if (info) { const text = walking.length ? `${walking.join(', ')} — в пути` : ''; if (info.textContent !== text) info.textContent = text; }
     const shell = parent.closest('.game-shell');
     for (const actor of this.actors.values()) {
-      const status = shell?.querySelector(`[data-team-activity="${actor.id}"]`);
-      if (!status) continue;
-      const text = actor.moving ? actor.motionLabel : status.dataset.baseActivity;
-      if (status.textContent !== text) status.textContent = text;
+      const statuses = shell?.querySelectorAll(`[data-team-activity="${actor.id}"],[data-employee-activity="${actor.id}"]`);
+      for(const status of statuses||[]){const text=actor.moving?actor.motionLabel:status.dataset.baseActivity;if(status.textContent!==text)status.textContent=text;}
     }
   }
   pick(event) {

@@ -29,3 +29,13 @@ test('thanks is offered once per genuinely completed result and works through no
   assert.ok(employeeOverview(g,id).actions.some(a=>a.action==='life-praise'));assert.equal(careFor(g,id,'praise'),null);
   assert.ok(!employeeOverview(g,id).actions.some(a=>a.action==='life-praise'));
 });
+
+test('one selected portrait references the same employee card and invalid colleagues render nothing',async()=>{
+  const {renderTeamHUD}=await import('../assets/team-hud.js');
+  const {renderEmployeeCard}=await import('../assets/employee-card.js');
+  const g=working(),id=g.assignments.brief,html=renderTeamHUD(g,id);
+  assert.equal((html.match(/aria-pressed="true"/g)||[]).length,1);
+  assert.match(html,new RegExp('data-id="'+id+'"[^>]*aria-pressed="true"[^>]*aria-controls="employee-card"'));
+  const card=renderEmployeeCard(g,id);assert.match(card,new RegExp('id="employee-card" data-actor="'+id+'"'));assert.match(card,/Разобрать задание/);
+  assert.equal(renderEmployeeCard(g,'nord'),'');
+});

@@ -70,7 +70,7 @@ export function renderTeamHUD(game, selected) {
       const s=states[i];
       if(!s)return `<div class="team-hud-vacant"><span aria-hidden="true">＋</span><small>Ждёт коллегу</small></div>`;
       const a=s.agent, active=a.id===focused?.agent.id;
-      return `<button class="team-hud-person ${active?'is-current':''}" data-character-speaker="${a.id}" data-action="team-focus" data-id="${a.id}" data-tone="${s.tone}" aria-pressed="${active}" aria-expanded="${active}" aria-label="${esc(a.name)}. ${esc(s.mood)}. Показать реплику" aria-describedby="team-activity-${a.id}">
+      return `<button class="team-hud-person ${active?'is-current':''}" data-character-speaker="${a.id}" data-action="team-focus" data-id="${a.id}" data-tone="${s.tone}" aria-pressed="${active}" aria-expanded="${active}" aria-controls="employee-card" aria-label="${esc(a.name)}. ${esc(s.mood)}. Открыть состояние и помощь" aria-describedby="team-activity-${a.id}">
         <span class="team-portrait-ring" style="--morale:${s.morale}%"><span class="team-portrait" style="--px:${a.index%3*50}%;--py:${Math.floor(a.index/3)*100}%"></span><span class="team-mood-face">${face(s.tone)}</span></span>
         <b>${a.name}</b><span class="team-mood-label">${esc(s.mood)}</span><span class="team-activity" id="team-activity-${a.id}" data-team-activity="${a.id}" data-base-activity="${esc(s.activity)}${s.progress===null?'':` · ${s.progress}%`}">${esc(s.activity)}${s.progress===null?'':` · ${s.progress}%`}</span>
       </button>`;
