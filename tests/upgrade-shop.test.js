@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createDemoGame} from '../demo.js';import {buyUpgrade,UPGRADES} from '../assets/studio-life.js';import {upgradeOffer,renderOfficeCatalog,modelPreview} from '../assets/upgrade-shop.js';import {purchasePanel} from '../assets/commission-view.js';
+test('menu purchase availability agrees with the engine across cash, unlocks, ownership and stages',()=>{
+ for(const stage of ['hire','plan','work','result'])for(const cash of [0,5000,100000])for(const opened of [false,true])for(const owned of [false,true])for(const u of UPGRADES){const s=createDemoGame();s.stage=stage;s.life.cash=cash;if(opened){s.life.missionsWon=['festival','club','cup'];s.life.upgrades=['desk4'];}if(owned)s.life.upgrades=[...new Set([...s.life.upgrades,u.id])];const offer=upgradeOffer(s,u.id),copy=structuredClone(s),error=buyUpgrade(copy,u.id);assert.equal(offer.canBuy,!error,stage+' '+u.id+' '+cash);if(!error)assert.equal(copy.life.cash,offer.after);}
+});
+test('catalog and confirmation use native model posters and keep every item inspectable',()=>{
+ const s=createDemoGame(),before=structuredClone(s),html=renderOfficeCatalog(s);assert.equal((html.match(/data-action="life-buy-preview"/g)||[]).length,6);assert.ok(!html.includes('<svg'));assert.ok(!/data-action="life-buy-preview"[^>]*disabled/.test(html));assert.match(html,/Касса студии/);assert.match(html,/Резерв проекта/);assert.deepEqual(s,before);
+ for(const u of UPGRADES){const card=purchasePanel(s,u);assert.match(card,new RegExp('data-model-viewer="'+u.id+'"'));assert.match(card,/Цена улучшения/);assert.ok(!card.includes('<svg'));}
+ s.stage='work';assert.match(purchasePanel(s,UPGRADES[3]),/data-action="life-buy"[^>]*disabled/);assert.equal(upgradeOffer(s,'unknown'),null);assert.match(modelPreview('lounge'),/До улучшения/);
+});

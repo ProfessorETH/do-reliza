@@ -1,3 +1,4 @@
+import { mountMenuPreview, disposeMenuPreview } from './assets/menu-preview-runtime.js';
 import { coffeeArrival } from './assets/coffee-trip.js';
 import { captureMembers, queueActorReaction, queueMemberFeedback, queuePurchaseFeedback, clearSceneFeedback } from './assets/scene-feedback.js';
 
@@ -106,10 +107,12 @@ function showDialog(html) {
   document.querySelector('#dialog-content').innerHTML = `<button class="icon-btn dialog-close" data-action="close-dialog" aria-label="Закрыть окно">${icon('cross')}</button>${html}`;
   if (!dialog.open) dialog.showModal(); else dialog.querySelector('button')?.focus({preventScroll:true});
   dialog.scrollTop=0;
+  mountMenuPreview(dialog);
 }
 dialog.addEventListener('cancel',()=>sound.stopVoice('character'));
 dialog.addEventListener('click',e=>{if(e.target!==dialog)return;const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){sound.stopVoice('character');dialog.close();}});
 dialog.addEventListener('close', () => {
+  disposeMenuPreview();
   if(decisionFeedback){const feedback=decisionFeedback;decisionFeedback=null;if(feedback.game===game){queueMemberFeedback(game,feedback.before,feedback.affected);for(const response of feedback.responses)queueActorReaction(game,response.id,response.kind==='agree'?'joy':response.kind==='reconsider'?'calm':'sad');render();root.querySelector('[data-action="tick"]')?.focus({preventScroll:true});}}
   if (dialogOrigin) [...root.querySelectorAll('[data-action]')].find(el => el.dataset.action === dialogOrigin.action && el.dataset.id === dialogOrigin.id)?.focus({ preventScroll: true });
 });
@@ -454,7 +457,7 @@ document.addEventListener('click',e=>{
   if(action==='candidate-info'){const a=agentById(id);showDialog(`<div class="speaker">${portrait(a)}<span><b>${a.name}</b><small>${a.role}</small></span></div><h2 id="dialog-title">${a.trait}</h2><blockquote>«${a.quote}»</blockquote><p>${a.desc}</p><div class="inspect-radar">${radar(a)}</div><p class="profile-weakness">${a.weakness}</p>${sound.hasCharacterVoice(id,'intro')?`<button class="secondary full" data-action="character-voice" data-id="${id}" data-kind="intro" aria-label="Послушать голос: ${a.name}">Послушать голос</button>`:''}<button class="primary full" data-action="close-dialog">Вернуться к команде</button>`);sound.speakCharacter(id,'intro',true);}
   if(action==='shop-filter'){const catalog=dialog.querySelector('.office-catalog');if(catalog){catalog.dataset.filter=id;catalog.querySelectorAll('[data-action=shop-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));}return;}
   if(action==='scene-time'){const t=shiftTime(game);showDialog(`<h2 id="dialog-title">Часы студии</h2><dl class="life-stats"><div><dt>Сейчас</dt><dd>${t.now}</dd></div><div><dt>Дедлайн</dt><dd>${t.end}</dd></div><div><dt>${t.late?'Опоздание':'Осталось'}</dt><dd>${t.remaining}</dd></div></dl><p>Время идёт вместе со сменой. Просмотр меню ставит её на паузу.</p>`);return;}
-  if(action==='life-office'){showDialog(officePanel(game));return;}
+  if(action==='life-office'){showDialog(officePanel(game,{filter:id}));return;}
   if(action==='life-member'){if(employeeEvent(game)?.id===id){if(dialog.open)dialog.close();syncEventDialog(true);return;}if(game.team.includes(id)){selectEmployee(id,{focus:false});showDialog(memberPanel(game,id));}return;}
   if(action==='life-contracts'){if(game.stage==='result')showDialog(contractsPanel(game));return;}
   if(action==='life-break'||action==='life-coffee'||action==='life-praise'||action==='life-raise'||action==='life-release'){
