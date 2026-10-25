@@ -87,7 +87,7 @@ export function supportTask(state, taskId) {
 }
 export function recommend(state) {
   if (state.stage !== 'plan') return;
-  for (const task of TASKS) state.assignments[task.id] = [...state.team].sort((a, b) => fit(b, task) - fit(a, task))[0];
+  for (const task of TASKS) state.assignments[task.id] = [...state.team].sort((a, b) => fit(b, task, state) - fit(a, task, state))[0];
 }
 export function beginWork(state) {
   if (state.stage !== 'plan' || !teamSeated(state) || !TASKS.every(t => state.team.includes(state.assignments[t.id]))) return false;
