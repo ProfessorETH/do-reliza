@@ -8,6 +8,7 @@ import { mountStudioExpansion, mountStudioSurroundings } from './assets/studio-e
 import { clone as cloneSkeleton } from './vendor/three/utils/SkeletonUtils.js';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from './vendor/meshopt/meshopt_decoder.mjs';
 import { OrbitControls } from './vendor/three/controls/OrbitControls.js';
 import { OfficeActor } from './office-actors.js?v=portrait-team-v4-20261024';
 import { ALL_DESKS as DESKS, LOUNGE_SEAT, distance } from './office-layout.js?v=shift-ux-20261024-v2';
@@ -21,7 +22,7 @@ import { assetURL } from './asset-url.js';
 
 let world;
 const modelCache = new Map();
-const loader = new GLTFLoader();
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 const loadModel = name => {
   if (!modelCache.has(name)) modelCache.set(name, loader.loadAsync(assetURL(`models/${name}.glb?v=body-team-v5-20261025`)).catch(error => { modelCache.delete(name); throw error; }));
   return modelCache.get(name);

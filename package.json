@@ -8,9 +8,15 @@
     "test": "node --test tests/*.test.js",
     "build": "node scripts/build-demo.js",
     "check": "node --check assets/speech-mouth.js && node --check assets/office-conversations.js && node --check assets/office-chatter.js && node --check assets/office-chatter-state.js && node --check assets/office-chatter-lines.js && node --check assets/office-speech.js && node --check assets/scene-feedback.js && node --check assets/team-discussion.js && node --check assets/character-voice.js && node --check assets/decision-view.js && node --check assets/commission-view.js && node --check assets/scene-clock.js && node --check assets/studio-visuals.js && node --check assets/employee-event.js && node --check assets/studio-progression.js && node --check assets/studio-expansion.js && node --check app.js && node --check demo.js && node --check engine.js && node --check data.js && node --check office.js && node --check office-world.js && node --check office-camera-fit.js && node --check office-actors.js && node --check office-skeleton.js && node --check art/characters/preview.js && node --check scripts/attach-rigid-parts.js && node --check scripts/character-receipt.js && node --check office-pose.js && node --check office-screens.js && node --check office-layout.js && node --check scripts/build-demo.js && node --check assets/office-atmosphere.js && node --check assets/studio-ui-components.js && node --check assets/team-hud.js && node --check assets/studio-life.js && node --check assets/studio-life-view.js && node --check assets/onboarding/onboarding.js && node --check assets/onboarding/onboarding-model.js && node --check assets/onboarding/voice-manifest.js && node --check assets/start-screen.js && node --check assets/sound.js && node --check assets/office-upgrades.js && node --check assets/shift-clock.js && node --check assets/lounge-seat.js && node --check assets/office-runtime.js && node --check scripts/prepare-hosting.js && node --check assets/orbit.js && node --check assets/orbit-view.js && node --check assets/orbit-missions.js && node --check assets/event-clock.js && node --check scripts/attach-portrait-head.js && node --check scripts/optimize-head-normal.js && node --check assets/character-dialogue.js && node --check assets/character-voice-manifest.js && node --check assets/play-shell.js && node --check assets/onboarding/guide-bubble.js && node --check assets/onboarding/bubble-position.js && node --check assets/coffee-trip.js && node --check assets/character-reactions.js && node --check assets/employee-selection.js && node --check assets/employee-card.js && node --check assets/upgrade-shop.js && node --check assets/upgrade-model-viewer.js && node --check assets/furniture-preview-parts.js && node --check assets/menu-preview-runtime.js && node --check assets/task-planning.js && node --check assets/hiring-view.js && node --check assets/shift-view.js && node --check assets/career-employment.js && node --check assets/employment-view.js && node --check assets/career-view.js && node --check assets/studio-career.js",
-    "test:hosting": "node --test deploy/hosting-build.test.js"
+    "test:hosting": "node --test deploy/hosting-build.test.js",
+    "test:characters": "node --test deploy/character-transfer.test.js"
   },
   "devDependencies": {
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
+    "meshoptimizer": "1.3.0",
+    "sharp": "0.35.5"
   }
 }
