@@ -1,11 +1,11 @@
 {
-  "updated": "mira-polish-preview-20261025",
-  "note": "Мира — отдельный рабочий вариант для визуальной оценки: волосы, шея, кисти и ворот свитера. Остальные модели не менялись. 25 костей и пять сохранённых движений; в офисе у Миры дополнительно исправлена рабочая поза.",
+  "updated": "mira-polish-release-20261025",
+  "note": "У Миры доведены волосы, шея, кисти и ворот свитера. Остальные модели сохранены. 25 костей и пять сохранённых движений; в офисе у Миры дополнительно исправлена рабочая поза.",
   "models": {
     "mira": {
       "url": "../../assets/models/mira.glb",
       "sha256": "2be92c4f890f7e24a1ef9153251238c986cec0cd53be695ef868e913da52cdb1",
-      "visualReview": "awaiting-user"
+      "visualReview": "approved-for-publication"
     },
     "pixel": {
       "url": "../../assets/models/pixel.glb",
@@ -32,6 +32,6 @@
       "sha256": "339252c3413811752240da4850c7c437a95073204e2d80326910abd7e715d4f4"
     }
   },
-  "acceptance": false,
-  "pendingReview": ["mira"]
+  "acceptance": true,
+  "pendingReview": []
 }
