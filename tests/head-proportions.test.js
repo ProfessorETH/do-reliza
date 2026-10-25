@@ -22,6 +22,7 @@ for(const [id,scale]of Object.entries(scales))test(`${id}: smaller head preserve
     const old=accessorValues(b,bb,q.attributes.POSITION),now=accessorValues(a,ab,p.attributes.POSITION);
     old.forEach((v,i)=>{const x=new Vector3(...v).applyMatrix4(w),y=new Vector3(...now[i]).applyMatrix4(w);oldTop=Math.max(oldTop,x.y);newTop=Math.max(newTop,y.y);if(Math.abs(x.y-1.36)<.0001&&Math.hypot(x.x,x.z)<=.09){contacts++;assert.ok(x.distanceTo(y)<1e-6,'protected collar ring moved');}});
     for(const n of accessorValues(a,ab,p.attributes.NORMAL))assert.ok(n.every(Number.isFinite)&&Math.abs(Math.hypot(...n)-1)<.001,'valid normals after neck adaptation');
+    if(p.attributes.TANGENT!==undefined){const ns=accessorValues(a,ab,p.attributes.NORMAL),ts=accessorValues(a,ab,p.attributes.TANGENT);ts.forEach((t,i)=>{assert.ok(Math.abs(Math.hypot(...t.slice(0,3))-1)<.001);assert.ok(Math.abs(new Vector3(...t).dot(new Vector3(...ns[i])))<.001,'normal-map basis remains orthogonal');assert.ok(Math.abs(t[3])===1,'UV handedness preserved');});}
     for(let t=0;t<(q.targets??[]).length;t++){const od=accessorValues(b,bb,q.targets[t].POSITION),nd=accessorValues(a,ab,p.targets[t].POSITION);od.forEach((v,i)=>{if(new Vector3(...old[i]).applyMatrix4(w).y>1.40)assert.ok(new Vector3(...nd[i]).distanceTo(new Vector3(...v).multiplyScalar(scale))<1e-6,'blink must follow the smaller face');});}
   }
   assert.ok(oldTop-newTop>.05&&oldTop-newTop<.21,'visible, bounded reduction of head height');

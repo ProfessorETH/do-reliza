@@ -40,11 +40,11 @@ export function fitHeadProportions(bytes,{id,scale=.76,neckY=1.36,chinY=1.395}={
   function append(values){
     const raw=Buffer.from(new Float32Array(values.flat()).buffer),pad=Buffer.alloc((4-length%4)%4);chunks.push(pad,raw);length+=pad.length;
     const view=j.bufferViews.length;j.bufferViews.push({buffer:0,byteOffset:length,byteLength:raw.length,target:34962});length+=raw.length;
-    const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];for(const v of values)for(let k=0;k<3;k++){min[k]=Math.min(min[k],v[k]);max[k]=Math.max(max[k],v[k]);}
-    const a={bufferView:view,componentType:5126,count:values.length,type:'VEC3',min,max};
+    const size=values[0].length,min=Array(size).fill(Infinity),max=Array(size).fill(-Infinity);for(const v of values)for(let k=0;k<size;k++){min[k]=Math.min(min[k],v[k]);max[k]=Math.max(max[k],v[k]);}
+    const a={bufferView:view,componentType:5126,count:values.length,type:size===4?'VEC4':'VEC3',min,max};
     const i=j.accessors.length;j.accessors.push(a);return i;
   }
-  let vertices=0,minDet=Infinity,maxContactError=0;const beforeBounds=[Infinity,-Infinity],afterBounds=[Infinity,-Infinity];
+  let vertices=0,minDet=Infinity,maxContactError=0,tangentFallbacks=0;const beforeBounds=[Infinity,-Infinity],afterBounds=[Infinity,-Infinity];
   for(const p of j.meshes[j.nodes[index].mesh].primitives){
     const positions=accessorValues(j,bin,p.attributes.POSITION),normals=accessorValues(j,bin,p.attributes.NORMAL),worldPositions=positions.map(v=>new Vector3(...v).applyMatrix4(w));
     const fitted=worldPositions.map(v=>deform(v));
@@ -54,7 +54,12 @@ export function fitHeadProportions(bytes,{id,scale=.76,neckY=1.36,chinY=1.395}={
       beforeBounds[0]=Math.min(beforeBounds[0],a.y);beforeBounds[1]=Math.max(beforeBounds[1],a.y);afterBounds[0]=Math.min(afterBounds[0],b.y);afterBounds[1]=Math.max(afterBounds[1],b.y);
     }
     p.attributes.POSITION=append(fitted.map(v=>v.clone().applyMatrix4(iw).toArray()));
-    p.attributes.NORMAL=append(normals.map((v,i)=>new Vector3(...v).applyMatrix3(nw).normalize().applyMatrix3(jacobian(worldPositions[i]).invert().transpose()).normalize().applyMatrix3(inw).normalize().toArray()));
+    const fittedNormals=normals.map((v,i)=>new Vector3(...v).applyMatrix3(nw).normalize().applyMatrix3(jacobian(worldPositions[i]).invert().transpose()).normalize().applyMatrix3(inw).normalize());
+    p.attributes.NORMAL=append(fittedNormals.map(v=>v.toArray()));
+    if(p.attributes.TANGENT!==undefined){
+      const tangents=accessorValues(j,bin,p.attributes.TANGENT),linear=new Matrix3().setFromMatrix4(w),inverse=linear.clone().invert();
+      p.attributes.TANGENT=append(tangents.map((v,i)=>{const t=new Vector3(v[0],v[1],v[2]).applyMatrix3(linear).applyMatrix3(jacobian(worldPositions[i])).applyMatrix3(inverse),n=fittedNormals[i];t.addScaledVector(n,-t.dot(n));if(t.lengthSq()<1e-16){t.set(Math.abs(n.x)<.9?1:0,Math.abs(n.x)<.9?0:1,0);t.addScaledVector(n,-t.dot(n));tangentFallbacks++;}t.normalize();return [...t.toArray(),v[3]];}));
+    }
     for(const t of p.targets??[]){
       if(t.NORMAL)throw Error('Inspect normal morph before fitting');
       if(t.POSITION){const d=accessorValues(j,bin,t.POSITION);t.POSITION=append(d.map((v,i)=>{const q=new Vector3(...positions[i]).add(new Vector3(...v)).applyMatrix4(w);return deform(q).applyMatrix4(iw).sub(fitted[i].clone().applyMatrix4(iw)).toArray();}));}
@@ -62,7 +67,7 @@ export function fitHeadProportions(bytes,{id,scale=.76,neckY=1.36,chinY=1.395}={
     vertices+=positions.length;
   }
   if(minDet<=0)throw Error('Head/neck fit folds the surface');
-  const report={id,scale,neckY,chinY,vertices,beforeBoundsY:beforeBounds,afterBoundsY:afterBounds,minJacobianDeterminant:minDet,maxFixedNeckContactError:maxContactError,sourceSha256:sha(bytes),bodyRigClipsUvsAndTexturesUnchanged:true};
+  const report={id,scale,neckY,chinY,vertices,beforeBoundsY:beforeBounds,afterBoundsY:afterBounds,minJacobianDeterminant:minDet,maxFixedNeckContactError:maxContactError,tangentFallbacks,sourceSha256:sha(bytes),bodyRigClipsUvsAndTexturesUnchanged:true};
   j.asset.extras={...j.asset.extras,headProportions:report,headProportionOriginal:{jsonGzip:gzipSync(jsonChunk).toString('base64'),binLength:bin.length,sha256:sha(bytes)}};
   j.buffers[0].byteLength=length;
   const out=packGLB(j,Buffer.concat(chunks));

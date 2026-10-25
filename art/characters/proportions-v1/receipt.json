@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "method": "Individually fitted heads with protected collar, unchanged bodies/rig/UV/materials; original input recoverable",
+  "method": "Individually fitted heads with protected collar and corrected normal-map basis",
   "models": [
     {
       "id": "mira",
@@ -18,10 +18,11 @@
       ],
       "minJacobianDeterminant": 0.3075627413773372,
       "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 1,
       "sourceSha256": "9337139bb7223a69d16388413e39c64efdfd8ffdc20f05bc6fb076d2c74bbe64",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "28b9999e7b68acd0a14b749f2ad3b49c1eb31ceeba48cb36549df4a816947c62",
-      "outputBytes": 20430688
+      "outputSha256": "849a50fb5168020d45247fa0092041d440c991c99eca60acf4fdd72d45789dd6",
+      "outputBytes": 21196360
     },
     {
       "id": "pixel",
@@ -39,10 +40,11 @@
       ],
       "minJacobianDeterminant": 0.3676607411381757,
       "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 3,
       "sourceSha256": "e7194043bace40962fd120b9f1dcd1cca06cf316640ee5b7e43e78b4a3f5b1ca",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "3a0d86b9135332731e5a6ccdff2406cb19bcef4bce13fe448b8a4b3137268880",
-      "outputBytes": 21912200
+      "outputSha256": "b9b350f0aa355df650eaf1e3b70e8dcc0cea1dea6d42cf2b1feca22cf7e481fd",
+      "outputBytes": 22702560
     },
     {
       "id": "nord",
@@ -60,10 +62,11 @@
       ],
       "minJacobianDeterminant": 0.5604274553012447,
       "maxFixedNeckContactError": 4.7186779599747095e-9,
+      "tangentFallbacks": 5,
       "sourceSha256": "704b29e8871b4d67e61a990b141bb2c82df3f03c8c4e30859eba67ede4293415",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "06a5e7f86c6e045e127868bb84759d63a35268b6758c21cd11801994655c02c5",
-      "outputBytes": 20973052
+      "outputSha256": "e6d29aafab92a74df099b43a50d7e331b9455a1552b480463d3e25202e29b1cd",
+      "outputBytes": 21709844
     },
     {
       "id": "iskra",
@@ -81,10 +84,11 @@
       ],
       "minJacobianDeterminant": 0.3400259473281309,
       "maxFixedNeckContactError": 5.218503398681236e-9,
+      "tangentFallbacks": 2,
       "sourceSha256": "d42e7a1cc7551f0cbaffb81b5ab57b0c210731c67269b13832b66150edb1b0db",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "7850c43ec77461a72c37ed0800770f58cdc455b23e95eeabad844337c409144d",
-      "outputBytes": 23216504
+      "outputSha256": "ce870e159dc82205cbc849db5eee08e95198f2a59f79f15ebe5c0718c8414044",
+      "outputBytes": 24063828
     },
     {
       "id": "saga",
@@ -102,10 +106,11 @@
       ],
       "minJacobianDeterminant": 0.42403417247479336,
       "maxFixedNeckContactError": 7.572614668508571e-9,
+      "tangentFallbacks": 2,
       "sourceSha256": "9e99ac9152640e8f81462cb7f623bd9877a717072df7d3be6b701014332c502b",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "84dabbcded7182176acda333d32aa488b28e7fbff975b7973171c40d778d9b0f",
-      "outputBytes": 20783132
+      "outputSha256": "6280556b28296cec083a69180e85cfa0615da23adc393f2c084f71ee5cafd2e2",
+      "outputBytes": 21630292
     },
     {
       "id": "echo",
@@ -123,10 +128,11 @@
       ],
       "minJacobianDeterminant": 0.49044024465671016,
       "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 1,
       "sourceSha256": "c14585cff6394f959007af26c80411a70b59f7e5f2fcd16e26a8d8dc2acde0af",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "06ee08aef9a197cac490942ee553f71bf5f7083ed13f68a3e2cce038861a66d8",
-      "outputBytes": 22554716
+      "outputSha256": "c9aea7267dda40a4d3172a046a096c29c712239b20cbcefc50c281bdfac29974",
+      "outputBytes": 23303808
     },
     {
       "id": "nika",
@@ -144,10 +150,11 @@
       ],
       "minJacobianDeterminant": 0.194549526442338,
       "maxFixedNeckContactError": 0,
+      "tangentFallbacks": 0,
       "sourceSha256": "fce735828e4191ffc869e0070635a8dcf551b4c1df438150455027aa8168eb0b",
       "bodyRigClipsUvsAndTexturesUnchanged": true,
-      "outputSha256": "7ae448fb60bd944e27f5f3c15d78abdfa05e01126bb8499c61edd1d836f496fd",
-      "outputBytes": 26122888
+      "outputSha256": "339252c3413811752240da4850c7c437a95073204e2d80326910abd7e715d4f4",
+      "outputBytes": 26122912
     }
   ]
 }
