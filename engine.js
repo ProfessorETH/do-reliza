@@ -183,15 +183,10 @@ export function nextProject(state, contractId) {
   const payroll = state.team.filter(id => !l.departures.includes(id)).reduce((sum,id) => sum + l.members[id].raises * 1000, 0);
   if (l.cash < payroll) return `Для обещанных доплат нужно ${payroll} ₽. В окне сотрудника можно не продлевать контракт и нанять замену на следующий заказ.`;
   const next = createGame(state.difficulty), team = state.team.filter(id => !l.departures.includes(id));
-<<<<<<< HEAD
   if(state.officeChatter)next.officeChatter=carryOfficeChatter(state);
-  next.budget = next.initialBudget = contract.budget + DIFFICULTIES[state.difficulty].budget - 36000;
-  next.deadline = contract.deadline + DIFFICULTIES[state.difficulty].deadline - 16;
-=======
   const terms=contractTerms(state,contract);
   next.budget = next.initialBudget = terms.budget;
   next.deadline = terms.deadline;
->>>>>>> origin/main
   const departed=[...l.departures], away=departed.slice(0,AGENTS.length-3);
   const fees = team.reduce((sum,id) => sum + careerFee(state,id,true), 0);
   const replacements=AGENTS.map(a=>({...a,cost:careerFee(state,a.id,true)})).filter(a=>!team.includes(a.id)&&!away.includes(a.id)).sort((a,b)=>a.cost-b.cost).slice(0,Math.max(0,3-team.length));
