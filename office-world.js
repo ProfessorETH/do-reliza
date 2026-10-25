@@ -106,10 +106,13 @@ class OfficeWorld {
   refreshContainer() {
     if (!this.container) return;
     const parent = this.container.closest('.office-room'); parent.classList.toggle('is-3d', !!this.ready && !this.failed);
-    parent.dataset.officeState = this.failed ? 'fallback' : this.ready ? 'ready' : 'loading';
+    const expected=this.game?.team||[],present=expected.filter(id=>this.actors.has(id)).length;
+    const loadingPeople=this.ready&&!this.failed&&present<expected.length;
+    this.container.dataset.actors=expected.filter(id=>this.actors.has(id)).join(',');
+    parent.dataset.officeState = this.failed ? 'fallback' : !this.ready ? 'loading' : loadingPeople?'characters-loading':'ready';
     const status = parent.querySelector('.office-render-status');
     const flyButton=parent.querySelector('[data-action="office-camera"][data-id="flight"]');if(flyButton){flyButton.setAttribute('aria-pressed',String(!!this.flying));flyButton.textContent=this.flying?'Стоп':'WASD';}
-    if (status) status.textContent = this.failed || (this.ready ? this.flying ? 'Полёт: W A S D · Q / E — высота · тяни — осмотр · Esc — выход' : window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
+    if (status) status.textContent = this.failed || (loadingPeople?`Загружаем команду · ${present} из ${expected.length}. Персонажи появятся на своих местах.`:this.ready ? this.flying ? 'Полёт: W A S D · Q / E — высота · тяни — осмотр · Esc — выход' : window.matchMedia('(pointer:coarse)').matches ? 'Тяни — поворот · два пальца — масштаб и сдвиг' : 'Тяни — поворот · колесо — масштаб · правая кнопка — сдвиг' : 'Загружаем 3D-студию…');
   }
   fail(message) { this.failed = message; this.refreshContainer(); this.callbacks.onBusy(false); this.callbacks.onError?.(message); this.reportRest(true);settleCoffeeFallback(this.game,this.callbacks.onCoffee); }
   resize() {
@@ -128,20 +131,20 @@ class OfficeWorld {
     // cached promises prevent duplicate transfers during intermediate renders.
     for(const id of this.game.team)if(!this.actors.has(id))void loadModel(id).catch(()=>{});
     for (const [id, actor] of this.actors) if (!this.game.team.includes(id)) { actor.speechMouth?.dispose(); this.scene.remove(actor.group); this.actors.delete(id); }
-    for (const [order, id] of this.game.team.entries()) {
+    await Promise.all(this.game.team.map(async (id,order) => {
       let actor = this.actors.get(id);
-      if (actor) { actor.order = order; actor.destination(this.game); continue; }
-      if (this.loadingActors.has(id)) continue;
+      if (actor) { actor.order = order; actor.destination(this.game); return; }
+      if (this.loadingActors.has(id)) return;
       this.loadingActors.add(id);
       try {
         const model = cloneSkeleton((await loadModel(id)).scene);
-        if (!this.game.team.includes(id)) continue;
+        if (!this.game.team.includes(id)) return;
         actor = new OfficeActor(id, model, agentById(id).color, order);
         actor.destination(this.game, this.initialTeam.has(id)); actor.pose(false, false, 0, this.reduced.matches);
         this.actors.set(id, actor); this.scene.add(actor.group);
       } catch (error) { this.fail('Не удалось загрузить персонажа. Показан облегчённый офис.'); console.error('Office character:', error); }
-      finally { this.loadingActors.delete(id); }
-    }
+      finally { this.loadingActors.delete(id); this.refreshContainer(); }
+    }));
   }
   reportRest(fallback = false) {
     if (!this.game) return;

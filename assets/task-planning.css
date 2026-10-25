@@ -1,5 +1,5 @@
 /* A focused planning table above the studio; native dialog owns focus and Escape. */
-.game-shell.scene-first #project-panel.planning-dialog { position:fixed; inset:0; margin:auto; width:min(1060px,calc(100vw - 48px)); height:auto; max-height:calc(100dvh - 48px); min-height:0; padding:0; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--panel); color:var(--text); box-shadow:0 24px 80px #0007; }
+.game-shell.scene-first #project-panel.planning-dialog { position:fixed; inset:0; margin:auto; width:min(1060px,calc(100vw - 48px)); height:fit-content; max-height:calc(100dvh - 48px); min-height:0; padding:0; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:var(--panel); color:var(--text); box-shadow:0 24px 80px #0007; }
 .planning-dialog::backdrop { background:#08131cd9; }
 .game-shell.scene-first #project-panel.planning-dialog { max-width:none; display:block; }
 .game-shell.scene-first #project-panel.planning-dialog .planning-footer .primary { display:inline-flex; align-items:center; justify-content:center; }

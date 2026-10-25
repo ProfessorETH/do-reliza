@@ -213,7 +213,17 @@ function render({openProject=false}={}) {
   if(openProject)workspaceView='project';
   const planning=game.stage==='plan'&&workspaceView==='project',hiring=game.stage==='hire'&&workspaceView==='project',shifting=game.stage==='work'&&workspaceView==='project',managementModal=planning||hiring||shifting;
   root.innerHTML=`<main class="game-shell team-hud-layout scene-first ${game.stage==='event'?'event-state':''}" data-pane-expanded="${managementExpanded}" data-expanded="${officeExpanded}" data-stage="${game.stage}" data-event="${game.currentEvent||''}" data-workspace="${workspaceView}">${topbar()}${workspaceTabs()}<div class="game-layout">${renderTeamHUD(game,officeSelection)}${scene()}<${managementModal?'dialog':'section'} id="project-panel" class="control-panel ${planning?'planning-dialog':hiring?'hiring-dialog':shifting?'shift-dialog':''}" ${managementModal?`aria-labelledby="${planning?'planning-title':hiring?'hiring-title':'shift-title'}"`:'aria-label="Управление проектом"'} ${workspaceView==='project'?'':'hidden inert'}>${managementModal?'':managementBar(managementExpanded,{icon})}${panels[game.stage]()}</${managementModal?'dialog':'section'}></div></main>`;
-  if(managementModal){const panel=root.querySelector('#project-panel');panel.showModal();panel.addEventListener('cancel',e=>{e.preventDefault();workspaceView='office';render();root.querySelector('.scene-dock [data-id=project]')?.focus({preventScroll:true});});}
+  if(managementModal){
+    const panel=root.querySelector('#project-panel');
+    const dismiss=()=>{workspaceView='office';render();root.querySelector('.scene-dock [data-id=project]')?.focus({preventScroll:true});};
+    const outside=e=>{const r=panel.getBoundingClientRect();return e.target===panel&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);};
+    let backdropPress=false;
+    panel.showModal();
+    panel.addEventListener('cancel',e=>{e.preventDefault();dismiss();});
+    panel.addEventListener('pointerdown',e=>{backdropPress=outside(e);});
+    panel.addEventListener('pointercancel',()=>{backdropPress=false;});
+    panel.addEventListener('click',e=>{const close=backdropPress&&outside(e);backdropPress=false;if(close)dismiss();});
+  }
   mountOfficeWorld(game,officeSelection,{
     arriveOnLoad: DEMO && demoArrival,
     getSpeech:()=>officeChat.speech,
