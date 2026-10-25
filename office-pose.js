@@ -25,14 +25,15 @@ export function footstep(phase, amount) {
     { y: lerp(-.24, .24, smooth((p - .6) / .4)) * amount, lift: Math.sin((p - .6) / .4 * Math.PI) * .105 * amount, pitch:pitch*amount };
 }
 
-function arm(j, side, target, palmAngle, spread, blend) {
+function arm(j, side, target, palmAngle, spread, blend, relaxedElbow = 0) {
   const upper = j[side + 'UpperArm'], fore = j[side + 'Forearm'], wrist = j[side + 'Wrist'];
   if (!wrist) return;
   const torso = j.Torso, inverse = torso.quaternion.clone().invert();
   const goal = target.clone().sub(torso.position).applyQuaternion(inverse).sub(upper.position);
   const d = clamp(goal.length(), .03, .5499), direction = goal.clone().normalize();
   const a = (.285 ** 2 - .265 ** 2 + d * d) / (2 * d), sign = side === 'Left' ? -1 : 1;
-  const bend = new THREE.Vector3(sign, -.3, .3).addScaledVector(direction, -new THREE.Vector3(sign, -.3, .3).dot(direction)).normalize();
+  const pole = new THREE.Vector3(sign * lerp(1,.55,relaxedElbow), lerp(-.3,-1,relaxedElbow), lerp(.3,.1,relaxedElbow));
+  const bend = pole.addScaledVector(direction, -pole.dot(direction)).normalize();
   const elbow = direction.clone().multiplyScalar(a).addScaledVector(bend, Math.sqrt(Math.max(0, .285 ** 2 - a * a)));
   const upperQ = new THREE.Quaternion().setFromUnitVectors(DOWN, elbow.clone().normalize());
   const foreQ = new THREE.Quaternion().setFromUnitVectors(DOWN, goal.clone().sub(elbow).normalize().applyQuaternion(upperQ.clone().invert()));
@@ -53,6 +54,13 @@ export function poseActor(actor, elapsed, reduced) {
   j.Hips.position.set(0, lerp(.88 - stride * .045 + Math.cos(actor.phase * Math.PI * 4) * stride * .006, lerp(.60,LOUNGE_SEAT.hipHeight,lounge), s), 0);
   j.Hips.rotation.set(0, reduced ? 0 : wave * stride * .025, 0);
   j.Torso.rotation.set(-lowerLean - s * (.04 + actor.workBlend * .07) + rest*(.16+(reduced?0:Math.sin(t*.9)*.012)), reduced ? 0 : wave * stride * -.025, breath * .4);
+  // Mira's fitted shoulders need a lower elbow pole, rather than raising the
+  // whole forearm to the keys. Keep wrist targets and the chair/sole anchors.
+  const miraDesk = actor.id === 'mira' ? s * actor.workBlend * (1-rest) * (1-expression) * (coffee.active?0:1) : 0;
+  if(actor.id === 'mira') {
+    j.Torso.position.z = -.02 * miraDesk;
+    j.Torso.rotation.x -= .04 * miraDesk;
+  }
   j.Torso.scale.y = 1 + breath * (1 - stride)-expression*(kind==='sad'?.025:0);
   j.Torso.rotation.x+=expression*(kind==='sad'?-.15:kind==='calm'?.06:kind==='joy'?.035:0);
   j.Torso.rotation.z+=expression*(kind==='joy'?reaction.wave*.045:0);
@@ -124,7 +132,7 @@ export function poseActor(actor, elapsed, reduced) {
         target.lerp(pickup.lerp(mouth,coffee.sip),coffee.reach);palmAngle=lerp(palmAngle,1.8,coffee.reach);
       }else target.lerp(new THREE.Vector3(-.18,.8-j.Hips.position.y,-.13),coffee.reach);
     }
-    arm(j, side, target, palmAngle, lerp(sign * .06,-.06,mouse), Math.max(smooth(s),expression,coffee.active?1:0));
+    arm(j, side, target, palmAngle, lerp(sign * .06,-.06,mouse), Math.max(smooth(s),expression,coffee.active?1:0), miraDesk);
     for (let finger = 0; finger < 4; finger++) {
       const digit = j[side + 'Finger' + finger];
       if (digit) digit.rotation.x = coffee.holding&&side==='Right'?-.35: reduced ? -.08 : -.08 - (1 - Math.cos(t * (12 + finger) + finger * 1.3 + sign)) * .14 * typing * (1 - mouse + (finger === 1 ? mouse * .3 : 0));
